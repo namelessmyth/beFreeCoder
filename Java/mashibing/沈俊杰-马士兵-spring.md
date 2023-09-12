@@ -273,21 +273,27 @@ Spring容器中的bean分2类，上述讲得其实都是普通对象，也就是
 
 
 
-## 重要类和接口
+## 类和接口
 
-### 接口
+### 重要类和接口
 
 ```mermaid
 flowchart LR
-接口-->BeanFactory    
+接口-->BeanFactory-->DefaultListableBeanFactory
+
+BeanFactory-->ApplicationContext-->ClassPathXmlApplicationContext
+ApplicationContext-->WebApplicationContext
+
+接口-->BeanDefinition
+接口-->BeanDefinitionReader
+接口-->BeanDefinitionRegister
+
 接口-->Aware
     Aware-->EnvironmentAware
     Aware-->BeanNameAware
     Aware-->BeanClassLoaderAware
     Aware-->ApplicationContextAware
-接口-->BeanDefinition
-接口-->BeanDefinitionReader
-接口-->BeanDefinitionRegister
+
 接口-->BeanPostProcessor
 接口-->BeanFactoryPostProcessor
 接口-->Environment-->StandardEnvironment
