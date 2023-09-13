@@ -2,18 +2,18 @@
 
 ## 为什么要学源码
 
-- **源码是大厂面试的必要环节。**有的人可能会觉得工作中绝大部分时间都是CRUD，学习源码完全没用。但实际情况下，目前只要去大厂面试或者一些要求比较高的小厂都会问源码，虽然工作中不一定会用到，但是不会的话，连进去CRUD的资格都没。目前不在大厂的同学也可以问下自己，自己的未来规划是什么？想不想进大厂？还是后续转业务或者转管理？
-- **对源码的理解是一种加分项**。也许有的公司不一定会问源码，但只要简历上写了，面试的时候找机会表现出来，会是一种加分项。进入公司内部之后，如果能向领导和同事很好的展现对源码的认知，也会加分。毕竟你觉得难的，别人也觉得难，所以能真正理解源码的人是少数。
-- **工作中其实可以使用**。Spring中有很多好的设计思想和公共方法，懂了之后实际是可以在项目中运用的。一些大厂，例如：阿里。其实直接用源码都不一定能扛住双11那样的并发量，所以得在源码基础上修改，让他支持更高的并发。例如：SpringCloudAlibaba就是阿里在老的微服务框架基础上改出来的。也有一些技术很强的公司，会自己开发框架，然后开源出来给其他人使用。所以在工作中能否使用学到的知识，取决于个人对这个知识的掌握程度以及所在公司对技术的要求。就算进了大厂，大厂也不会让所有人都去写框架，而是会挑有能力的人去做这些事情。而在小厂，只要不严重影响任务进度，领导也不太可能强制员工不能使用。
+- **源码是大厂面试的必要环节。**目前源码是很多大厂面试的必要环节。一些要求有自研产品的小厂也会问源码。所以如果不会源码的话，面试这关就无法加分了。大家也可以根据自己的职业规划自行判断。想不想进大厂或者去自研型企业？还是一直写CRUD代码？还是后续转业务或者转管理？
+- **对源码的理解是一种加分项**。即使有的公司不一定会问源码，但只要简历上写了，面试的时候找机会表现出来，会是一种加分项。进入公司内部之后，如果能向领导和同事很好的展现对源码的认知，也会加分。毕竟大家都知道看懂源码比较难，所以能真正理解源码的人是少数。
+- **工作中其实可以使用**。源码中有很多好的设计思想和公共方法，看懂了之后实际是可以在项目中运用的。有很多技术很强的大厂，外面的开源框架不一定能符合自己公司的业务场景，例如：阿里。直接用源码扛不住双11的并发量，所以他们在老的微服务框架基础上修改，开发出了SpringCloudAlibaba，并重新开源给其他公司使用。在工作中实际是否能用到源码还取决于能力。大厂也不会让所有人都去写框架，而是会挑有能力的人去做这些事情。当然，不管大厂小厂，只要不严重影响任务进度，领导也不会强制员工不能使用。
 
 
 
 ## 学习思路
 
 - 储备基础知识。
-  - 设计模式。学习源码最重要的基础知识。会了设计模式之后能够更好的理解源码的思想。
+  - 设计模式。学习源码非常重要的基础知识。会了设计模式之后能够更好的理解源码的思想。否则，可能会觉得源码写的很乱，明明一个类能解决的事情，非得搞出几十个类。看着看着就会反感，就看不下去了。
   - 数据结构与算法。
-  - 反射。
+  - 反射。Java基础，源码中会有很多地方将类名写在配置中，然后通过反射得到实例。
   - 多线程。例如：AbstractAppicationContext.refresh()为什么要加锁？
   - JVM。
 - 不要太关注细节。不要一上来就一个个方法点进去看。要先摸清流程脉络。
@@ -743,7 +743,7 @@ finish-->finishRefresh-->reset[resetCommonCaches]
     	}
     ```
 
-  - 如果BeanFactory已经存在，则先销毁里面的所有beans。再关闭BeanFactory
+  - 如果BeanFactory已经存在，则先销毁里面的所有beans。再关闭BeanFactory。
 
   - 初始化BeanFactory，此时很多属性都是初始值。使用applicationContext的id，设置序列化id
 
@@ -786,8 +786,8 @@ finish-->finishRefresh-->reset[resetCommonCaches]
       - 解析配置文件地址中的路径修饰字符。例如："classpath:xxx.xml"
       - doLoadBeanDefinitions。
         - doLoadDocument。使用SAX，从String[]到Resource[]，再将resource读取成Document文档对象（此步骤不建议深入研究）。并将其封装成BeanDefinition对象。
-        - registerBeanDefinitions。
-      - 
+        - registerBeanDefinitions。解析并读取配置文件。区分不同的命名空间做不同的处理。对于非默认命名空间的配置通过resources\META-INF\spring.handlers文件中对应的类进行处理。基于此，我们也可以自定义标签的处理类。
+      - 这里预留了一个扩展点，[自定义标签](#配置文件自定义标签)。
   
   - 
 
@@ -856,6 +856,324 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 ##### resetCommonCaches()
 
 重置公共缓存。
+
+
+
+### 扩展点
+
+#### 配置文件自定义标签
+
+自定义标签的意思是，在Spring的配置文件中（applicationContext.xml）加入自己定义的标签，同时加入处理类，让IOC容器启动时可以自动解析到beanFactory中。
+
+##### 代码出处
+
+在ioc容器初始化过程中，会调用类（XmlBeanDefinitionReader.java）的下面这个方法。在这个方法的（createReaderContext(resource)）中会初始化上下文。同时会确定配置文件地址。
+
+```java
+//org/springframework/beans/factory/xml/XmlBeanDefinitionReader.java
+    public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+        // 对xml的beanDefinition进行解析
+        BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+        int countBefore = getRegistry().getBeanDefinitionCount();
+        // 完成具体的解析过程,createReaderContext这个方法会读取配置文件，读出不同命名空间对应的处理类
+        documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+        return getRegistry().getBeanDefinitionCount() - countBefore;
+    }
+
+	/**
+	 * 接着进入getNamespaceHandlerResolver()这个方法
+	 */
+	public XmlReaderContext createReaderContext(Resource resource) {
+		return new XmlReaderContext(resource, this.problemReporter, this.eventListener,
+				this.sourceExtractor, this, getNamespaceHandlerResolver());
+	}
+
+	/**
+	 * 第一次进来肯定为空，所以进入createDefaultNamespaceHandlerResolver()
+	 */
+	public NamespaceHandlerResolver getNamespaceHandlerResolver() {
+		if (this.namespaceHandlerResolver == null) {
+			this.namespaceHandlerResolver = createDefaultNamespaceHandlerResolver();
+		}
+		return this.namespaceHandlerResolver;
+	}
+
+	/**
+	 * 进到这个方法后，配置文件路径确定
+	 */
+	protected NamespaceHandlerResolver createDefaultNamespaceHandlerResolver() {
+		ClassLoader cl = (getResourceLoader() != null ? getResourceLoader().getClassLoader() : getBeanClassLoader());
+		return new DefaultNamespaceHandlerResolver(cl);
+	}
+```
+
+在下面的这个parseCustomElement方法，会解析非默认命名空间的配置项。这里面会使用上下文调用resolve方法找到命名空间对应的处理类。针对不同命名空间调用不同类的方法来解析。
+
+```java
+//org.springframework.beans.factory.xml.BeanDefinitionParserDelegate	
+	public BeanDefinition parseCustomElement(Element ele, @Nullable BeanDefinition containingBd) {
+		// 获取对应的命名空间
+		String namespaceUri = getNamespaceURI(ele);
+		if (namespaceUri == null) {
+			return null;
+		}
+		// 根据命名空间找到对应的Namespace Handler
+		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
+		if (handler == null) {
+			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
+			return null;
+		}
+		// 调用自定义的NamespaceHandler进行解析
+		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
+	}
+
+//org.springframework.beans.factory.xml.DefaultNamespaceHandlerResolver
+	public NamespaceHandler resolve(String namespaceUri) {
+		// 获取所有已经配置好的handler映射
+		Map<String, Object> handlerMappings = getHandlerMappings();
+		// 根据命名空间找到对应的信息
+		Object handlerOrClassName = handlerMappings.get(namespaceUri);
+		if (handlerOrClassName == null) {
+			return null;
+		}
+		else if (handlerOrClassName instanceof NamespaceHandler) {
+			// 如果已经做过解析，直接从缓存中读取
+			return (NamespaceHandler) handlerOrClassName;
+		}
+		else {
+			// 没有做过解析，则返回的是类路径
+			String className = (String) handlerOrClassName;
+			try {
+				// 通过反射将类路径转化为类
+				Class<?> handlerClass = ClassUtils.forName(className, this.classLoader);
+				if (!NamespaceHandler.class.isAssignableFrom(handlerClass)) {
+					throw new FatalBeanException("Class [" + className + "] for namespace [" + namespaceUri +
+							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
+				}
+				// 实例化类
+				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				// 调用自定义的namespaceHandler的初始化方法
+				namespaceHandler.init();
+				// 讲结果记录在缓存中
+				handlerMappings.put(namespaceUri, namespaceHandler);
+				return namespaceHandler;
+			}
+			catch (ClassNotFoundException ex) {
+				throw new FatalBeanException("Could not find NamespaceHandler class [" + className +
+						"] for namespace [" + namespaceUri + "]", ex);
+			}
+			catch (LinkageError err) {
+				throw new FatalBeanException("Unresolvable class definition for NamespaceHandler class [" +
+						className + "] for namespace [" + namespaceUri + "]", err);
+			}
+		}
+	}
+```
+
+
+
+##### 步骤
+
+例如：我们自定义一个标签<test:user username="zhangsan" email="testEmail" password="test123456" />
+
+1. 定义一个实体类User
+
+2. 写一个类继承AbstractSingleBeanDefinitionParser，并覆盖父类方法。
+
+3. 写一个类继承NamespaceHandlerSupport，覆盖父类方法。可参考ContextNamespaceHandler。
+
+   1. 上述步骤参考代码
+
+   2. ```java
+      /**
+      * 1.实体类，用于承载自定义标签中的信息
+      */
+      public class User {
+          private String username;
+          private String email;
+          private String password;
+      
+          public String getUsername() {
+              return username;
+          }
+      
+          public void setUsername(String username) {
+              this.username = username;
+          }
+      
+          public String getEmail() {
+              return email;
+          }
+      
+          public void setEmail(String email) {
+              this.email = email;
+          }
+      
+          public String getPassword() {
+              return password;
+          }
+      
+          public void setPassword(String password) {
+              this.password = password;
+          }
+      }
+      
+      /**
+       * 自定义标签分析器。<br>
+       * 不继承AbstractPropertyLoadingBeanDefinitionParser是因为，我们标签中暂时不需要location，properties-ref等等属性。
+       */
+      public class UserBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+      
+          /**
+           * 返回属性值所对应的对象
+           *
+           * @param element the {@code Element} that is being parsed
+           * @return
+           */
+          @Override
+          protected Class<?> getBeanClass(Element element) {
+              return User.class;
+          }
+      
+          /**
+           * 标签解析方法。负责解析标签的自定义属性。
+           *
+           * @param element the XML element being parsed
+           * @param builder used to define the {@code BeanDefinition}
+           */
+          @Override
+          protected void doParse(Element element, BeanDefinitionBuilder builder) {
+              String userName = element.getAttribute("userName");
+              String email = element.getAttribute("email");
+              String password = element.getAttribute("password");
+      
+              if (StringUtils.hasText(userName)) {
+                  builder.addPropertyValue("username", userName);
+              }
+              if (StringUtils.hasText(email)) {
+                  builder.addPropertyValue("email", email);
+              }
+              if (StringUtils.hasText(password)) {
+                  builder.addPropertyValue("password", password);
+              }
+          }
+      }
+      
+      /**
+       * 3.自定义命名空间处理类。参考ContextNamespaceHandler
+       */
+      public class UserNamespaceHandler extends NamespaceHandlerSupport {
+          @Override
+          public void init() {
+              registerBeanDefinitionParser("user",new UserBeanDefinitionParser());
+          }
+      }
+      ```
+
+4. 在项目配置文件目录（resources/META-INF/）中，新增文件spring.handlers，加入处理类的映射。
+
+   1. 注意：在idea中创建这个文件时，要确保他是properties类型的。不能是txt类型的。
+   2. `http\://www.test.com/schema/user=com.test.selftag.UserNamespaceHandler`
+
+5. 在项目配置文件目录（resources/META-INF/）中，新增文件spring.schemas，加入命名空间和xsd的映射。
+
+   1. 注意：在idea中创建这个文件时，要确保他是properties类型的。不能是txt类型的。
+   2. `http\://www.test.com/schema/user.xsd=META-INF/user.xsd`
+
+6. 在项目配置文件目录（resources/META-INF/）中，新增文件user.xsd。
+
+   1. ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema"
+              targetNamespace="http://www.test.com/schema/user"
+              xmlns:tns="http://www.test.com/schema/user"
+              elementFormDefault="qualified">
+          <element name="user">
+              <complexType>
+                  <attribute name ="id" type = "string"/>
+                  <attribute name ="userName" type = "string"/>
+                  <attribute name ="email" type = "string"/>
+                  <attribute name ="password" type="string"/>
+              </complexType>
+          </element>
+      </schema>
+      ```
+
+7. 在Spring配置文件中，使用我们的自定义标签。
+
+   1. applicationContext.xml
+
+   2. ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <beans xmlns="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:test="http://www.test.com/schema/user"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+              http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd
+              http://www.test.com/schema/user http://www.test.com/schema/user.xsd">
+      
+      	<test:user id="testTag" username="lisi" email="lisi@163.com" password="123456"></test:user>
+      
+          <bean id="person"  class="com.test.Person" scope="prototype">
+              <property name="id" value="1"></property>
+              <property name="name" value="zhangsan"></property>
+          </bean>
+      </beans>
+      ```
+
+8. 写一个容器启动测试类。测试刚才的自定义标签。
+
+   1. ```java
+      public class Test {
+          public static void main(String[] args) {
+       		ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+              User user = ac.getBean("testTag");
+              System.out.println(user);
+          }
+      }
+      ```
+
+9. 问题排查。
+
+   1. 如果报错assert short name !=key，可能是docs.gradle中的这段代码引起的，把它注释掉就行了。
+
+   2. ```groovy
+      task schemaZip(type: Zip) {
+      	group = "Distribution"
+      	archiveBaseName.set("spring-framework")
+      	archiveClassifier.set("schema")
+      	description = "Builds -${archiveClassifier} archive containing all " +
+      			"XSDs for deployment at https://springframework.org/schema."
+      	duplicatesStrategy DuplicatesStrategy.EXCLUDE
+      	moduleProjects.each { module ->
+      		def Properties schemas = new Properties();
+      
+      		module.sourceSets.main.resources.find {
+      			(it.path.endsWith("META-INF/spring.schemas") || it.path.endsWith("META-INF\\spring.schemas"))
+      		}?.withInputStream { schemas.load(it) }
+      
+      //把下面的代码注释。
+      //		for (def key : schemas.keySet()) {
+      //			def shortName = key.replaceAll(/http.*schema.(.*).spring-.*/, '$1')
+      //			assert shortName != key
+      //			File xsdFile = module.sourceSets.main.resources.find {
+      //				(it.path.endsWith(schemas.get(key)) || it.path.endsWith(schemas.get(key).replaceAll('\\/','\\\\')))
+      //			}
+      //			assert xsdFile != null
+      //			into (shortName) {
+      //				from xsdFile.path
+      //			}
+      //		}
+      	}
+      }
+      ```
+
+   3. 
+
+
+
+
 
 
 
