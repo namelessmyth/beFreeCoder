@@ -793,9 +793,107 @@ finish-->finishRefresh-->reset[resetCommonCaches]
 
 
 
-##### prepareBeanFactory(beanFactory)
+##### prepareBeanFactory
 
-beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行填充
+beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行填充，配置工厂的标准上下文特征，后置处理器等
+
+1. 设置beanFactory的classloader为当前context的classloader
+
+2. 设置beanfactory的SpEL表达式语言的Resolver。内部还会创建SpelExpressionParser
+
+   1. 创建Parser的时候还创建了一个配置类。SpelParserConfiguration
+   2. 这里仅仅时注册，并没有正真开始解析。
+
+3. 为beanFactory增加一个默认的PropertyEditorRegistrar，这个主要是对bean的属性等设置管理的一个工具类
+
+   1. 这里是Spring预留的一个扩展点。可以[自定义属性编辑器](#自定义属性编辑器)。
+
+4. 为beanFactory增加一个BeanPostProcessor，ApplicationContextAwareProcessor。
+
+   1. 这个Aware接口是用来调用其他6个aware接口的。在他的before方法中
+
+   2. ```java
+      /**
+      	 * 接口beanPostProcessor规定的方法，会在bean创建时，实例化后，初始化前，对bean对象应用
+      	 * @param bean the new bean instance
+      	 * @param beanName the name of the bean
+      	 * @return
+      	 * @throws BeansException
+      	 */
+      	@Override
+      	@Nullable
+      	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+      		if (!(bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
+      				bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
+      				bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)){
+      			return bean;
+      		}
+      
+      		AccessControlContext acc = null;
+      
+      		if (System.getSecurityManager() != null) {
+      			acc = this.applicationContext.getBeanFactory().getAccessControlContext();
+      		}
+      
+      		if (acc != null) {
+      			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+      				// 检测bean上是否实现了某个aware接口，有的话进行相关的调用
+      				invokeAwareInterfaces(bean);
+      				return null;
+      			}, acc);
+      		}
+      		else {
+      			invokeAwareInterfaces(bean);
+      		}
+      
+      		return bean;
+      	}
+      
+      	/**
+      	 * 如果某个bean实现了某个aware接口，给指定的bean设置相应的属性值
+      	 *
+      	 * @param bean
+      	 */
+      	private void invokeAwareInterfaces(Object bean) {
+      		if (bean instanceof EnvironmentAware) {
+      			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+      		}
+      		if (bean instanceof EmbeddedValueResolverAware) {
+      			((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver);
+      		}
+      		if (bean instanceof ResourceLoaderAware) {
+      			((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+      		}
+      		if (bean instanceof ApplicationEventPublisherAware) {
+      			((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+      		}
+      		if (bean instanceof MessageSourceAware) {
+      			((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+      		}
+      		if (bean instanceof ApplicationContextAware) {
+      			((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+      		}
+      	}
+      ```
+
+   3. 另有3个aware接口是在invokeAwareMethods方法中调用。BeanNameAware，BeanClassLoaderAware，BeanFactoryAware
+
+5. 设置要忽略自动装配的接口。这6个接口已经通过上面的ApplicationContextAwareProcessor相当于是容器自动赋值的。所以需要在DI（autowired）的时候过滤掉他们。
+
+6. 设置几个自动装配的特殊规则,当在进行自动注入的时候，如果某个类有多个实现，那么就使用指定的对象进行注入
+
+7. 为beanFactory增加一个BeanPostProcessor，此类用来检测bean是否实现了ApplicationListener接口
+
+   1. 实例化完成之后，如果bean为单例并且属于ApplicationListener接口，则加入到多播器中。
+   2. bean销毁之前，如果bean是一个applicationListener，则从多播器中提前删除
+
+8. 如果BeanFactory包含某个特殊的Bean（用于AOP）就做一些特殊处理
+
+   1. 主要为了增加对AspectJ的支持，在java中织入分为三种方式，分为编译器织入，类加载器织入，运行期织入，编译器织入是指在java编译器，采用特殊的编译器，将切面织入到java类中
+   2. 而类加载期织入则指通过特殊的类加载器，在类字节码加载到JVM时，织入切面，运行期织入则是采用cglib和jdk进行切面的织入
+   3. aspectj提供了两种织入方式，第一种是通过特殊编译器，在编译器，将aspectj语言编写的切面类织入到java类中，第二种是类加载期织入，就是下面的load time weaving，此处后续讲
+
+9. 注册默认的系统环境bean到一级缓存中。便于后续使用。
 
 
 
@@ -863,7 +961,9 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 
 #### 配置文件自定义标签
 
-自定义标签的意思是，在Spring的配置文件中（applicationContext.xml）加入自己定义的标签，同时加入处理类，让IOC容器启动时可以自动解析到beanFactory中。
+##### 说明
+
+自定义标签的意思是，在Spring的配置文件中（例如：applicationContext.xml）加入自己定义的标签，同时加入处理类，让IOC容器启动时可以自动解析到beanFactory中。
 
 ##### 代码出处
 
@@ -1128,7 +1228,7 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
       public class Test {
           public static void main(String[] args) {
        		ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-              User user = ac.getBean("testTag");
+              User user = (User) ac.getBean("testTag");
               System.out.println(user);
           }
       }
@@ -1171,11 +1271,582 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 
    3. 
 
+##### 应用场景
+
+暂无。工作中很少用到。
 
 
 
+#### 自定义属性编辑器
 
+##### 说明
 
+Spring允许用户自定义属性编辑器。当对象实例化后，可以对某一个字段进行定制化修改。例如：从某个对象的文本address字段中解析出，省市区3个字段。
+
+##### 代码出处
+
+1. 在ioc容器初始化过程中，在类（AbstractApplicationContext）的prepareBeanFactory方法中会初始化PropertyEditorRegistrar。
+
+2. ```java
+   	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+   		// Tell the internal bean factory to use the context's class loader etc.
+   		// 设置beanFactory的classloader为当前context的classloader
+   		beanFactory.setBeanClassLoader(getClassLoader());
+   		// 设置beanfactory的SpEL表达式语言的Resolver。内部还会创建SpelExpressionParser
+   		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+   		// 为beanFactory增加一个默认的PropertyEditorRegistrar，这个主要是对bean的属性等设置管理的一个工具类
+   		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+   		//上面就是PropertyEditorRegistrar初始化的地方，忽略其他不相关代码
+   	}
+   ```
+
+3. invokeBeanFactoryPostProcessors()方法会调用CustomEditorConfigurer.postProcessBeanFactory()方法，会循环自身的数组属性propertyEditorRegistrar。将其添加到BeanFactory中。同时还会循环另一个属性customEditors也加入到BeanFactory中。
+
+   1. 参考代码
+
+   2. ```java
+      	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+      		// 如果属性编辑注册器不等于空
+      		if (this.propertyEditorRegistrars != null) {
+      			// 遍历属性编辑注册器的集合
+      			for (PropertyEditorRegistrar propertyEditorRegistrar : this.propertyEditorRegistrars) {
+      				// 将属性编辑注册器添加到beanFactory
+      				beanFactory.addPropertyEditorRegistrar(propertyEditorRegistrar);
+      			}
+      		}
+      		// 如果自定义编辑器不等于空
+      		if (this.customEditors != null) {
+      			// 遍历自定义编辑器集合将自定义编辑器添加到beanFactory中
+      			this.customEditors.forEach(beanFactory::registerCustomEditor);
+      		}
+      	}
+      ```
+
+   3. 调用堆栈，可通过Idea的Call Hierarchy功能反查得到
+
+   4. CustomEditorConfigurer.postProcessBeanFactory(ConfigurableListableBeanFactory)  (org.springframework.beans.factory.config)  
+
+      - PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(Collection, ConfigurableListableBeanFactory)  (org.springframework.context.support)  
+        - PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory, List)(6 usages)  (org.springframework.context.support)  
+          - AbstractApplicationContext.invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory)  (org.springframework.context.support)  
+            - AbstractApplicationContext.refresh()  (org.springframework.context.support)
+
+4. 在AbstractBeanFactory.registerCustomEditors()方法中，会调用我们自定义的注册器，将属性和编辑器绑定。
+
+   1. 源代码
+
+   2. ```java
+      	protected void initBeanWrapper(BeanWrapper bw) {
+      		// 使用该工厂的ConversionService来作为bw的ConversionService，用于转换属性值，以替换JavaBeans PropertyEditor
+      		bw.setConversionService(getConversionService());
+      		// 将工厂中所有定制PropertyEditor注册到bw中
+      		registerCustomEditors(bw);
+      	}
+      
+      	protected void registerCustomEditors(PropertyEditorRegistry registry) {
+      		// PropertyEditorRegistrySupport是PropertyEditorRegistry接口的默认实现
+      		// 将registry强转成PropertyEditorRegistrySupport对象，如果registry不能强转则为null
+      		PropertyEditorRegistrySupport registrySupport =
+      				(registry instanceof PropertyEditorRegistrySupport ? (PropertyEditorRegistrySupport) registry : null);
+      		// 如果成功获取PropertyEditorRegistrySupport对象
+      		if (registrySupport != null) {
+      			// 激活仅用于配置目的的配置值编辑器
+      			registrySupport.useConfigValueEditors();
+      		}
+      		// PropertyEditorRegistrar：各种业务的PropertyEditorSupport一般都会先注册到PropertyEditorRegistrar中，再通过PropertyEditorRegistrar
+      		// 将PropertyEditorSupport注册到PropertyEditorRegistry中
+      		// 如果该工厂的propertyEditorRegistrar列表不为空
+      		if (!this.propertyEditorRegistrars.isEmpty()) {
+      			// propertyEditorRegistrars默认情况下只有一个元素对象，该对象为ResourceEditorRegistrar。
+      			// 遍历propertyEditorRegistrars
+      			for (PropertyEditorRegistrar registrar : this.propertyEditorRegistrars) {
+      				try {
+      					// ResourceEditorRegistrar会将ResourceEditor, InputStreamEditor, InputSourceEditor,
+      					// FileEditor, URLEditor, URIEditor, ClassEditor, ClassArrayEditor注册到registry中，
+      					// 如果registry已配置了ResourcePatternResolver,则还将注册ResourceArrayPropertyEditor
+      					// 将registrar中的所有PropertyEditor注册到PropertyEditorRegistry中
+      					registrar.registerCustomEditors(registry);
+      				}
+      				// 捕捉Bean创建异常
+      				catch (BeanCreationException ex) {
+      					Throwable rootCause = ex.getMostSpecificCause();
+      					if (rootCause instanceof BeanCurrentlyInCreationException) {
+      						BeanCreationException bce = (BeanCreationException) rootCause;
+      						String bceBeanName = bce.getBeanName();
+      						if (bceBeanName != null && isCurrentlyInCreation(bceBeanName)) {
+      							if (logger.isDebugEnabled()) {
+      								logger.debug("PropertyEditorRegistrar [" + registrar.getClass().getName() +
+      										"] failed because it tried to obtain currently created bean '" +
+      										ex.getBeanName() + "': " + ex.getMessage());
+      							}
+      							onSuppressedException(ex);
+      							continue;
+      						}
+      					}
+      					// 重写抛出ex
+      					throw ex;
+      				}
+      			}
+      		}
+      		// 如果该工厂的自定义PropertyEditor集合有元素，在SpringBoot中，customEditors默认是空的
+      		if (!this.customEditors.isEmpty()) {
+      			// 遍历自定义PropertyEditor集合,将其元素注册到registry中
+      			this.customEditors.forEach((requiredType, editorClass) ->
+      					registry.registerCustomEditor(requiredType, BeanUtils.instantiateClass(editorClass)));
+      		}
+      	}
+      ```
+
+   3. 调用堆栈。是在实例化对象时调用进来的。
+
+   4. AbstractBeanFactory.registerCustomEditors(PropertyEditorRegistry)  (org.springframework.beans.factory.support)
+
+      - AbstractBeanFactory.initBeanWrapper(BeanWrapper)  (org.springframework.beans.factory.support)
+        - AbstractAutowireCapableBeanFactory.instantiateBean(String, RootBeanDefinition)  (org.springframework.beans.factory.support)
+          - AbstractAutowireCapableBeanFactory.createBeanInstance(String, RootBeanDefinition, Object[])(2 usages)  (org.springframework.beans.factory.support)
+            - AbstractAutowireCapableBeanFactory.doCreateBean(String, RootBeanDefinition, Object[])  (org.springframework.beans.factory.support)
+
+5. 在TypeConverterDelegate.convertIfNecessary()方法中，会根据属性类型去自定义属性编辑器中查找，如果找到就会对值进行转化和赋值操作
+
+   1. 源代码。在第7行会进行查找，然后在第64行进行值的转换。并且在这个里面会调用我们自己写的编辑器。
+
+   2. ```java
+      public <T> T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue, @Nullable Object newValue,
+      			@Nullable Class<T> requiredType, @Nullable TypeDescriptor typeDescriptor) throws IllegalArgumentException {
+      
+      		// Custom editor for this type? 自定义编辑这个类型吗？
+      		// PropertyEditor是属性编辑器的接口，它规定了将外部设置值转换为内部JavaBean属性值的转换接口方法。
+      		// 为requiredType和propertyName找到一个自定义属性编辑器
+      		PropertyEditor editor = this.propertyEditorRegistry.findCustomEditor(requiredType, propertyName);
+      
+      		// 尝试使用自定义ConversionService转换newValue转换失败后抛出的异常
+      		ConversionFailedException conversionAttemptEx = null;
+      
+      		// No custom editor but custom ConversionService specified?
+      		// 没有自定以编辑器，但自定以 ConversionService 指定了？
+      		// ConversionService :  一个类型转换的服务接口。这个转换系统的入口。
+      		// 获取类型转换服务
+      		ConversionService conversionService = this.propertyEditorRegistry.getConversionService();
+      		// 如果editor为null且cnversionService不为null&&新值不为null&&类型描述符不为null
+      		if (editor == null && conversionService != null && newValue != null && typeDescriptor != null) {
+      			// 将newValue封装成TypeDescriptor对象
+      			TypeDescriptor sourceTypeDesc = TypeDescriptor.forObject(newValue);
+      			// 如果sourceTypeDesc的对象能被转换成typeDescriptor.
+      			if (conversionService.canConvert(sourceTypeDesc, typeDescriptor)) {
+      				try {
+      					// 从conversionService 中找到 sourceTypeDesc,typeDesriptor对于的转换器进行对newValue的转换成符合typeDesciptor类型的对象，并返回出去
+      					return (T) conversionService.convert(newValue, sourceTypeDesc, typeDescriptor);
+      				}
+      				catch (ConversionFailedException ex) {
+      					// fallback to default conversion logic below
+      					// 返回到下面的默认转换逻辑
+      					conversionAttemptEx = ex;
+      				}
+      			}
+      		}
+      
+      		// 默认转换后的值为newValue
+      		Object convertedValue = newValue;
+      
+      		// Value not of required type?
+      		// 值不是必需的类型
+      		// 如果editor不为null||(requiredType不为null&&convertedValue不是requiredType的实例)
+      		if (editor != null || (requiredType != null && !ClassUtils.isAssignableValue(requiredType, convertedValue))) {
+      			// 如果typeDescriptor不为null&&requiredType不为null&&requiredType是Collection的子类或实现&&conventedValue是String类型
+      			if (typeDescriptor != null && requiredType != null && Collection.class.isAssignableFrom(requiredType) &&
+      					convertedValue instanceof String) {
+      				// 获取该typeDescriptor的元素TypeDescriptor
+      				TypeDescriptor elementTypeDesc = typeDescriptor.getElementTypeDescriptor();
+      				// 如果elementTypeDesc不为null
+      				if (elementTypeDesc != null) {
+      					// 获取elementTypeDesc的类型
+      					Class<?> elementType = elementTypeDesc.getType();
+      					// 如果elementType是Class类||elementType是Enum的子类或实现
+      					if (Class.class == elementType || Enum.class.isAssignableFrom(elementType)) {
+      						// 将convertedValue强转为String，以逗号分割convertedValue返回空字符串
+      						convertedValue = StringUtils.commaDelimitedListToStringArray((String) convertedValue);
+      					}
+      				}
+      			}
+      			// 如果editor为null
+      			if (editor == null) {
+      				// 找到requiredType的默认编辑器
+      				editor = findDefaultEditor(requiredType);
+      			}
+      			// 使用editor将convertedValue转换为requiredType
+      			convertedValue = doConvertValue(oldValue, convertedValue, requiredType, editor);
+      		}
+      
+      		// 标准转换标记，convertedValue是Collection类型，Map类型，数组类型，可转换成Enum类型的String对象，Number类型并成功进行转换后即为true
+      		boolean standardConversion = false;
+      
+      		// 如果requiredType不为null
+      		if (requiredType != null) {
+      			// Try to apply some standard type conversion rules if appropriate.
+      			// 如果合适，尝试应用一些标准类型转换规则
+      			// convertedValue不为null
+      			if (convertedValue != null) {
+      				// 如果requiredType是Object类型
+      				if (Object.class == requiredType) {
+      					// 直接返回convertedValue
+      					return (T) convertedValue;
+      				}
+      				// 如果requiredType是数组
+      				else if (requiredType.isArray()) {
+      					// Array required -> apply appropriate conversion of elements.
+      					// 数组所需 -> 应用适当的元素转换
+      					// 如果convertedValue是String的实例&&requiredType的元素类型是Enum的子类或实现
+      					if (convertedValue instanceof String && Enum.class.isAssignableFrom(requiredType.getComponentType())) {
+      						// 将逗号分割的列表(例如 csv 文件中的一行)转换为字符串数组
+      						convertedValue = StringUtils.commaDelimitedListToStringArray((String) convertedValue);
+      					}
+      					// 将convertedValue转换为componentType类型数组对象
+      					return (T) convertToTypedArray(convertedValue, propertyName, requiredType.getComponentType());
+      				}
+      				// 如果convertedValue是Collection对象
+      				else if (convertedValue instanceof Collection) {
+      					// Convert elements to target type, if determined.
+      					// 如果确定，则将元素转换为目标类型
+      					// 将convertedValue转换为Collection类型对象
+      					convertedValue = convertToTypedCollection(
+      							(Collection<?>) convertedValue, propertyName, requiredType, typeDescriptor);
+      					// 更新standardConversion标记
+      					standardConversion = true;
+      				}
+      				// 如果convertedValue是Map对象
+      				else if (convertedValue instanceof Map) {
+      					// Convert keys and values to respective target type, if determined.
+      					// 如果确定了，则将建和值转换为相应的目标类型
+      					convertedValue = convertToTypedMap(
+      							(Map<?, ?>) convertedValue, propertyName, requiredType, typeDescriptor);
+      					// 更新standardConversion标记
+      					standardConversion = true;
+      				}
+      				// 如果convertedValue是数组类型，并且长度为1，那么就把get(0)赋值给本身
+      				if (convertedValue.getClass().isArray() && Array.getLength(convertedValue) == 1) {
+      					// 获取convertedValue的第一个元素对象
+      					convertedValue = Array.get(convertedValue, 0);
+      					// 更新standardConversion标记
+      					standardConversion = true;
+      				}
+      				// 如果需要的类型是String，并且convertedValue的类型是基本类型或者装箱类型，那就直接toString 后强行转换
+      				if (String.class == requiredType && ClassUtils.isPrimitiveOrWrapper(convertedValue.getClass())) {
+      					// We can stringify any primitive value...
+      					// 将convertedValue转换为字符转返回出去
+      					return (T) convertedValue.toString();
+      				}
+      				// 如果convertedValue是String类型&& convertedValue不是requiredType类型
+      				else if (convertedValue instanceof String && !requiredType.isInstance(convertedValue)) {
+      					// conversionAttemptEx为null意味着自定义ConversionService转换newValue转换失败或者没有自定义ConversionService
+      					// 如果conversionAttemptEx为null&&requiredType不是接口&&requireType不是枚举类
+      					if (conversionAttemptEx == null && !requiredType.isInterface() && !requiredType.isEnum()) {
+      						try {
+      							// 获取requiredType的接收一个String类型参数的构造函数对象
+      							Constructor<T> strCtor = requiredType.getConstructor(String.class);
+      							// 使用strCtor构造函数，传入convertedValue实例化对象并返回出去
+      							return BeanUtils.instantiateClass(strCtor, convertedValue);
+      						}
+      						catch (NoSuchMethodException ex) {
+      							// proceed with field lookup
+      							if (logger.isTraceEnabled()) {
+      								logger.trace("No String constructor found on type [" + requiredType.getName() + "]", ex);
+      							}
+      						}
+      						catch (Exception ex) {
+      							if (logger.isDebugEnabled()) {
+      								logger.debug("Construction via String failed for type [" + requiredType.getName() + "]", ex);
+      							}
+      						}
+      					}
+      					// 将convertedValue强转为字符串，并去掉前后的空格
+      					String trimmedValue = ((String) convertedValue).trim();
+      					// 如果requireType是枚举&&trimmedValue是空字符串
+      					if (requiredType.isEnum() && trimmedValue.isEmpty()) {
+      						// It's an empty enum identifier: reset the enum value to null.
+      						// 这个一个空枚举标识符：重置枚举值为null
+      						return null;
+      					}
+      					// 尝试转换String对象为Enum对象
+      					convertedValue = attemptToConvertStringToEnum(requiredType, trimmedValue, convertedValue);
+      					// 更新standardConversion标记
+      					standardConversion = true;
+      				}
+      				// 如果convertedValue是Number实例&&requiredType是Number的实现或子类
+      				else if (convertedValue instanceof Number && Number.class.isAssignableFrom(requiredType)) {
+      					// NumberUtils.convertNumberToTargetClass：将convertedValue为requiredType的实例
+      					convertedValue = NumberUtils.convertNumberToTargetClass(
+      							(Number) convertedValue, (Class<Number>) requiredType);
+      					// 更新standardConversion标记
+      					standardConversion = true;
+      				}
+      			}
+      			else {
+      				// convertedValue == null
+      				// 如果requiredType为Optional类
+      				if (requiredType == Optional.class) {
+      					// 将convertedValue设置Optional空对象
+      					convertedValue = Optional.empty();
+      				}
+      			}
+      
+      			// 如果convertedValue不是requiredType的实例
+      			if (!ClassUtils.isAssignableValue(requiredType, convertedValue)) {
+      				// conversionAttemptEx：尝试使用自定义ConversionService转换newValue转换失败后抛出的异常
+      				// conversionAttemptEx不为null
+      				if (conversionAttemptEx != null) {
+      					// Original exception from former ConversionService call above...
+      					// 从前面的ConversionService调用的原始异常
+      					// 重新抛出conversionAttemptEx
+      					throw conversionAttemptEx;
+      				}
+      				// 如果conversionService不为null&&typeDescriptor不为null
+      				else if (conversionService != null && typeDescriptor != null) {
+      					// ConversionService not tried before, probably custom editor found
+      					// but editor couldn't produce the required type...
+      					// ConversionService之前没有尝试过，可能找到了自定义编辑器，但编辑器不能产生所需的类型获取newValue的类型描述符
+      					TypeDescriptor sourceTypeDesc = TypeDescriptor.forObject(newValue);
+      					// 如果sourceTypeDesc的对象能被转换成typeDescriptor
+      					if (conversionService.canConvert(sourceTypeDesc, typeDescriptor)) {
+      						// 将newValue转换为typeDescriptor对应类型的对象
+      						return (T) conversionService.convert(newValue, sourceTypeDesc, typeDescriptor);
+      					}
+      				}
+      
+      				// Definitely doesn't match: throw IllegalArgumentException/IllegalStateException
+      				// 绝对不匹配：抛出IllegalArgumentException/IllegalStateException
+      				// 拼接异常信息
+      				StringBuilder msg = new StringBuilder();
+      				msg.append("Cannot convert value of type '").append(ClassUtils.getDescriptiveType(newValue));
+      				msg.append("' to required type '").append(ClassUtils.getQualifiedName(requiredType)).append("'");
+      				if (propertyName != null) {
+      					msg.append(" for property '").append(propertyName).append("'");
+      				}
+      				if (editor != null) {
+      					msg.append(": PropertyEditor [").append(editor.getClass().getName()).append(
+      							"] returned inappropriate value of type '").append(
+      							ClassUtils.getDescriptiveType(convertedValue)).append("'");
+      					throw new IllegalArgumentException(msg.toString());
+      				}
+      				else {
+      					msg.append(": no matching editors or conversion strategy found");
+      					throw new IllegalStateException(msg.toString());
+      				}
+      			}
+      		}
+      
+      		// conversionAttemptEx：尝试使用自定义ConversionService转换newValue转换失败后抛出的异常
+      		// conversionAttemptEx不为null
+      		if (conversionAttemptEx != null) {
+      			// editor：requiredType和propertyName对应一个自定义属性编辑器
+      			// standardConversion:标准转换标记，convertedValue是Collection类型，Map类型，数组类型，
+      			// 可转换成Enum类型的String对象，Number类型并成功进行转换后即为true
+      			// editor为null&&不是标准转换&&要转换的类型不为null&&requiedType不是Object类
+      			if (editor == null && !standardConversion && requiredType != null && Object.class != requiredType) {
+      				// 重新抛出conversionAttemptEx
+      				throw conversionAttemptEx;
+      			}
+      			logger.debug("Original ConversionService attempt failed - ignored since " +
+      					"PropertyEditor based conversion eventually succeeded", conversionAttemptEx);
+      		}
+      
+      		// 返回转换后的值
+      		return (T) convertedValue;
+      	}
+      ```
+
+   3. 此方法的调用堆栈比较长，他是在AbstractApplicationContext.finishBeanFactoryInitialization()中调用的
+
+6. 
+
+##### 步骤
+
+1. 定义2个实体类，一个是Customer，一个是Address
+
+   1. ```java
+      /**
+       * 地址类：包含省市区。
+       */
+      public class Address {
+          private String province;
+          private String city;
+          private String town;
+      
+          public String getProvince() {
+              return province;
+          }
+      
+          public void setProvince(String province) {
+              this.province = province;
+          }
+      
+          public String getCity() {
+              return city;
+          }
+      
+          public void setCity(String city) {
+              this.city = city;
+          }
+      
+          public String getTown() {
+              return town;
+          }
+      
+          public void setTown(String town) {
+              this.town = town;
+          }
+      
+          @Override
+          public String toString() {
+              return "Address{" +
+                      "province='" + province + '\'' +
+                      ", city='" + city + '\'' +
+                      ", town='" + town + '\'' +
+                      '}';
+          }
+      }
+      
+      /**
+       * 客户类
+       */
+      public class Customer {
+          private String name;
+          private Address address;
+      
+          public String getName() {
+              return name;
+          }
+      
+          public void setName(String name) {
+              this.name = name;
+          }
+      
+          public Address getAddress() {
+              return address;
+          }
+      
+          public void setAddress(Address address) {
+              this.address = address;
+          }
+      
+          @Override
+          public String toString() {
+              return "Customer{" +
+                      "name='" + name + '\'' +
+                      ", address=" + address +
+                      '}';
+          }
+      }
+      ```
+
+2. 写一个类继承PropertyEditorSupport。可参考FileEditor。
+
+   1. ```java
+      public class AddressPropertyEditor extends PropertyEditorSupport {
+          /**
+           * 将传入的String解析成省市区。按"_"分割
+           * @param text The string to be parsed.
+           * @throws IllegalArgumentException
+           */
+          @Override
+          public void setAsText(String text) throws IllegalArgumentException {
+              String[] s = text.split("_");
+              Address address = new Address();
+              address.setProvince(s[0]);
+              address.setCity(s[1]);
+              address.setTown(s[2]);
+              //调用父类的setValue方法将address赋值到父对象上。
+              this.setValue(address);
+          }
+      }
+      ```
+
+3. 写一个类实现PropertyEditorRegistrar接口
+
+   1. ```java
+      public class AddressPropertyEditorRegistrar implements PropertyEditorRegistrar {
+          /**
+           * 自定义属性编辑器注册。将Address类型和其绑定。
+           * @param registry the {@code PropertyEditorRegistry} to register the
+           * custom {@code PropertyEditors} with
+           */
+          @Override
+          public void registerCustomEditors(PropertyEditorRegistry registry) {
+              registry.registerCustomEditor(Address.class, new AddressPropertyEditor());
+          }
+      }
+      ```
+
+4. 在配置文件中配置customer类，并且将自定义编辑器加入到Spring内部。
+
+   1. ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <beans xmlns="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+      
+          <bean id="customer" class="com.test.selfEditor.Customer">
+              <property name="name" value="zhangsan"></property>
+              <property name="address" value="江苏省_苏州市_唯亭镇"></property>
+          </bean>
+          
+          <!-- 往Spring内部增加自定义属性注册器 -->
+          <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+              <property name="propertyEditorRegistrars">
+                  <list>
+                      <bean class="com.test.selfEditor.AddressPropertyEditorRegistrar"></bean>
+                  </list>
+              </property>
+          </bean>
+      </beans>
+      ```
+
+   2. 另一种配置方式。
+
+      1. 上面是通过往propertyEditorRegistrars放入注册器实现的，通过看代码可以知道，其实这种方式Spring最终还是会customEditors写入属性编辑器。所以我们也可以直接在配置文件中新增属性编辑器。
+
+      2. ```xml
+         <?xml version="1.0" encoding="UTF-8"?>
+         <beans xmlns="http://www.springframework.org/schema/beans"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+         
+             <bean id="customer" class="com.test.selfEditor.Customer">
+                 <property name="name" value="zhangsan"></property>
+                 <property name="address" value="江苏省_苏州市_唯亭镇"></property>
+             </bean>
+             
+             <!-- 往customEditors直接增加自定义属性编辑器 -->
+             <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+                 <property name="customEditors">
+                     <map>
+                         <entry key="com.test.selfEditor.Address">
+                             <value>com.test.selfEditor.AddressPropertyEditor</value>
+                         </entry>
+                     </map>
+                 </property>
+             </bean>
+         </beans>
+         ```
+
+5. 写一个容器启动的测试类。
+
+   1. ```java
+      public class Test {
+          public static void main(String[] args) {
+       		ApplicationContext ac = new ClassPathXmlApplicationContext("customPropertyEditor.xml");
+              Customer c = (Customer)ac.getBean("customer");
+              System.out.println(c);
+          }
+      }
+      ```
+
+   2. 控制台打印
+
+      1. > Customer{name='zhangsan', address=Address{province='江苏省', city='苏州市', town='唯亭镇'}}
+
+##### 应用场景
+
+暂无。工作中很少用到。
 
 
 
