@@ -38,8 +38,10 @@ flowchart LR
 root-->English
 root-->Java
 root-->Shell
+root-->Job
+root-->Template[文件模板]
 
-Java-->mashibing[mashibing-马士兵]
-Java-->gupao[gupao-咕泡]
+Java-->mashibing[mashibing-马士兵学习笔记]
+Java-->gupao[gupao-咕泡学习笔记]
 ~~~
 

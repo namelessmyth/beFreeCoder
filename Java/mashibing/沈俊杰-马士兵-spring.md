@@ -899,13 +899,13 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 
 ##### postProcessBeanFactory()
 
-略。
+默认空。这个方法是留给子类实现的。也算是一个扩展点。可以参考AbstractRefreshableWebApplicationContext中的实现。
 
 
 
 ##### invokeBeanFactoryPostProcessors()
 
-调用各种beanFactory处理器
+调用各种beanFactory的后置处理器（BFPP）。
 
 
 
