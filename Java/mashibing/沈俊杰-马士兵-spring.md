@@ -449,7 +449,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.351-b10, mixed mode)
 
 
 
-### ApplicationContext初始化
+### ClassPathXmlApplicationContext初始化
 
 #### 起点
 
@@ -906,6 +906,25 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 ##### invokeBeanFactoryPostProcessors()
 
 调用各种beanFactory的后置处理器（BFPP）。
+
+1. 使用委派类（PostProcessorRegistrationDelegate）来调用BeanFactoryPostProcessors
+2. 判断beanFactory是否是BeanDefinitionRegistry类型，如果是
+   1. 由于ConfigurableListableBeanFactory默认是继承BeanDefinitionRegistry接口的，所以会走这里。
+   2. BeanDefinitionRegistry接口提供了对BeanDefinition进行增删改查的方法。
+   3. 程序创建了2个list，分别处理2个父子接口BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor
+   4. 优先处理传进来的BFPP，如果不为空，则根据类型放入到上面的2个list中。
+   5. 放的时候BeanDefinitionRegistryPostProcessor的实例会额外调用postProcessBeanDefinitionRegistry方法。
+   6. 读取Spring中所有BeanDefinitionRegistryPostProcessor的Bean名称，如果定制实现了这个接口就会被读到。
+   7. 循环处理读出来的所有Bean名字，判断这个bean是否实现了PriorityOrdered接口。
+      1. 如果实现了，则将他的bean实例加入到当前正在处理的BeanDefinitionRegistryPostProcessor的list中。
+      2. 同时将要被执行的BFPP名称添加到processedBeans，避免后续重复执行。
+   8. 对当前正在处理的list按照优先级进行排序。
+   9. 将排好序的list追加到上面那个BeanDefinitionRegistryPostProcessor的list中。
+   10. 遍历currentRegistryProcessors，执行postProcessBeanDefinitionRegistry方法
+   11. 执行完毕之后，清空currentRegistryProcessors
+   12. 到这里程序只是处理了实现了PriorityOrdered接口的bean，后面还会有类似的程序处理Ordered接口和没实现接口的。
+   13. 
+3. 如果beanFactory不是BeanDefinitionRegistry类型
 
 
 
@@ -1847,6 +1866,159 @@ Spring允许用户自定义属性编辑器。当对象实例化后，可以对�
 ##### 应用场景
 
 暂无。工作中很少用到。
+
+
+
+### 工具类
+
+https://blog.csdn.net/f641385712/article/details/89417895
+
+#### AopUtils
+
+Spring非常重要的一个AOP工具类。可以判断当前实例是否是aop代理对象、是jdk代理还是cglib代理的还可以拿到代理对象。
+
+```java
+   public static void main(String[] args) {
+        HelloService helloService = getProxy(new HelloServiceImpl());
+        //===============演示AopUtils==================
+
+        // AopUtils.isAopProxy:是否是代理对象
+        System.out.println(AopUtils.isAopProxy(helloService)); // true
+        System.out.println(AopUtils.isJdkDynamicProxy(helloService)); // false
+        System.out.println(AopUtils.isCglibProxy(helloService)); // true
+
+        // 拿到目标对象
+        System.out.println(AopUtils.getTargetClass(helloService)); //class com.fsx.service.HelloServiceImpl
+
+        // selectInvocableMethod:方法@since 4.3  底层依赖于方法MethodIntrospector.selectInvocableMethod
+        // 只是在他技术上做了一个判断： 必须是被代理的方法才行（targetType是SpringProxy的子类,且是private这种方法，且不是static的就不行）
+        // Spring MVC的detectHandlerMethods对此方法有大量调用~~~~~
+        Method method = ClassUtils.getMethod(HelloServiceImpl.class, "hello");
+        System.out.println(AopUtils.selectInvocableMethod(method, HelloServiceImpl.class)); //public java.lang.Object com.fsx.service.HelloServiceImpl.hello()
+
+        // 是否是equals方法
+        // isToStringMethod、isHashCodeMethod、isFinalizeMethod  都是类似的
+        System.out.println(AopUtils.isEqualsMethod(method)); //false
+
+        // 它是对ClassUtils.getMostSpecificMethod,增加了对代理对象的特殊处理。。。
+        System.out.println(AopUtils.getMostSpecificMethod(method,HelloService.class));
+	｝
+```
+
+#### AopConfigUtils
+
+AOP配置的工具类。配置AOP的方式有多种（比如xml、注解等），此工具类针对不同配置，提供不同的工具方法。
+
+不管什么配置，最终走底层逻辑都统一了。
+
+注意：请尽量不要自定义`自动代理创建器`，也不要轻易使用低级别的创建器，若你对原理不是非常懂的话，慎重
+
+```java
+public abstract class AopConfigUtils {
+
+	// 这是注册自动代理创建器，默认的BeanName（若想覆盖，需要使用这个BeanName）
+	public static final String AUTO_PROXY_CREATOR_BEAN_NAME = "org.springframework.aop.config.internalAutoProxyCreator";
+
+	// 按照升级顺序 存储自动代理创建器（注意这里是升级的顺序 一个比一个强的）
+	private static final List<Class<?>> APC_PRIORITY_LIST = new ArrayList<>();
+	static {
+		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
+		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
+		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
+	}
+
+	// 这两个：注册的是`InfrastructureAdvisorAutoProxyCreator`  
+	// 调用处为：AutoProxyRegistrar#registerBeanDefinitions（它是一个ImportBeanDefinitionRegistrar实现类） 
+	// 而AutoProxyRegistrar使用处为CachingConfigurationSelector，和`@EnableCaching`注解有关
+	// 其次就是AopNamespaceUtils有点用，这个下面再分析
+	@Nullable
+	public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry,
+			@Nullable Object source) {
+		return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
+	}
+	@Nullable
+	public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
+		return registerAspectJAutoProxyCreatorIfNecessary(registry, null);
+	}
+	
+	// 下面这两个是注入：AspectJAwareAdvisorAutoProxyCreator
+	// 目前没有地方默认调用~~~~和Aop的xml配置方案有关的
+	@Nullable
+	public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
+		return registerAspectJAutoProxyCreatorIfNecessary(registry, null);
+	}
+	@Nullable
+	public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry,
+			@Nullable Object source) {
+		return registerOrEscalateApcAsRequired(AspectJAwareAdvisorAutoProxyCreator.class, registry, source);
+	}
+
+	// 这个就是最常用的，注入的是：AnnotationAwareAspectJAutoProxyCreator  注解驱动的自动代理创建器
+	// `@EnableAspectJAutoProxy`注入进来的就是它了
+	@Nullable
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
+		return registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry, null);
+	}
+	@Nullable
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry,
+			@Nullable Object source) {
+		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
+	}
+
+
+	// 这两个方法，很显然，就是处理注解的两个属性值
+	// proxyTargetClass：true表示强制使用CGLIB的动态代理
+	// exposeProxy：true暴露当前代理对象到线程上绑定
+	// 最终都会放到自动代理创建器得BeanDefinition 里面去~~~创建代理的时候会用到此属性值
+	public static void forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry) {
+		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			definition.getPropertyValues().add("proxyTargetClass", Boolean.TRUE);
+		}
+	}
+	public static void forceAutoProxyCreatorToExposeProxy(BeanDefinitionRegistry registry) {
+		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
+		}
+	}
+
+	//上面的注册自动代理创建器IfNecessary之类的方法，最终都是调用了这里========
+	@Nullable
+	private static BeanDefinition registerOrEscalateApcAsRequired(Class<?> cls, BeanDefinitionRegistry registry,
+			@Nullable Object source) {
+		
+		// 这里相当于，如果你自己定义了一个名称为这个的自动代理创建器，那也是ok的（需要注意的是使用工厂方法@Bean的方式定义，这里是会报错的）
+		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
+			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			
+			// 若使用@Bean的方法定义，这里apcDefinition.getBeanClassName()就是null，导致后面的findPriorityForClass(apcDefinition.getBeanClassName())就会报错~~~~~~~  需要特别的注意哦~~~~~
+			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
+				int requiredPriority = findPriorityForClass(cls);
+				if (currentPriority < requiredPriority) {
+					apcDefinition.setBeanClassName(cls.getName());
+				}
+			}
+			return null;
+		}
+
+		// 绝大部分情况下都会走这里，new一个Bean定义信息出来，然后order属性值为HIGHEST_PRECEDENCE
+		// role是：ROLE_INFRASTRUCTURE属于Spring框架自己使用的Bean
+		// BeanName为：AUTO_PROXY_CREATOR_BEAN_NAME
+		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
+		beanDefinition.setSource(source);
+		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
+		beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
+		return beanDefinition;
+	}
+
+	...findPriorityForClass的逻辑省略
+}
+```
+
+
 
 
 
