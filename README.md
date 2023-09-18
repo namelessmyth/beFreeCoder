@@ -1,26 +1,29 @@
 # Git-Doc
 
 ## 介绍
-此项目主要存放：个人经验总结，学习笔记，心得分享，周期性报告等。内容参考[目录说明](#目录说明)。
+此项目主要存放：个人经验总结，学习笔记，心得分享，周期性报告等。目录内容参考[目录说明](#目录说明)。
 
-格式主要以文档格式为主，例如：markdown，docx，xlsx等。
+文件格式主要以文档格式为主，例如：markdown，docx，xlsx等。
+
+本项目所有内容大家可随意下载、转发、评论。如果您觉得有用，欢迎收藏+加星哦，O(∩_∩)O。
 
 
 
 ## 目录说明
 
-~~~mermaid
+```mermaid
 flowchart LR
-root-->English[English：英语资料]
-root-->Java
-root-->Script[Script：脚本（sh，bat）]
-root-->Job[Job：求职资料]
-root-->Template[Template：文件模板]
-root-->Report[Report：报告]
 
-Java-->mashibing[mashibing：马士兵学习笔记]
-Java-->gupao[gupao：咕泡学习笔记]
-~~~
+root-->English["English：英语资料"]
+root-->Java["Java"]
+root-->Script["Script：脚本（sh，bat）"]
+root-->Job["Job：求职资料"]
+root-->Template["Template：文件模板"]
+root-->Report["Report：报告"]
+
+Java-->mashibing[马士兵学习笔记]
+Java-->gupao[咕泡学习笔记]
+```
 
 
 
@@ -53,10 +56,9 @@ Java-->gupao[gupao：咕泡学习笔记]
 
 ## 友情链接
 
-如果您觉得这些内容对你有用，欢迎（点赞+关注+收藏）哦，O(∩_∩)O
+下面是我的博客和其他内容分享主页，如果您觉得这些内容对你有用，欢迎（点赞+关注+收藏）哦，O(∩_∩)O
 
 1.  CSDN博客：https://blog.csdn.net/namelessmyth
 1.  Gitee主页：https://gitee.com/namelessmyth
 1.  GitHub主页：https://github.com/namelessmyth
-
 
