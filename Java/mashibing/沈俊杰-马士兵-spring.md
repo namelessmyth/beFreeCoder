@@ -66,11 +66,11 @@ pull[从容器获取]
 
 加载和解析配置文件的时候，考虑到后续配置格式可能增多，根据开闭原则为了方便后续的扩展，Spring定义了解析规范和接口。BeanDefinitionReader，通过IDEA的Type Hierarch看下他的类继承结构.
 
-BeanDefinitionReader (org.springframework.beans.factory.support)
-⊦AbstractBeanDefinitionReader (org.springframework.beans.factory.support)
-⊦⊦PropertiesBeanDefinitionReader (org.springframework.beans.factory.support)
-⊦⊦GroovyBeanDefinitionReader (org.springframework.beans.factory.groovy)
-⊦⊦XmlBeanDefinitionReader (org.springframework.beans.factory.xml)
+> BeanDefinitionReader (org.springframework.beans.factory.support)
+> ⊦AbstractBeanDefinitionReader (org.springframework.beans.factory.support)
+> ⊦⊦PropertiesBeanDefinitionReader (org.springframework.beans.factory.support)
+> ⊦⊦GroovyBeanDefinitionReader (org.springframework.beans.factory.groovy)
+> ⊦⊦XmlBeanDefinitionReader (org.springframework.beans.factory.xml)
 
 所以流程扩充成这样：
 
@@ -80,9 +80,9 @@ xml-->BeanDefinitionReader
 properties-->BeanDefinitionReader
 yaml-->BeanDefinitionReader
 Annotation-->BeanDefinitionReader
-BeanDefinitionReader[定义规范接口，方便扩展]-->BeanDefinition
-BeanDefinition[封装BeanDefinition]-->instantiation
-instantiation[实例化]
+BeanDefinitionReader["定义规范接口，方便扩展"]-->BeanDefinition
+BeanDefinition["封装BeanDefinition"]-->instantiation
+instantiation["实例化"]
 ```
 
 #### BeanDefinition封装
@@ -117,14 +117,14 @@ PostProcessor-->BeanPostProcessor
 
 ```mermaid
 flowchart TB
-instantiation[实例化-执行构造函数]-->initValue[属性赋值-populate]
+instantiation["实例化-执行构造函数"]-->initValue[属性赋值-populate]
 subgraph 初始化
 initValue-->setAware[给Aware接口属性赋值]
 -->postBefore[BeanPostProcessor:before]
--->initM[执行（init-method）方法]
+-->initM["执行（init-method）方法"]
 -->postAfter[BeanPostProcessor:after]
 end
-postAfter-->obj[完整对象，放入容器]
+postAfter-->obj["完整对象，放入容器"]
 -->getBean[可获取对象]
 
 ```
@@ -133,23 +133,23 @@ postAfter-->obj[完整对象，放入容器]
 
 Spring中的Aware接口主要用于让当前bean对象获取到Spring容器中的其他Bean信息的。有如下子接口，分别用于获取不同的容器对象。
 
-Aware (org.springframework.beans.factory)
-⊦ApplicationEventPublisherAware (org.springframework.context)
-⊦ServletContextAware (org.springframework.web.context)
-⊦MessageSourceAware (org.springframework.context)
-⊦ResourceLoaderAware (org.springframework.context)
-⊦SchedulerContextAware (org.springframework.scheduling.quartz)
-⊦NotificationPublisherAware (org.springframework.jmx.export.notification)
-⊦BeanFactoryAware (org.springframework.beans.factory)
-⊦EnvironmentAware (org.springframework.context)
-⊦EmbeddedValueResolverAware (org.springframework.context)
-⊦ImportAware (org.springframework.context.annotation)
-⊦BootstrapContextAware (org.springframework.jca.context)
-⊦ServletConfigAware (org.springframework.web.context)
-⊦LoadTimeWeaverAware (org.springframework.context.weaving)
-⊦BeanNameAware (org.springframework.beans.factory)：用于获取当前Bean的名字。
-⊦BeanClassLoaderAware (org.springframework.beans.factory)：用于获取bean的classload。
-⊦ApplicationContextAware (org.springframework.context)：用于获取ApplicationContext
+> Aware (org.springframework.beans.factory)
+> ⊦ApplicationEventPublisherAware (org.springframework.context)
+> ⊦ServletContextAware (org.springframework.web.context)
+> ⊦MessageSourceAware (org.springframework.context)
+> ⊦ResourceLoaderAware (org.springframework.context)
+> ⊦SchedulerContextAware (org.springframework.scheduling.quartz)
+> ⊦NotificationPublisherAware (org.springframework.jmx.export.notification)
+> ⊦BeanFactoryAware (org.springframework.beans.factory)
+> ⊦EnvironmentAware (org.springframework.context)
+> ⊦EmbeddedValueResolverAware (org.springframework.context)
+> ⊦ImportAware (org.springframework.context.annotation)
+> ⊦BootstrapContextAware (org.springframework.jca.context)
+> ⊦ServletConfigAware (org.springframework.web.context)
+> ⊦LoadTimeWeaverAware (org.springframework.context.weaving)
+> ⊦BeanNameAware (org.springframework.beans.factory)：用于获取当前Bean的名字。
+> ⊦BeanClassLoaderAware (org.springframework.beans.factory)：用于获取bean的classload。
+> ⊦ApplicationContextAware (org.springframework.context)：用于获取ApplicationContext
 
 部分Aware实现类的方法是在下面的方法中调用的。可以通过ctrl+alt+H查看调用堆栈。
 

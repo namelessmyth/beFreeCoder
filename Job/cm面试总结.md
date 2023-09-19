@@ -1,36 +1,5 @@
 # 面试记录
 
-## 网络
-
-#### TCP和UDP的区别
-
-TCP与UDP区别总结：
-
-1、TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接
-
-2、TCP提供可靠的服务。也就是说，通过TCP连接传送的数据，无差错，不丢失，不重复，且按序到达;UDP尽最大努力交付，即不保证可靠交付
-3、TCP面向字节流，实际上是TCP把数据看成一连串无结构的字节流;UDP是面向报文的
-UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速率降低（对实时应用很有用，如IP电话，实时视频会议等）
-4、每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信
-5、TCP首部开销20字节;UDP的首部开销小，只有8个字节
-
-6、TCP的逻辑通信信道是全双工的可靠信道，UDP则是不可靠信道
-
-
-
-#### http和https的区别
-
-1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
-2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
-3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
-4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
-
-
-
-#### 有没有排查解决过网络方面的问题。
-
-没有
-
 
 
 ## 多线程
@@ -76,59 +45,6 @@ Volatile的解决可见性问题。当共享变量在修改时会使用写屏障
 
 
 ## Spring
-
-#### Spring的钩子接口和应用
-
-在bean的生命周期之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
-
-##### 可以影响多个Bean的
-
-InstantiationAwareBeanPostProcessor
-
-作用于**实例化**阶段的前后
-
-BeanPostProcessor
-
-作用于**初始化**阶段的前后
-
-两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
-
-有多个的时候可以implement了PriorityOrdered和Ordered接口，按照这两个的顺序来排序（PriorityOrdered优先于Ordered）
-InitializingBean.afterPropertiesSet
-
-BeanFactoryPostProcessor
-
-比执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
-
-SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
-
-##### 影响单个Bean的
-
-Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
-
-具体来说分2组，一组是在初始化方法最前面调用的。还有一组是通过BeanPostProcess的before方法调用的。
-
-BeanNameAware,
-BeanClassLoaderAware,
-BeanFactoryAware,
-
-EnvironmentAware,
-EmbeddedValueResolverAware,
-ResourceLoaderAware,
-ApplicationEventPublisherAware,
-MessageSourceAware,
-ApplicationContextAware,
-ServletContextAware,
-
-下面2个是生命周期接口，在
-
-InitializingBean
-
-在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
-
-afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
-
-DisposableBean在bean销毁时调用
 
 
 

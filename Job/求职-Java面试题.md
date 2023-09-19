@@ -1,6 +1,33 @@
-# 面试求职
+# Java面试题
 
-https://www.mashibing.com/live/2417?r=1987
+# 文档说明
+
+本文档主要整理了Java领域的所有面试题。目前尚未整理结束，还在持续更新中。如有问题，欢迎讨论交流。
+
+| 编制人       | namelessmyth   |
+| ------------ | -------------- |
+| 编制日期     | 2021-07-07     |
+| 编制单位     | 无             |
+| 文档分类     | 求职-面试-Java |
+| 版本号       | 1.2            |
+| 最后更新人   | namelessmyth   |
+| 最后更新日期 | 2023-09-19     |
+
+
+
+## 文档更新记录
+
+| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）         |
+| ---- | ------------ | ---------- | ------------------------------------ |
+| 1.0  | namelessmyth | 2021-07-07 | 整理了本次找工作的面试题             |
+| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的笔记                     |
+| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，去掉了简历和沟通部分 |
+|      |              |            |                                      |
+|      |              |            |                                      |
+|      |              |            |                                      |
+|      |              |            |                                      |
+
+
 
 
 
@@ -145,285 +172,12 @@ idb的存储结构是什么样子的，为什么表数据量过大会影响效�
 
 7. dubbo多路复用，如佝保证一致性请求，生产者A，消费者B，C，D，确定返回结果，具体跟哪个消费者——对应22.JuC-AQS,茹何实现可童入
 
-   ![image-20210330155907869](../../../文档/开发文档/面试题积累.assets/image-20210330155907869.png)
 
 
 
-# 个人简历
+# 算法
 
-把时间和精力放在能改变的事情上
-
-### 个人情况
-
-姓名，性别，年龄，工作经验，邮箱，联系方式，（学校，学历，专业：如果非常好，那么可以写，不好的可以不写），籍贯
-
-**注意格式**
-
-### 技能描述（技术服务于项目  项目加持于技术）
-
-**详细的去展示自己的每一个技术栈，不要只写技术名词，不要只做单词本，要展示出技术的优势和细节，同样要引导面试官问一些你准备好的问题**
-
-**下面罗列了很多技术栈，但是并不是让大家把所有的技术在短时间内都要做到精通这个级别，如果不着急找工作，可以系统的储备，尽量多的完善自己的技术体系，对于着急找工作的同学，把下面这些常问技术点的八股文背会，同时从里面选择2-3个技术点作为自己的精通项，当面试中问到的时候可以侃侃而言，可以展示出你自己的技术体系**
-
-1、精通、熟悉java核心技术，多年一线开发经验，具备良好的编程能力，并熟练应用**设计模式**
-
-精通、熟悉javase基础知识，对集合、线程、io等都有深入理解，具备良好的面向对象的设计思想，并熟练掌握**设计模式**
-
-2、精通、熟悉jvm，对类加载机制，GC算法，垃圾回收器等都有深入理解，**并参与过线上项目的JVM调优工作**
-
-3、精通、熟悉并发编程，对java中的各种锁，JUC，ThreadLocal等都有深入理解，**并在项目中熟练使用**
-
-4、精通、熟悉spring，springmvc，springboot，mybatis等核心框架，可以根据需求快速搭建项目，**并且阅读过核心源码**（并深入理解springboot源码的启动流程、springboot自动装配原理，IOC底层实现机制）
-
-5、精通、熟悉springcloud、springcloud alibaba、dubbo等微服务框架，对（nacos，sentinel）等组件有深入理解，**并参与过项目中的服务划分、服务治理，服务分层**，对springcloud相关的源码也有深入理解。
-
-6、精通、熟悉常用的分布式解决方案：**分布式事务、分布式锁、分布式id、分布式幂等**......等
-
-7、精通、熟悉mysql，对mysql的索引、事务、锁、存储引擎等都有深入理解，**并参与过项目中的sql优化工作**
-
-8、精通、熟悉redis，对底层刷盘和io模型、持久化机制都有深入理解，对于单机redis和集群redis都有实际的项目经验
-
-9、精通、熟悉kafka，对底层刷盘机制，集群分片机制都有深入理解，并对消息丢失和重复消费有对应的解决方案，同时**熟悉rocketmq，rabbitmq等其他中间件**
-
-10、ngxin，lvs，lua
-
-11、docker，k8s
-
-12、es
-
-13、mongodb
-
-14、netty
-
-15、http、https、网络
-
-16、mycat，shardingsphere
-
-### 项目经历
-
-**项目名称**：不要再出现系统（平台），一定要从项目名称中能了解项目具体的内容
-
-**项目描述**：不要堆积大量的文字，通过三四行文字描述即可，重点在于突出项目的价值（项目主要解决了什么问题，提供了什么行业的解决方案，包含哪些核心内容（并不是让你把项目中每一个模块都单独罗列出来），项目中有哪些可以展示出来的数据量（数据库实际存储的数据条数，有多少人或者多少企业再用，日活，tps，qps））
-
-**技术架构**：罗列用到的技术栈有哪些（不需要做任何的解释，也不需要做任何的分类，用、或者+把技术罗列出来即可）
-
-**职责描述**：突出你对于项目的突出贡献，最好显示出来项目离开你就完蛋了，不要用大量的文字堆积，分条去进行展示，写个七八条足以，而写这部分内容的时候要注意虚（需求分析，数据库设计，项目进度把控，代码review）实（实际的业务点，越细节越好，但是不是让你罗列项目的模块，利用什么技术完成什么功能，遇到什么问题，如何解决的）结合，在写每一条的时候不要吝啬文字描述，最好是占满一行或者四分之三行
-
-​		可以适当的添加一些业务需求点进去，没必要所有的内容都是真实的，只要在面试的时候能够自圆其说就好，面试官是不会特别较真的，重点在于展示出自己解决问题的能力
-
-**难点亮点**：不要在简历中展示出来，就是不要写，因为每个人的技术认知不同，你认为难得点在别人看起来可能很简单，所以当面试官看到你的描述之后可能会觉得很low，如果就是非要写，可以从以下几个点去描述：调优，**重构**，架构设计（借鉴大厂bug处理课）
-
-个人建议，一份简历中项目的个数3-4个最好，无论你多少年的工作经验，写的项目并不是说个数越多就越厉害，而是通过项目能够展示出你的技术价值和解决问题的能力
-
-### 工作经历
-
-工作经历不需要写太多的内容，很多同学喜欢在工作经历中添加工作的职责，完全没必要，因为这部分的内容已经写到项目中去了
-
-工作经历只需要写**公司名称，时间，职位**即可
-
-**建议**：以后千万不要频繁跳槽，最好不要出现不满一年的工作经历
-
-### 教育背景
-
-学校名称，时间，专业
-
-奖项：市级别以上的可以写，市级别以下的不要写
-
-### 个人评价
-
-个人评价不建议分条展示，写成一个段落即可，重点展示的是行业背景和技术经验，可以从业务背景、技术深度，解决方案等多个维度写，比如做过什么按行业的项目，提出过什么技术解决方案，接触过多大数据量的项目，做过哪些架构设计，对那些技术有深入理解和沉淀
-
-------------
-
-对技术有热情，深入研究过什么技术，leetcode有多少道题目的准备，做过哪些项目，获得了哪些成长，自己私下会如何学习技术，看过哪些技术类的数据，fork过哪些github的项目，做过哪些博客的积累和沉淀，大写获得过什么奖项
-
-
-
--------
-
-# 面试表达
-
-### 自我介绍
-
-1、个人情况：姓名，年龄，学校专业，籍贯
-
-2、工作经历：每一份工作公司的名称和项目做简单的描述
-
-3、技术储备：展示你所具备的技术栈和技术体系
-
-4、最近或者最熟或者最有的聊的一个项目:**介绍项目的价值，包含了哪些核心的功能，项目整体的架构是什么样的，你在其中承担什么样的角色，做过哪些具体的业务细节点，自己遇到的最大的问题是什么以及如何解决的**
-
-5、对于公司的背调：
-
-6、邀请面试官主动问问题
-
-### 介绍项目
-
-1、项目内容（解决什么问题，核心的业务点或者模块做一个描述）
-
-2、项目架构（最好能带着纸和笔画出来，边画边解释，引导面试官）
-
-3、自己在项目中的职责（具体的业务点的实践）
-
-4、项目中遇到的最大问题是啥，你是如何解决的（解决问题的能力）
-
-5、对于项目的总结，把话递交给面试官，让他提问
-
-注意：对于比较low，比较小的项目怎么办？套路不变，但是可以往项目添加一些不存在的业务点进去，只要保证能够自圆其说就好
-
-### 如何回答自己会的问题
-
-很多同学在遇到自己会的问题的时候，会比较兴奋，会把自己脑子里有的所有的关于这点的知识储备都一股脑的说出来，但是这种效果并不好，一定要记住，在回答问题的时候要有条理性，要有逻辑思维
-
-**总分总**的模式
-
-总：先对这个问题做一个整体的描述
-
-分：把具体的细节点拆分出来，按照1，2，3，4，5或者首先，然后，然后，最后这样的方式去总结，如果有可能的话最好跟项目中的一些实际的业务场景做整合
-
-总：对刚刚回答问题的内容总结：上面就是我对于这个问题的理解，面试官，您看一下，有什么可以指导我的？
-
-谈一下你对于mysql索引的理解？
-
-1、mysql索引是为了加快数据访问而存在，因此在进行索引设计的时候必须要考虑效率
-
-2、mysql的数据和索引的数据都是存储在磁盘的，磁盘在跟内存交互的时候会有io的问题，io本质上是硬件的问题，但是我们在设计的时候也要考虑效率的提升，一般有两个方式，减少io量和减少io次数
-
-3、mysql的数据量是没有任何限制的，所以有可能会存在很大的数据文件，这些大量的数据文件是没有办法一次性读取到内存的，因此要考虑分块读取，此时考虑到操作系统中有磁盘预读这样的处理机制，我们可以按照页的方式来进行数据的读取，正好满足分块读取的需求，比如在innodb中每次读取的数据是16kb
-
-4、当读取的方式确定好之后就要考虑数据的格式，我们在进行索引使用的时候，都是根据某个字段查询到行数据的其他信息，因此使用的是kv格式的数据，k表示的是索引列的之，v表示的是实际的行数据
-
-5、数据格式定好之后，我们要选择合理的数据结构了，存储kv格式的数据，可以使用哈希表，也可以使用各种树，但是哈希表不适合范围查询同时需要性能优良的哈希算法，而二叉树，红黑树，avl他们都只有两个分支，当存储更多的数据的时候，会导致树的高度变高，同时带来的是io次数的增加，而这个是违反我们提高io效率的原则的，因此要进行调整，变成多叉树，其实就是B树，而B树虽然是多叉树，但是任何一个节点都存储实际的数据，会导致占用大量的空间，因此进行优化之后，使用b+树，b+树的叶子节点存储数据，非叶子节点不存储数据，可以在固定树高的情况下存储更多的数据，所以mysql选了B+树，本质上来说还是io的问题，要想办法提高io的效率
-
-6、索引的分类
-
-7、索引的失效
-
-8、聚簇索引和非聚簇索引
-
-9、回表，索引覆盖，最左匹配，
-
-10、索引优化的实际场景
-
-11、这是我对于索引的理解，面试官您看有什么想问的
-
-### 如何回答自己不会的问题
-
-面试中所有的问题不可能百分之百答出来，你也不要给自己这样的心理预期
-
-当遇到自己不会的问题的时候，千万不要慌，同时不要给面试官太大的心里期待
-
-**稍微懂一点**
-
-面试官，对于您刚刚问的问题我了解的其实不是特别清楚，但是自己之前简单接触过，下面是我对于这个问题的理解，您帮我指导下，
-
-总分总的方式把你所了解的所有内容做一个讲解
-
-这是我对于这个问题的理解，您看有什么问题
-
-**一点都不会**
-
-直接给面试官承认自己不会
-
-面试官，非常抱歉，这个技术点或者这个问题在我之前的工作经历和项目中从来没有遇到过，这个应该是我的知识盲区，如果咱们公司有这方面的需要的话，我下去之后可以详细的了解下，我自认为我的学习能力还是没问题的，因为自己整个的技术体系里的技术都是通过自学得来的，同时，**希望您能给我简单的介绍下这个点在咱们公司的整个技术架构中是如何使用的**（千万注意不要每一个问题都来反问面试官）
-
-### 如何谈薪资
-
-确保你的薪水预期在合理的区间内，给一个前置的标准，上一份工作的薪水是多少
-
-期望薪水是15k，说期望薪水的时候是18k
-
-我看到咱们公司招聘的jd里写的薪水范围是15-25k，我之前公司的薪水是13k，我希望这次可以拿到18k的薪水
-
-----
-
-我期望的薪水是18k，是根据我的经验和目前的面试反馈得到的这样一个数值，其实我已经收到16k的offer了，但是在最近几次的面试中，跟面试官的交流比较融洽，我感觉他是一个技术很牛逼的人，我也希望能在他手下获得更多的发展，同时跟您的交流，包括看到咱们公司的场地，人文这些都是我比较喜欢的，而且咱们公司的平台和现在做的业务方向也是我一直想要尝试的方向，所以我期望能拿到18k，如果说给不到这样的薪水的话，我也希望能够跟我上一个offer的薪水持平，相对比之下，我还是比较喜欢咱们公司的，您能公司这边能否接受？
-
-### 如何谈缺点
-
-面试的时候千万不要真正的说自己的缺点，想办法把优点当作缺点说
-
-我个人的性格上有一些固执，之前在做XX项目的时候，项目上线已经没有问题了，只是在日志中出现了一个小的警告信息，我个人比较不舒服，所以熬夜加班去修复那个警告，其他同事都说没必要，但是我个人觉得还是要保证项目没问题
-
-我个人有强迫症，有代码洁癖，之前看到很多同时写的代码不好，在做code review的时候会要求别人改正，其实并不影响项目的运行，但是这个臭毛病就是改不了
-
-### 如何说明自己的职业规划
-
-技术+管理
-
-面试官是这样的，我个人的职业规划是希望能够沿着技术这条路一直走下去，我现在给自己的定位是中级或者高级开发工程，自己的技术体系和深度还是不够完善，所以希望能够继续加深自己的技术储备，同时能够想着架构师这个方向去发展，当然在储备技术的同时，也想增加自己的管理能力，之前有过带五六个人的经验，但是不够，我希望自己能够带领更多人的团队，打造一个高效的研发团队，以技术为支撑，管理作为赋能，当然我也希望自己之后能够扎根到某一个行业中，储备这个行业相关的背景和专业知识，能够在更大的平台贡献自己的能力，也希望自己有更好的发展
-
-还可以按照工作年限来聊：在多少年工作经验的时候达到什么样的水平
-
-### 如何回答你有什么想问的
-
-**HR**：薪资，福利，待遇，上班时间，加班（钱）
-
-**技术面试官**：不要聊钱，聊技术
-
-1、咱们公司内部的技术栈是什么样的，如果我有幸入职咱们公司的话，需要提前做什么准备
-
-2、咱们公司技术团队内部有没有什么技术分享会之类的内容，关注于大家的技术提升
-
-3、之前看过咱们公司的官网，了解过咱们公司是做XX行业解决方案的，您能详细给我说一下嘛
-
-4、如果我有幸入职咱们公司的话，主要做哪些方面的工作
-
-5、咱们公司技术团队的规模是什么样的
-
-6、在咱们公司，有什么样的内部晋升的空间和方式
-
-7、面试官，咱们聊了这么久了，您能否帮我指点下，我个人的技术体系有哪些方面是需要重点提升的
-
-### 如何回答离职原因
-
-在聊离职原因的时候千万不要说上家公司不好的情况，裁员，公司倒闭，最好都不要说
-
-因为最近市场的问题，我们公司的经营出现了一些问题，其实我们是想跟公司一起走下去的，公司这三个月时间也一直没有发过工资，老板那边也觉得对不住大家，所以给大家一个月的时间让大家主动找一下工作，之前的工资也承诺会尽快发给大家，所以没办法只能换工作
-
-裁员：公司因为经营的问题，把整个业务线或者产品线砍掉了，而且不给调岗转岗的机会
-
-不可抗力：
-
-前一段时间，周末跟朋友去爬山，不小心摔了，骨折了，需要请长假，公司那边任务安排比较多，没办法，所以只能主动离职
-
-在公司工作了三年时间，自己也走到整个技术团队负责人这样的岗位，但是每天做的工作基本都是重复的工作，对于自己的技术提升和未来的发展没有什么加持和帮助了，所以想要出来重新换一个工作，能让自己有更好的发展空间和机会
-
-假设新的公司在海淀，我跟我女朋友都在北京工作，她在海淀，我在通州，我们两个虽然在一个城市的，但是跟异地恋一样，两周可能才能见一面，所以我想换一个离她近一点的公司，这样的话，两个人的关系也会更加融洽
-
-假设要跨城市工作：我父母都在南京工作，而我之前在北京，他们年纪大了，我想找个离他们近一点的公司，这样也方便照顾他们
-
-试用期离职：当时入职的时候给我说的是做后端开发相关的工作，但是入职之后，给我分配的任务是其他工作，我找领导反馈过，总说给我调整，但是一直没动静，两三个月过去了，还是不调整，我觉得继续这份工作对我的帮助不是很大，所以我主动提了离职
-
-### 空窗期怎么说
-
-没有特别好的说辞，可以按照时间点来找一些说得过去的理由
-
-1、三个月以内：
-
-自己意外骨折了，休养了一段时间
-
-工作经验较多的，自己自从工作依赖一直没有好好休息过，前段时间家里父母生病了，照顾了他们一段时间，正好自己也想休息休息，所以离职了这么久
-
-2、3个月+：
-
-创业：（一年以上的更加合适）
-
-之前的领导对我很不错，他离职了，然后拉着我到了另外一家公司，希望我跟着一起发展创业，但是那家公司最终没有做起来，所以要重新开始找工作了（跨城市）
-
-
-
-
-
-
-
-
-
-# 软件设计
-
-## 算法
-
-### 排序
+## 排序
 
 #### 两个有序char数组，找出不一致的那一个元素
 
@@ -435,7 +189,7 @@ idb的存储结构是什么样子的，为什么表数据量过大会影响效�
 
 
 
-### 动态规划
+## 动态规划
 
 #### 高楼扔鸡蛋
 
@@ -446,6 +200,12 @@ https://zhuanlan.zhihu.com/p/92288604
 #### LeetCode 45 跳跃游戏 II
 
 https://zhuanlan.zhihu.com/p/82831669
+
+
+
+
+
+# 软件设计
 
 
 
@@ -1591,15 +1351,102 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 # Spring
 
-## Core
+## Framework
+
+#### 对Spring框架的理解?
+
+##### Spring发展历史
+
+1. 2002 年，Rod Johnson 发表了他的专著 “Expert One-On-One J2EE Design and Development”，提出了 Spring 框架的思想。
+2. 2003 年，Johnson 和一些开发者创建了 Spring Framework 项目，并在 SourceForge 上发布了第一个版本。
+3. 2004 年，Spring Framework 1.0 版本发布，包括核心容器、AOP 模块、DAO 模块、JDBC 模块和 Web 模块等组成部分。
+4. 2006 年，Spring Framework 2.0 版本发布，增加了对注解的支持、Web Services 支持、异步执行能力等新特性。
+5. 2009 年，Spring Framework 3.0 版本发布，引入了对 Java 5、Java 6 特性的支持，包括泛型、注解、并发等。
+6. 2013 年，Spring Framework 4.0 版本发布，提供对 Java 8 的支持，包括 lambda 表达式、Stream API 等。
+7. 2015 年，Spring Framework 4.2 版本发布，增加了对 WebSocket 和 STOMP 协议的支持。
+8. 2017 年，Spring Framework 5.0 版本发布，对响应式编程提供了支持，并对代码库进行了大规模升级和剪裁，去掉了过时和不必要的模块和类。
+9. 2022年，Spring Framework 6.0 版本发布
+
+自从 2003 年发布以来，Spring Framework 在 Java 开发社区中变得越来越流行，并成为了多个企业级应用开发的首选框架之一。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/4439cbc2c1b14ba1a3ffcfee99fde070.png)
+
+##### 模块介绍
+
+
+Spring Core：核心类库，提供IOC服务；
+
+Spring Context：提供框架式的Bean访问方式，以及企业级功能（JNDI、定时任务等）；
+
+Spring AOP：AOP服务；
+
+Spring DAO：对JDBC的抽象，简化了数据访问异常的处理；
+
+Spring ORM：对现有的ORM框架的支持；
+
+Spring Web：提供了基本的面向Web的综合特性，例如多方文件上传；
+
+Spring MVC：提供面向Web应用的Model-View-Controller实现。
+
+ 1、Spring core 是spring框架的核心，提供了IOC和依赖注入特性。
+ 2、Spring Context 提供了一种框架风格的方式来访问对象，继承了beans包的功能，同时增加了国际化、事件传播、资源装载、以及透明创建上下文。
+ 3、Spring AOP 通过配置管理，直接将面向切面编程技术集成到了框架之中。
+ 4、Spring DAO 提供了JDBC的抽象层。可以消除冗长的JDBC编码和数据库厂商特有的错误代码。
+ 5、Spring ORM Spring框架插入了若干个ORM框架，从而提供了ORM对象关系工具，其中包括JDO、Hibernate、Ibatis、Mybatis等，所有这些都遵从Spring的事务和DAO异常层次结构。
+ 6、Spring Web 此模块建立在应用程序上下文模块程序之上，为web应用程序提供了上下文，所以他支持与Struts1或Struts2或SpringMVC的集成。
+ 7、SpringMVC是一个全功能的构建web应用程序的mvc实现。
+ 8、Spring ORM是对象与表关系映射，通过对象直接操作表。
+
+
+
+#### 对Spring IoC的理解
+
+（1）IOC是控制反转，是指创建对象的控制权的转移，以前创建对象的主动权和时机是由自己把控的，而现在这种权力转移到Spring容器中，并由容器根据配置文件去创建实例和管理各个实例之间的依赖关系，对象与对象之间松散耦合，也利于功能的复用。DI依赖注入和IOC控制反转是同一个概念的不同角度的描述，即：应用程序在运行时依赖IoC容器来动态注入对象需要的外部资源。
+ （2）最直观的表达就是，IOC让对象的创建不用去new了，可以由spring自动生产，使用java的反射机制，根据配置文件在运行时动态的去创建对象以及管理对象，并调用对象的方法的。
+ （3）Spring的IOC有三种注入方式 ：构造器注入、setter方法注入、根据注解注入。
+
+IoC让相互协作的组件保持松散的耦合，而AOP编程允许你把遍布于应用各层的功能分离出来形成可重用的功能组件。
+
+IoC不是什么技术，而是一种设计思想。在java的开发过程中。ioc意味着将你设计好的对象交给容器控制，而不是传统的在对象内部直接控制。理解“谁控制谁，控制什么，为何是反转（有反转是不是有正转），反转了哪些”
+
+IOC是一种设计思想（思想的转变），之前所有创建对象的操作是由程序员自己new，现在交给了spring，由spring帮我们创建对象，注入之类的。控制反转，控制是指 ioc提供的容器控制类的对象，反转是指转交给spring来负责。最大的作用就是解耦（降低耦合性）
+
+
+
+#### 对Spring AOP的理解
+
+OOP面向对象其中一个优势就是继承，父类的代码可以被子类所复用，但平级关系类中使用相同的功能代码时会出现大量代码的重复，不利于各个模块的复用，这种情况可以使用AOP技术来解决。
+
+ AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
+
+AOP（Aspect Oriented Programming），即面向切面编程，可以说是OOP（Object Oriented  Programming，面向对象编程）的补充和完善。OOP引入封装、继承、多态等概念来建立一种对象层次结构，用于模拟公共行为的一个集合。不过OOP允许开发者定义纵向的关系，但并不适合定义横向的关系，例如日志功能。日志代码往往横向地散布在所有对象层次中，而与它对应的对象的核心功能毫无关系对于其他类型的代码，如安全性、异常处理和透明的持续性也都是如此，这种散布在各处的无关的代码被称为横切（cross cutting），在OOP设计中，它导致了大量代码的重复，而不利于各个模块的重用。
+  AOP技术恰恰相反，它利用一种称为"横切"的技术，剖解开封装的对象内部，并将那些影响了多个类的公共行为封装到一个可重用模块，并将其命名为"Aspect"，即切面。所谓"切面"，简单说就是那些与业务无关，却为业务模块所共同调用的逻辑或责任封装起来，便于减少系统的重复代码，降低模块之间的耦合度，并有利于未来的可操作性和可维护性。
+
+使用"横切"技术，AOP把软件系统分为两个部分：
+
+核心关注点和横切关注点。业务处理的主要流程是核心关注点，与之关系不大的部分是横切关注点。横切关注点的一个特点是，他们经常发生在核心关注点的多处，而各处基本相似，比如权限认证、日志、事物。AOP的作用在于分离系统中的各种关注点，将核心关注点和横切关注点分离开来。
+
+
 
 #### BeanFactoryPostProcessor和BeanPostProcessor区别
 
+这2个都是Spring框架预留的后处理扩展接口，但是2者的调用时机不一样。功能也不一样。
+
+##### BeanPostProcessor
+
+BeanPostProcessor接口提供了两个方法，分别是初始化前和初始化后执行，具体这个初始化方法指的是什么方法，类似我们在定义bean时，定义了init-method所指定的方法<bean id = "xxx" class = "xxx" init-method = "init()">
+
+这两个方法分别在init方法前后执行，需要注意一点，我们定义一个类实现了BeanPostProcessor，默认是会对整个Spring容器中所有的bean进行处理。
+
+既然是默认全部处理，那么我们怎么确认我们需要处理的某个具体的bean呢？
+
+可以看到方法中有两个参数。类型分别为Object和String，第一个参数是每个bean的实例，第二个参数是每个bean的name或者id属性的值。所以我们可以第二个参数，来确认我们将要处理的具体的bean。
+
+##### BeanFactoryPostProcessor
+
+调用时机上，BeanFactoryPostProcessor是在BeanFactory初始化之后，Bean实例化之前调用的，在refresh方法中是在invokeBeanFactoryPostProcessors方法中调用。而
 
 
-#### SpringMVC响应请求时无状态的，但是到了dao层，数据库连接池是有状态的，两者怎么管理的呢
-
-每个请求会独占一个连接池的连接，用完就归还，多个请求之间不会相互影响，这样就保证了每个请求都是无状态的。
 
 
 
@@ -1623,64 +1470,83 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 #### ApplicationContext和BeanFactory的区别
 
+BeanFactory和ApplicationContext是Spring的两大核心接口，都可以当做Spring的容器。
+
+其中ApplicationContext是BeanFactory的子接口。
+
+（1）两者具有继承关系
+  BeanFactory：是Spring里面最底层的接口，包含了各种Bean的定义，读取bean配置文档，管理bean的加载、实例化，控制bean的生命周期，维护bean之间的依赖关系。ApplicationContext接口作为BeanFactory的子接口，除了提供BeanFactory所具有的功能外，还提供了更完整的框架功能：
+ A.继承MessageSource，因此支持国际化。
+ B.统一的资源文件访问方式。
+ C.提供在监听器中注册bean的事件。
+ D.同时加载多个配置文件。
+ E.载入多个（有继承关系）上下文 ，使得每一个上下文都专注于一个特定的层次，比如应用的web层。
+
+（2）两者实例化类的时机不同
+  A.BeanFactroy采用的是延迟加载形式来注入Bean的，即只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能发现一些存在的Spring的配置问题。如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常。
+  B.ApplicationContext，它是在容器启动时，一次性创建了所有的Bean。这样，在容器启动时，我们就可以发现Spring中存在的配置错误，这样有利于检查所依赖属性是否注入。 ApplicationContext启动后预载入所有的单实例Bean，通过预载入单实例bean  ,确保当你需要的时候，你就不用等待，因为它们已经创建好了。
+ C.相对于基本的BeanFactory，ApplicationContext 唯一的不足是占用内存空间。当应用程序配置Bean较多时，程序启动较慢。
+
+（3）BeanFactory通常以手写代码的方式被创建。
+ ApplicationContext还能以声明的方式创建，如使用ContextLoader，在web.xml中进行配置，代码如下：
+ 
+ org.springframework.web.context.ContextLoaderListener
+ 
+ **继承关系：**
+ public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
+
+（4）BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProcessor的使用，但**两者之间的区别是：**
+ BeanFactory需要手动注册，代码如下：
+ DefaultListableBeanFactory c;
+ c.addBeanPostProcessor(beanPostProcessor);
+
+**方法为public：**
+ public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor)
+
+ApplicationContext则是自动注册。
+ public abstract class AbstractApplicationContext extends DefaultResourceLoader
+ implements ConfigurableApplicationContext {
+
+```
+protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+}
+```
+
+**BeanFactory：**
+ 是spring里面最底层的接口，提供了最简单的容器的功能，只提供实例化对象和获取对象
+ applicationContext：
+ 应用上下文，继承了BeanFactory接口（上一个的子接口），提供了更多的功能
+ 1.ClassPathXmlApplicationContext 从 classpath 加载 spring 的配置文件
+ 2.FileSystemApplicationContext 从系统文件加载 spring 的配置文件
+ 3.AnnotationConfigApplicationContext 获取基于注解的 spring 容器对象
+ 4.XmlWebApplicationContext 在web环境中获取 spring 容器对象
+
 
 
 #### bean的生命周期介绍
 
-
-
-#### Spring的钩子接口和应用
-
-在bean的生命周期之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
-
-##### 可以影响多个Bean的
-
-InstantiationAwareBeanPostProcessor
-
-作用于**实例化**阶段的前后
-
-BeanPostProcessor
-
-作用于**初始化**阶段的前后
-
-两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
-
-有多个的时候可以implement了PriorityOrdered和Ordered接口，按照这两个的顺序来排序（PriorityOrdered优先于Ordered）
-InitializingBean.afterPropertiesSet
-
-BeanFactoryPostProcessor
-
-比执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
-
-SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
-
-##### 影响单个Bean的
-
-Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
-
-具体来说分2组，一组是在初始化方法最前面调用的。还有一组是通过BeanPostProcess的before方法调用的。
-
-BeanNameAware,
-BeanClassLoaderAware,
-BeanFactoryAware,
-
-EnvironmentAware,
-EmbeddedValueResolverAware,
-ResourceLoaderAware,
-ApplicationEventPublisherAware,
-MessageSourceAware,
-ApplicationContextAware,
-ServletContextAware,
-
-下面2个是生命周期接口，在
-
-InitializingBean
-
-在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
-
-afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
-
-DisposableBean在bean销毁时调用
+首先说一下Servlet的生命周期：实例化，初始init，接收请求service，销毁destroy；
+ Spring上下文中的Bean生命周期也类似，如下：
+ （1）实例化Bean：
+  对于BeanFactory容器，当客户向容器请求一个尚未初始化的bean时，或初始化bean的时候需要注入另一个尚未初始化的依赖时，容器就会调用createBean进行实例化。对于ApplicationContext容器，当容器启动结束后，通过获取BeanDefinition对象中的信息，实例化所有的bean。
+ （2）设置对象属性（依赖注入）：
+ 实例化后的对象被封装在BeanWrapper对象中，紧接着，Spring根据BeanDefinition中的信息 以及 通过BeanWrapper提供的设置属性的接口完成依赖注入。
+ （3）处理Aware接口：
+ 接着，Spring会检测该对象是否实现了xxxAware接口，并将相关的xxxAware实例注入给Bean：
+ ①如果这个Bean已经实现了BeanNameAware接口，会调用它实现的setBeanName(String beanId)方法，此处传递的就是Spring配置文件中Bean的id值；
+ ②如果这个Bean已经实现了BeanFactoryAware接口，会调用它实现的setBeanFactory()方法，传递的是Spring工厂自身。
+ ③如果这个Bean已经实现了ApplicationContextAware接口，会调用setApplicationContext(ApplicationContext)方法，传入Spring上下文；
+ （4）BeanPostProcessor：
+ 如果想对Bean进行一些自定义的处理，那么可以让Bean实现了BeanPostProcessor接口，那将会调用postProcessBeforeInitialization(Object obj, String s)方法。
+ （5）InitializingBean 与 init-method：
+ 如果Bean在Spring配置文件中配置了 init-method 属性，则会自动调用其配置的初始化方法。
+  （6）如果这个Bean实现了BeanPostProcessor接口，将会调用postProcessAfterInitialization(Object obj, String s)方法；由于这个方法是在Bean初始化结束时调用的，所以可以被应用于内存或缓存技术；
+ 以上几个步骤完成后，Bean就已经被正确创建了，之后就可以使用这个Bean了。
+ （7）DisposableBean：
+ 当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean这个接口，会调用其实现的destroy()方法；
+ （8）destroy-method：
+ 最后，如果这个Bean的Spring配置中配置了destroy-method属性，会自动调用其配置的销毁方法。
+ 还可以参考网址：https://www.cnblogs.com/kenshinobiy/p/4652008.html
 
 
 
@@ -1771,6 +1637,451 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 
 
+#### Spring的IoC容器实现原理？
+
+1. 控制翻转
+2. Spring中IoC的实现：管理Bean对象的容器 ==》 容器是如何管理Bean对象 ==》 容器创建添加Bean对象 ==》Bean的定义。Bean定义的管理。Bean的声明周期
+
+Bean的定义==》 BeanDefinition  ==》 BeanFactory【存储了所有的BeanDefinition】==》BeanDefinitionRegistry ==》 Bean实例有两种类型 单例，原型  单例==》容器初始化的时候==》完成对应的实例。单例Bean保存在一级缓存中。  原型Bean  在我们获取Bean的时候getBean()会完成对象的实例化
+
+&emsp;&emsp;Spring的IoC（Inversion of Control，控制反转）是一种设计模式，它的核心思想是将对象的创建、组装和管理过程交给框架来完成，而不是由应用程序直接控制。这种模式通过将应用程序的控制权交给框架来提高应用程序的可扩展性、灵活性和可维护性。
+
+&emsp;&emsp;在Spring中，IoC容器负责管理和组装应用程序中的组件。IoC容器可以通过XML配置文件、Java注解和Java代码来配置和组装对象。Spring IoC容器的实现类包括BeanFactory和ApplicationContext，其中ApplicationContext是BeanFactory的子接口，提供了更多的功能和便利的特性。
+
+&emsp;&emsp;在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
+
+&emsp;&emsp;在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
+
+&emsp;&emsp;在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
+
+#### Spring Framework的Bean生命周期是怎样的？
+
+Spring的Bean的生命周期
+
+Servlet的生命周期
+
+Filter的生命周期
+
+Vue 生命周期
+
+....
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/8f84f49c0a4e4cd5bf6df4f774e802a4.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/2408f6ee01384b21a54c49fbabdfed74.png)
+
+#### Spring Framework AOP的实现原理是什么？
+
+AOP:面向切面编程  ==补充==》OOP：面向对象编程
+
+1。你们公司中对AOP的应用
+
+2。在Spring中AOP的使用方式
+
+3。AOP中的核心概念
+
+4。SpringAOP的实现
+
+核心概念讲解：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/9634e5003e534b1485e71296f4b603f6.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/fbb63d04f86d4331bc6122a79ca487b0.png)
+
+#### Spring Framework事务管理的实现原理是什么？
+
+1。事务特性--》 事务的传播属性和事务的隔离级别  serviceA  事务管理a(){serviceB.b()}   serviceB   b();
+
+serviceA  a(){proxy.b();}  b()
+
+2。Spring中的事务的设计
+
+3。基于AOP的事务实现
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/67a742d85dd244f186c926f95abc8a0d.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
+
+#### Spring Framework的事件机制是怎样的？
+
+1.设计模式：发布订阅模式【观察者模式】
+
+2。事件涉及到的核心概念：
+
+&emsp;&emsp;Spring中的事件机制是基于观察者设计模式的实现。它包含三个核心组件：事件、事件监听器和事件发布器。
+
+&emsp;&emsp;在Spring中，事件是一个普通的Java对象，通过继承 `ApplicationEvent`类来实现，它可以包含任意的数据。事件监听器是一个接口，只有一个方法 `onApplicationEvent()`，用来处理事件。事件发布器是 `ApplicationEventPublisher`接口的实现类，用来发布事件。
+
+&emsp;&emsp;当一个事件发布器发布一个事件时，它会通知所有注册了对应事件类型的监听器。监听器会按照注册的顺序一次处理事件。如果事件处理抛出了异常，发布器会捕获并打印异常信息。
+
+&emsp;&emsp;Spring事件机制的优点在于它可以实现模块之间的解耦合，一个模块只需要发布事件，而不需要知道哪些其他模块会对此事件进行处理。同时，使用Spring事件机制也可以实现事务的控制，例如在事件处理方法上添加 `@Transactional`注解，就可以保证整个事件在一个事务中执行。
+
+#### Spring Framework中常用的设计模式有哪些？
+
+Spring框架是一个基于多种设计模式的框架，以下是Spring中常用的几种设计模式：
+
+1. 依赖注入（Dependency Injection）：也称为控制反转（Inversion of Control），通过控制反转，将对象的创建和依赖关系的管理交给Spring容器来处理，实现松散耦合和易于测试的目标。
+2. AOP（Aspect-Oriented Programming）：面向切面编程，通过将横切关注点（如事务、安全、日志等）抽取出来，与业务代码分离，实现模块化开发、代码复用，提高系统的可维护性和可扩展性。
+3. 工厂模式（Factory Pattern）：通过抽象工厂接口来统一管理对象的创建，增加新的实现类时不需要修改已有代码，只需要添加新的实现类，符合开闭原则。
+4. 单例模式（Singleton Pattern）：通过单例模式确保一个类只有一个对象，提高系统性能和资源使用效率。
+5. 模板方法模式（Template Method Pattern）：将一个操作中的算法框架固定，将具体实现延迟到子类中，实现了代码复用和扩展的目标。
+6. 观察者模式（Observer Pattern）：定义一种一对多的关系，当一个对象的状态发生改变时，通知其他对象更新自己的状态，常用于事件处理等场景中。
+
+通过以上常用的设计模式，Spring框架实现了松散耦合、面向切面、工厂化、可扩展、易于测试等优秀的特性，提高了系统的可维护性和可扩展性。
+
+#### Spring Framework中常用的注解有哪些？
+
+Spring框架中常用的注解有：
+
+1. @Autowired：自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
+2. @Component：声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
+3. @Controller：声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
+4. @Service：声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
+5. @Repository：声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
+6. @Configuration：声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象。
+7. @Bean：声明一个Bean，用于在Java配置类中定义需要注入IOC容器中的Bean实例对象。
+8. @RequestMapping：用于将HTTP请求映射到对应的控制器中的处理方法上。
+9. @Value：用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
+
+以上是Spring框架中常用的注解，可以帮助开发者快速实现依赖注入、Bean管理、Spring MVC等功能。
+
+#### Spring Framework中如何处理循环依赖问题？
+
+1。什么是循环依赖 A--》 B    B--》 A
+
+构造注入：是解决不了循环依赖的
+
+设值注入：是可以解决循环依赖的--》 提前暴露
+
+2。Spring中的循环依赖是怎么处理？
+
+三级缓存
+
+3。为什么要三级缓存？  
+
+如果没有代理对象。二级缓存是足够的
+
+二级缓存提前暴露的是 Bean的真实对象。但是后面我们返回的其实是代理对象
+
+4。为什么Spring没有使用二级缓存来解决。
+
+5。Spring中一级缓存能处理循环依赖吗？
+
+Spring中一级缓存存储的是单例bean
+
+6。Spring支持对原型对象的循环依赖的支持吗？
+
+原型对象==》有很多个。那么我就需要缓存 原型对象。
+
+Spring容器支持处理循环依赖，即A对象依赖了B对象，而B对象又依赖了A对象的情况。
+
+当Spring容器在创建一个Bean实例时，会记录该Bean实例的创建过程，当发生了循环依赖时，Spring会将该Bean实例的先前创建请求暂存到一个“早期引用”中，这时Spring容器并未将完全构造的Bean实例提供给请求它的对象，而是返回一个代理对象，等到该Bean实例构造完成后，将“早期引用”中的Bean实例注入到对应的属性中。
+
+要注意的是，Spring只能处理单例模式下的循环依赖，因为每个单例Bean在Spring容器只会被创建一次，而在原型模式下，每次请求新的Bean实例时，Spring容器都会进行一次完整的Bean实例化过程，这样循环依赖就不存在了。
+
+当存在循环依赖时，Spring容器会抛出BeanCurrentlyInCreationException异常，表明当前Bean正在创建中，此时可以通过调整Bean的依赖关系，或使用构造器注入等方式解决循环依赖问题。
+
+
+
+#### Spring中的单例是线程安全的么？
+
+ 不一定，因为安全与不安全取决于Bean的写法。
+  Spring框架并没有对单例bean进行任何多线程的封装处理。关于单例bean的线程安全和并发问题需要开发者自行去搞定。但实际上，大部分的Spring  bean并没有可变的状态(比如Service类和DAO类)，所以在某种程度上说Spring的单例bean是线程安全的。如果你的bean有多种状态的话（比如 View Model  对象），就需要自行保证线程安全。最浅显的解决办法就是将多态bean的作用域由“singleton”变更为“prototype”。
+
+
+
+#### Spring如何处理线程并发问题？
+
+ 在一般情况下，只有无状态的Bean才可以在多线程环境下共享，在Spring中，绝大部分Bean都可以声明为singleton作用域，因为Spring对一些Bean中非线程安全状态采用ThreadLocal进行处理，解决线程安全问题。
+ ThreadLocal和线程同步机制都是为了解决多线程中相同变量的访问冲突问题。同步机制采用了“时间换空间”的方式，仅提供一份变量，不同的线程在访问前需要获取锁，没获得锁的线程则需要排队。而ThreadLocal采用了“空间换时间”的方式。
+ ThreadLocal会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，从而也就没有必要对该变量进行同步了。
+ ThreadLocal提供了线程安全的共享对象，在编写多线程代码时，可以把不安全的变量封装进ThreadLocal。
+
+
+
+#### Spring基于xml注入bean的几种方式：
+
+ （1）Set方法注入；
+ （2）构造器注入：①通过index设置参数的位置；②通过type设置参数类型；
+ （3）静态工厂注入；
+ （4）实例工厂；
+ 详细内容可以阅读：https://blog.csdn.net/a745233700/article/details/89307518
+
+
+
+#### Spring的自动装配有哪些
+
+在spring中，对象无需自己查找或创建与其关联的其他对象，由容器负责把需要相互协作的对象引用赋予各个对象，使用autowire来配置自动装载模式。
+
+**在Spring框架xml配置中共有5种装配方式：**
+ （1）no：默认的方式是不进行自动装配的，需要通过手工设置ref属性来进行装配bean。
+ （2）byName：通过bean的名称进行自动装配，如果一个bean的 property 与另一bean 的name 相同，就进行自动装配。
+ （3）byType：通过参数的数据类型进行自动装配。使用@autowire。
+ （4）constructor：利用构造函数进行装配，并且构造函数的参数通过byType进行装配。
+ （5）autodetect：自动探测，如果有构造方法，通过 construct的方式自动装配，否则使用  byType的方式自动装配。参考：https://www.yiibai.com/spring/spring-autowiring-by-autodetect.html
+
+**在Spring框架中使用注解的装配方式：**
+ 使用@Autowired注解来自动装配指定的bean。在使用@Autowired注解之前需要在Spring配置文件进行配置：
+ <context:annotation-config />。
+ 在启动spring  IoC时，容器自动装载了一个AutowiredAnnotationBeanPostProcessor后置处理器，当容器扫描到@Autowied、@Resource或@Inject时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性。
+ 在使用@Autowired时，首先在容器中查询对应类型的bean：
+ （1）如果查询结果刚好为一个，就将该bean装配给@Autowired指定的数据；
+ （2）如果查询的结果不止一个，那么@Autowired会根据名称来查找；
+ （3）如果上述查找的结果为空，那么会抛出异常。解决方法时，使用required=false。
+
+**@Autowired可用于：构造函数、成员变量、Setter方法**
+ **注：@Autowired和@Resource之间的区别**
+ (1) @Autowired默认是按照类型装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。
+ (2) @Resource默认是按照名称来装配注入的，只有当找不到与名称匹配的bean才会按照类型来装配注入。
+
+**自动装配类型：**
+ （1）autowire byName (按名称自动装配)
+ ①将查找其类中所有的set方法名，例如setCat，获得将set去掉并且首字母小写的字符串，即cat。
+ ②去spring容器中寻找是否有此字符串名称id的对象。
+ 如果有，就取出注入；如果没有，就报空指针异常。
+
+（2）autowire byType (按类型自动装配)
+ 使用autowire byType首先需要保证：同一类型的对象，在spring容器中唯一。如果不唯一，会报不唯一的异常。
+
+（3）自动装配autowire
+ 首先尝试使用constructor进行自动装配，如果失败，再尝试使用byType进行自动装配
+
+（4）constructor
+ 把与Bean的构造器入参具有相同类型的其他Bean自动装配到Bean构造器的对应入参中。
+
+
+
+#### Spring框架中的设计模式
+
+ （1）工厂模式：BeanFactory就是简单工厂模式的体现，用来创建对象的实例；
+ （2）单例模式：Bean默认为单例模式。
+ （3）代理模式：Spring的AOP功能用到了JDK的动态代理和CGLIB字节码生成技术；
+ （4）模板方法：用来解决代码重复的问题。比如. RestTemplate, JmsTemplate, JpaTemplate。
+ （5）观察者模式：定义对象键一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都会得到通知被制动更新，如Spring中listener的实现–ApplicationListener。
+
+
+
+#### Spring事务处理有哪两种方式
+
+ Spring事务的本质其实就是数据库对事务的支持，只不过Spring框架进行了封装，如果没有底层数据库对事务的支持，spring是无法提供事务功能的。
+ Spring支持编程式事务管理和声明式事务管理两种方式：
+ （1）编程式事务管理使用TransactionTemplate类，使用较少。
+ （2）声明式事务管理建立在AOP之上的，使用较多。该方式本质是通过AOP功能对方法前后进行拦截，将事务处理的功能编织到拦截的方法中，也就是在目标方法开始之前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+ 声明式事务最大的优点就是不需要在业务逻辑代码中掺杂事务管理的相关代码，只需在配置文件中做相关的事务规则声明或通过@Transactional注解的方式，便可以将事务规则应用到业务逻辑中。
+ 声明式事务管理要优于编程式事务管理，这正是spring倡导的非侵入式的开发方式，使业务代码不受污染，只要加上注解就可以获得完全的事务支持。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。
+ 透彻的掌握 Spring 中@transactional 的使用
+ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html
+
+
+
+#### spring的事务传播行为
+
+ spring事务的传播行为说的是，当多个事务同时存在的时候，spring如何处理这些事务的行为。
+ （1）PROPAGATION_REQUIRED：如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置。
+ （2）PROPAGATION_SUPPORTS：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就以非事务执行。‘
+ （3） PROPAGATION_MANDATORY：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就抛出异常。
+ （4） PROPAGATION_REQUIRES_NEW：创建新事务，无论当前存不存在事务，都创建新事务。
+ （5） PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+ （6） PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，则抛出异常。
+ （7） PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按REQUIRED属性执行。
+
+**我的总结：**
+ （1）REQUIRED代表如果已经存在一个事务，就加入到这个事务中。如果当前没有事务，就新建一个事务，这是默认的事务传播设置。
+ 白话解释：如果马路上有车就搭车，如果马路上没有车就造一个车。
+ （2）SUPPORTS代表如果已经存在一个事务，就加入到这个事务中。如果当前没有事务，就以非事务方式执行。
+ 白话解释：如果马路上有车就搭车，如果马路上没有车就自己走绿色环保。
+ （3）MANDATORY代表如果已经存在一个事务，就加入到这个事务中。如果当前没有事务，就抛出异常。
+ 白话解释：如果马路上有车就搭车，如果马路上没有车就愤怒的爆炸。
+ （4）REQUIRES_NEW代表新建事务，如果已经存在一个事务，就把这个事务挂起并创建新的事务。
+ 白话解释：如果马路上有车也不搭车，还要自己造车。
+ （5）NOT_SUPPORTED代表如果已经存在一个事务，就把这个事务挂起。并以非事务方式执行操作。
+ 白话解释：如果马路上有车也不搭车，自己走绿色环保。
+ （6）NEVER代表如果已经存在一个事务，则抛出异常。如果当前没有事务，以非事务方式执行。
+ 白话解释：马路上有车就愤怒的爆炸，一台车都没有时则自己走绿色环保。
+ （7）NESTED代表创建当前事务的子事务。
+ 白话解释：水和鱼的关系，鱼（子事务）没有了但不影响水（父事务），但水（父事务）没有了则影响鱼（子事务）。
+
+
+
+Spring中的隔离级别
+
+ （1） ISOLATION_DEFAULT：这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。
+ （2） ISOLATION_READ_UNCOMMITTED：读未提交，允许另外一个事务可以看到这个事务未提交的数据。
+ （3） ISOLATION_READ_COMMITTED：读已提交，保证一个事务修改的数据提交后才能被另一事务读取，而且能看到该事务对已有记录的更新。
+ （4） ISOLATION_REPEATABLE_READ：可重复读，保证一个事务修改的数据提交后才能被另一事务读取，但是不能看到该事务对已有记录的更新。
+ （5） ISOLATION_SERIALIZABLE：一个事务在执行的过程中完全看不到其他事务对数据库所做的更新。
+
+
+
+#### Spring框架中有哪些不同类型的事件？
+
+ Spring 提供了以下5种标准的事件：
+ （1）上下文更新事件（ContextRefreshedEvent）：在调用ConfigurableApplicationContext 接口中的refresh()方法时被触发。
+ （2）上下文开始事件（ContextStartedEvent）：当容器调用ConfigurableApplicationContext的Start()方法开始/重新开始容器时触发该事件。
+ （3）上下文停止事件（ContextStoppedEvent）：当容器调用ConfigurableApplicationContext的Stop()方法停止容器时触发该事件。
+ （4）上下文关闭事件（ContextClosedEvent）：当ApplicationContext被关闭时触发该事件。容器被关闭时，其管理的所有单例Bean都被销毁。
+ （5）请求处理事件（RequestHandledEvent）：在Web应用中，当一个http请求（request）结束触发该事件。
+ 如果一个bean实现了ApplicationListener接口，当一个ApplicationEvent 被发布以后，bean会自动被通知。
+
+
+
+解释Spring AOP里面的几个名词
+
+ （1）切面（Aspect）：被抽取的公共模块，可能会横切多个对象。 在Spring AOP中，切面可以使用通用类（基于模式的风格） 或者在普通类中以 @AspectJ 注解来实现。
+ （2）连接点（Join point）：指方法，在Spring AOP中，一个连接点 总是 代表一个方法的执行。
+ （3）通知（Advice）：在切面的某个特定的连接点（Join  point）上执行的动作。通知有各种类型，其中包括“around”、“before”和“after”等通知。许多AOP框架，包括Spring，都是以拦截器做通知模型， 并维护一个以连接点为中心的拦截器链。
+ （4）切入点（Pointcut）：切入点是指 我们要对哪些Join point进行拦截的定义。通过切入点表达式，指定拦截的方法，比如指定拦截add*、search*。
+ （5）引入（Introduction）：（也被称为内部类型声明（inter-type  declaration））。声明额外的方法或者某个类型的字段。Spring允许引入新的接口（以及一个对应的实现）到任何被代理的对象。例如，你可以使用一个引入来使bean实现 IsModified 接口，以便简化缓存机制。
+ 参考URL：https://blog.csdn.net/Danny_idea/article/details/78232298
+ （6）目标对象（Target Object）： 被一个或者多个切面（aspect）所通知（advise）的对象。也有人把它叫做  被通知（adviced） 对象。 既然Spring AOP是通过运行时代理实现的，这个对象永远是一个 被代理（proxied） 对象。
+ （7）织入（Weaving）：指把增强应用到目标对象来创建新的代理对象的过程。Spring是在运行时完成织入。
+ 切入点（pointcut）和连接点（join point）匹配的概念是AOP的关键，这使得AOP不同于其它仅仅提供拦截功能的旧技术。  切入点使得定位通知（advice）可独立于OO层次。  例如，一个提供声明式事务管理的around通知可以被应用到一组横跨多个对象中的方法上（例如服务层的所有业务操作）。
+
+
+
+
+
+#### 常见Spring注解
+
+ @Controller：只能用控制器类上
+ @Service：只能用在业务类上
+ @Repository：只能用在dao类上
+ @Component：工具类的组件使用此注解
+ @Bean：在方法上面使用@Bean注解代表声明一个创建bean的工厂方法，并且交给Spring容器管理；当使用此Bean时直接使用@Autowire进行注入即可。
+ @Aspect：表明整个类是一个切面。
+ @Component：标记该类是一个组件，spring扫描注解配置时，会标记这些类要生成bean
+ @Pointcut：注解声明对应的方法为切入点。
+ @Inject：和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
+ @Named：相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
+
+ @Component：是一个标识类是IOC容器的一个组件确保被扫描器识别,注入进来
+ @Repossitory：声明dao层
+ @Lazy(value=true) ：延迟加载
+ @Configuration：起到配置定义的作用,细节就是@Bean创建了JavaBean的细节信息
+ @ComponentScan(basePackages="")：扫包,也可以进行类扫描
+ @Scope(scopeName=“singleton”)：单例
+ @Scope(scopeName=“prototype”)：多例
+ @Service：声明业务类
+ @Autowrite：反射注入，如果找不到符合的JavaBean对象时,控制台会出现NoSuchBeanDefinitionException
+ @Primary：当Spring不知道具体注入那个实现类对象,使用这个设置优先级
+ @Qualifier：给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
+ @Resource官方：可以使用byName或byType形式进行注入
+ @ImportResource(value=“ac.xml”)：在Java类中导入xml文件中的配置
+
+ 注解的分类
+
+ 注解分为两类：
+ 1、一类是使用Bean，即是把已经在xml文件中配置好的Bean拿来用，完成属性、方法的组装；比如@Autowired , @Resource，可以通过byTYPE（@Autowired）、byNAME（@Resource）的方式获取Bean；
+ 2、一类是注册Bean,@Component , @Repository , @ Controller , @Service ,  @Configration这些注解都是把你要实例化的对象转化成一个Bean，放在IoC容器中，等你要用的时候，它会和上面的@Autowired , @Resource配合到一起，把对象、属性、方法完美组装。
+
+
+
+#### 延迟和立即加载的优点
+
+ 延迟实例化的优点（BeanFactory）
+ 应用启动的时候占用资源很少；对资源要求较高的应有，比较有优势
+ 立即实例化的优点（ApplicationContext）
+ 1.所有的Bean在启动的时候都加载，系统运行的速度快
+ 2.在启动的时候所有Bean都加载，就能在系统启动的时候尽早的发现系统中的配置问题
+ 3.建议web应用中，在启动的时候就把所有的Bean都加载了（把费时操作放到系统启动中完成）
+
+
+
+#### Spring框架中工厂模式，单例模式，代理模式的应用
+
+ **（1）工厂模式**：BeanFactory用来创建对象的实例。
+  通常由应用程序直接使用new创建新的对象，为了将对象的创建和使用相分离，采用工厂模式,即应用程序将对象的创建及初始化职责交给工厂对象。一般情况下,应用程序有自己的工厂对象来创建bean.如果将应用程序自己的工厂对象交给Spring管理,那么Spring管理的就不是普通的bean,而是工厂Bean。
+
+**（2）单例模式**：在spring配置文件中定义的bean默认为单例模式。
+ 1.饿汉模式
+ 将构造方法设为私有，并设置成员变量并初始化对象（立即加载）。通过静态方法返回初始化对象
+ 2.懒汉模式
+ 将构造方法设为私有，设置成员变量并不初始化（延迟加载），通过静态方法返回new出的对象，首先判断成员变量是否为空，然后为new出对象的代码加上锁，最后再判断一次成员变量是否为空，最后new出对象
+ 3.静态内部类实现
+ 静态内部类虽然保证了单例在多线程并发下的线程安全，但是在遇到序列化对象时，默认的方式运行得到的结果就是多例的
+ 4.static静态代码块实现
+ 5.内部枚举类实现
+
+**（3）代理模式**：在AOP和remoting中被用的比较多。
+ 静态代理和动态代理本质区别：是否需要修改源代码（不包含测试类），就可以控制代理内容的变化。
+ **A. 静态代理**：程序写好之后，想修改代理过程，就必须修改源代码。
+ 优点：可以做到在符合开闭原则的情况下对目标对象进行功能扩展。
+ 缺点：需要为每一个服务都得创建代理类，工作量太大，不易管理。同时接口一旦发生改变，代理类也得相应修改。
+
+**B. 动态代理**：程序写好后，更改代理过程。只需要修改代理对象（分身）
+
+**JDK动态代理**：代理类实现invocationHandler
+ 优点：相对于静态代理，动态代理大大减少了我们的开发任务，同时减少了对业务接口的依赖，降低了耦合度。
+ 缺点：需要被代理类实现接口。
+
+**CGLIB动态代理**：CGLib采用了非常底层的字节码技术，其原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。但因为采用的是继承，所以不能对final修饰的类进行代理。
+ **优点**：CGLIB创建的动态代理对象比JDK创建的动态代理对象的性能更高，对于单例的对象，因为无需频繁创建对象，用CGLIB合适。
+ **缺点**：CGLIB创建代理对象时所花费的时间却比JDK多得多。
+ JDK动态代理是需要根据接口创建出新的实现类，新的实现类是目标类的代理类。而CGLIB是根据父类创建出新的子类，新的子类就是父类的代理类，
+
+
+
+#### ApplicationContext常见的3个实现类
+
+ （1）FileSystemXmlApplicationContext ：此容器从一个XML文件中加载beans的定义，XML Bean 配置文件的全路径名必须提供给它的构造函数。用在直接从硬盘上某一个位置加载XML配置文件。
+  （2）ClassPathXmlApplicationContext：此容器也从一个XML文件中加载beans的定义，这里，你需要正确设置classpath因为这个容器将在classpath里找bean配置。用在在类路径中加载XML配置文件，适用于Java类型的项目。
+ （3）WebXmlApplicationContext：此容器加载一个XML文件，此文件定义了一个WEB应用的所有bean。用在在WEB环境中加载XML配置文件，适用于web类型的项目。
+
+
+
+#### 三种实现DI的方式
+
+ • （1）构造器依赖注入：构造器依赖注入通过容器执行一个类的构造器来实现的，该类有一系列参数，每个参数代表一个对其他类的依赖。
+ • （2）Setter方法注入：Setter方法注入是容器通过调用无参构造器或无参static工厂 方法实例化bean之后，调用该bean的setter方法，即实现了基于setter的依赖注入。
+ （3）注解注入：使用@autowire注解进行注入
+
+ （1）get/set方法注入
+ （2）构造器注入
+ （3）静态工厂方法注入
+ （4）实例工厂方法注入
+
+
+
+@autowired 和@resource区别
+
+ 1、共同点
+ 两者都可以写在字段和setter方法上。两者如果都写在字段上，那么就不需要再写setter方法。
+
+ 2、不同点
+ （1）@Autowired
+ @Autowired为Spring提供的注解，需要导入包org.springframework.beans.factory.annotation.Autowired;只按照byType注入。
+ @Autowired注解是按照类型（byType）装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它的required属性为false。如果我们想使用按照名称（byName）来装配，可以结合@Qualifier注解一起使用。
+ （2）@Resource
+  @Resource默认按照ByName自动注入，由J2EE提供，需要导入包javax.annotation.Resource。@Resource有两个重要的属性：name和type，而Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以，如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不制定name也不制定type属性，这时将通过反射机制使用byName自动注入策略。
+
+
+
+Spring怎么配置事务
+
+ 配置事务的方法有两种
+
+基于XML的事务配置。
+
+**基于注解方式的事务配置。**
+
+@Transactional：直接在Java源代码中声明事务的做法让事务声明和将受其影响的代码距离更近了，而且一般来说不会有不恰当的耦合的风险，因为，使用事务性的代码几乎总是被部署在事务环境中。
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"xmlns:aop="http://www.springframework.org/schema/aop"xmlns:tx="http://www.springframework.org/schema/tx"xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"><bean id="helloService" class="com.yintong.service.HelloService" /><bean id="txManager"class="org.springframework.jdbc.datasource.DataSourceTransactionManager"><property name="dataSource" ref="dataSource" /></bean><!-- 配置注解事务 --><tx:annotation-driventransaction-manager="txManager" />
+</beans>
+```
+
+
+
+
+
+## SpringMVC
+
+#### SpringMVC响应请求时无状态的，但是到了dao层，数据库连接池是有状态的，两者怎么管理的呢
+
+每个请求会独占一个连接池的连接，用完就归还，多个请求之间不会相互影响，这样就保证了每个请求都是无状态的。
+
 
 
 ## SpringBoot
@@ -1782,6 +2093,72 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 #### 自定义Starter
 
 https://www.cnblogs.com/hello-shf/p/10864977.html
+
+
+
+#### 谈谈对SpringBoot的理解
+
+1.为什么会出现SpringBoot：
+
+SSM：添加相关的依赖【依赖很大。版本兼容性问题】 添加各自的配置文件，还有添加相关的整合文件。web.xml中配置  每个项目都得干这些事情。---》有很多重复性的工作 --》约定由于配置--》SpringBoot【脚手架】
+
+2.SpringBoot的发展
+
+2014 1.x  2018  2.x  2022 3.x
+
+3.从技术发展演变过程介绍SpringBoot ：Spring注解编程的发展
+
+4.Spring和SpringBoot的关系
+
+#### SpringBoot工作原理
+
+SpringBoot：IoC  需要清楚Spring的加载过程
+
+1。run方法干了什么事情 --》 IoC
+
+2。SpringBootApplication注解做了什么事情  --》 通过EnableAutoConfiguration注解实现加载 META-INF/spring.factories 文件中的配置类
+
+3。1和2是怎么关联的
+
+BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
+
+#### @Import注解的作用
+
+1。@Import注解的由来： xml  import标签--> 配置类转变 3.0 @Configuration @Import替换import标签的作用  3.1 扫描注解
+
+2。@Import注解的作用：1。导入第三方的其他配置类  2。可以直接将某个Class的对象注入到容器中 @Import(User.class)  3. 动态注入，注入的类型如果实现了下面的接口。就不会把该类型的对象注入进去
+
+ImportSelector：接口 ： 把selectImports方法返回的字符串数组的类型注入到容器中
+
+ImportBeanDefinitionRegistrar：接口  在抽象方法中直接提供了注册器。我们在方法体中完成注入
+
+ImportSelector 和 ImportBeanDefinitionRegistrar的区别
+
+3。@Import注解的应用：SpringBoot的自动装配
+
+#### SpringBoot中为什么用DeferredImportSelector?
+
+为什么? 为什么要延迟加载？  本身逻辑代码是在BeanFactory的后置处理器中完成的
+
+BeanFactory的后置处理器本身的作用就是要完善BeanDefinition的定义。所以我们需要在所有对应都完成了定义信息的加载后再去注入实例到容器中
+
+#### SpringBoot和SpringMVC的关系
+
+SpringBoot是一个基于Spring的脚手架工具。我们要创建一个Web项目。那么我们需要引入spring-boot-starter-web 这个依赖。在这个依赖中会完成相关的SpringMVC和Spring的关联配置
+
+#### SpringBoot和Tomcat的关系
+
+https://www.mashibing.com/course/1767
+
+通过SpringBoot构建一个Web项目。默认依赖的Web容器就是Tomcat
+
+#### SpringSecurity中是如何实现自定义认证的
+
+1。回答具体的应用过程
+
+2。SpringSecurity的工作原理：过滤器
+
+https://www.mashibing.com/course/1834
 
 
 
@@ -3190,3 +3567,36 @@ LRU，LFU，RANDOM，TTL。
 21. redlock
 
 22. 延迟双删
+
+
+
+# 网络
+
+#### TCP和UDP的区别
+
+TCP与UDP区别总结：
+
+1、TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接
+
+2、TCP提供可靠的服务。也就是说，通过TCP连接传送的数据，无差错，不丢失，不重复，且按序到达;UDP尽最大努力交付，即不保证可靠交付
+3、TCP面向字节流，实际上是TCP把数据看成一连串无结构的字节流;UDP是面向报文的
+UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速率降低（对实时应用很有用，如IP电话，实时视频会议等）
+4、每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信
+5、TCP首部开销20字节;UDP的首部开销小，只有8个字节
+
+6、TCP的逻辑通信信道是全双工的可靠信道，UDP则是不可靠信道
+
+
+
+#### http和https的区别
+
+1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
+2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
+3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+
+
+
+#### 有没有排查解决过网络方面的问题。
+
+没有
