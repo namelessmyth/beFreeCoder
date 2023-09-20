@@ -1353,6 +1353,8 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 ## Framework
 
+### 概念理解
+
 #### 对Spring框架的理解?
 
 ##### Spring发展历史
@@ -1373,43 +1375,76 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 ##### 模块介绍
 
+官网的Spring5模块结构图
 
-Spring Core：核心类库，提供IOC服务；
+![](https://img-blog.csdnimg.cn/20201217150640980.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjEwNjk4MQ==,size_16,color_FFFFFF,t_70)
 
-Spring Context：提供框架式的Bean访问方式，以及企业级功能（JNDI、定时任务等）；
+```mermaid
+flowchart LR
+spring-->cc["Core Container"]
+cc-->Beans-->bd["提供bean的定义，加载，装配，解析。核心模块"]
+cc-->Context-->ctd["提供对Bean的生命周期管理，国际化，事件"]
+cc-->Core-->cod["是其他模块基本都依赖的公共核心模块，为他们提供基础能力"]
+cc-->Expression-->exd["提供SpEL表达式，可以动态获取值"]
 
-Spring AOP：AOP服务；
+spring-->AOP-->ad["提供面向切面编程的能力，例如：事务切面"]
+spring-->da["Data Access"]-->dad["提供对数据访问和系统集成的支持，例如：jdbc，ORM，事务，JMS"]
+spring-->Web-->webd["提供Web基础能力以及对MVC的支持"]
+```
 
-Spring DAO：对JDBC的抽象，简化了数据访问异常的处理；
+spring beans
 
-Spring ORM：对现有的ORM框架的支持；
+负责Bean的定义（BeanDefinition），Bean的装配（BeanFactory），Bean的解析（BeanDefinitionReader）。Spring是面向Bean编程的，所以Bean是Spring的核心主角。
 
-Spring Web：提供了基本的面向Web的综合特性，例如多方文件上传；
+Spring Context
 
-Spring MVC：提供面向Web应用的Model-View-Controller实现。
+spring-context模块构架于核心模块之上，扩展了BeanFactory，为它添加了Bean生命周期控制、框架事件体系及资源加载透明化等功能。此外，该模块还提供了许多企业级支持，如邮件访问、远程访问、任务调度等，ApplicationContext是该模块的核心接口，它的超类是BeanFactory。与BeanFactory不同，ApplicationContext实例化后会自动对所有的单实例Bean进行实例化与依赖关系的装配，使之处于待用状态。
 
- 1、Spring core 是spring框架的核心，提供了IOC和依赖注入特性。
- 2、Spring Context 提供了一种框架风格的方式来访问对象，继承了beans包的功能，同时增加了国际化、事件传播、资源装载、以及透明创建上下文。
- 3、Spring AOP 通过配置管理，直接将面向切面编程技术集成到了框架之中。
- 4、Spring DAO 提供了JDBC的抽象层。可以消除冗长的JDBC编码和数据库厂商特有的错误代码。
- 5、Spring ORM Spring框架插入了若干个ORM框架，从而提供了ORM对象关系工具，其中包括JDO、Hibernate、Ibatis、Mybatis等，所有这些都遵从Spring的事务和DAO异常层次结构。
- 6、Spring Web 此模块建立在应用程序上下文模块程序之上，为web应用程序提供了上下文，所以他支持与Struts1或Struts2或SpringMVC的集成。
- 7、SpringMVC是一个全功能的构建web应用程序的mvc实现。
- 8、Spring ORM是对象与表关系映射，通过对象直接操作表。
+Spring Core
+
+这个模块是其他模块基本都依赖的公共核心模块，为他们提供基础能力。
+
+Spring Expression
+
+SpEL，Spring的一种表达式。用来动态的获取，值、对象等。例如：@value("#{'system.key.value'}")
+
+Spring AOP
+
+通过配置方式将面向切面编程技术集成到了框架之中；例如：事务切面
+
+Spring aspects
+
+模块集成自 AspectJ 框架，主要是为 Spring AOP 提供多种 AOP 实现方法。
+
+Spring instrument
+
+模块是基于 JAVA SE 中的 java.lang.instrument 进行设计的，应该算是AOP 的一个支援模块，主要作用是在 JVM 启用时，生成一个代理类，程序员通过代理类在运行时修改类的字节，从而改变一个类的功能，实现 AOP 的功能。在分类里，我把他分在了 AOP 模块下，在 Spring 官方文档里对这个地方也有点含糊不清。
+
+Spring Data Access/Integration
+
+此模块主要负责数据访问以及和其他系统的集成。例如：JDBC，ORM，事务，JMS的支持；在Spring源码中对应着很多子模块。
+
+Spring Web
+
+由 spring-web、spring-webmvc、spring-websocket和spring-webflux 4个模块组成。
+spring-web 模块为 Spring 提供了最基础 Web 支持，主要建立于核心容器之上，通过 Servlet 或者 Listeners 来初始化 IOC 容器，也包含一些与 Web 相关的支持。
+spring-webmvc 模块是一个的Web-Servlet 模 块 ， 实现了Spring MVC（model-view-Controller）的 Web 应用。
+spring-websocket 模块主要是与 Web 前端的全双工通讯的协议。
+spring-webflux 是一个新的非堵塞函数式 Reactive Web 框架，可以用来建立异步的，非阻塞，事件驱动的服务，并且扩展性非常好。
+
+Spring messaging
+
+从 Spring4 开始新加入的一个模块，主要职责是为 Spring 框架集成一些基础的报文传送应用。
 
 
 
 #### 对Spring IoC的理解
 
-（1）IOC是控制反转，是指创建对象的控制权的转移，以前创建对象的主动权和时机是由自己把控的，而现在这种权力转移到Spring容器中，并由容器根据配置文件去创建实例和管理各个实例之间的依赖关系，对象与对象之间松散耦合，也利于功能的复用。DI依赖注入和IOC控制反转是同一个概念的不同角度的描述，即：应用程序在运行时依赖IoC容器来动态注入对象需要的外部资源。
- （2）最直观的表达就是，IOC让对象的创建不用去new了，可以由spring自动生产，使用java的反射机制，根据配置文件在运行时动态的去创建对象以及管理对象，并调用对象的方法的。
- （3）Spring的IOC有三种注入方式 ：构造器注入、setter方法注入、根据注解注入。
+IOC（Inversion of control），即：控制反转，是指创建对象的控制权的转移，以前创建对象的主动权和时机是由自己把控的，而现在这种权力转移到Spring容器中，并由容器根据配置文件去创建实例和管理各个实例之间的依赖关系，对象与对象之间松散耦合DI依赖注入和IOC控制反转是同一个概念的不同角度的描述，即：应用程序在运行时依赖IoC容器来动态注入对象需要的外部资源。
 
-IoC让相互协作的组件保持松散的耦合，而AOP编程允许你把遍布于应用各层的功能分离出来形成可重用的功能组件。
+IOC是一种设计思想（思想的转变）。最大的作用就是解耦（降低耦合性），也利于功能的复用。
 
-IoC不是什么技术，而是一种设计思想。在java的开发过程中。ioc意味着将你设计好的对象交给容器控制，而不是传统的在对象内部直接控制。理解“谁控制谁，控制什么，为何是反转（有反转是不是有正转），反转了哪些”
-
-IOC是一种设计思想（思想的转变），之前所有创建对象的操作是由程序员自己new，现在交给了spring，由spring帮我们创建对象，注入之类的。控制反转，控制是指 ioc提供的容器控制类的对象，反转是指转交给spring来负责。最大的作用就是解耦（降低耦合性）
+[Spring IoC的实现原理](#Spring的IoC实现原理)
 
 
 
@@ -1419,36 +1454,105 @@ OOP面向对象其中一个优势就是继承，父类的代码可以被子类�
 
  AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
 
-AOP（Aspect Oriented Programming），即面向切面编程，可以说是OOP（Object Oriented  Programming，面向对象编程）的补充和完善。OOP引入封装、继承、多态等概念来建立一种对象层次结构，用于模拟公共行为的一个集合。不过OOP允许开发者定义纵向的关系，但并不适合定义横向的关系，例如日志功能。日志代码往往横向地散布在所有对象层次中，而与它对应的对象的核心功能毫无关系对于其他类型的代码，如安全性、异常处理和透明的持续性也都是如此，这种散布在各处的无关的代码被称为横切（cross cutting），在OOP设计中，它导致了大量代码的重复，而不利于各个模块的重用。
-  AOP技术恰恰相反，它利用一种称为"横切"的技术，剖解开封装的对象内部，并将那些影响了多个类的公共行为封装到一个可重用模块，并将其命名为"Aspect"，即切面。所谓"切面"，简单说就是那些与业务无关，却为业务模块所共同调用的逻辑或责任封装起来，便于减少系统的重复代码，降低模块之间的耦合度，并有利于未来的可操作性和可维护性。
-
-使用"横切"技术，AOP把软件系统分为两个部分：
-
-核心关注点和横切关注点。业务处理的主要流程是核心关注点，与之关系不大的部分是横切关注点。横切关注点的一个特点是，他们经常发生在核心关注点的多处，而各处基本相似，比如权限认证、日志、事物。AOP的作用在于分离系统中的各种关注点，将核心关注点和横切关注点分离开来。
+[Spring中AOP的实现原理](#Spring中AOP的实现原理)
 
 
 
-#### BeanFactoryPostProcessor和BeanPostProcessor区别
+#### Spring AOP的几个名词
 
-这2个都是Spring框架预留的后处理扩展接口，但是2者的调用时机不一样。功能也不一样。
+（1）切面（Aspect）：被抽取的公共模块，可能会横切多个对象。 在Spring AOP中，切面可以使用通用类（基于模式的风格） 或者在普通类中以 @AspectJ 注解来实现。
 
-##### BeanPostProcessor
+（2）连接点（Join point）：指方法，在Spring AOP中，一个连接点代表一个方法的执行。
 
-BeanPostProcessor接口提供了两个方法，分别是初始化前和初始化后执行，具体这个初始化方法指的是什么方法，类似我们在定义bean时，定义了init-method所指定的方法<bean id = "xxx" class = "xxx" init-method = "init()">
+（3）通知（Advice）：在切面的某个特定的连接点（Join  point）上执行的动作。通知有各种类型，其中包括“around”、“before”和“after”等通知。许多AOP框架，包括Spring，都是以拦截器做通知模型， 并维护一个以连接点为中心的拦截器链。
 
-这两个方法分别在init方法前后执行，需要注意一点，我们定义一个类实现了BeanPostProcessor，默认是会对整个Spring容器中所有的bean进行处理。
+（4）切入点（Pointcut）：切入点是指 我们要对哪些Join point进行拦截的定义。通过切入点表达式，指定拦截的方法，比如指定拦截add*、search*。
 
-既然是默认全部处理，那么我们怎么确认我们需要处理的某个具体的bean呢？
+（5）引入（Introduction）：（也被称为内部类型声明（inter-type  declaration））。声明额外的方法或者某个类型的字段。Spring允许引入新的接口（以及一个对应的实现）到任何被代理的对象。例如，你可以使用一个引入来使bean实现 IsModified 接口，以便简化缓存机制。
 
-可以看到方法中有两个参数。类型分别为Object和String，第一个参数是每个bean的实例，第二个参数是每个bean的name或者id属性的值。所以我们可以第二个参数，来确认我们将要处理的具体的bean。
+（6）目标对象（Target Object）： 被一个或者多个切面（aspect）所通知（advise）的对象。也有人把它叫做  被通知（adviced） 对象。 既然Spring AOP是通过运行时代理实现的，这个对象永远是一个 被代理（proxied） 对象。
 
-##### BeanFactoryPostProcessor
-
-调用时机上，BeanFactoryPostProcessor是在BeanFactory初始化之后，Bean实例化之前调用的，在refresh方法中是在invokeBeanFactoryPostProcessors方法中调用。而
+（7）织入（Weaving）：指把增强应用到目标对象来创建新的代理对象的过程。Spring是在运行时完成织入。切入点（pointcut）和连接点（join point）匹配的概念是AOP的关键，这使得AOP不同于其它仅仅提供拦截功能的旧技术。  切入点使得定位通知（advice）可独立于OO层次。  例如，一个提供声明式事务管理的around通知可以被应用到一组横跨多个对象中的方法上（例如服务层的所有业务操作）。
 
 
 
+#### Spring Bean的生命周期
 
+这是一个高频面试题，这个问题即考察对Spring的微观了解，又考察对Spring的宏观认识，还考察对Spring源码的熟悉程度！Bean的生命周期宏观上可以表达为：
+
+1. Bean工厂初始化（不熟的，这部分可以不提）
+2. 实例化-Instantiation
+3. 属性赋值-populate
+4. 初始化-Initialization
+5. 销毁-Destruction
+
+接下来是一个完整的生命周期流程图：
+
+```mermaid
+flowchart TB
+xml["配置文件，注解，启动类"]-->bf
+
+subgraph bf[Bean工厂初始化]
+    direction TB
+    bfobtain["加载配置文件，创建容器对象(obtainFreshBeanFactory)"]
+    -->bfprepare["beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行填充(prepareBeanFactory)"]
+    
+    subgraph bfpost["调用各种beanFactory处理器(invokeBeanFactoryPostProcessors)"]
+    	direction TB
+    	ConfigurationClassPostProcessor
+        -->config["解析@Configuration的配置类"]
+        -->component["解析@ComponentScan扫描的包"]
+        -->import["解析@Import注解"]
+    end
+    bfprepare-->bfpost
+end
+
+bfpost-->beanRegister["完成BeanPostProcessor的注册工作，以便后续在实例化完成之后调用before和after方法"]
+-->finishInitial["Bean创建总方法(finishBeanFactoryInitialization)"]
+
+direction TB
+subgraph initantiation[实例化]
+    direction TB
+    doGetBean
+    -->createBean
+    -->doCreateBean
+    -->createBeanInstance
+    -->applyMergedBeanDefinitionPostProcessors
+end
+
+subgraph populate[属性赋值]
+    setValue["属性填充"]-->createDepend["依赖对象创建"]
+end
+
+subgraph Initialization[初始化]
+    direction TB
+    subgraph invokeAware[invokeAwareMethod]
+        BeanNameAware-->BeanClassLoaderAware-->BeanFactoryAware
+    end
+    subgraph bppbefore["执行BPP的before方法"]
+        ApplicationAwarePostPRocessor-->CommonAnnotationBeanPostProcessor
+    end
+    subgraph invokeInitMethod
+        InitializingBean["InitializingBean.afterPropertiesSet"]
+        -->initmethod["执行用户自定义的init-method"]
+    end
+    subgraph bffAfter["执行BFF的after方法"]
+        AOP
+    end
+    invokeAware-->bppbefore-->invokeInitMethod-->bffAfter
+end
+
+subgraph destruct["销毁-Destruction"]
+	DestructionAwareBeanPostProcessors
+	-->DisposableBean
+	-->detroyMethod[自定义的destoryMethod]
+end
+finishInitial-->initantiation-->populate-->Initialization-->destruct
+```
+
+
+
+### 使用
 
 #### 哪些场景会导致Spring配置的AOP事务失效
 
@@ -1467,153 +1571,6 @@ BeanPostProcessor接口提供了两个方法，分别是初始化前和初始化
 依赖数据库不支持事务。比如：MyISAM引擎。
 
 
-
-#### ApplicationContext和BeanFactory的区别
-
-BeanFactory和ApplicationContext是Spring的两大核心接口，都可以当做Spring的容器。
-
-其中ApplicationContext是BeanFactory的子接口。
-
-（1）两者具有继承关系
-  BeanFactory：是Spring里面最底层的接口，包含了各种Bean的定义，读取bean配置文档，管理bean的加载、实例化，控制bean的生命周期，维护bean之间的依赖关系。ApplicationContext接口作为BeanFactory的子接口，除了提供BeanFactory所具有的功能外，还提供了更完整的框架功能：
- A.继承MessageSource，因此支持国际化。
- B.统一的资源文件访问方式。
- C.提供在监听器中注册bean的事件。
- D.同时加载多个配置文件。
- E.载入多个（有继承关系）上下文 ，使得每一个上下文都专注于一个特定的层次，比如应用的web层。
-
-（2）两者实例化类的时机不同
-  A.BeanFactroy采用的是延迟加载形式来注入Bean的，即只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能发现一些存在的Spring的配置问题。如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常。
-  B.ApplicationContext，它是在容器启动时，一次性创建了所有的Bean。这样，在容器启动时，我们就可以发现Spring中存在的配置错误，这样有利于检查所依赖属性是否注入。 ApplicationContext启动后预载入所有的单实例Bean，通过预载入单实例bean  ,确保当你需要的时候，你就不用等待，因为它们已经创建好了。
- C.相对于基本的BeanFactory，ApplicationContext 唯一的不足是占用内存空间。当应用程序配置Bean较多时，程序启动较慢。
-
-（3）BeanFactory通常以手写代码的方式被创建。
- ApplicationContext还能以声明的方式创建，如使用ContextLoader，在web.xml中进行配置，代码如下：
- 
- org.springframework.web.context.ContextLoaderListener
- 
- **继承关系：**
- public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
-
-（4）BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProcessor的使用，但**两者之间的区别是：**
- BeanFactory需要手动注册，代码如下：
- DefaultListableBeanFactory c;
- c.addBeanPostProcessor(beanPostProcessor);
-
-**方法为public：**
- public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor)
-
-ApplicationContext则是自动注册。
- public abstract class AbstractApplicationContext extends DefaultResourceLoader
- implements ConfigurableApplicationContext {
-
-```
-protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
-}
-```
-
-**BeanFactory：**
- 是spring里面最底层的接口，提供了最简单的容器的功能，只提供实例化对象和获取对象
- applicationContext：
- 应用上下文，继承了BeanFactory接口（上一个的子接口），提供了更多的功能
- 1.ClassPathXmlApplicationContext 从 classpath 加载 spring 的配置文件
- 2.FileSystemApplicationContext 从系统文件加载 spring 的配置文件
- 3.AnnotationConfigApplicationContext 获取基于注解的 spring 容器对象
- 4.XmlWebApplicationContext 在web环境中获取 spring 容器对象
-
-
-
-#### bean的生命周期介绍
-
-首先说一下Servlet的生命周期：实例化，初始init，接收请求service，销毁destroy；
- Spring上下文中的Bean生命周期也类似，如下：
- （1）实例化Bean：
-  对于BeanFactory容器，当客户向容器请求一个尚未初始化的bean时，或初始化bean的时候需要注入另一个尚未初始化的依赖时，容器就会调用createBean进行实例化。对于ApplicationContext容器，当容器启动结束后，通过获取BeanDefinition对象中的信息，实例化所有的bean。
- （2）设置对象属性（依赖注入）：
- 实例化后的对象被封装在BeanWrapper对象中，紧接着，Spring根据BeanDefinition中的信息 以及 通过BeanWrapper提供的设置属性的接口完成依赖注入。
- （3）处理Aware接口：
- 接着，Spring会检测该对象是否实现了xxxAware接口，并将相关的xxxAware实例注入给Bean：
- ①如果这个Bean已经实现了BeanNameAware接口，会调用它实现的setBeanName(String beanId)方法，此处传递的就是Spring配置文件中Bean的id值；
- ②如果这个Bean已经实现了BeanFactoryAware接口，会调用它实现的setBeanFactory()方法，传递的是Spring工厂自身。
- ③如果这个Bean已经实现了ApplicationContextAware接口，会调用setApplicationContext(ApplicationContext)方法，传入Spring上下文；
- （4）BeanPostProcessor：
- 如果想对Bean进行一些自定义的处理，那么可以让Bean实现了BeanPostProcessor接口，那将会调用postProcessBeforeInitialization(Object obj, String s)方法。
- （5）InitializingBean 与 init-method：
- 如果Bean在Spring配置文件中配置了 init-method 属性，则会自动调用其配置的初始化方法。
-  （6）如果这个Bean实现了BeanPostProcessor接口，将会调用postProcessAfterInitialization(Object obj, String s)方法；由于这个方法是在Bean初始化结束时调用的，所以可以被应用于内存或缓存技术；
- 以上几个步骤完成后，Bean就已经被正确创建了，之后就可以使用这个Bean了。
- （7）DisposableBean：
- 当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean这个接口，会调用其实现的destroy()方法；
- （8）destroy-method：
- 最后，如果这个Bean的Spring配置中配置了destroy-method属性，会自动调用其配置的销毁方法。
- 还可以参考网址：https://www.cnblogs.com/kenshinobiy/p/4652008.html
-
-
-
-#### Spring的钩子接口和应用
-
-在bean的生命周期之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
-
-##### 可以影响多个Bean的
-
-InstantiationAwareBeanPostProcessor
-
-作用于**实例化**阶段的前后
-
-BeanPostProcessor
-
-作用于**初始化**阶段的前后
-
-两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
-
-有多个的时候可以implement了PriorityOrdered和Ordered接口，按照这两个的顺序来排序（PriorityOrdered优先于Ordered）
-InitializingBean.afterPropertiesSet
-
-BeanFactoryPostProcessor
-
-比执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
-
-SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
-
-##### 影响单个Bean的
-
-Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
-
-具体来说分2组，一组是在初始化方法最前面调用的。还有一组是通过BeanPostProcess的before方法调用的。
-
-BeanNameAware,
-BeanClassLoaderAware,
-BeanFactoryAware,
-
-EnvironmentAware,
-EmbeddedValueResolverAware,
-ResourceLoaderAware,
-ApplicationEventPublisherAware,
-MessageSourceAware,
-ApplicationContextAware,
-ServletContextAware,
-
-下面2个是生命周期接口，在
-
-InitializingBean
-
-在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
-
-afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
-
-DisposableBean在bean销毁时调用
-
-
-
-#### InitializingBean的功能和使用场景
-
-在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
-
-afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
-
-
-
-#### BeanFactory和FactoryBean的区别
 
 
 
@@ -1636,98 +1593,6 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 三级缓存就是Spring的三个Map，
 
 
-
-#### Spring的IoC容器实现原理？
-
-1. 控制翻转
-2. Spring中IoC的实现：管理Bean对象的容器 ==》 容器是如何管理Bean对象 ==》 容器创建添加Bean对象 ==》Bean的定义。Bean定义的管理。Bean的声明周期
-
-Bean的定义==》 BeanDefinition  ==》 BeanFactory【存储了所有的BeanDefinition】==》BeanDefinitionRegistry ==》 Bean实例有两种类型 单例，原型  单例==》容器初始化的时候==》完成对应的实例。单例Bean保存在一级缓存中。  原型Bean  在我们获取Bean的时候getBean()会完成对象的实例化
-
-&emsp;&emsp;Spring的IoC（Inversion of Control，控制反转）是一种设计模式，它的核心思想是将对象的创建、组装和管理过程交给框架来完成，而不是由应用程序直接控制。这种模式通过将应用程序的控制权交给框架来提高应用程序的可扩展性、灵活性和可维护性。
-
-&emsp;&emsp;在Spring中，IoC容器负责管理和组装应用程序中的组件。IoC容器可以通过XML配置文件、Java注解和Java代码来配置和组装对象。Spring IoC容器的实现类包括BeanFactory和ApplicationContext，其中ApplicationContext是BeanFactory的子接口，提供了更多的功能和便利的特性。
-
-&emsp;&emsp;在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
-
-&emsp;&emsp;在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
-
-&emsp;&emsp;在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
-
-#### Spring Framework的Bean生命周期是怎样的？
-
-Spring的Bean的生命周期
-
-Servlet的生命周期
-
-Filter的生命周期
-
-Vue 生命周期
-
-....
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/8f84f49c0a4e4cd5bf6df4f774e802a4.png)
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/2408f6ee01384b21a54c49fbabdfed74.png)
-
-#### Spring Framework AOP的实现原理是什么？
-
-AOP:面向切面编程  ==补充==》OOP：面向对象编程
-
-1。你们公司中对AOP的应用
-
-2。在Spring中AOP的使用方式
-
-3。AOP中的核心概念
-
-4。SpringAOP的实现
-
-核心概念讲解：
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/9634e5003e534b1485e71296f4b603f6.png)
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/fbb63d04f86d4331bc6122a79ca487b0.png)
-
-#### Spring Framework事务管理的实现原理是什么？
-
-1。事务特性--》 事务的传播属性和事务的隔离级别  serviceA  事务管理a(){serviceB.b()}   serviceB   b();
-
-serviceA  a(){proxy.b();}  b()
-
-2。Spring中的事务的设计
-
-3。基于AOP的事务实现
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/67a742d85dd244f186c926f95abc8a0d.png)
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
-
-#### Spring Framework的事件机制是怎样的？
-
-1.设计模式：发布订阅模式【观察者模式】
-
-2。事件涉及到的核心概念：
-
-&emsp;&emsp;Spring中的事件机制是基于观察者设计模式的实现。它包含三个核心组件：事件、事件监听器和事件发布器。
-
-&emsp;&emsp;在Spring中，事件是一个普通的Java对象，通过继承 `ApplicationEvent`类来实现，它可以包含任意的数据。事件监听器是一个接口，只有一个方法 `onApplicationEvent()`，用来处理事件。事件发布器是 `ApplicationEventPublisher`接口的实现类，用来发布事件。
-
-&emsp;&emsp;当一个事件发布器发布一个事件时，它会通知所有注册了对应事件类型的监听器。监听器会按照注册的顺序一次处理事件。如果事件处理抛出了异常，发布器会捕获并打印异常信息。
-
-&emsp;&emsp;Spring事件机制的优点在于它可以实现模块之间的解耦合，一个模块只需要发布事件，而不需要知道哪些其他模块会对此事件进行处理。同时，使用Spring事件机制也可以实现事务的控制，例如在事件处理方法上添加 `@Transactional`注解，就可以保证整个事件在一个事务中执行。
-
-#### Spring Framework中常用的设计模式有哪些？
-
-Spring框架是一个基于多种设计模式的框架，以下是Spring中常用的几种设计模式：
-
-1. 依赖注入（Dependency Injection）：也称为控制反转（Inversion of Control），通过控制反转，将对象的创建和依赖关系的管理交给Spring容器来处理，实现松散耦合和易于测试的目标。
-2. AOP（Aspect-Oriented Programming）：面向切面编程，通过将横切关注点（如事务、安全、日志等）抽取出来，与业务代码分离，实现模块化开发、代码复用，提高系统的可维护性和可扩展性。
-3. 工厂模式（Factory Pattern）：通过抽象工厂接口来统一管理对象的创建，增加新的实现类时不需要修改已有代码，只需要添加新的实现类，符合开闭原则。
-4. 单例模式（Singleton Pattern）：通过单例模式确保一个类只有一个对象，提高系统性能和资源使用效率。
-5. 模板方法模式（Template Method Pattern）：将一个操作中的算法框架固定，将具体实现延迟到子类中，实现了代码复用和扩展的目标。
-6. 观察者模式（Observer Pattern）：定义一种一对多的关系，当一个对象的状态发生改变时，通知其他对象更新自己的状态，常用于事件处理等场景中。
-
-通过以上常用的设计模式，Spring框架实现了松散耦合、面向切面、工厂化、可扩展、易于测试等优秀的特性，提高了系统的可维护性和可扩展性。
 
 #### Spring Framework中常用的注解有哪些？
 
@@ -1851,16 +1716,6 @@ Spring容器支持处理循环依赖，即A对象依赖了B对象，而B对象�
 
 
 
-#### Spring框架中的设计模式
-
- （1）工厂模式：BeanFactory就是简单工厂模式的体现，用来创建对象的实例；
- （2）单例模式：Bean默认为单例模式。
- （3）代理模式：Spring的AOP功能用到了JDK的动态代理和CGLIB字节码生成技术；
- （4）模板方法：用来解决代码重复的问题。比如. RestTemplate, JmsTemplate, JpaTemplate。
- （5）观察者模式：定义对象键一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都会得到通知被制动更新，如Spring中listener的实现–ApplicationListener。
-
-
-
 #### Spring事务处理有哪两种方式
 
  Spring事务的本质其实就是数据库对事务的支持，只不过Spring框架进行了封装，如果没有底层数据库对事务的支持，spring是无法提供事务功能的。
@@ -1922,22 +1777,6 @@ Spring中的隔离级别
  （4）上下文关闭事件（ContextClosedEvent）：当ApplicationContext被关闭时触发该事件。容器被关闭时，其管理的所有单例Bean都被销毁。
  （5）请求处理事件（RequestHandledEvent）：在Web应用中，当一个http请求（request）结束触发该事件。
  如果一个bean实现了ApplicationListener接口，当一个ApplicationEvent 被发布以后，bean会自动被通知。
-
-
-
-解释Spring AOP里面的几个名词
-
- （1）切面（Aspect）：被抽取的公共模块，可能会横切多个对象。 在Spring AOP中，切面可以使用通用类（基于模式的风格） 或者在普通类中以 @AspectJ 注解来实现。
- （2）连接点（Join point）：指方法，在Spring AOP中，一个连接点 总是 代表一个方法的执行。
- （3）通知（Advice）：在切面的某个特定的连接点（Join  point）上执行的动作。通知有各种类型，其中包括“around”、“before”和“after”等通知。许多AOP框架，包括Spring，都是以拦截器做通知模型， 并维护一个以连接点为中心的拦截器链。
- （4）切入点（Pointcut）：切入点是指 我们要对哪些Join point进行拦截的定义。通过切入点表达式，指定拦截的方法，比如指定拦截add*、search*。
- （5）引入（Introduction）：（也被称为内部类型声明（inter-type  declaration））。声明额外的方法或者某个类型的字段。Spring允许引入新的接口（以及一个对应的实现）到任何被代理的对象。例如，你可以使用一个引入来使bean实现 IsModified 接口，以便简化缓存机制。
- 参考URL：https://blog.csdn.net/Danny_idea/article/details/78232298
- （6）目标对象（Target Object）： 被一个或者多个切面（aspect）所通知（advise）的对象。也有人把它叫做  被通知（adviced） 对象。 既然Spring AOP是通过运行时代理实现的，这个对象永远是一个 被代理（proxied） 对象。
- （7）织入（Weaving）：指把增强应用到目标对象来创建新的代理对象的过程。Spring是在运行时完成织入。
- 切入点（pointcut）和连接点（join point）匹配的概念是AOP的关键，这使得AOP不同于其它仅仅提供拦截功能的旧技术。  切入点使得定位通知（advice）可独立于OO层次。  例如，一个提供声明式事务管理的around通知可以被应用到一组横跨多个对象中的方法上（例如服务层的所有业务操作）。
-
-
 
 
 
@@ -2021,12 +1860,6 @@ Spring中的隔离级别
 
 
 
-#### ApplicationContext常见的3个实现类
-
- （1）FileSystemXmlApplicationContext ：此容器从一个XML文件中加载beans的定义，XML Bean 配置文件的全路径名必须提供给它的构造函数。用在直接从硬盘上某一个位置加载XML配置文件。
-  （2）ClassPathXmlApplicationContext：此容器也从一个XML文件中加载beans的定义，这里，你需要正确设置classpath因为这个容器将在classpath里找bean配置。用在在类路径中加载XML配置文件，适用于Java类型的项目。
- （3）WebXmlApplicationContext：此容器加载一个XML文件，此文件定义了一个WEB应用的所有bean。用在在WEB环境中加载XML配置文件，适用于web类型的项目。
-
 
 
 #### 三种实现DI的方式
@@ -2071,6 +1904,264 @@ Spring怎么配置事务
 <beans xmlns="http://www.springframework.org/schema/beans"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"xmlns:aop="http://www.springframework.org/schema/aop"xmlns:tx="http://www.springframework.org/schema/tx"xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"><bean id="helloService" class="com.yintong.service.HelloService" /><bean id="txManager"class="org.springframework.jdbc.datasource.DataSourceTransactionManager"><property name="dataSource" ref="dataSource" /></bean><!-- 配置注解事务 --><tx:annotation-driventransaction-manager="txManager" />
 </beans>
 ```
+
+
+
+#### Spring的SpEL表达式的使用
+
+- 在@Value注解中使用
+- 在XML配置中使用
+- 在代码中创建Expression对象，利用Expression对象来执行SpEL
+
+https://blog.csdn.net/JokerLJG/article/details/124434854
+
+
+
+### 类&接口
+
+#### BeanFactoryPostProcessor和BeanPostProcessor区别
+
+这2个都是Spring框架预留的后处理扩展接口，但是2者的调用时机不一样。功能也不一样。
+
+##### BeanPostProcessor
+
+BeanPostProcessor接口提供了两个方法，分别是初始化前和初始化后执行，具体这个初始化方法指的是什么方法，类似我们在定义bean时，定义了init-method所指定的方法<bean id = "xxx" class = "xxx" init-method = "init()">
+
+这两个方法分别在init方法前后执行，需要注意一点，我们定义一个类实现了BeanPostProcessor，默认是会对整个Spring容器中所有的bean进行处理。
+
+既然是默认全部处理，那么我们怎么确认我们需要处理的某个具体的bean呢？
+
+可以看到方法中有两个参数。类型分别为Object和String，第一个参数是每个bean的实例，第二个参数是每个bean的name或者id属性的值。所以我们可以第二个参数，来确认我们将要处理的具体的bean。
+
+##### BeanFactoryPostProcessor
+
+调用时机上，BeanFactoryPostProcessor是在BeanFactory初始化之后，Bean实例化之前调用的，在refresh方法中是在invokeBeanFactoryPostProcessors方法中调用。而
+
+
+
+#### ApplicationContext和BeanFactory的区别
+
+BeanFactory和ApplicationContext是Spring的两大核心接口，都可以当做Spring的容器。
+
+其中ApplicationContext是BeanFactory的子接口。
+
+（1）两者具有继承关系
+  BeanFactory：是Spring里面最底层的接口，包含了各种Bean的定义，读取bean配置文档，管理bean的加载、实例化，控制bean的生命周期，维护bean之间的依赖关系。ApplicationContext接口作为BeanFactory的子接口，除了提供BeanFactory所具有的功能外，还提供了更完整的框架功能：
+ A.继承MessageSource，因此支持国际化。
+ B.统一的资源文件访问方式。
+ C.提供在监听器中注册bean的事件。
+ D.同时加载多个配置文件。
+ E.载入多个（有继承关系）上下文 ，使得每一个上下文都专注于一个特定的层次，比如应用的web层。
+
+（2）两者实例化类的时机不同
+  A.BeanFactroy采用的是延迟加载形式来注入Bean的，即只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能发现一些存在的Spring的配置问题。如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常。
+  B.ApplicationContext，它是在容器启动时，一次性创建了所有的Bean。这样，在容器启动时，我们就可以发现Spring中存在的配置错误，这样有利于检查所依赖属性是否注入。 ApplicationContext启动后预载入所有的单实例Bean，通过预载入单实例bean  ,确保当你需要的时候，你就不用等待，因为它们已经创建好了。
+ C.相对于基本的BeanFactory，ApplicationContext 唯一的不足是占用内存空间。当应用程序配置Bean较多时，程序启动较慢。
+
+（3）BeanFactory通常以手写代码的方式被创建。
+ ApplicationContext还能以声明的方式创建，如使用ContextLoader，在web.xml中进行配置，代码如下：
+
+ org.springframework.web.context.ContextLoaderListener
+
+ **继承关系：**
+ public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
+
+（4）BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProcessor的使用，但**两者之间的区别是：**
+ BeanFactory需要手动注册，代码如下：
+ DefaultListableBeanFactory c;
+ c.addBeanPostProcessor(beanPostProcessor);
+
+**方法为public：**
+ public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor)
+
+ApplicationContext则是自动注册。
+ public abstract class AbstractApplicationContext extends DefaultResourceLoader
+ implements ConfigurableApplicationContext {
+
+```
+protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+}
+```
+
+**BeanFactory：**
+ 是spring里面最底层的接口，提供了最简单的容器的功能，只提供实例化对象和获取对象
+ applicationContext：
+ 应用上下文，继承了BeanFactory接口（上一个的子接口），提供了更多的功能
+ 1.ClassPathXmlApplicationContext 从 classpath 加载 spring 的配置文件
+ 2.FileSystemApplicationContext 从系统文件加载 spring 的配置文件
+ 3.AnnotationConfigApplicationContext 获取基于注解的 spring 容器对象
+ 4.XmlWebApplicationContext 在web环境中获取 spring 容器对象
+
+
+
+#### ApplicationContext常见的3个实现类
+
+ （1）FileSystemXmlApplicationContext ：此容器从一个XML文件中加载beans的定义，XML Bean 配置文件的全路径名必须提供给它的构造函数。用在直接从硬盘上某一个位置加载XML配置文件。
+  （2）ClassPathXmlApplicationContext：此容器也从一个XML文件中加载beans的定义，这里，你需要正确设置classpath因为这个容器将在classpath里找bean配置。用在在类路径中加载XML配置文件，适用于Java类型的项目。
+ （3）WebXmlApplicationContext：此容器加载一个XML文件，此文件定义了一个WEB应用的所有bean。用在在WEB环境中加载XML配置文件，适用于web类型的项目。
+
+
+
+#### BeanFactory和FactoryBean的区别
+
+
+
+#### InitializingBean的功能和使用场景
+
+InitializingBean是一个Spring提供的一个扩展接口。接口需要实现在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
+
+afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作。
+
+这个方法可以在Bean中为static修饰的静态成员变量赋值（我们知道如果直接用@Auowired注解是不能为static修饰的成员变量赋值的）。看过spring整合mybatis的源码的可以知道很多地方都用到这个方法，例如：SqlSessionFactoryBean.afterPropertiesSet()就是对它的巧妙应用
+
+
+
+
+
+### 原理源码
+
+#### Spring的IoC实现原理
+
+1. 控制翻转
+2. Spring中IoC的实现：管理Bean对象的容器 ==》 容器是如何管理Bean对象 ==》 容器创建添加Bean对象 ==》Bean的定义。Bean定义的管理。Bean的声明周期
+
+Bean的定义==》 BeanDefinition  ==》 BeanFactory【存储了所有的BeanDefinition】==》BeanDefinitionRegistry ==》 Bean实例有两种类型 单例，原型  单例==》容器初始化的时候==》完成对应的实例。单例Bean保存在一级缓存中。  原型Bean  在我们获取Bean的时候getBean()会完成对象的实例化
+
+&emsp;&emsp;Spring的IoC（Inversion of Control，控制反转）是一种设计模式，它的核心思想是将对象的创建、组装和管理过程交给框架来完成，而不是由应用程序直接控制。这种模式通过将应用程序的控制权交给框架来提高应用程序的可扩展性、灵活性和可维护性。
+
+&emsp;&emsp;在Spring中，IoC容器负责管理和组装应用程序中的组件。IoC容器可以通过XML配置文件、Java注解和Java代码来配置和组装对象。Spring IoC容器的实现类包括BeanFactory和ApplicationContext，其中ApplicationContext是BeanFactory的子接口，提供了更多的功能和便利的特性。
+
+&emsp;&emsp;在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
+
+&emsp;&emsp;在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
+
+&emsp;&emsp;在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
+
+
+
+#### Spring中AOP的实现原理
+
+AOP:面向切面编程  ==补充==》OOP：面向对象编程
+
+1。你们公司中对AOP的应用
+
+2。在Spring中AOP的使用方式
+
+3。AOP中的核心概念
+
+4。SpringAOP的实现
+
+核心概念讲解：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/9634e5003e534b1485e71296f4b603f6.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/fbb63d04f86d4331bc6122a79ca487b0.png)
+
+#### Spring Framework事务管理的实现原理是什么？
+
+1。事务特性--》 事务的传播属性和事务的隔离级别  serviceA  事务管理a(){serviceB.b()}   serviceB   b();
+
+serviceA  a(){proxy.b();}  b()
+
+2。Spring中的事务的设计
+
+3。基于AOP的事务实现
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/67a742d85dd244f186c926f95abc8a0d.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
+
+#### Spring Framework的事件机制是怎样的？
+
+1.设计模式：发布订阅模式【观察者模式】
+
+2。事件涉及到的核心概念：
+
+&emsp;&emsp;Spring中的事件机制是基于观察者设计模式的实现。它包含三个核心组件：事件、事件监听器和事件发布器。
+
+&emsp;&emsp;在Spring中，事件是一个普通的Java对象，通过继承 `ApplicationEvent`类来实现，它可以包含任意的数据。事件监听器是一个接口，只有一个方法 `onApplicationEvent()`，用来处理事件。事件发布器是 `ApplicationEventPublisher`接口的实现类，用来发布事件。
+
+&emsp;&emsp;当一个事件发布器发布一个事件时，它会通知所有注册了对应事件类型的监听器。监听器会按照注册的顺序一次处理事件。如果事件处理抛出了异常，发布器会捕获并打印异常信息。
+
+&emsp;&emsp;Spring事件机制的优点在于它可以实现模块之间的解耦合，一个模块只需要发布事件，而不需要知道哪些其他模块会对此事件进行处理。同时，使用Spring事件机制也可以实现事务的控制，例如在事件处理方法上添加 `@Transactional`注解，就可以保证整个事件在一个事务中执行。
+
+#### Spring Framework中常用的设计模式有哪些？
+
+Spring框架是一个基于多种设计模式的框架，以下是Spring中常用的几种设计模式：
+
+1. 依赖注入（Dependency Injection）：也称为控制反转（Inversion of Control），通过控制反转，将对象的创建和依赖关系的管理交给Spring容器来处理，实现松散耦合和易于测试的目标。
+2. AOP（Aspect-Oriented Programming）：面向切面编程，通过将横切关注点（如事务、安全、日志等）抽取出来，与业务代码分离，实现模块化开发、代码复用，提高系统的可维护性和可扩展性。
+3. 工厂模式（Factory Pattern）：通过抽象工厂接口来统一管理对象的创建，增加新的实现类时不需要修改已有代码，只需要添加新的实现类，符合开闭原则。
+4. 单例模式（Singleton Pattern）：通过单例模式确保一个类只有一个对象，提高系统性能和资源使用效率。
+5. 模板方法模式（Template Method Pattern）：将一个操作中的算法框架固定，将具体实现延迟到子类中，实现了代码复用和扩展的目标。
+6. 观察者模式（Observer Pattern）：定义一种一对多的关系，当一个对象的状态发生改变时，通知其他对象更新自己的状态，常用于事件处理等场景中。
+
+通过以上常用的设计模式，Spring框架实现了松散耦合、面向切面、工厂化、可扩展、易于测试等优秀的特性，提高了系统的可维护性和可扩展性。
+
+
+
+#### Spring的钩子接口和应用
+
+在bean的生命周期之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
+
+##### 可以影响多个Bean的
+
+InstantiationAwareBeanPostProcessor
+
+作用于**实例化**阶段的前后
+
+BeanPostProcessor
+
+作用于**初始化**阶段的前后
+
+两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
+
+有多个的时候可以implement了PriorityOrdered和Ordered接口，按照这两个的顺序来排序（PriorityOrdered优先于Ordered）
+InitializingBean.afterPropertiesSet
+
+BeanFactoryPostProcessor
+
+比执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
+
+SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
+
+##### 影响单个Bean的
+
+Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
+
+具体来说分2组，一组是在初始化方法最前面调用的。还有一组是通过BeanPostProcess的before方法调用的。
+
+BeanNameAware,
+BeanClassLoaderAware,
+BeanFactoryAware,
+
+EnvironmentAware,
+EmbeddedValueResolverAware,
+ResourceLoaderAware,
+ApplicationEventPublisherAware,
+MessageSourceAware,
+ApplicationContextAware,
+ServletContextAware,
+
+下面2个是生命周期接口，在
+
+InitializingBean
+
+在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
+
+afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
+
+DisposableBean在bean销毁时调用
+
+
+
+#### Spring框架中的设计模式
+
+ （1）工厂模式：BeanFactory就是简单工厂模式的体现，用来创建对象的实例；
+ （2）单例模式：Bean默认为单例模式。
+ （3）代理模式：Spring的AOP功能用到了JDK的动态代理和CGLIB字节码生成技术；
+ （4）模板方法：用来解决代码重复的问题。比如. RestTemplate, JmsTemplate, JpaTemplate。
+ （5）观察者模式：定义对象键一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都会得到通知被制动更新，如Spring中listener的实现–ApplicationListener。
 
 
 
