@@ -17,15 +17,15 @@
 
 ## 文档更新记录
 
-| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）         |
-| ---- | ------------ | ---------- | ------------------------------------ |
-| 1.0  | namelessmyth | 2021-07-07 | 整理了本次找工作的面试题             |
-| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的笔记                     |
-| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，去掉了简历和沟通部分 |
-|      |              |            |                                      |
-|      |              |            |                                      |
-|      |              |            |                                      |
-|      |              |            |                                      |
+| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）               |
+| ---- | ------------ | ---------- | ------------------------------------------ |
+| 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题   |
+| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构     |
+| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分拆分出去。 |
+|      |              |            |                                            |
+|      |              |            |                                            |
+|      |              |            |                                            |
+|      |              |            |                                            |
 
 
 
@@ -124,6 +124,8 @@ idb的存储结构是什么样子的，为什么表数据量过大会影响效�
 
 当页发生分裂或合并时,大小会改变吗，会变换所在区吗
 
+
+
 ## Java
 
 1.线上jvm环境 哪个命令 怎么写 可以查到每个类有多少个 占用多大
@@ -181,7 +183,7 @@ idb的存储结构是什么样子的，为什么表数据量过大会影响效�
 
 #### 两个有序char数组，找出不一致的那一个元素
 
-例如：[a,b,c,d,e,f,g]，[a,b,c,d,f,g]
+例如：[a,b,c,d,e, f, g]，[a,b,c,d,f,g]
 
 
 
@@ -1478,7 +1480,13 @@ OOP面向对象其中一个优势就是继承，父类的代码可以被子类�
 
 #### Spring Bean的生命周期
 
-这是一个高频面试题，这个问题即考察对Spring的微观了解，又考察对Spring的宏观认识，还考察对Spring源码的熟悉程度！Bean的生命周期宏观上可以表达为：
+##### 本文作用
+
+本文主要是为了说明Spring Bean的生命周期。这是一个高频面试题，这个问题即考察对Spring的微观了解，又考察对Spring的宏观认识，还考察对Spring源码的熟悉程度！
+
+##### 宏观认识
+
+Bean的生命周期宏观上可以表达为：
 
 1. Bean工厂初始化（不熟的，这部分可以不提）
 2. 实例化-Instantiation
@@ -1486,7 +1494,15 @@ OOP面向对象其中一个优势就是继承，父类的代码可以被子类�
 4. 初始化-Initialization
 5. 销毁-Destruction
 
-接下来是一个完整的生命周期流程图：
+有的人可能会疑惑，Bean工厂和Bean是两回事，为什么会和Bean的生命周期有关？
+
+- Bean工厂中存放了BeanDefinition，这个就是Bean的定义，Bean就是根据这个实例化出来的。
+- Bean工厂初始化的时候会调用一个特殊的后置处理器：ConfigurationClassPostProcessor。他会解析如下注解。
+  - @Configuration的配置类
+  - 解析@ComponentScan扫描的包
+  - 解析@Import注解
+- 从上可以看出，Bean工厂的实例化的过程和Bean的生命周期是有关系的。
+- 下面就用这个完整的Bean生命周期流程图来说明。（使用mermaid语法绘制）
 
 ```mermaid
 flowchart TB
@@ -1530,7 +1546,14 @@ subgraph Initialization[初始化]
         BeanNameAware-->BeanClassLoaderAware-->BeanFactoryAware
     end
     subgraph bppbefore["执行BPP的before方法"]
-        ApplicationAwarePostPRocessor-->CommonAnnotationBeanPostProcessor
+    	subgraph ApplicationAwarePostPRocessor
+    		direction TB
+    		EnvironmentAware-->EmbeddedValueResolverAware-->ResourceLoaderAware
+    		-->ApplicationEventPublisherAware-->MessageSourceAware-->ApplicationContextAware
+    	end
+        ApplicationAwarePostPRocessor-->CommonAnnotationBeanPostProcessor["CommonAnnotationBeanPostProcessor
+        负责解析@Resource、@WebServiceRef
+        、@EJB三个注解，这三个注解定义在javax.*包下"]
     end
     subgraph invokeInitMethod
         InitializingBean["InitializingBean.afterPropertiesSet"]
@@ -1543,12 +1566,152 @@ subgraph Initialization[初始化]
 end
 
 subgraph destruct["销毁-Destruction"]
-	DestructionAwareBeanPostProcessors
-	-->DisposableBean
+	DestructionAwareBPP["DestructionAwareBeanPostProcessors<br>.postProcessBeforeDestruction()"]
+	-->DisposableBean["DisposableBean<br>.destroy()"]
 	-->detroyMethod[自定义的destoryMethod]
 end
 finishInitial-->initantiation-->populate-->Initialization-->destruct
 ```
+
+##### Spring源码
+
+其实在Spring源码的BeanFactory这个类的注释中，Spring源码的作者已经告诉我们Bean完整的生命周期了。
+
+下面就是Spring源码的摘录。大家本地有源码的朋友，可以把鼠标放到类名字上面去，就可以预览注释的实际效果了。
+
+```java
+/**
+ * Bean工厂的根父类，定义获取bean及bean的各种属性。下面的注释中还列举了Bean的生命周期 <br>
+ * The root interface for accessing a Spring bean container.
+ *
+ * <p>This is the basic client view of a bean container;
+ * further interfaces such as {@link ListableBeanFactory} and
+ * {@link org.springframework.beans.factory.config.ConfigurableBeanFactory}
+ * are available for specific purposes.
+ *
+ * <p>This interface is implemented by objects that hold a number of bean definitions,
+ * each uniquely identified by a String name. Depending on the bean definition,
+ * the factory will return either an independent instance of a contained object
+ * (the Prototype design pattern), or a single shared instance (a superior
+ * alternative to the Singleton design pattern, in which the instance is a
+ * singleton in the scope of the factory). Which type of instance will be returned
+ * depends on the bean factory configuration: the API is the same. Since Spring
+ * 2.0, further scopes are available depending on the concrete application
+ * context (e.g. "request" and "session" scopes in a web environment).
+ *
+ * <p>The point of this approach is that the BeanFactory is a central registry
+ * of application components, and centralizes configuration of application
+ * components (no more do individual objects need to read properties files,
+ * for example). See chapters 4 and 11 of "Expert One-on-One J2EE Design and
+ * Development" for a discussion of the benefits of this approach.
+ *
+ * <p>Note that it is generally better to rely on Dependency Injection
+ * ("push" configuration) to configure application objects through setters
+ * or constructors, rather than use any form of "pull" configuration like a
+ * BeanFactory lookup. Spring's Dependency Injection functionality is
+ * implemented using this BeanFactory interface and its subinterfaces.
+ *
+ * <p>Normally a BeanFactory will load bean definitions stored in a configuration
+ * source (such as an XML document), and use the {@code org.springframework.beans}
+ * package to configure the beans. However, an implementation could simply return
+ * Java objects it creates as necessary directly in Java code. There are no
+ * constraints on how the definitions could be stored: LDAP, RDBMS, XML,
+ * properties file, etc. Implementations are encouraged to support references
+ * amongst beans (Dependency Injection).
+ *
+ * <p>In contrast to the methods in {@link ListableBeanFactory}, all of the
+ * operations in this interface will also check parent factories if this is a
+ * {@link HierarchicalBeanFactory}. If a bean is not found in this factory instance,
+ * the immediate parent factory will be asked. Beans in this factory instance
+ * are supposed to override beans of the same name in any parent factory.
+ *
+ * <p>Bean factory implementations should support the standard bean lifecycle interfaces
+ * as far as possible. The full set of initialization methods and their standard order is:
+ * <ol>
+ * <li>BeanNameAware's {@code setBeanName}
+ * <li>BeanClassLoaderAware's {@code setBeanClassLoader}
+ * <li>BeanFactoryAware's {@code setBeanFactory}
+ * <li>EnvironmentAware's {@code setEnvironment}
+ * <li>EmbeddedValueResolverAware's {@code setEmbeddedValueResolver}
+ * <li>ResourceLoaderAware's {@code setResourceLoader}
+ * (only applicable when running in an application context)
+ * <li>ApplicationEventPublisherAware's {@code setApplicationEventPublisher}
+ * (only applicable when running in an application context)
+ * <li>MessageSourceAware's {@code setMessageSource}
+ * (only applicable when running in an application context)
+ * <li>ApplicationContextAware's {@code setApplicationContext}
+ * (only applicable when running in an application context)
+ * <li>ServletContextAware's {@code setServletContext}
+ * (only applicable when running in a web application context)
+ * <li>{@code postProcessBeforeInitialization} methods of BeanPostProcessors
+ * <li>InitializingBean's {@code afterPropertiesSet}
+ * <li>a custom init-method definition
+ * <li>{@code postProcessAfterInitialization} methods of BeanPostProcessors
+ * </ol>
+ *
+ * <p>On shutdown of a bean factory, the following lifecycle methods apply:
+ * <ol>
+ * <li>{@code postProcessBeforeDestruction} methods of DestructionAwareBeanPostProcessors
+ * <li>DisposableBean's {@code destroy}
+ * <li>a custom destroy-method definition
+ * </ol>
+ *
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @author Chris Beams
+ * @since 13 April 2001
+ * @see BeanNameAware#setBeanName
+ * @see BeanClassLoaderAware#setBeanClassLoader
+ * @see BeanFactoryAware#setBeanFactory
+ * @see org.springframework.context.ResourceLoaderAware#setResourceLoader
+ * @see org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher
+ * @see org.springframework.context.MessageSourceAware#setMessageSource
+ * @see org.springframework.context.ApplicationContextAware#setApplicationContext
+ * @see org.springframework.web.context.ServletContextAware#setServletContext
+ * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization
+ * @see InitializingBean#afterPropertiesSet
+ * @see org.springframework.beans.factory.support.RootBeanDefinition#getInitMethodName
+ * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization
+ * @see DisposableBean#destroy
+ * @see org.springframework.beans.factory.support.RootBeanDefinition#getDestroyMethodName
+ */
+public interface BeanFactory {
+	//...... 此处省略代码细节	
+}
+```
+
+根据这个注释，我们可以整理出一份简易文字版bean生命周期
+
+1. BeanNameAware's setBeanName
+2. BeanClassLoaderAware's setBeanClassLoader
+3. BeanFactoryAware's setBeanFactory
+4. EnvironmentAware's setEnvironment
+5. EmbeddedValueResolverAware's setEmbeddedValueResolver
+6. ResourceLoaderAware's setResourceLoader (only applicable when running in an application context)
+7. ApplicationEventPublisherAware's setApplicationEventPublisher (only applicable when running in an application context)
+8. MessageSourceAware's setMessageSource (only applicable when running in an application context)
+9. ApplicationContextAware's setApplicationContext (only applicable when running in an application context)
+10. ServletContextAware's setServletContext (only applicable when running in a web application context)
+11. postProcessBeforeInitialization methods of BeanPostProcessors
+12. InitializingBean's afterPropertiesSet
+13. a custom init-method definition
+14. postProcessAfterInitialization methods of BeanPostProcessors
+
+在关闭bean工厂时，也就是销毁时，应用以下生命周期方法：
+
+1. DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()
+2. DisposableBean的destroy方法
+3. 自定义的destroy-method
+
+
+
+##### 参考说明
+
+https://zhuanlan.zhihu.com/p/622803858?utm_id=0
+
+https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=1241
+
+
 
 
 
@@ -1575,22 +1738,6 @@ finishInitial-->initantiation-->populate-->Initialization-->destruct
 
 
 #### Bean实现延迟加载的方式
-
-
-
-#### 不同的注入方式以及区别
-
-
-
-#### 什么是循环依赖，如何解决
-
-只有单例的对象能够通过三级缓存解决循环依赖问题，其他的发现循环依赖会直接抛异常。
-
-
-
-#### 解释以下Spring的三级缓存
-
-三级缓存就是Spring的三个Map，
 
 
 
@@ -2039,6 +2186,152 @@ Bean的定义==》 BeanDefinition  ==》 BeanFactory【存储了所有的BeanDef
 
 
 
+#### 什么是循环依赖？如何解决
+
+##### 类图
+
+```mermaid
+classDiagram
+direction LR
+
+class A{
+	B b
+	+getB()
+	+setB()
+}
+
+class B{
+	A a
+	+getA()
+	+setA()
+}
+
+A --> B
+B --> A
+```
+
+##### 什么是循环依赖
+
+举例说明：参考上面的类图，Spring要初始化A类，但是A类中有一个类型为B的属性，所以此时要去创建类型B的实例。但是B类中又有一个A类型的属性，所以反过来又需要初始化A，但A此时又没有初始化完成。这就是循环依赖问题。
+
+如果不考虑Spring，循环依赖并不是问题，因为对象之间相互依赖是很正常的事情。但在Spring中，一个对象并不是简单new出来了，而是会经过一系列的Bean的生命周期，正式因为Beand生命周期的存在，才会出现循环依赖问题。
+
+##### 如何解决
+
+首先并不是所有场景的循环依赖Spring都能解决的。只能解决单例对象且set方法的循环依赖。构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者解决。
+
+Spring解决循环依赖的机制叫做三级缓存。
+
+##### Spring三级缓存
+
+三级缓存其实就是Spring中一个类的三个Map，
+
+- 一级缓存：singletonObjects；
+- 二级缓存为：earlySingletonObjects；
+- 三级缓存为：singletonFactories；
+
+类名：DefaultSingletonBeanRegistry，源码参考如下：
+
+~~~java
+public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
+
+	/**
+	 * 一级缓存
+	 * 用于保存BeanName和创建bean实例之间的关系
+	 *
+	 * Cache of singleton objects: bean name to bean instance. */
+	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+
+	/**
+	 * 三级缓存
+	 * 用于保存BeanName和创建bean的工厂之间的关系
+	 *
+	 * Cache of singleton factories: bean name to ObjectFactory. */
+	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
+
+	/**
+	 * 二级缓存
+	 * 保存BeanName和创建bean实例之间的关系，与singletonFactories的不同之处在于，当一个单例bean被放到这里之后，那么当
+	 * bean还在创建过程中，就可以通过getBean方法获取到，可以方便进行循环依赖的检测
+	 *
+	 * Cache of early singleton objects: bean name to bean instance. */
+	private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+    
+}
+~~~
+
+##### 三个缓存分别放的是什么？
+
+一级缓存（singletonObjects）中放的是已经初始化完成的bean对象。
+
+二级缓存（earlySingletonObjects）比 singletonObjects 多了一个 early，表示存放的是实例化结束但还没初始化的bean对象。
+
+三级缓存（singletonFactories）中存的是ObjectFactory，表示的是用来创建AOP代理对象的函数式接口。
+
+##### 二级缓存流程
+
+如果不考虑AOP对象代理，其实只需要二级缓存足以解决问题。
+
+我们先使用二级缓存来把解决流程演示一遍。
+
+1. 首先创建A的Bean对象，先依次在一二三级缓存中找。显然第一次肯定是找不到。
+2. 然后开始实例化A，实例化A结束后，会将A对象放入二级缓存中。此时A还没初始化。
+3. 然后进行属性赋值，遇到B对象。
+4. 同样的流程，先依次在一二三级缓存找。肯定也是找不到。
+5. 开始实例化B，实例化B结束，放入二级缓存中。此时B也没初始化。
+6. 然后进行属性赋值，遇到A对象。也是依次在一二三级缓存找
+7. 此时由于A对象已经在二级缓存中存在，所以找到后，完成B的属性赋值
+8. 接着继续B的初始化，然后初始化完成之后，放入一级缓存中。
+9. 接着A的属性赋值和初始化也能结束了。放入一级缓存中。
+
+```mermaid
+flowchart TB
+
+subgraph cache["三级缓存"]
+cache1[一级缓存]-->cache2[二级缓存]-->cache3[三级缓存]
+end
+
+subgraph A
+getBeana["在一、二、三级缓存中查找A"]-->notfounda["没有找到A"]-->createBeana["实例化A"]
+-->putCachea["放入二级缓存"]-->populatea["属性赋值B"]-->initA["初始化A"]-->finishA["A创建完成"]
+end
+putCachea-->|A|cache2
+
+subgraph B
+getBeanb["在一、二、三级缓存中查找B"]-->notfoundb["没有找到B"]-->createBeanb["实例化B"]
+-->putCacheb["放入二级缓存"]-->populateb["属性赋值A"]-->getBa["去一、二、三级缓存中查找a"]
+-->getA["在二级缓存中找到A"]-->initB["初始化B"]-->finishB["B创建完成"]
+end
+putCacheb-->|B|cache2
+populatea-->getBeanb
+finishB-->initA
+```
+
+##### 考虑AOP代理
+
+为什么考虑了AOP代理之后就必须使用三级缓存了呢？首先要了解一个知识就是Spring的AOP代理对象的产生是在填充属性后进入到初始化阶段才进行的，是通过后置处理器BeanPostProcessor来实现。如果用二级缓存来解决，那么就要在属性填充的时候，就要将代理对象生成好，放入二级缓存了。那这样就与spring的Bean生命周期相悖了。所以这种方式不好，于是就引入了三级缓存。
+
+引入了三级缓存之后的流程。
+
+1. 首先创建A的Bean对象，先依次在一二三级缓存中找。显然第一次肯定是找不到。
+2. 然后开始实例化A，实例化A结束后，如果A对象需要AOP代理，那此时会将A放入三级缓存而不是二级缓存。
+3. 放入三级缓存中的A是一个函数式接口ObjectFactory对象。此时并没有调用接口方法。
+4. 然后进行属性赋值，遇到B对象。
+5. 同样的流程，先依次在一二三级缓存找。肯定也是找不到。
+6. 开始实例化B，实例化B结束，放入二级缓存中。此时B也没初始化。
+7. 然后进行属性赋值，遇到A对象。也是依次在一二三级缓存找
+8. 此时可以在三级缓存中找到A的ObjectFactory对象，找到后会调用接口方法，并将生成的代理对象放到二级缓存中。删除三级缓存中de
+9. 接着继续B的初始化，然后初始化完成之后，放入一级缓存中。
+10. 接着A的属性赋值和初始化也能结束了。放入一级缓存中。
+
+
+
+#### 解释一下Spring的三级缓存
+
+循环依赖和三级缓存相关问题，请参考[循环依赖三级缓存统一解答](#什么是循环依赖？如何解决)。
+
+
+
 #### Spring中AOP的实现原理
 
 AOP:面向切面编程  ==补充==》OOP：面向对象编程
@@ -2071,6 +2364,8 @@ serviceA  a(){proxy.b();}  b()
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
 
+
+
 #### Spring Framework的事件机制是怎样的？
 
 1.设计模式：发布订阅模式【观察者模式】
@@ -2084,6 +2379,8 @@ serviceA  a(){proxy.b();}  b()
 &emsp;&emsp;当一个事件发布器发布一个事件时，它会通知所有注册了对应事件类型的监听器。监听器会按照注册的顺序一次处理事件。如果事件处理抛出了异常，发布器会捕获并打印异常信息。
 
 &emsp;&emsp;Spring事件机制的优点在于它可以实现模块之间的解耦合，一个模块只需要发布事件，而不需要知道哪些其他模块会对此事件进行处理。同时，使用Spring事件机制也可以实现事务的控制，例如在事件处理方法上添加 `@Transactional`注解，就可以保证整个事件在一个事务中执行。
+
+
 
 #### Spring Framework中常用的设计模式有哪些？
 

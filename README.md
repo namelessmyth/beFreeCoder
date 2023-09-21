@@ -20,6 +20,7 @@ root-->Script["Script：脚本（sh，bat）"]
 root-->Job["Job：求职资料"]
 root-->Template["Template：文件模板"]
 root-->Report["Report：报告"]
+root-->os["OS：操作系统使用"]
 
 Java-->mashibing[马士兵学习笔记]
 Java-->gupao[咕泡学习笔记]
