@@ -1359,6 +1359,18 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 #### 对Spring框架的理解?
 
+```mindmap
+- 教程
+- 语法指导
+  - 普通内容
+  - 提及用户
+  - 表情符号 Emoji
+    - 一些表情例子
+  - 大标题 - Heading 3
+```
+
+
+
 ##### Spring发展历史
 
 1. 2002 年，Rod Johnson 发表了他的专著 “Expert One-On-One J2EE Design and Development”，提出了 Spring 框架的思想。
@@ -1440,7 +1452,7 @@ Spring messaging
 
 
 
-#### 对Spring IoC的理解
+#### 对SpringIoC的理解
 
 IOC（Inversion of control），即：控制反转，是指创建对象的控制权的转移，以前创建对象的主动权和时机是由自己把控的，而现在这种权力转移到Spring容器中，并由容器根据配置文件去创建实例和管理各个实例之间的依赖关系，对象与对象之间松散耦合DI依赖注入和IOC控制反转是同一个概念的不同角度的描述，即：应用程序在运行时依赖IoC容器来动态注入对象需要的外部资源。
 
@@ -1457,24 +1469,6 @@ OOP面向对象其中一个优势就是继承，父类的代码可以被子类�
  AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
 
 [Spring中AOP的实现原理](#Spring中AOP的实现原理)
-
-
-
-#### Spring AOP的几个名词
-
-（1）切面（Aspect）：被抽取的公共模块，可能会横切多个对象。 在Spring AOP中，切面可以使用通用类（基于模式的风格） 或者在普通类中以 @AspectJ 注解来实现。
-
-（2）连接点（Join point）：指方法，在Spring AOP中，一个连接点代表一个方法的执行。
-
-（3）通知（Advice）：在切面的某个特定的连接点（Join  point）上执行的动作。通知有各种类型，其中包括“around”、“before”和“after”等通知。许多AOP框架，包括Spring，都是以拦截器做通知模型， 并维护一个以连接点为中心的拦截器链。
-
-（4）切入点（Pointcut）：切入点是指 我们要对哪些Join point进行拦截的定义。通过切入点表达式，指定拦截的方法，比如指定拦截add*、search*。
-
-（5）引入（Introduction）：（也被称为内部类型声明（inter-type  declaration））。声明额外的方法或者某个类型的字段。Spring允许引入新的接口（以及一个对应的实现）到任何被代理的对象。例如，你可以使用一个引入来使bean实现 IsModified 接口，以便简化缓存机制。
-
-（6）目标对象（Target Object）： 被一个或者多个切面（aspect）所通知（advise）的对象。也有人把它叫做  被通知（adviced） 对象。 既然Spring AOP是通过运行时代理实现的，这个对象永远是一个 被代理（proxied） 对象。
-
-（7）织入（Weaving）：指把增强应用到目标对象来创建新的代理对象的过程。Spring是在运行时完成织入。切入点（pointcut）和连接点（join point）匹配的概念是AOP的关键，这使得AOP不同于其它仅仅提供拦截功能的旧技术。  切入点使得定位通知（advice）可独立于OO层次。  例如，一个提供声明式事务管理的around通知可以被应用到一组横跨多个对象中的方法上（例如服务层的所有业务操作）。
 
 
 
@@ -1811,13 +1805,22 @@ Spring容器支持处理循环依赖，即A对象依赖了B对象，而B对象�
 
 
 
-#### Spring基于xml注入bean的几种方式：
+#### Spring Bean的注入方式：
 
- （1）Set方法注入；
- （2）构造器注入：①通过index设置参数的位置；②通过type设置参数类型；
- （3）静态工厂注入；
- （4）实例工厂；
- 详细内容可以阅读：https://blog.csdn.net/a745233700/article/details/89307518
+##### 基于XML的注入
+
+[文章参考](https://blog.csdn.net/a745233700/article/details/89307518)。
+
+- Set方法注入；
+- 构造器注入：①通过index设置参数的位置；②通过type设置参数类型；
+- 静态工厂注入；
+- 实例工厂；
+
+##### 基于注解的注入
+
+@Resource
+
+@Autowired
 
 
 
@@ -2169,24 +2172,40 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 #### Spring的IoC实现原理
 
-1. 控制翻转
-2. Spring中IoC的实现：管理Bean对象的容器 ==》 容器是如何管理Bean对象 ==》 容器创建添加Bean对象 ==》Bean的定义。Bean定义的管理。Bean的声明周期
+##### 介绍
 
-Bean的定义==》 BeanDefinition  ==》 BeanFactory【存储了所有的BeanDefinition】==》BeanDefinitionRegistry ==》 Bean实例有两种类型 单例，原型  单例==》容器初始化的时候==》完成对应的实例。单例Bean保存在一级缓存中。  原型Bean  在我们获取Bean的时候getBean()会完成对象的实例化
+虽然问的是实现原理，但同一类型的题一般面试官会问一个。所以也可以讲下对IOC的理解。可以参考[对SpringIoC的理解](#对SpringIoC的理解)。讲了理解之后再讲实现。
 
-&emsp;&emsp;Spring的IoC（Inversion of Control，控制反转）是一种设计模式，它的核心思想是将对象的创建、组装和管理过程交给框架来完成，而不是由应用程序直接控制。这种模式通过将应用程序的控制权交给框架来提高应用程序的可扩展性、灵活性和可维护性。
+##### 实现过程
 
-&emsp;&emsp;在Spring中，IoC容器负责管理和组装应用程序中的组件。IoC容器可以通过XML配置文件、Java注解和Java代码来配置和组装对象。Spring IoC容器的实现类包括BeanFactory和ApplicationContext，其中ApplicationContext是BeanFactory的子接口，提供了更多的功能和便利的特性。
+IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化。过程中主要涉及依赖注入，动态代理技术，反射技术。
 
-&emsp;&emsp;在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
+1. 在IOC容器启动时，读取并解析配置文件，注解中的Bean定义信息，将其封装成BeanDefinition对象存储在BeanFactory中
+2. 对于单例非延迟加载的Bean，IOC容器初始化的时候会将其统一实例化好，放在缓存中。
+3. 对于原型Bean，则是获取他的时候才会初始化。
+4. 普通对象实例化时会用到反射技术，代理对象的实例化还会用到了动态代理技术。
+5. Bean被实例化之后，需要给其属性进行赋值，属性的类型可能是另一个Bean，这个过程就是依赖注入。
+6. 依赖注入完成以后，就是执行每一个Bean的初始化流程。这个流程中Spring定义了一些列的回调方法允许使用者扩展。
 
-&emsp;&emsp;在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
+##### 源码层面
 
-&emsp;&emsp;在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
+在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
+
+在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
+
+在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
+
+[参考文章](https://zhuanlan.zhihu.com/p/523343141?utm_id=0)
 
 
 
-#### 什么是循环依赖？如何解决
+
+
+#### 循环依赖，三级缓存，统一解答
+
+##### 本文目的
+
+本文主要说明什么是Spring的循环依赖。哪些场景的循环依赖Spring可以解决。如何解决的。同时讲解了Spring的三级缓存。
 
 ##### 类图
 
@@ -2212,19 +2231,21 @@ B --> A
 
 ##### 什么是循环依赖
 
-举例说明：参考上面的类图，Spring要初始化A类，但是A类中有一个类型为B的属性，所以此时要去创建类型B的实例。但是B类中又有一个A类型的属性，所以反过来又需要初始化A，但A此时又没有初始化完成。这就是循环依赖问题。
+参考上面的类图，Spring要初始化A类，但A类中有一个类型为B的属性，所以此时要去创建类型B。但是B类中又有一个A类型的属性，所以反过来又需要初始化A，但A此时又没有初始化完成。这就是循环依赖问题。
 
-如果不考虑Spring，循环依赖并不是问题，因为对象之间相互依赖是很正常的事情。但在Spring中，一个对象并不是简单new出来了，而是会经过一系列的Bean的生命周期，正式因为Beand生命周期的存在，才会出现循环依赖问题。
+这个例子中说的是AB型循环依赖，还有ABC型。就是A中有B，B中有C，但C中又有A。
+
+如果不考虑Spring，循环依赖其实并不是问题，因为对象之间相互依赖是很正常的事情。但在Spring中，一个对象并不是简单new出来就可以了，而是会经过一系列的Bean的生命周期。正式因为Beand生命周期的存在，才会出现循环依赖问题。所以建议大家可以先了解下[Bean的生命周期](https://blog.csdn.net/namelessmyth/article/details/133139513?spm=1001.2014.3001.5501)。
 
 ##### 如何解决
 
-首先并不是所有场景的循环依赖Spring都能解决的。只能解决单例对象且set方法的循环依赖。构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者解决。
+首先并不是所有场景的循环依赖Spring都能解决的。Spring只能解决单例对象且set方法的循环依赖。构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者向其他办法解决。
 
-Spring解决循环依赖的机制叫做三级缓存。
+接下来正式介绍Spring解决循环依赖的机制，叫做三级缓存。
 
 ##### Spring三级缓存
 
-三级缓存其实就是Spring中一个类的三个Map，
+三级缓存说穿了，其实就是Spring中一个类的三个Map，
 
 - 一级缓存：singletonObjects；
 - 二级缓存为：earlySingletonObjects；
@@ -2268,7 +2289,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 三级缓存（singletonFactories）中存的是ObjectFactory，表示的是用来创建AOP代理对象的函数式接口。
 
-##### 二级缓存流程
+
+
+##### 如果只有二级缓存
 
 如果不考虑AOP对象代理，其实只需要二级缓存足以解决问题。
 
@@ -2283,6 +2306,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 7. 此时由于A对象已经在二级缓存中存在，所以找到后，完成B的属性赋值
 8. 接着继续B的初始化，然后初始化完成之后，放入一级缓存中。
 9. 接着A的属性赋值和初始化也能结束了。放入一级缓存中。
+10. 下面是用mermaid画的流程图。
 
 ```mermaid
 flowchart TB
@@ -2307,34 +2331,545 @@ populatea-->getBeanb
 finishB-->initA
 ```
 
-##### 考虑AOP代理
+##### 代理与三级缓存
 
-为什么考虑了AOP代理之后就必须使用三级缓存了呢？首先要了解一个知识就是Spring的AOP代理对象的产生是在填充属性后进入到初始化阶段才进行的，是通过后置处理器BeanPostProcessor来实现。如果用二级缓存来解决，那么就要在属性填充的时候，就要将代理对象生成好，放入二级缓存了。那这样就与spring的Bean生命周期相悖了。所以这种方式不好，于是就引入了三级缓存。
+既然二级缓存就能解决循环依赖，那为什么考虑了AOP代理之后就必须使用三级缓存了呢？首先要了解的一个知识就是Spring的AOP代理对象的产生是在填充属性后进入到初始化阶段才进行的，是通过后置处理器BeanPostProcessor来实现。如果用二级缓存来解决，那么就要在属性填充的时候，就要将代理对象生成好，放入二级缓存了。那这样就与Spring的Bean生命周期相悖了。所以这种方式不好，于是就引入了三级缓存以及ObjectFactory对象。
 
 引入了三级缓存之后的流程。
 
 1. 首先创建A的Bean对象，先依次在一二三级缓存中找。显然第一次肯定是找不到。
-2. 然后开始实例化A，实例化A结束后，如果A对象需要AOP代理，那此时会将A放入三级缓存而不是二级缓存。
-3. 放入三级缓存中的A是一个函数式接口ObjectFactory对象。此时并没有调用接口方法。
+2. 然后开始实例化A，实例化A结束后，**那此时会将A放入三级缓存而不是二级缓存**。
+3. **放入三级缓存中的A是一个函数式接口ObjectFactory对象。此时并没有调用接口方法**。
 4. 然后进行属性赋值，遇到B对象。
 5. 同样的流程，先依次在一二三级缓存找。肯定也是找不到。
-6. 开始实例化B，实例化B结束，放入二级缓存中。此时B也没初始化。
-7. 然后进行属性赋值，遇到A对象。也是依次在一二三级缓存找
-8. 此时可以在三级缓存中找到A的ObjectFactory对象，找到后会调用接口方法，并将生成的代理对象放到二级缓存中。删除三级缓存中de
-9. 接着继续B的初始化，然后初始化完成之后，放入一级缓存中。
-10. 接着A的属性赋值和初始化也能结束了。放入一级缓存中。
+6. 开始实例化B，实例化B结束，同样将ObjectFactory放入三级缓存中。
+7. 然后进行属性赋值，遇到A对象。也是依次在一二三级缓存找。
+8. 此时可以在三级缓存中找到A的ObjectFactory对象，找到后会调用ObjectFactory.getObject()方法，
+9. 将生成的代理对象放到二级缓存中。同时删除三级缓存中的对象。
+10. 接着继续B的初始化，然后初始化完成之后，放入一级缓存中。
+11. 接着A的属性赋值和初始化也能结束了。放入一级缓存中。
+
+```mermaid
+flowchart TB
+
+subgraph cache["三级缓存"]
+cache1[一级缓存]-->cache2[二级缓存]-->cache3[三级缓存]
+
+end
+
+subgraph A
+getBeana["在一、二、三级缓存中查找A"]-->notfounda["没有找到A"]-->createBeana["实例化A"]
+-->putCachea["放入三级缓存"]-->populatea["属性赋值B"]-->initA["初始化A"]-->finishA["A创建完成"]
+end
+putCachea-->|"ObjectFactory(A)"|cache3
+
+subgraph B
+getBeanb["在一、二、三级缓存中查找B"]-->notfoundb["没有找到B"]-->createBeanb["实例化B"]
+-->putCacheb["放入三级缓存"]-->populateb["属性赋值A"]-->getBa["去一、二、三级缓存中查找a"]
+-->getA["在三级缓存中找到ObjectFactory(A)"]-->put2["通过ObjectFactory的getObject()<br>得到对象然后移入二级缓存"]
+-->initB["初始化B"]-->finishB["B创建完成"]
+end
+putCacheb-->|"ObjectFactory(B)"|cache3
+populatea-->getBeanb
+put2-->cache2
+finishB-->initA
+
+```
 
 
 
-#### 解释一下Spring的三级缓存
+###### 二级缓存在其中的作用
 
-循环依赖和三级缓存相关问题，请参考[循环依赖三级缓存统一解答](#什么是循环依赖？如何解决)。
+假设AB相互依赖，AC相互依赖。那么B实例化后，就该进行C的实例化，这时C就可以从二级缓存来获取A的实例引用了，就不需要再从三级缓存获取工厂让其生产实例。
+
+即假设只有AB相互依赖，其他对象不依赖AB时，这里二级缓存是没用的，一级和三级缓存起作用。
+
+
+
+##### 源码分析
+
+接下来我们可以从Spring源码中印证上述想法的正确性。
+
+###### 创建对象之前先从缓存中查找
+
+AbstractBeanFactory.doGetBean()方法。第15行，先调用getSingleton方法去缓存中找。
+
+```java
+	/**
+	 * 得到一个Bean实例的实例，
+	 *
+	 */
+	protected <T> T doGetBean(
+			String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
+			throws BeansException {
+
+		/** 提取对应的beanName，这里需要转换的原因在于，当bean对象实现FactoryBean接口之后就会变成&beanName，同时如果存在别名，也需要把别名进行转换 */
+		String beanName = transformedBeanName(name);
+		Object bean;
+
+		// Eagerly check singleton cache for manually registered singletons.
+		/** 提前检查单例缓存中是否有手动注册的单例对象，跟循环依赖有关联 */
+		Object sharedInstance = getSingleton(beanName);
+		// 如果bean的单例对象找到了，且没有创建bean实例时要使用的参数
+		if (sharedInstance != null && args == null) {
+			if (logger.isTraceEnabled()) {
+				if (isSingletonCurrentlyInCreation(beanName)) {
+					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
+							"' that is not fully initialized yet - a consequence of a circular reference");
+				}
+				else {
+					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
+				}
+			}
+			// 返回对象的实例，当你实现了FactoryBean接口的对象，需要获取具体的对象的时候就需要此方法来进行获取了
+			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
+		}
+
+		else {
+			// Fail if we're already creating this bean instance:
+			// We're assumably within a circular reference.
+			// 当对象都是单例的时候会尝试解决循环依赖的问题，但是原型模式下如果存在循环依赖的情况，那么直接抛出异常
+			if (isPrototypeCurrentlyInCreation(beanName)) {
+				throw new BeanCurrentlyInCreationException(beanName);
+			}
+
+			// Check if bean definition exists in this factory.
+			// 如果bean定义不存在，就检查父工厂是否有
+			BeanFactory parentBeanFactory = getParentBeanFactory();
+			// 如果beanDefinitionMap中也就是在所有已经加载的类中不包含beanName，那么就尝试从父容器中获取
+			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
+				// Not found -> check parent.
+				// 获取name对应的规范名称【全类名】，如果name前面有'&'，则会返回'&'+规范名称【全类名】
+				String nameToLookup = originalBeanName(name);
+				// 如果父工厂是AbstractBeanFactory的实例
+				if (parentBeanFactory instanceof AbstractBeanFactory) {
+					// 调用父工厂的doGetBean方法，就是该方法。【递归】
+					return ((AbstractBeanFactory) parentBeanFactory).doGetBean(
+							nameToLookup, requiredType, args, typeCheckOnly);
+				}
+				else if (args != null) {
+					// Delegation to parent with explicit args.
+					// 如果有创建bean实例时要使用的参数
+					// Delegation to parent with explicit args. 使用显示参数委派给父工厂
+					// 使用父工厂获取该bean对象,通bean全类名和创建bean实例时要使用的参数
+					return (T) parentBeanFactory.getBean(nameToLookup, args);
+				}
+				else if (requiredType != null) {
+					// No args -> delegate to standard getBean method.
+					// 没有创建bean实例时要使用的参数 -> 委托给标准的getBean方法。
+					// 使用父工厂获取该bean对象,通bean全类名和所需的bean类型
+					return parentBeanFactory.getBean(nameToLookup, requiredType);
+				}
+				else {
+					// 使用父工厂获取bean，通过bean全类名
+					return (T) parentBeanFactory.getBean(nameToLookup);
+				}
+			}
+			// 如果不是做类型检查，那么表示要创建bean，此处在集合中做一个记录
+			if (!typeCheckOnly) {
+				// 为beanName标记为已经创建（或将要创建）
+				markBeanAsCreated(beanName);
+			}
+
+			try {
+				// 此处做了BeanDefinition对象的转换，当我们从xml文件中加载beandefinition对象的时候，封装的对象是GenericBeanDefinition,
+				// 此处要做类型转换，如果是子类bean的话，会合并父类的相关属性
+				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+				// 检查mbd的合法性，不合格会引发验证异常
+				checkMergedBeanDefinition(mbd, beanName, args);
+
+				// Guarantee initialization of beans that the current bean depends on.
+				// 如果存在依赖的bean的话，那么则优先实例化依赖的bean
+				String[] dependsOn = mbd.getDependsOn();
+				if (dependsOn != null) {
+					// 如果存在依赖，则需要递归实例化依赖的bean
+					for (String dep : dependsOn) {
+						// 如果beanName已注册依赖于dependentBeanName的关系
+						if (isDependent(beanName, dep)) {
+							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
+						}
+						// 注册各个bean的依赖关系，方便进行销毁
+						registerDependentBean(dep, beanName);
+						try {
+							// 递归优先实例化被依赖的Bean
+							getBean(dep);
+						}
+						// 捕捉为找到BeanDefinition异常：'beanName'依赖于缺少的bean'dep'
+						catch (NoSuchBeanDefinitionException ex) {
+							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+									"'" + beanName + "' depends on missing bean '" + dep + "'", ex);
+						}
+					}
+				}
+
+				// Create bean instance.
+				// 创建bean的实例对象
+				if (mbd.isSingleton()) {
+					// 返回以beanName的(原始)单例对象，如果尚未注册，则使用singletonFactory创建并注册一个对象:
+					sharedInstance = getSingleton(beanName, () -> {
+						try {
+							// 为给定的合并后BeanDefinition(和参数)创建一个bean实例
+							return createBean(beanName, mbd, args);
+						}
+						catch (BeansException ex) {
+							// Explicitly remove instance from singleton cache: It might have been put there
+							// eagerly by the creation process, to allow for circular reference resolution.
+							// Also remove any beans that received a temporary reference to the bean.
+							// 显示地从单例缓存中删除实例：它可能是由创建过程急切地放在那里，以允许循环引用解析。还要删除
+							// 接收到该Bean临时引用的任何Bean
+							// 销毁给定的bean。如果找到相应的一次性Bean实例，则委托给destoryBean
+							destroySingleton(beanName);
+							// 重新抛出ex
+							throw ex;
+						}
+					});
+					// 从beanInstance中获取公开的Bean对象，主要处理beanInstance是FactoryBean对象的情况，如果不是
+					// FactoryBean会直接返回beanInstance实例
+					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+				}
+				// 原型模式的bean对象创建
+				else if (mbd.isPrototype()) {
+					// It's a prototype -> create a new instance.
+					// 它是一个原型 -> 创建一个新实例
+					// 定义prototype实例
+					Object prototypeInstance = null;
+					try {
+						// 创建Prototype对象前的准备工作，默认实现将beanName添加到prototypesCurrentlyInCreation中
+						beforePrototypeCreation(beanName);
+						// 为mbd(和参数)创建一个bean实例
+						prototypeInstance = createBean(beanName, mbd, args);
+					}
+					finally {
+						// 创建完prototype实例后的回调，默认是将beanName从prototypesCurrentlyInCreation移除
+						afterPrototypeCreation(beanName);
+					}
+					// 从beanInstance中获取公开的Bean对象，主要处理beanInstance是FactoryBean对象的情况，如果不是
+					// FactoryBean会直接返回beanInstance实例
+					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
+				}
+
+				else {
+					// 指定的scope上实例化bean
+					String scopeName = mbd.getScope();
+					if (!StringUtils.hasLength(scopeName)) {
+						throw new IllegalStateException("No scope name defined for bean ´" + beanName + "'");
+					}
+					// 从scopes中获取scopeName对于的Scope对象
+					Scope scope = this.scopes.get(scopeName);
+					// 如果scope为null
+					if (scope == null) {
+						// 抛出非法状态异常：没有名为'scopeName'的scope注册
+						throw new IllegalStateException("No Scope registered for scope name '" + scopeName + "'");
+					}
+					try {
+						// 从scope中获取beanName对应的实例对象
+						Object scopedInstance = scope.get(beanName, () -> {
+							// 创建Prototype对象前的准备工作，默认实现 将beanName添加到prototypesCurrentlyInCreation中
+							beforePrototypeCreation(beanName);
+							try {
+								// 为mbd(和参数)创建一个bean实例
+								return createBean(beanName, mbd, args);
+							}
+							finally {
+								// 创建完prototype实例后的回调，默认是将beanName从prototypesCurrentlyInCreation移除
+								afterPrototypeCreation(beanName);
+							}
+						});
+						// 从beanInstance中获取公开的Bean对象，主要处理beanInstance是FactoryBean对象的情况，如果不是
+						// FactoryBean会直接返回beanInstance实例
+						bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd);
+					}
+					catch (IllegalStateException ex) {
+						// 捕捉非法状态异常
+						// 抛出Bean创建异常：作用域 'scopeName' 对于当前线程是不活动的；如果您打算从单个实例引用它，请考虑为此
+						// beanDefinition一个作用域代理
+						throw new BeanCreationException(beanName,
+								"Scope '" + scopeName + "' is not active for the current thread; consider " +
+								"defining a scoped proxy for this bean if you intend to refer to it from a singleton",
+								ex);
+					}
+				}
+			}
+			catch (BeansException ex) {
+				// 捕捉获取Bean对象抛出的Bean异常
+				// 在Bean创建失败后，对缓存的元数据执行适当的清理
+				cleanupAfterBeanCreationFailure(beanName);
+				// 重新抛出ex
+				throw ex;
+			}
+		}
+
+		// Check if required type matches the type of the actual bean instance.
+		// 检查requiredType是否与实际Bean实例的类型匹配
+		// 如果requiredType不为null&&bean不是requiredType的实例
+		if (requiredType != null && !requiredType.isInstance(bean)) {
+			try {
+				// 获取此BeanFactory使用的类型转换器，将bean转换为requiredType
+				T convertedBean = getTypeConverter().convertIfNecessary(bean, requiredType);
+				// 如果convertedBean为null
+				if (convertedBean == null) {
+					// 抛出Bean不是必要类型的异常
+					throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
+				}
+				// 返回convertedBean
+				return convertedBean;
+			}
+			catch (TypeMismatchException ex) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Failed to convert bean '" + name + "' to required type '" +
+							ClassUtils.getQualifiedName(requiredType) + "'", ex);
+				}
+				throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
+			}
+		}
+		// 将bean返回出去
+		return (T) bean;
+	}
+```
+
+###### 从一二三级缓存中依次查找对象
+
+DefaultSingletonBeanRegistry.getSingleton()方法。从三级缓存中找到对象之后还会调用ObjectFactory的getObject()方法得到单例对象。放到二级缓存中，同时从三级缓存中移除。
+
+```java
+protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// Quick check for existing instance without full singleton lock
+		// 从单例对象缓存（一级缓存）中获取beanName对应的单例对象
+		Object singletonObject = this.singletonObjects.get(beanName);
+		// 如果单例对象缓存中没有，并且该beanName对应的单例bean正在创建中
+		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// 从早期单例对象缓存（二级缓存）中获取单例对象（之所称成为早期单例对象，是因为earlySingletonObjects里的对象的都是通过提前曝光的ObjectFactory创建出来的，还未进行属性填充等操作）
+			singletonObject = this.earlySingletonObjects.get(beanName);
+			// 如果在早期单例对象缓存中也没有，并且允许创建早期单例对象引用
+			if (singletonObject == null && allowEarlyReference) {
+				// 如果为空，则锁定全局变量并进行处理
+				synchronized (this.singletonObjects) {
+					// Consistent creation of early reference within full singleton lock
+					singletonObject = this.singletonObjects.get(beanName);
+					if (singletonObject == null) {
+						singletonObject = this.earlySingletonObjects.get(beanName);
+						if (singletonObject == null) {
+							// 当某些方法需要提前初始化的时候则会调用addSingletonFactory方法将对应的ObjectFactory初始化策略存储在singletonFactories
+							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+							if (singletonFactory != null) {
+								// 如果存在单例对象工厂，则通过工厂创建一个单例对象
+								singletonObject = singletonFactory.getObject();
+								// 记录在缓存中，二级缓存和三级缓存的对象不能同时存在
+								this.earlySingletonObjects.put(beanName, singletonObject);
+								// 从三级缓存中移除
+								this.singletonFactories.remove(beanName);
+							}
+						}
+					}
+				}
+			}
+		}
+		return singletonObject;
+	}
+```
+
+###### 对象实例化时放入到三级缓存中
+
+AbstractAutowireCapableBeanFactory.doCreateBean()方法.对于符合循环依赖条件的bean，会往三级缓存中放入一个lambda表达式返回的ObjectFactory对象
+
+```java
+// ... 省略非关键代码
+// 判断当前bean是否需要提前曝光：单例&允许循环依赖&当前bean正在创建中，检测循环依赖	
+boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
+        isSingletonCurrentlyInCreation(beanName));
+if (earlySingletonExposure) {
+    if (logger.isTraceEnabled()) {
+        logger.trace("Eagerly caching bean '" + beanName +
+                "' to allow for resolving potential circular references");
+    }
+    // 为避免后期循环依赖，可以在bean初始化完成前将创建实例的ObjectFactory加入工厂
+    addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+
+    synchronized (this.singletonObjects) {
+        if (!this.singletonObjects.containsKey(beanName)) {
+            //实例化后的对象先添加到三级缓存中，三级缓存对应beanName的是一个lambda表达式(能够触发创建代理对象的机制)
+            this.singletonFactories.put(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+            this.registeredSingletons.add(beanName);
+        }
+    }
+
+}
+
+// Initialize the bean instance.
+// 初始化bean实例
+Object exposedObject = bean;
+try {
+    // 对bean的属性进行填充，将各个属性值注入，其中，可能存在依赖于其他bean的属性，则会递归初始化依赖的bean
+    populateBean(beanName, mbd, instanceWrapper);
+    // 执行初始化逻辑
+    exposedObject = initializeBean(beanName, exposedObject, mbd);
+}
+catch (Throwable ex) {
+    if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
+        throw (BeanCreationException) ex;
+    }
+    else {
+        throw new BeanCreationException(
+                mbd.getResourceDescription(), beanName, "Initialization of bean failed", ex);
+    }
+}
+```
+
+###### 何时放入一级缓存
+
+AbstractBeanFactory的doGetBean()方法中。运行createBean方法后，会调用getSingleton方法。
+
+```java
+// 创建bean的实例对象
+if (mbd.isSingleton()) {
+    // 返回以beanName的(原始)单例对象，如果尚未注册，则使用singletonFactory创建并注册一个对象:
+    sharedInstance = getSingleton(beanName, () -> {
+        try {
+            // 为给定的合并后BeanDefinition(和参数)创建一个bean实例
+            return createBean(beanName, mbd, args);
+        }
+        catch (BeansException ex) {
+            // Explicitly remove instance from singleton cache: It might have been put there
+            // eagerly by the creation process, to allow for circular reference resolution.
+            // Also remove any beans that received a temporary reference to the bean.
+            // 显示地从单例缓存中删除实例：它可能是由创建过程急切地放在那里，以允许循环引用解析。还要删除
+            // 接收到该Bean临时引用的任何Bean
+            // 销毁给定的bean。如果找到相应的一次性Bean实例，则委托给destoryBean
+            destroySingleton(beanName);
+            // 重新抛出ex
+            throw ex;
+        }
+    });
+    // 从beanInstance中获取公开的Bean对象，主要处理beanInstance是FactoryBean对象的情况，如果不是
+    // FactoryBean会直接返回beanInstance实例
+    bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+}
+```
+
+这里的getSingleton方法和上面的不一样，如果从一级缓存没有找到，那么会调用addSingleton()方法将其加入到一级缓存中。
+
+```java
+	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+		// 如果beanName为null，抛出异常
+		Assert.notNull(beanName, "Bean name must not be null");
+		// 使用单例对象的高速缓存Map作为锁，保证线程同步
+		synchronized (this.singletonObjects) {
+			// 从单例对象的高速缓存Map中获取beanName对应的单例对象
+			Object singletonObject = this.singletonObjects.get(beanName);
+			// 如果单例对象获取不到
+			if (singletonObject == null) {
+				// 如果当前在destorySingletons中
+				if (this.singletonsCurrentlyInDestruction) {
+					throw new BeanCreationNotAllowedException(beanName,
+							"Singleton bean creation not allowed while singletons of this factory are in destruction " +
+							"(Do not request a bean from a BeanFactory in a destroy method implementation!)");
+				}
+				// 如果当前日志级别时调试
+				if (logger.isDebugEnabled()) {
+					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
+				}
+				// 创建单例之前的回调,默认实现将单例注册为当前正在创建中
+				beforeSingletonCreation(beanName);
+				// 表示生成了新的单例对象的标记，默认为false，表示没有生成新的单例对象
+				boolean newSingleton = false;
+				// 有抑制异常记录标记,没有时为true,否则为false
+				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
+				// 如果没有抑制异常记录
+				if (recordSuppressedExceptions) {
+					// 对抑制的异常列表进行实例化(LinkedHashSet)
+					this.suppressedExceptions = new LinkedHashSet<>();
+				}
+				try {
+					// 从单例工厂中获取对象
+					singletonObject = singletonFactory.getObject();
+					// 生成了新的单例对象的标记为true，表示生成了新的单例对象
+					newSingleton = true;
+				}
+				catch (IllegalStateException ex) {
+					// Has the singleton object implicitly appeared in the meantime ->
+					// if yes, proceed with it since the exception indicates that state.
+					// 同时，单例对象是否隐式出现 -> 如果是，请继续操作，因为异常表明该状态
+					// 尝试从单例对象的高速缓存Map中获取beanName的单例对象
+					singletonObject = this.singletonObjects.get(beanName);
+					// 如果获取失败，抛出异常
+					if (singletonObject == null) {
+						throw ex;
+					}
+				}
+				// 捕捉Bean创建异常
+				catch (BeanCreationException ex) {
+					// 如果没有抑制异常记录
+					if (recordSuppressedExceptions) {
+						// 遍历抑制的异常列表
+						for (Exception suppressedException : this.suppressedExceptions) {
+							// 将抑制的异常对象添加到 bean创建异常 中，这样做的，就是相当于 '因XXX异常导致了Bean创建异常‘ 的说法
+							ex.addRelatedCause(suppressedException);
+						}
+					}
+					// 抛出异常
+					throw ex;
+				}
+				finally {
+					// 如果没有抑制异常记录
+					if (recordSuppressedExceptions) {
+						// 将抑制的异常列表置为null，因为suppressedExceptions是对应单个bean的异常记录，置为null
+						// 可防止异常信息的混乱
+						this.suppressedExceptions = null;
+					}
+					// 创建单例后的回调,默认实现将单例标记为不在创建中
+					afterSingletonCreation(beanName);
+				}
+				// 生成了新的单例对象
+				if (newSingleton) {
+					// 将beanName和singletonObject的映射关系添加到该工厂的单例缓存中:
+					addSingleton(beanName, singletonObject);
+				}
+			}
+			// 返回该单例对象
+			return singletonObject;
+		}
+	}
+
+	/**
+	 * 将beanName和singletonObject的映射关系添加到该工厂的单例缓存中
+	 *
+	 * Add the given singleton object to the singleton cache of this factory.
+	 * <p>To be called for eager registration of singletons.
+	 * @param beanName the name of the bean
+	 * @param singletonObject the singleton object
+	 */
+	protected void addSingleton(String beanName, Object singletonObject) {
+		synchronized (this.singletonObjects) {
+			// 将映射关系添加到单例对象的高速缓存（一级缓存）中
+			this.singletonObjects.put(beanName, singletonObject);
+			// 移除beanName在单例工厂缓存中的数据（三级缓存）
+			this.singletonFactories.remove(beanName);
+			// 移除beanName在早期单例对象的高速缓存的数据（二级缓存）
+			this.earlySingletonObjects.remove(beanName);
+			// 将beanName添加到已注册的单例集中
+			this.registeredSingletons.add(beanName);
+		}
+	}
+```
+
+
+
+
+
+
+
+#### 解释Spring的三级缓存
+
+循环依赖和三级缓存相关问题，请参考[循环依赖，三级缓存，统一解答](#循环依赖，三级缓存，统一解答)。
 
 
 
 #### Spring中AOP的实现原理
 
-AOP:面向切面编程  ==补充==》OOP：面向对象编程
+[参考文章](https://zhuanlan.zhihu.com/p/523107068)
+
+在Spring中AOP的实现是依托IOC的，在Bean的初始化过程中
 
 1。你们公司中对AOP的应用
 
