@@ -39,7 +39,7 @@
 
 操作系统安装好之后，C盘大小一般为30G左右。可按如下步骤，逐步优化C盘空间。
 
-## 
+
 
 ## 虚拟内存调整
 
@@ -48,14 +48,14 @@
 1. 右击开始菜单点“系统”菜单。或者在桌面的“此电脑”上右击点“属性”。
 2. 然后选择高级系统设置。接下来的界面，windows11，10，7基本都一样了。
 3. 依次找到“高级->性能->设置"
-4. ![img](https://img-blog.csdnimg.cn/1a963c97f98c4022a4e8da559da7d1b4.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+4. ![img](https://img-blog.csdnimg.cn/1a963c97f98c4022a4e8da559da7d1b4.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 5. 在虚拟内存那边点更改
-6. ![img](https://img-blog.csdnimg.cn/b19a0bfa87794502ae885a8d44037c7e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+6. ![img](https://img-blog.csdnimg.cn/b19a0bfa87794502ae885a8d44037c7e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 7. 去掉”自动管理所有驱动器的分页文件“的勾。然后选中D盘在选择”自动管理的大小“点”设置“按钮。在选择C盘然后选择”无分页文件“点”设置“按钮。最后点”确定“
-8. ![img](https://img-blog.csdnimg.cn/f57a895ed32b49479306ddd92afde126.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+8. ![img](https://img-blog.csdnimg.cn/f57a895ed32b49479306ddd92afde126.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 9. 点确定之后可能会提示你重启，可以等所有操作都做完之后一起重启。
 
-## 
+
 
 ## 关闭系统休眠
 
@@ -64,7 +64,7 @@
 1. 打开命令提示符（管理员）。
 2. 输入如下命令：powercfg -h off
 3. 腾讯电脑管家，“空间清理->一键清理”功能。
-4. ![img](https://img-blog.csdnimg.cn/f907f524fbfa420ebb38cc911c6f33de.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+4. ![img](https://img-blog.csdnimg.cn/f907f524fbfa420ebb38cc911c6f33de.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -76,15 +76,15 @@
 
 打开软件，点“空间清理->一键清理”功能。然后点”一键扫描“
 
-![img](https://img-blog.csdnimg.cn/9ecc3818250d461b8738d87af55edf47.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/9ecc3818250d461b8738d87af55edf47.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 选择要清理的项，点立即清理。
 
-![img](https://img-blog.csdnimg.cn/b761877f4cbd4e9a916a97397ec9cf85.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/b761877f4cbd4e9a916a97397ec9cf85.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 腾讯电脑关键还有一个C盘清理功能，需要对扫描出来的大文件做单独判断。使用者需有一定经验。否则可能造成软件无法使用。
 
-![img](https://img-blog.csdnimg.cn/c11f65ba913b4f90880b2a3c9b6cca6f.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/c11f65ba913b4f90880b2a3c9b6cca6f.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -92,7 +92,7 @@
 
 打开软件，在”清理“页签的”系统“和”软件“中分别勾选要清理的项。然后点分析。出现分析结果后再点清理。
 
-![img](https://img-blog.csdnimg.cn/200019246e434e19af4189e14c012003.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/200019246e434e19af4189e14c012003.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -102,9 +102,9 @@
 
 1. 软件下载后，解压到某个目录后，即可打开。
 2. 选择”常用工具->空间回收“。先点扫描，再点清理。
-3. ![img](https://img-blog.csdnimg.cn/5b0b069d8308455d934ea732011b0f83.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+3. ![img](https://img-blog.csdnimg.cn/5b0b069d8308455d934ea732011b0f83.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-## 
+
 
 ## TreeSize Free
 
@@ -114,7 +114,7 @@
 
 打开软件后，点”选择目录“，然后选中C盘。他自动生成统计结果。
 
-![img](https://img-blog.csdnimg.cn/99adff28610f48589195f15ae03286b9.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/99adff28610f48589195f15ae03286b9.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 一般重点清理这个目录："C:\Users\Administrator\AppData"，随着软件的增多和运行，很多软件都会将自己的升级包，日志，缓存写到这个目录里面来。
 
@@ -153,7 +153,7 @@ Office是我们很多人的一个常用软件，但是目前最新版的Office20
 11. 激活成功之后，如果之前没有改过注册表的话，已经可以正常使用Office了。
 12. 如果之前修改过注册表的配置，请将其还原后，重启系统。
 13. 重启之后，请修改Office图标的超链接目标位置。将其中的部分路径改成之前注册表指向的那个路径。 例如："D:\ProgramFiles\Microsoft Office\root\Office16\OUTLOOK.EXE"
-14. ![img](https://img-blog.csdnimg.cn/cb8af3d47c8240188e3e75ccb1cca05e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+14. ![img](https://img-blog.csdnimg.cn/cb8af3d47c8240188e3e75ccb1cca05e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 15. 将所有图标链接地址都改好后，可以双击测试下，是否能正常使用。
 
 
@@ -167,7 +167,7 @@ Office是我们很多人的一个常用软件，但是目前最新版的Office20
 OneNote是微软Office的一个组件，主要用于记笔记。
 
 1. 点”文件->选项->保存和备份“，里面的目录可以配置到其他盘。
-2. ![img](https://img-blog.csdnimg.cn/20c8da3f1c4a489c829400a1369df5c0.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+2. ![img](https://img-blog.csdnimg.cn/20c8da3f1c4a489c829400a1369df5c0.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -175,7 +175,7 @@ OneNote是微软Office的一个组件，主要用于记笔记。
 
 打开软件，找到”设置“菜单。
 
-![img](https://img-blog.csdnimg.cn/9bb4c7ce96124f8e8b122ad7c9ff04e8.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/9bb4c7ce96124f8e8b122ad7c9ff04e8.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -226,10 +226,10 @@ DBeaver是一款通用的数据库管理工具，类似Navicat。只是他有免
 DBeaver是用Java开发的，当链接不同的数据库时，它会使用内置的Maven下载不同的数据库驱动。这个默认的临时目录是：C:\Users\Administrator\AppData\Roaming\DBeaverData\drivers。同时是去默认的Maven中央仓库下载的。下载速度很慢。这里建议大家做如下优化：
 
 - 打开“窗口->首选项->连接->驱动->驱动位置”，将“本地文件夹”改到其他盘。
-- ![img](https://img-blog.csdnimg.cn/5c148c62c2664f8bba2c1e36e4e2c784.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+- ![img](https://img-blog.csdnimg.cn/5c148c62c2664f8bba2c1e36e4e2c784.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 - 接着点下面的maven，然后点“添加”，将阿里云maven仓库地址加入，同时移动到最上面。http://maven.aliyun.com/nexus/content/groups/public/
 
-## 
+
 
 ## 网易有道翻译
 
@@ -241,4 +241,3 @@ DBeaver是用Java开发的，当链接不同的数据库时，它会使用内置
 
 
 
-## 

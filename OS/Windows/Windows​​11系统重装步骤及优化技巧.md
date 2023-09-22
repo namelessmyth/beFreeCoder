@@ -1,9 +1,5 @@
  
 
-[TOC]
-
-
-
 # 前言
 
 本文主要用于以下用途：
@@ -36,11 +32,11 @@
 
 Windows11桌面截图
 
-![img](https://img-blog.csdnimg.cn/c1797ec2f91a4628ad94d95c07d05c7e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/c1797ec2f91a4628ad94d95c07d05c7e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 Windows11照片功能截图
 
-![img](https://img-blog.csdnimg.cn/01657d4c7f0c4413bae432a02446510a.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://img-blog.csdnimg.cn/01657d4c7f0c4413bae432a02446510a.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
 
@@ -59,7 +55,7 @@ Windows11照片功能截图
    3. edge浏览器。内核是chrome，还有[ChatGPT插件](https://microsoftedge.microsoft.com/addons/detail/sider-chatgpt侧边栏gpt4-/dhoenijjpgpeimemopealfcbiecgceod?hl=zh-CN)。可替代chrome浏览器。
 5. 开始菜单样式改变。这一点上，个人感觉window10的磁贴设计的更好。win10的磁贴面积更大还可以左右扩展空间，可以给磁贴分类。按下win键之后，直接就能找到菜单的位置。win11的开始菜单设计的跟手机类似，分类之后需要先选文件夹，再选择里面的菜单，还不支持扩展。 
    1. 补充一张windows11的开始菜单截图。
-   2. ![img](https://img-blog.csdnimg.cn/227edd09e3004f60ae81c3d00ced4da1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+   2. ![img](https://img-blog.csdnimg.cn/227edd09e3004f60ae81c3d00ced4da1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 6. C盘空间占用更小。这一点也是因人而异，因版本而异。作为一个非常关注C盘空间的人，Win10的C盘大小我常年控制在25G左右。但这个win11经过优化可以到达18.5G。
 
 
@@ -151,7 +147,7 @@ C盘越大，产生的备份文件也就越大，恢复时间也就越长。这�
 此篇章主要写给Java程序员的，介绍常用Java开发工具。
 
 1. JDK。需要配置2个环境变量，JAVA_HOME，PATH
-2. Notepad++。强大的文本编辑器。
+2. Notepad++。强大的文本器。
 3. Intellij Idea。需要重新安装。
 4. Eclipse。绿色，配置好jdk后，双击即可运行。
 5. 工程工具：git，Maven，gradle。
