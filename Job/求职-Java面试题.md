@@ -1464,10 +1464,6 @@ IOC是一种设计思想（思想的转变）。最大的作用就是解耦（�
 
 #### 对Spring AOP的理解
 
-OOP面向对象其中一个优势就是继承，父类的代码可以被子类所复用，但平级关系类中使用相同的功能代码时会出现大量代码的重复，不利于各个模块的复用，这种情况可以使用AOP技术来解决。
-
- AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
-
 [Spring中AOP的实现原理](#Spring中AOP的实现原理)
 
 
@@ -2868,6 +2864,102 @@ if (mbd.isSingleton()) {
 #### Spring中AOP的实现原理
 
 [参考文章](https://zhuanlan.zhihu.com/p/523107068)
+
+##### 介绍，AOP是什么？
+
+AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
+
+OOP面向对象其中一个优势就是继承，父类的代码可以被子类所复用，但平级关系类中使用相同的功能代码时会出现大量代码的重复，不利于各个模块的复用，这种情况可以使用AOP技术来解决。
+
+#####  AOP概念
+
+```mermaid
+flowchart LR
+
+AOP-->Target["目标对象(Target)"]-->JoinPoint["连接点(JoinPoint)"]
+AOP-->Aspect["切面(Aspect)"]
+
+
+Aspect-->Pointcut["切入点(Pointcut)"]
+Aspect-->Advice["通知(Advice)"]
+Advice-->Before["前置通知(Before)"]
+Advice-->After["后置通知(After)"]
+Advice-->AfterRetuning["返回后通知(After Retuning)"]
+Advice-->AfterThrowing["异常抛出后通知(After Throwing)"]
+Advice-->AroundAdvice["围绕通知(Around)"]
+```
+
+如上图，AOP有如下核心概念。
+
+- **目标(Target)**：要被增强的方法所在的类，要被代理的目标对象。
+- **连接点(JoinPoint)**：哪些方法需要被AOP增强，这些方法就叫做连接点。
+- **切点(@Pointcut)**：切点是指表达式，用于匹配连接点。切点定义了哪些连接点与切面中的通知关联。
+  - 例如：`@Pointcut("execution( * com.test.dao.*(..))")`
+- **通知(Advice)**：在连接点进行具体操作的通知方式，分为前置、后置、异常、返回后、环绕这几种情况。
+  - 前置通知(@Before)。在进入连接点方法之前执行，除非它抛出异常，否则不能中断执行流。使用@Before注解使用
+  - 返回后通知(@AfterReturning)。连接点方法正常结束并且返回之后执行。如果抛异常不会执行。
+  - 异常通知(@AfterThrowing)。连接点方法抛出异常之后执行。
+  - 后置通知(@After)。无论连接点方法是通过什么方式退出的，正常返回或者抛出异常，都会执行。相当于finally。
+  - 围绕通知(@Around)。前后都执行。最强大的Advice。
+- **切面(@Aspect)**：在Spring AOP中，切面就是带有@Aspect注解的类。切面是AOP的核心，它是将要被织入到目标类连接点中的可重用模块。这些可重用模块一般封装了多个类的通用行为，含有一组或者多组API功能。例如：日志输出模块。
+- **织入(Weaving)：**将增强处理添加到目标对象中，创建一个被增强代理对象的过程
+
+##### 案例
+
+```java
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+
+@Aspect
+public class AnnoAdvice {
+    //切点
+    @Pointcut("execution( * com.test.dao.*(..))")
+    public void poincut(){}
+    //前置通知
+    @Before("poincut()")
+    public void before(JoinPoint joinPoint){        //使用JoinPoint接口实例作为参数获得目标对象的类名和方法名
+        System.out.print("这是前置通知！");
+        System.out.print("目标类：" + joinPoint.getTarget());
+        System.out.println("，被织入增强处理的目标方法为："+joinPoint.getSignature().getName());
+    }
+    //返回通知
+    @AfterReturning("poincut()")
+    public void afterReturning(JoinPoint joinPoint){//使用JoinPoint接口实例作为参数获得目标对象的类名和方法名
+        System.out.print("这是返回通知（方法不出现异常时调用）！");
+        System.out.println("被织入增强处理的目标方法为："+joinPoint.getSignature().getName());
+    }
+    /**
+     * 环绕通知
+     * ProceedingJoinPoint是JoinPoint子接口，表示可以执行目标方法
+     * 1.必须是Object类型的返回值
+     * 2.必须接收一个参数，类型为ProceedingJoinPoint
+     * 3.必须throws Throwable
+     */
+    @Around("poincut()")
+    public Object around(ProceedingJoinPoint point)throws Throwable{//使用ProceedingJoinPoint接口实例作为参数获得目标对象的类名和方法名
+        System.out.println("这是环绕通知之前的部分！");
+        //调用目标方法
+        Object object = point.proceed();
+        System.out.println("这是环绕通知之前的部分！");
+        return object;
+    }
+    //异常通知
+    @AfterThrowing("poincut()")
+    public void afterException(){
+        System.out.println("异常通知！");
+    }
+    //后置通知
+    @After("poincut()")
+    public void after(){
+        System.out.println("这是后置通知！");
+    }
+}
+```
+
+
+
+
 
 在Spring中AOP的实现是依托IOC的，在Bean的初始化过程中
 
