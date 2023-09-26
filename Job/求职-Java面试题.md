@@ -2462,13 +2462,13 @@ https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=12
 
 #### 对Spring AOP的理解
 
-[Spring中AOP的实现原理](#Spring中AOP的实现原理)
+[介绍，AOP是什么？](#介绍，AOP是什么？)
 
 
 
 #### Spring中AOP的实现原理
 
-[参考文章](https://zhuanlan.zhihu.com/p/523107068),https://zhuanlan.zhihu.com/p/444431302,https://zhuanlan.zhihu.com/p/572503780, https://blog.csdn.net/CX610602108/article/details/105904591
+[Spring AOP原理剖析](https://zhuanlan.zhihu.com/p/523107068)，[76 张图，剖析 Spring AOP 源码](https://zhuanlan.zhihu.com/p/572503780)，[Spring源码之AOP源码解析](https://blog.csdn.net/CX610602108/article/details/105904591)
 
 ##### 介绍，AOP是什么？
 
@@ -2511,7 +2511,7 @@ Advice-->AroundAdvice["围绕通知(Around)"]
 
 
 
-##### 应用场景
+##### AOP应用场景
 
 1. 日志记录：通过AOP可以在方法执行前后记录日志，避免在每个方法中手动编写日志记录代码。
 2. 事务管理：通过AOP可以在方法执行前后进行事务管理，避免在每个方法中手动编写事务管理代码。
@@ -2519,7 +2519,7 @@ Advice-->AroundAdvice["围绕通知(Around)"]
 4. 性能监控：通过AOP可以在方法执行前后进行性能监控，例如记录方法的执行时间、调用次数等指标。
 5. 异常处理：通过AOP可以统一处理方法中抛出的异常，例如将异常转换为指定的错误码或错误信息。
 6. 缓存管理：通过AOP可以在方法执行前后进行缓存管理，例如将方法的返回结果缓存起来以提高性能。
-7. 参数验证：通过AOP可以在方法执行前对参数进行验证，例如检查参数的合法性或格式是否正确。
+7. 参数验证：通过AOP可以在方法执行前对参数进行验证，例如：检查参数是否为空，是否合法，格式是否正确等。
 8. 分布式追踪：通过AOP可以在方法执行前后进行分布式追踪，例如记录方法的调用链路、跟踪ID等信息。
 9. 事件驱动：通过AOP可以在方法执行前后触发事件，例如在方法执行前发送一个通知或通知其他模块执行相应的操作。
 
@@ -2527,21 +2527,39 @@ Advice-->AroundAdvice["围绕通知(Around)"]
 
 ##### 使用案例
 
-maven依赖，pom.xml
+文章参考：https://blog.csdn.net/weixin_45203607/article/details/120248631
+
+**maven依赖，pom.xml**
+
+```xml
+    <!-- SpringBoot aop -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+```
 
 注意：不需要再添加aspectjweaver的依赖了，因为spring-boot-starter-aop中已包含，如果再添加老版本启动会报错。
 
-```xml
-        <!-- SpringBoot aop -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
+**切面代码参考**
+
+目标类
+
+```java
+@Service
+public class TargetClass {
+
+    public void method1() {
+        System.out.println("连接点1");
+    }
+    
+    public void method2() {
+        System.out.println("连接点2");
+    }
+}
 ```
 
-https://blog.csdn.net/weixin_45203607/article/details/120248631
-
-切面代码参考：
+切面类
 
 ```java
 import org.aspectj.lang.JoinPoint;
@@ -2549,12 +2567,17 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 
 @Aspect
-public class AnnoAdvice {
-    //切点
-    @Pointcut("execution( * com.test.controller.*(..))")
+@Component
+public class AspectTest {
+    /**
+    * 切点
+    */
+    @Pointcut("execution( * com.test.service.*(..))")
     public void poincut(){}
     
-    //前置通知
+    /**
+    * 前置通知
+    */
     @Before("poincut()")
 	public void before(JoinPoint joinPoint){
         System.out.println("前置通知");
@@ -2629,12 +2652,20 @@ public class AnnoAdvice {
 
 ##### 源码分析
 
-1. aop配置读取。aop的在xml中的配置是`<aop:config />`，是在Spring的IOC容器启动时，在obtainFreshBeanFactory() -> loadBeanDefinitions() -> parseBeanDefinitions() 方法中读取的。
+###### 流程图（mermaid）
 
-   1. DefaultBeanDefinitionDocumentReader.parseBeanDefinitions()方法代码（第21行）
+https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
-   2. ```java
-      /**
+###### 详细步骤解析
+
+1. 从配置中的AOP配置，封装成BeanDefinition对象。aop的在xml中的配置是`<aop:config />`。
+
+   1. 在IOC容器初始化时，是在obtainFreshBeanFactory()->loadBeanDefinitions()->parseBeanDefinitions() 方法中读取的。
+
+   2. DefaultBeanDefinitionDocumentReader.parseBeanDefinitions()方法代码（第21行）
+
+   3. ```java
+      	/**
       	 * 解析文档中的根级元素:"import"、"alias"、"bean"。
       	 * Parse the elements at the root level in the document:
       	 * "import", "alias", "bean".
@@ -2665,9 +2696,9 @@ public class AnnoAdvice {
       	}
       ```
 
-   3. 继续往里面点，找到ConfigBeanDefinitionParser.parse()就可以看到熟悉的aop元素解析了。
+   4. 继续往里面点，找到ConfigBeanDefinitionParser.parse()就可以看到熟悉的aop元素解析了。
 
-   4. ```java
+   5. ```java
       	public BeanDefinition parse(Element element, ParserContext parserContext) {
       		CompositeComponentDefinition compositeDef =
       				new CompositeComponentDefinition(element.getTagName(), parserContext.extractSource(element));
@@ -2694,17 +2725,25 @@ public class AnnoAdvice {
       	}
       ```
 
-   5. 这个方法的第6行configureAutoProxyCreator也比较重要，这是在往IOC容器中注册自动代理模式创建器，AspectjAwareAdvisorAutoProxyCreator。这里是xml配置文件，如果是注解方式则是ta的子类：AnnotationAwareAspectJAutoProxyCreator
+   6. 这个方法的第6行configureAutoProxyCreator也比较重要，这是在往IOC容器中注册自动代理模式创建器，AspectjAwareAdvisorAutoProxyCreator。这里是xml配置文件，如果是注解方式则是它的子类：AnnotationAwareAspectJAutoProxyCreator
 
-   6. 这一步骤会将配置中涉及AOP的部分，解析成为BeanDefinition对象，并加入到BeanFactory中。
+   7. 这一步骤会将配置中涉及AOP的部分，解析成为BeanDefinition对象，并加入到BeanFactory中。
 
-2. 将AOP的代理对象创建器作为BeanPostProcessor注册到容器中以便后续调用。AbstractApplicationContext.registerBeanPostProcessors()
+2. AOP相关的BeanPostProcessor注册到容器中以便后续调用。
 
-3. 对于符合切点表达式的类，创建其代理对象并替换原对象。
+   1. AbstractApplicationContext.registerBeanPostProcessors()方法内。
 
-   1. AbstractApplicationContext.finishBeanFactoryInitialization() -> AbstractAutowireCapableBeanFactory.createBean()
+3. 遍历容器中所有的切面信息，然后将切面信息保存在缓存中。
 
-   2. ```java
+   1. 这一块在处理时，会首先遍历容器中所有的类，然后判断是否切面，只有切面才会进入后面逻辑；
+
+   2. 比如示例中类似AspectTest的就是一个切面类。然后获取每个Aspect的切面列表；
+
+   3. 保存 Aspect 的切面列表到缓存 advisorsCache 中。
+
+   4. 具体的实现是在创建Bean的方法中调用的，AbstractApplicationContext.finishBeanFactoryInitialization() -> AbstractAutowireCapableBeanFactory.createBean()
+
+   5. ```java
       protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
               throws BeanCreationException {
       
@@ -2769,9 +2808,9 @@ public class AnnoAdvice {
       }
       ```
 
-   3. 第35行调用了resolveBeforeInstantiation方法。代码如下：
+   6. 第35行调用了resolveBeforeInstantiation方法。这个方法主要是在创建bean之前调用InstantiationAwareBeanPostProcessor后置处理器判断是否需要为这个类创建AOP,  也就是解析切面的过程。其主要代码如下：
 
-   4. ```java
+   7. ```java
       	/**
       	 * 调用预实例化的postprocessor，处理是否有预实例化的快捷方式对于特殊的bean 
       	 */
@@ -2787,6 +2826,7 @@ public class AnnoAdvice {
       				// 获取类型
       				Class<?> targetType = determineTargetType(beanName, mbd);
       				if (targetType != null) {
+                          ////执行InstantiationAwareBeanPostProcessor类型的后置处理器,调用before方法
       					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
       					if (bean != null) {
       						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
@@ -2800,30 +2840,496 @@ public class AnnoAdvice {
       	}
       ```
 
-   5. 
+   8. applyBeanPostProcessorsBeforeInstantiation方法
+
+   9. ```java
+      	protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
+      		for (BeanPostProcessor bp : getBeanPostProcessors()) {
+      			if (bp instanceof InstantiationAwareBeanPostProcessor) {
+      				InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+      				Object result = ibp.postProcessBeforeInstantiation(beanClass, beanName);
+      				if (result != null) {
+      					return result;
+      				}
+      			}
+      		}
+      		return null;
+      	}
+      ```
+
+   10. applyBeanPostProcessorsAfterInitialization方法
+
+   11. ```java
+       	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+       			throws BeansException {
+       		//初始化结果对象为result，默认引用existingBean
+       		Object result = existingBean;
+       		//遍历该工厂创建的bean的BeanPostProcessors列表
+       		for (BeanPostProcessor processor : getBeanPostProcessors()) {
+       			//回调BeanPostProcessor#postProcessAfterInitialization来对现有的bean实例进行包装
+       			Object current = processor.postProcessAfterInitialization(result, beanName);
+       			//一般processor对不感兴趣的bean会回调直接返回result，使其能继续回调后续的BeanPostProcessor；
+       			// 但有些processor会返回null来中断其后续的BeanPostProcessor
+       			// 如果current为null
+       			if (current == null) {
+       				//直接返回result，中断其后续的BeanPostProcessor处理
+       				return result;
+       			}
+       			//让result引用processor的返回结果,使其经过所有BeanPostProcess对象的后置处理的层层包装
+       			result = current;
+       		}
+       		//返回经过所有BeanPostProcess对象的后置处理的层层包装后的result
+       		return result;
+       	}
+       ```
+
+   12. 将获取到的切面信息加入缓存的方法：buildAspectJAdvisors()
+
+   13. ```java
+       	/**
+       	 * 寻找Aspect注解的面向对象，然后解析他的方法，通过注解来生成对应的通知器Advisor
+       	 */
+       	public List<Advisor> buildAspectJAdvisors() {
+       		// 获取切面名字列表
+       		List<String> aspectNames = this.aspectBeanNames;
+       
+       		// 缓存字段aspectNames没有值,注意实例化第一个单实例bean的时候就会触发解析切面
+       		if (aspectNames == null) {
+       			// 双重检查
+       			synchronized (this) {
+       				aspectNames = this.aspectBeanNames;
+       				if (aspectNames == null) {
+       					// 用于保存所有解析出来的Advisors集合对象
+       					List<Advisor> advisors = new ArrayList<>();
+       					// 用于保存切面的名称的集合
+       					aspectNames = new ArrayList<>();
+       					/**
+       					 * AOP功能中在这里传入的是Object对象，代表去容器中获取到所有的组件的名称，然后再
+       					 * 进行遍历，这个过程是十分的消耗性能的，所以说Spring会再这里加入了保存切面信息的缓存。
+       					 * 但是事务功能不一样，事务模块的功能是直接去容器中获取Advisor类型的，选择范围小，且不消耗性能。
+       					 * 所以Spring在事务模块中没有加入缓存来保存我们的事务相关的advisor
+       					 */
+       					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+       							this.beanFactory, Object.class, true, false);
+       					// 遍历我们从IOC容器中获取处的所有Bean的名称
+       					for (String beanName : beanNames) {
+       						// 判断当前bean是否为子类定制的需要过滤的bean
+       						if (!isEligibleBean(beanName)) {
+       							continue;
+       						}
+       						// We must be careful not to instantiate beans eagerly as in this case they
+       						// would be cached by the Spring container but would not have been weaved.
+       						// 通过beanName去容器中获取到对应class对象
+       						Class<?> beanType = this.beanFactory.getType(beanName, false);
+       						if (beanType == null) {
+       							continue;
+       						}
+       						// 判断当前bean是否使用了@Aspect注解进行标注
+       						if (this.advisorFactory.isAspect(beanType)) {
+       							aspectNames.add(beanName);
+       							// 对于使用了@Aspect注解标注的bean，将其封装为一个AspectMetadata类型。
+       							// 这里在封装的过程中会解析@Aspect注解上的参数指定的切面类型，如perthis
+       							// 和pertarget等。这些被解析的注解都会被封装到其perClausePointcut属性中
+       							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+       							// 判断@Aspect注解中标注的是否为singleton类型，默认的切面类都是singleton类型
+       							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
+       								// 将BeanFactory和当前bean封装为MetadataAwareAspect-
+       								// InstanceFactory对象，这里会再次将@Aspect注解中的参数都封装
+       								// 为一个AspectMetadata，并且保存在该factory中
+       								MetadataAwareAspectInstanceFactory factory =
+       										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+       								// 通过封装的bean获取其Advice，如@Before，@After等等，并且将这些
+       								// Advice都解析并且封装为一个个的Advisor
+       								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+       								// 如果切面类是singleton类型，则将解析得到的Advisor进行缓存，
+       								// 否则将当前的factory进行缓存，以便再次获取时可以通过factory直接获取
+       								if (this.beanFactory.isSingleton(beanName)) {
+       									this.advisorsCache.put(beanName, classAdvisors);
+       								}
+       								else {
+       									this.aspectFactoryCache.put(beanName, factory);
+       								}
+       								advisors.addAll(classAdvisors);
+       							}
+       							else {
+       								// Per target or per this.
+       								// 如果@Aspect注解标注的是perthis和pertarget类型，说明当前切面
+       								// 不可能是单例的，因而这里判断其如果是单例的则抛出异常
+       								if (this.beanFactory.isSingleton(beanName)) {
+       									throw new IllegalArgumentException("Bean with name '" + beanName +
+       											"' is a singleton, but aspect instantiation model is not singleton");
+       								}
+       								// 将当前BeanFactory和切面bean封装为一个多例类型的Factory
+       								MetadataAwareAspectInstanceFactory factory =
+       										new PrototypeAspectInstanceFactory(this.beanFactory, beanName);
+       								// 对当前bean和factory进行缓存
+       								this.aspectFactoryCache.put(beanName, factory);
+       								advisors.addAll(this.advisorFactory.getAdvisors(factory));
+       							}
+       						}
+       					}
+       					this.aspectBeanNames = aspectNames;
+       					return advisors;
+       				}
+       			}
+       		}
+       
+       		if (aspectNames.isEmpty()) {
+       			return Collections.emptyList();
+       		}
+       		// 通过所有的aspectNames在缓存中获取切面对应的Advisor，这里如果是单例的，则直接从advisorsCache
+       		// 获取，如果是多例类型的，则通过MetadataAwareAspectInstanceFactory立即生成一个
+       		List<Advisor> advisors = new ArrayList<>();
+       		for (String aspectName : aspectNames) {
+       			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
+       			// 如果是单例的Advisor bean，则直接添加到返回值列表中
+       			if (cachedAdvisors != null) {
+       				advisors.addAll(cachedAdvisors);
+       			}
+       			else {
+       				// 如果是多例的Advisor bean，则通过MetadataAwareAspectInstanceFactory生成
+       				MetadataAwareAspectInstanceFactory factory = this.aspectFactoryCache.get(aspectName);
+       				advisors.addAll(this.advisorFactory.getAdvisors(factory));
+       			}
+       		}
+       		return advisors;
+       	}
+       ```
+
+   14. 
+
+4. 接下来是创建Bean的后置处理。在这个步骤中会做下面这些事情。
+
+   1. **获取所有的切面方法**：首先会从缓存中拿到所有的切面信息，和TargetClass的所有方法进行匹配，然后找到所有需要进行AOP增强的方法。
+   2. **创建AOP代理对象**：结合TargetClass需要进行AOP的方法，选择 Cglib 或 JDK，创建 AOP 代理对象。
+   3. **执行切面**：通过“责任链 + 递归”，去执行切面。
+   4. 源码是从 doCreateBean()开始的。
 
 
 
 
-#### SpringAOP事务失效场景
+#### Spring怎么配置事务
 
-[文章参考](https://www.jianshu.com/p/5df09b132abd?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
+https://www.cnblogs.com/jtlgb/p/9882772.html
 
-本类方法内部调用。要新建一个类调用。
+注意：上面的文章是2018年发布的。实际工作中只有老项目才会使用这种xml文件配置事务的方式。可以参考[SpringBoot事务配置](#234)
 
-方法非public，不能被代理。
+Spring配置文件中关于事务配置总是由三个组成部分，分别是DataSource、TransactionManager和代理机制这三部分，无论哪种配置方式，一般变化的只是代理机制这部分。
 
-有些时候事务会配置默认的方法名开头，看一下方法名是否符合。
+DataSource、TransactionManager这两部分只是会根据数据访问方式有所变化，比如使用Hibernate进行数据访问时，DataSource实际为SessionFactory，TransactionManager的实现为HibernateTransactionManager。
 
-默认情况下，事务只会对 Error 与 RuntimeException 及其子类这些异常做出回滚。要做出如下配置：rollbackFor = Exception.class
+具体如下图：
 
-如果是CGLIB代理，不能是final，否则无法生成代理类。
+[![Spring事务配置 (2)](http://www.blogjava.net/images/blogjava_net/robbie/WindowsLiveWriter/Spring_9C9C/Spring%E4%BA%8B%E5%8A%A1%E9%85%8D%E7%BD%AE%20(2)_thumb.jpg)](http://www.blogjava.net/images/blogjava_net/robbie/WindowsLiveWriter/Spring_9C9C/Spring事务配置 (2).jpg)
 
-依赖数据库不支持事务。比如：MyISAM引擎。
+根据代理机制的不同，总结了五种Spring事务的配置方式，配置文件如下：
+
+其中
+
+```xml
+<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+    <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+    <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+</bean> 
+```
+
+可以用下面的替换
+
+```xml
+<!-- 配置数据源，使用的是alibaba的Druid(德鲁伊)数据源 -->
+<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driver}" />  
+    <property name="url" value="${jdbc.url}" />  
+    <property name="username" value="${jdbc.username}" />  
+    <property name="password" value="${jdbc.password}" /> 
+    <!-- 初始化连接大小 -->  
+    <property name="initialSize" value="${jdbc.initialSize}"></property>  
+    <!-- 连接池最大数量 -->  
+    <property name="maxActive" value="${jdbc.maxActive}"></property>  
+    <!-- 连接池最小空闲 -->  
+    <property name="minIdle" value="${jdbc.minIdle}"></property>  
+    <!-- 连接池最大空闲 -->  
+    <property name="maxIdle" value="${jdbc.maxIdle}"></property>  
+    <!-- 获取连接最大等待时间 -->  
+    <property name="maxWait" value="${jdbc.maxWait}"></property>  
+</bean>
+```
+
+ 
+
+#####   1-每个Bean都有一个代理
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <bean id="sessionFactory"  
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+    </bean>  
+
+    <!-- 定义事务管理器（声明式的事务） -->  
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <!-- 配置DAO -->
+    <bean id="userDaoTarget" class="com.bluesky.spring.dao.UserDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="userDao"  
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">  
+           <!-- 配置事务管理器 -->  
+           <property name="transactionManager" ref="transactionManager" />     
+        <property name="target" ref="userDaoTarget" />  
+         <property name="proxyInterfaces" value="com.bluesky.spring.dao.GeneratorDao" />
+        <!-- 配置事务属性 -->  
+        <property name="transactionAttributes">  
+            <props>  
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>  
+        </property>  
+    </bean>  
+</beans>
+```
+
+ 
+
+##### 2-所有Bean共享一个代理基类
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <bean id="sessionFactory"  
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+    </bean>  
+
+    <!-- 定义事务管理器（声明式的事务） -->  
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="transactionBase"  
+            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"  
+            lazy-init="true" abstract="true">  
+        <!-- 配置事务管理器 -->  
+        <property name="transactionManager" ref="transactionManager" />  
+        <!-- 配置事务属性 -->  
+        <property name="transactionAttributes">  
+            <props>  
+                <prop key="*">PROPAGATION_REQUIRED</prop>  
+            </props>  
+        </property>  
+    </bean>    
+   
+    <!-- 配置DAO -->
+    <bean id="userDaoTarget" class="com.bluesky.spring.dao.UserDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="userDao" parent="transactionBase" >  
+        <property name="target" ref="userDaoTarget" />   
+    </bean>
+</beans>
+```
 
 
 
-#### Spring Framework事务管理的实现原理是什么？
+##### 3-使用拦截器
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <bean id="sessionFactory"  
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+    </bean>  
+
+    <!-- 定义事务管理器（声明式的事务） -->  
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean> 
+   
+    <bean id="transactionInterceptor"  
+        class="org.springframework.transaction.interceptor.TransactionInterceptor">  
+        <property name="transactionManager" ref="transactionManager" />  
+        <!-- 配置事务属性 -->  
+        <property name="transactionAttributes">  
+            <props>  
+                <prop key="*">PROPAGATION_REQUIRED</prop>  
+            </props>  
+        </property>  
+    </bean>
+      
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">  
+        <property name="beanNames">  
+            <list>  
+                <value>*Dao</value>
+            </list>  
+        </property>  
+        <property name="interceptorNames">  
+            <list>  
+                <value>transactionInterceptor</value>  
+            </list>  
+        </property>  
+    </bean>  
+  
+    <!-- 配置DAO -->
+    <bean id="userDao" class="com.bluesky.spring.dao.UserDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+</beans>
+```
+
+ 
+
+##### 4-使用tx标签配置的拦截器-声明式事务
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <context:annotation-config />
+    <context:component-scan base-package="com.bluesky" />
+
+    <bean id="sessionFactory"  
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+    </bean>  
+
+    <!-- 定义事务管理器（声明式的事务） -->  
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="delete*" propagation="REQUIRED" />             <tx:method name="save*" propagation="REQUIRED" />             <tx:method name="update*" propagation="REQUIRED" />             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <aop:config>
+        <aop:pointcut id="interceptorPointCuts"
+            expression="execution(* com.bluesky.spring.dao.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice"
+            pointcut-ref="interceptorPointCuts" />        
+    </aop:config>      
+</beans>
+```
+
+ 
+
+##### 5-全注解配置
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <context:annotation-config />
+    <context:component-scan base-package="com.bluesky" />
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="sessionFactory"  
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
+        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+    </bean>  
+
+    <!-- 定义事务管理器（声明式的事务） -->  
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+</beans>
+```
+
+此时在DAO上需加上@Transactional注解，如下：
+
+```java
+package com.bluesky.spring.dao;
+
+import java.util.List;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.stereotype.Component;
+
+import com.bluesky.spring.domain.User;
+
+@Transactional
+@Component("userDao")
+public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
+
+    public List<User> listUsers() {
+        return this.getSession().createQuery("from User").list();
+    }
+}
+```
+
+
+
+
+
+#### Spring中事务的实现原理？
 
 1。事务特性--》 事务的传播属性和事务的隔离级别  serviceA  事务管理a(){serviceB.b()}   serviceB   b();
 
@@ -2833,23 +3339,104 @@ serviceA  a(){proxy.b();}  b()
 
 3。基于AOP的事务实现
 
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/67a742d85dd244f186c926f95abc8a0d.png)
+
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
 
 
 
+#### Spring中事务的失效场景
+
+[文章参考](https://baijiahao.baidu.com/s?id=1714667126401049636&wfr=spider&for=pc)
+
+事务不生效
+
+1. 类未被spring容器管理。例如：未用有效注解标记@Service。
+
+2. 方法非public，不能被代理。
+
+3. 方法为final或者static，无法被重写。
+
+4. 同一个类内部方法内部调用。
+
+   1. ```java
+      @Service
+      public class OrderServiceOrderServiceImpl implements OrderService
+          public void update(Order order){
+          	updateOrder(order);
+      	}
+      
+          @Transactional
+          public void updateOrder(Orderorder){
+      		//todo
+          }
+      }
+      
+      ```
+
+   2. updateOrder方法拥有事务的能力是因为spring aop生成代理了对象，但是这种方法直接调用了this对象的方法，所以updateOrder方法不会生成事务。如果有些场景，确实想在同一个类的某个方法中，调用它自己的另外一个方法，该怎么办呢?
+
+      1. 将updateOrder方法放到新的Service类中。
+
+      2. 在该Service类中注入自己。
+
+      3. 使用AopContext.currentProxy()获取代理对象。
+
+         1. ```java
+                public Result saveTask(SynTask task) {
+                    Result result = Result.getInstanceError();
+                    if (!CacheUtils.putNx(Constants.CONCURRENT_CACHE, task.getDataKey(), new Date())) {
+                        result.setMsg(String.format("您请求的数据正在处理中，请稍后再试！%s", task.getDataKey()));
+                        return result;
+                    }
+                    try {
+                        //一个任务一个事务
+                        result = SpringUtils.getAopProxy(this).saveData(task,null);
+                        CacheUtils.remove(Constants.CONCURRENT_CACHE, task.getDataKey());
+                        if (Result.isSuccess(result)) {
+                            saveAfter(task);
+                        }
+                    } catch (Exception e) {
+                        log.error("saveDb.task:" + task.getDataKey(), e);
+                        CacheUtils.remove(Constants.CONCURRENT_CACHE, task.getDataKey());
+                        doException(task, e);
+                    }
+                    return result;
+                }
+            
+            	public static <T> T getAopProxy(T invoker){
+                    return (T) AopContext.currentProxy();
+                }
+            ```
+
+         2. 
+
+5. 自行使用多线程调用。例如：new Thread(() -> { xxxx }).start();
+
+6. 指定了错误的传播属性。例如：Propagation.NOT_SUPPORTED
+
+7. 抛出的异常，不是会回滚的异常。需要指定：@Transactional(rollbackFor = Exception.class)
+
+8. 自行catch异常，未抛出，会导致异常无法回滚。
+
+9. 嵌套事务回滚多了。
+
+   1. 嵌套事务的默认规则是，一旦嵌套子事务发生异常，会导致事务整体回滚。
+   2. 如果想只回滚当前事务，不影响其他事务，则可以在父方法内try catch子事务方法。
+
 
 
 #### Spring事务处理有哪两种方式
 
- Spring事务的本质其实就是数据库对事务的支持，只不过Spring框架进行了封装，如果没有底层数据库对事务的支持，spring是无法提供事务功能的。
- Spring支持编程式事务管理和声明式事务管理两种方式：
- （1）编程式事务管理使用TransactionTemplate类，使用较少。
- （2）声明式事务管理建立在AOP之上的，使用较多。该方式本质是通过AOP功能对方法前后进行拦截，将事务处理的功能编织到拦截的方法中，也就是在目标方法开始之前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+Spring事务的本质其实就是数据库对事务的支持，只不过Spring框架进行了封装，如果没有底层数据库对事务的支持，spring是无法提供事务功能的。Spring支持编程式事务管理和声明式事务管理两种方式
+
+1.  编程式事务管理使用TransactionTemplate类，使用较少。
+2.  声明式事务管理建立在AOP之上的，使用较多。
+
+声明式事务本质是通过AOP功能对方法前后进行拦截，将事务处理的功能编织到拦截的方法中，也就是在目标方法开始之前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
  声明式事务最大的优点就是不需要在业务逻辑代码中掺杂事务管理的相关代码，只需在配置文件中做相关的事务规则声明或通过@Transactional注解的方式，便可以将事务规则应用到业务逻辑中。
  声明式事务管理要优于编程式事务管理，这正是spring倡导的非侵入式的开发方式，使业务代码不受污染，只要加上注解就可以获得完全的事务支持。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。
- 透彻的掌握 Spring 中@transactional 的使用
+ 透彻的掌握 Spring 中@Transactional 的使用
  https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html
 
 
@@ -2890,26 +3477,6 @@ Spring中的隔离级别
  （3） ISOLATION_READ_COMMITTED：读已提交，保证一个事务修改的数据提交后才能被另一事务读取，而且能看到该事务对已有记录的更新。
  （4） ISOLATION_REPEATABLE_READ：可重复读，保证一个事务修改的数据提交后才能被另一事务读取，但是不能看到该事务对已有记录的更新。
  （5） ISOLATION_SERIALIZABLE：一个事务在执行的过程中完全看不到其他事务对数据库所做的更新。
-
-
-
-
-
-#### Spring怎么配置事务
-
- 配置事务的方法有两种
-
-基于XML的事务配置。
-
-**基于注解方式的事务配置。**
-
-@Transactional：直接在Java源代码中声明事务的做法让事务声明和将受其影响的代码距离更近了，而且一般来说不会有不恰当的耦合的风险，因为，使用事务性的代码几乎总是被部署在事务环境中。
-
-```java
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"xmlns:aop="http://www.springframework.org/schema/aop"xmlns:tx="http://www.springframework.org/schema/tx"xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"><bean id="helloService" class="com.yintong.service.HelloService" /><bean id="txManager"class="org.springframework.jdbc.datasource.DataSourceTransactionManager"><property name="dataSource" ref="dataSource" /></bean><!-- 配置注解事务 --><tx:annotation-driventransaction-manager="txManager" />
-</beans>
-```
 
 
 
@@ -2981,6 +3548,12 @@ Spring框架中常用的注解有：
  注解分为两类：
  1、一类是使用Bean，即是把已经在xml文件中配置好的Bean拿来用，完成属性、方法的组装；比如@Autowired , @Resource，可以通过byTYPE（@Autowired）、byNAME（@Resource）的方式获取Bean；
  2、一类是注册Bean,@Component , @Repository , @ Controller , @Service ,  @Configration这些注解都是把你要实例化的对象转化成一个Bean，放在IoC容器中，等你要用的时候，它会和上面的@Autowired , @Resource配合到一起，把对象、属性、方法完美组装。
+
+
+
+#### @Import注解的作用与原理
+
+
 
 
 
@@ -3273,6 +3846,10 @@ https://www.mashibing.com/course/1767
 2。SpringSecurity的工作原理：过滤器
 
 https://www.mashibing.com/course/1834
+
+
+
+#### SpringBoot事务配置
 
 
 
