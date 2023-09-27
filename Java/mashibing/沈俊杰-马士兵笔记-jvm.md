@@ -872,13 +872,13 @@ JVM级别如何规范（JSR133）
 > StoreStore屏障：
 >
 > 	对于这样的语句Store1; StoreStore; Store2，
-> 																														
+> 																															
 > 	在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 >
 > LoadStore屏障：
 >
 > 	对于这样的语句Load1; LoadStore; Store2，
-> 																														
+> 																															
 > 	在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 >
 > StoreLoad屏障：
@@ -2718,6 +2718,16 @@ thread -b, 找出当前阻塞其他线程的线程
 `thread -i 1000` : 统计最近 1000ms 内的线程 CPU 时间
 
 `thread -n 3 -i 1000` : 列出 1000ms 内最忙的 3 个线程栈
+
+
+
+##### trace
+
+https://blog.csdn.net/Ryan_black/article/details/126542247
+
+
+
+##### monitor
 
 
 

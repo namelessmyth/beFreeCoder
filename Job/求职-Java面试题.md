@@ -3008,7 +3008,7 @@ https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
 
 
-#### Spring怎么配置事务
+#### Spring事务配置方法
 
 https://www.cnblogs.com/jtlgb/p/9882772.html
 
@@ -3325,31 +3325,976 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
 }
 ```
 
+##### 6-SpringBoot事务配置
 
+在SpringBoot中，事务可以使用全注解的配置方式，不需要用到配置文件。
+
+1. 确认项目依赖中有aop的依赖。
+
+2. 在一个@Configuration类中加入启用事务注解@EnableTransactionManagement
+
+   1. ```java
+      @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+      @EnableAsync(proxyTargetClass = true)
+      @EnableTransactionManagement
+      @ComponentScan(value = {"com.ruoyi", "org.jeecg.modules.jmreport"})
+      public class AgileExtApplication {
+          public static void main(String[] args) {
+              // System.setProperty("spring.devtools.restart.enabled", "false");
+              SpringApplication.run(AgileExtApplication.class, args);
+              System.out.println("(♥◠‿◠)ﾉﾞ  AgileExt-启动成功！   ლ(´ڡ`ლ)ﾞ  \n");
+          }
+      }
+      ```
+
+3. 在实际要使用事务的方法上加上注解@Transactional，此时事务已经生效
+
+4. （此步骤非必须）如果想配置全局事务，可以新建一个配置类。
+
+   1. ```java
+      package com.study.config;
+      
+      import org.aspectj.lang.annotation.Aspect;
+      import org.slf4j.Logger;
+      import org.slf4j.LoggerFactory;
+      import org.springframework.aop.Advisor;
+      import org.springframework.aop.aspectj.AspectJExpressionPointcut;
+      import org.springframework.aop.support.DefaultPointcutAdvisor;
+      import org.springframework.beans.factory.annotation.Autowired;
+      import org.springframework.context.annotation.Bean;
+      import org.springframework.stereotype.Component;
+      import org.springframework.transaction.PlatformTransactionManager;
+      import org.springframework.transaction.TransactionDefinition;
+      import org.springframework.transaction.TransactionManager;
+      import org.springframework.transaction.interceptor.*;
+      
+      import java.util.Collections;
+      import java.util.HashMap;
+      import java.util.Map;
+      
+      /**
+       * 配置全局事务
+       */
+      @Aspect
+      @Component
+      public class TransactionManagerConfig {
+      
+          private final static Logger logger = LoggerFactory.getLogger(TransactionManagerConfig.class);
+          /**
+           * 配置方法过期时间，默认-1,永不超时，单位毫秒
+           */
+          private static final int AOP_TIME_OUT = 50000;
+          /**
+           * Aop 切面切入点表达式
+           */
+          private static final String AOP_POINTCUT_EXPRESSION = "execution(* com.dw.study.service.impl.*.*(..)))";
+      
+          @Autowired
+      //    private PlatformTransactionManager transactionManager;
+          private TransactionManager transactionManager;
+      
+          @Bean
+          public TransactionInterceptor txAdvice(){
+              NameMatchTransactionAttributeSource source = new NameMatchTransactionAttributeSource();
+      
+              /** 查询方法， 只读事务，不做更新操作 */
+              RuleBasedTransactionAttribute readOnlyTx = new RuleBasedTransactionAttribute();
+              readOnlyTx.setReadOnly(true);
+              readOnlyTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+      
+              /** 增、删、改 需要的事务 */
+              RuleBasedTransactionAttribute requiredTx = new RuleBasedTransactionAttribute();
+              /** 什么异常需要回滚 */
+              requiredTx.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
+              /** 当前存在事务就使用当前事务，当前不存在事务就创建一个新的事务 */
+              requiredTx.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+              requiredTx.setTimeout(AOP_TIME_OUT);
+      
+              Map<String, TransactionAttribute> methodMap = new HashMap<>();
+      
+              /** 可以提及事务或回滚事务的方法 */
+              methodMap.put("add*", requiredTx);
+              methodMap.put("save*", requiredTx);
+              methodMap.put("creat*", requiredTx);
+              methodMap.put("update*", requiredTx);
+              methodMap.put("modify*", requiredTx);
+              methodMap.put("edit*", requiredTx);
+              methodMap.put("insert*", requiredTx);
+              methodMap.put("delete*", requiredTx);
+              methodMap.put("remove*", requiredTx);
+              methodMap.put("repair*", requiredTx);
+              methodMap.put("binding*", requiredTx);
+      
+              /** 其他方法无事务，只读 */
+              methodMap.put("*", readOnlyTx);
+              source.setNameMap(methodMap);
+      
+              TransactionInterceptor txAdvice = new TransactionInterceptor(transactionManager, source);
+              return txAdvice;
+          }
+      
+          @Bean(name = "txAdviceAdvisor")
+          public Advisor txAdviceAdvisor(TransactionInterceptor txAdvice) {
+              logger.info("===============================创建txAdviceAdvisor===================================");
+              AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+              pointcut.setExpression(AOP_POINTCUT_EXPRESSION);
+              return new DefaultPointcutAdvisor(pointcut, txAdvice);
+          }
+      }
+      ```
+
+   2. 
 
 
 
 #### Spring中事务的实现原理？
 
-1。事务特性--》 事务的传播属性和事务的隔离级别  serviceA  事务管理a(){serviceB.b()}   serviceB   b();
+##### 什么是事务
 
-serviceA  a(){proxy.b();}  b()
+一般所指的事务是数据库事务。是指一个不可分割的数据库操作序列，也是数据库并发控制的基本单位。其执行的结果必须使数据库从一种一致性状态到另一种一致性状态。事务必须满足[4个基本特性](#事务的4个基本特性)，即`ACID`（原子性、一致性、隔离性和持久性）。
 
-2。Spring中的事务的设计
+##### Spring的事务管理
 
-3。基于AOP的事务实现
+Spring并不直接支持事务，只有当数据库支持事务时，Spring才支持。他只是简化了开发人员使用事务的步骤。Spring可通过xml和注解配置和一些关键类，确保bean中涉及数据库操作的方法执行符合事务4个基本特性。例如：一个业务调用了2个Service分别操作了不同的数据，必须确保这些数据一起成功或者一起失败。具体配置可参考[Spring事务配置方法](#Spring事务配置方法)。
+
+接下来介绍Spring中和事务有关的一些关键类。
+
+##### 事务管理器
+
+事务管理器的顶层接口是TransactionManager。以下是他的类图。
 
 
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/712d28cb90ee4d42aa0c705ea19f58e8.png)
+
+PlatformTransactionManager：平台事务管理器
+
+ReactiveTransactionManager：响应式编程的事务管理器
+
+Spring中关注的重点是：PlatformTransactionManager还有他的实现类
+
+JtaTransactionManager：支持分布式事务【单个服务中的多数据源，默认只有weblogic和websphere2个实现】
+
+DataSourceTransactionManager：单数据源事务管理器。平时用的最多的就是这个，是分析的重点。
+
+```java
+public interface PlatformTransactionManager extends TransactionManager {
+
+	/**
+     *      获取事务
+	*/
+	TransactionStatus getTransaction(@Nullable TransactionDefinition definition)
+			throws TransactionException;
+
+	/**
+	 * 提交数据
+	 */
+	void commit(TransactionStatus status) throws TransactionException;
+
+	/**
+	 * 回滚数据
+	 */
+	void rollback(TransactionStatus status) throws TransactionException;
+
+}
+```
+
+##### 事务定义
+
+事务定义类为`TransactionDefinition`，在事务管理器获取事务时作为参数传入。它定义了事务的 传播属性，隔离级别，超时时间，是否只读等属性。
+
+```java
+public interface TransactionDefinition {
+
+	/**
+	 * 支持当前事务，若当前没有事务就创建一个事务
+	 */
+	int PROPAGATION_REQUIRED = 0;
+
+	/**
+	 * 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式运行	
+	 */
+	int PROPAGATION_SUPPORTS = 1;
+
+	/**
+	 * 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常
+	 */
+	int PROPAGATION_MANDATORY = 2;
+
+	/**
+	 * 创建一个新的事务，如果当前存在事务，则把当前事务挂起
+	 */
+	int PROPAGATION_REQUIRES_NEW = 3;
+
+	/**
+	 * 以非事务方式运行，如果当前存在事务，则把当前事务挂起
+	 */
+	int PROPAGATION_NOT_SUPPORTED = 4;
+
+	/**
+	 * 以非事务方式运行，如果当前存在事务，则抛出异常
+	 */
+	int PROPAGATION_NEVER = 5;
+
+	/**
+	 * 如果外层存在事务，就以嵌套事务运行，被嵌套的事务可以独立于外层事务进行提交或者回滚(保存点)，
+	 * 如果外层不存在事务,行为跟PROPAGATION_REQUIRES_NEW
+	 */
+	int PROPAGATION_NESTED = 6;
+
+
+	/**
+	 * 使用数据库默认的隔离级别
+	 */
+	int ISOLATION_DEFAULT = -1;
+
+	/**
+	 * 读未提交
+	 */
+	int ISOLATION_READ_UNCOMMITTED = 1;  // same as java.sql.Connection.TRANSACTION_READ_UNCOMMITTED;
+
+	/**
+	 * 读已提交
+	 */
+	int ISOLATION_READ_COMMITTED = 2;  // same as java.sql.Connection.TRANSACTION_READ_COMMITTED;
+
+	/**
+	 * 可重复读
+	 */
+	int ISOLATION_REPEATABLE_READ = 4;  // same as java.sql.Connection.TRANSACTION_REPEATABLE_READ;
+
+	/**
+	 * 可串行化
+	 */
+	int ISOLATION_SERIALIZABLE = 8;  // same as java.sql.Connection.TRANSACTION_SERIALIZABLE;
+
+
+	/**
+	 * 使用默认的超时时间
+	 */
+	int TIMEOUT_DEFAULT = -1;
+
+
+	/**
+	 * 获取事务的传播行为
+	 */
+	default int getPropagationBehavior() {
+		return PROPAGATION_REQUIRED;
+	}
+
+	/**
+	 * 获取事务的隔离级别
+	 */
+	default int getIsolationLevel() {
+		return ISOLATION_DEFAULT;
+	}
+
+	/**
+	 * 获取事务的超时时间
+	 */
+	default int getTimeout() {
+		return TIMEOUT_DEFAULT;
+	}
+
+	/**
+	 * 是否为只读事务
+	 */
+	default boolean isReadOnly() {
+		return false;
+	}
+
+	/**
+	 * 获取当前事务的名称
+	 */
+	@Nullable
+	default String getName() {
+		return null;
+	}
+
+	static TransactionDefinition withDefaults() {
+		return StaticTransactionDefinition.INSTANCE;
+	}
+
+}
+```
+
+TransactionDefinition的体系结构
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/bceb1638d7eb427b843c29134ef8f5a3.png)
+
+DefaultTransactionDefinition：是事务定义的默认实现
+
+DefaultTransactionAttribute：扩展了TransactionAttribute中的属性的实现
+
+@Transactional:该组件会被解析加载为对应的 `TransactionDefinition`对象。
+
+
+
+##### 事务的开启
+
+在`PlatformTransactionManager`中获取事务的时候返回的是`TransactionStatus`对象。我们来看看这个对象。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/0f56735efe53456ca987a292dcb402c7.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/528465d751fe4461b043f35c19b27d7d.png)
+
+子类中扩展了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/fe5219e1378246eca34107103c8cae1a.png)
+
+##### 事务核心方法
+
+事务核心方法： `AbstractPlatformTransactionManager.getTransaction()`
+
+```java
+	/**
+	 * This implementation handles propagation behavior. Delegates to
+	 * {@code doGetTransaction}, {@code isExistingTransaction}
+	 * and {@code doBegin}.
+	 * @see #doGetTransaction
+	 * @see #isExistingTransaction
+	 * @see #doBegin
+	 */
+	@Override
+	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition)
+			throws TransactionException {
+
+		// Use defaults if no transaction definition given.
+		// 如果没有事务定义信息则使用默认的事务管理器定义信息
+		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
+
+		// 获取事务
+		Object transaction = doGetTransaction();
+		boolean debugEnabled = logger.isDebugEnabled();
+
+		// 判断当前线程是否存在事务，判断依据为当前线程记录的连接不为空且连接中的transactionActive属性不为空
+		if (isExistingTransaction(transaction)) {
+			// Existing transaction found -> check propagation behavior to find out how to behave.
+			// 当前线程已经存在事务
+			return handleExistingTransaction(def, transaction, debugEnabled);
+		}
+
+		// Check definition settings for new transaction.
+		// 事务超时设置验证
+		if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
+			throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
+		}
+
+		// No existing transaction found -> check propagation behavior to find out how to proceed.
+		// 如果当前线程不存在事务，但是PropagationBehavior却被声明为PROPAGATION_MANDATORY抛出异常
+		if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
+			throw new IllegalTransactionStateException(
+					"No existing transaction found for transaction marked with propagation 'mandatory'");
+		}
+		// PROPAGATION_REQUIRED，PROPAGATION_REQUIRES_NEW，PROPAGATION_NESTED都需要新建事务
+		else if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
+				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
+				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+			//没有当前事务的话，REQUIRED，REQUIRES_NEW，NESTED挂起的是空事务，然后创建一个新事务
+			SuspendedResourcesHolder suspendedResources = suspend(null);
+			if (debugEnabled) {
+				logger.debug("Creating new transaction with name [" + def.getName() + "]: " + def);
+			}
+			try {
+				return startTransaction(def, transaction, debugEnabled, suspendedResources);
+			}
+			catch (RuntimeException | Error ex) {
+				// 恢复挂起的事务
+				resume(null, suspendedResources);
+				throw ex;
+			}
+		}
+		else {
+			// Create "empty" transaction: no actual transaction, but potentially synchronization.
+			// 创建一个空的事务
+			if (def.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT && logger.isWarnEnabled()) {
+				logger.warn("Custom isolation level specified but no actual transaction initiated; " +
+						"isolation level will effectively be ignored: " + def);
+			}
+			boolean newSynchronization = (getTransactionSynchronization() == SYNCHRONIZATION_ALWAYS);
+			return prepareTransactionStatus(def, null, true, newSynchronization, debugEnabled, null);
+		}
+	}
+```
+
+其中关键的方法：doGetTransaction()方法，有很多不同的实现类。我们来看下DataSourceTransactionManager的
+
+```java
+	/**
+	 * 创建一个DataSourceTransactionObject当作事务，设置是否允许保存点，然后获取连接持有器ConnectionHolder
+	 * 里面会存放JDBC的连接，设置给DataSourceTransactionObject,当然第一次是空的
+	 *
+	 * @return
+	 */
+	@Override
+	protected Object doGetTransaction() {
+		// 创建一个数据源事务对象
+		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		// 是否允许当前事务设置保持点
+		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		/**
+		 * TransactionSynchronizationManager 事务同步管理器对象(该类中都是局部线程变量)
+		 * 用来保存当前事务的信息,我们第一次从这里去线程变量中获取 事务连接持有器对象 通过数据源为key去获取
+		 * 由于第一次进来开始事务 我们的事务同步管理器中没有被存放.所以此时获取出来的conHolder为null
+		 */
+		ConnectionHolder conHolder =
+				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// 非新创建连接则写false
+		txObject.setConnectionHolder(conHolder, false);
+		// 返回事务对象
+		return txObject;
+	}
+```
+
+然后事务管理的代码
+
+```java
+	/**
+	 * Create a TransactionStatus for an existing transaction.
+	 */
+	private TransactionStatus handleExistingTransaction(
+			TransactionDefinition definition, Object transaction, boolean debugEnabled)
+			throws TransactionException {
+
+		/**
+		 * 判断当前的事务行为是不是PROPAGATION_NEVER的
+		 * 表示为不支持事务,但是当前又存在一个事务,所以抛出异常
+		 */
+		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER) {
+			throw new IllegalTransactionStateException(
+					"Existing transaction found for transaction marked with propagation 'never'");
+		}
+
+		/**
+		 * 判断当前的事务属性不支持事务,PROPAGATION_NOT_SUPPORTED,所以需要先挂起已经存在的事务
+		 */
+		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED) {
+			if (debugEnabled) {
+				logger.debug("Suspending current transaction");
+			}
+			// 挂起当前事务
+			Object suspendedResources = suspend(transaction);
+			boolean newSynchronization = (getTransactionSynchronization() == SYNCHRONIZATION_ALWAYS);
+			// 创建一个新的非事务状态(保存了上一个存在事务状态的属性)
+			return prepareTransactionStatus(
+					definition, null, false, newSynchronization, debugEnabled, suspendedResources);
+		}
+
+		/**
+		 * 当前的事务属性状态是PROPAGATION_REQUIRES_NEW表示需要新开启一个事务状态
+		 */
+		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW) {
+			if (debugEnabled) {
+				logger.debug("Suspending current transaction, creating new transaction with name [" +
+						definition.getName() + "]");
+			}
+			// 挂起当前事务并返回挂起的资源持有器
+			SuspendedResourcesHolder suspendedResources = suspend(transaction);
+			try {
+				// 创建一个新的非事务状态(保存了上一个存在事务状态的属性)
+				return startTransaction(definition, transaction, debugEnabled, suspendedResources);
+			}
+			catch (RuntimeException | Error beginEx) {
+				resumeAfterBeginException(transaction, suspendedResources, beginEx);
+				throw beginEx;
+			}
+		}
+
+		// 嵌套事务
+		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+			// 不允许就报异常
+			if (!isNestedTransactionAllowed()) {
+				throw new NestedTransactionNotSupportedException(
+						"Transaction manager does not allow nested transactions by default - " +
+						"specify 'nestedTransactionAllowed' property with value 'true'");
+			}
+			if (debugEnabled) {
+				logger.debug("Creating nested transaction with name [" + definition.getName() + "]");
+			}
+			// 嵌套事务的处理
+			if (useSavepointForNestedTransaction()) {
+				// Create savepoint within existing Spring-managed transaction,
+				// through the SavepointManager API implemented by TransactionStatus.
+				// Usually uses JDBC 3.0 savepoints. Never activates Spring synchronization.
+				// 如果没有可以使用保存点的方式控制事务回滚，那么在嵌入式事务的建立初始简历保存点
+				DefaultTransactionStatus status =
+						prepareTransactionStatus(definition, transaction, false, false, debugEnabled, null);
+				// 为事务设置一个回退点
+				status.createAndHoldSavepoint();
+				return status;
+			}
+			else {
+				// Nested transaction through nested begin and commit/rollback calls.
+				// Usually only for JTA: Spring synchronization might get activated here
+				// in case of a pre-existing JTA transaction.
+				// 有些情况是不能使用保存点操作
+				return startTransaction(definition, transaction, debugEnabled, null);
+			}
+		}
+
+		// Assumably PROPAGATION_SUPPORTS or PROPAGATION_REQUIRED.
+		if (debugEnabled) {
+			logger.debug("Participating in existing transaction");
+		}
+		if (isValidateExistingTransaction()) {
+			if (definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT) {
+				Integer currentIsolationLevel = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+				if (currentIsolationLevel == null || currentIsolationLevel != definition.getIsolationLevel()) {
+					Constants isoConstants = DefaultTransactionDefinition.constants;
+					throw new IllegalTransactionStateException("Participating transaction with definition [" +
+							definition + "] specifies isolation level which is incompatible with existing transaction: " +
+							(currentIsolationLevel != null ?
+									isoConstants.toCode(currentIsolationLevel, DefaultTransactionDefinition.PREFIX_ISOLATION) :
+									"(unknown)"));
+				}
+			}
+			if (!definition.isReadOnly()) {
+				if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()) {
+					throw new IllegalTransactionStateException("Participating transaction with definition [" +
+							definition + "] is not marked as read-only but existing transaction is");
+				}
+			}
+		}
+		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+		return prepareTransactionStatus(definition, transaction, false, newSynchronization, debugEnabled, null);
+	}
+```
+
+最后来看看 startTransaction() 方法
+
+```java
+	/**
+	 * Start a new transaction.
+	 */
+	private TransactionStatus startTransaction(TransactionDefinition definition, Object transaction,
+			boolean debugEnabled, @Nullable SuspendedResourcesHolder suspendedResources) {
+
+		// 是否需要新同步
+		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+		// 创建新的事务
+		DefaultTransactionStatus status = newTransactionStatus(
+				definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
+		// 开启事务和连接
+		doBegin(transaction, definition);
+		// 新同步事务的设置，针对于当前线程的设置
+		prepareSynchronization(status, definition);
+		return status;
+	}
+```
+
+doBegin方法开启和连接事务
+
+```java
+	@Override
+	protected void doBegin(Object transaction, TransactionDefinition definition) {
+		// 强制转化事务对象
+		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+		Connection con = null;
+
+		try {
+			// 判断事务对象没有数据库连接持有器
+			if (!txObject.hasConnectionHolder() ||
+					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
+				// 通过数据源获取一个数据库连接对象
+				Connection newCon = obtainDataSource().getConnection();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
+				}
+				// 把我们的数据库连接包装成一个ConnectionHolder对象 然后设置到我们的txObject对象中去
+				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
+			}
+
+			// 标记当前的连接是一个同步事务
+			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
+			con = txObject.getConnectionHolder().getConnection();
+
+			// 为当前的事务设置隔离级别
+			Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
+			// 设置先前隔离级别
+			txObject.setPreviousIsolationLevel(previousIsolationLevel);
+			// 设置是否只读
+			txObject.setReadOnly(definition.isReadOnly());
+
+			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
+			// so we don't want to do it unnecessarily (for example if we've explicitly
+			// configured the connection pool to set it already).
+			// 关闭自动提交
+			if (con.getAutoCommit()) {
+				//设置需要恢复自动提交
+				txObject.setMustRestoreAutoCommit(true);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
+				}
+				// 关闭自动提交
+				con.setAutoCommit(false);
+			}
+
+			// 判断事务是否需要设置为只读事务
+			prepareTransactionalConnection(con, definition);
+			// 标记激活事务
+			txObject.getConnectionHolder().setTransactionActive(true);
+
+			// 设置事务超时时间
+			int timeout = determineTimeout(definition);
+			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
+				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
+			}
+
+			// Bind the connection holder to the thread.
+			// 绑定我们的数据源和连接到我们的同步管理器上，把数据源作为key,数据库连接作为value 设置到线程变量中
+			if (txObject.isNewConnectionHolder()) {
+				// 将当前获取到的连接绑定到当前线程
+				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
+			}
+		}
+
+		catch (Throwable ex) {
+			if (txObject.isNewConnectionHolder()) {
+				// 释放数据库连接
+				DataSourceUtils.releaseConnection(con, obtainDataSource());
+				txObject.setConnectionHolder(null, false);
+			}
+			throw new CannotCreateTransactionException("Could not open JDBC Connection for transaction", ex);
+		}
+	}
+```
+
+注意：在上述doBegin方法源码中的第42行关闭了自动提交，同时第60行把连接绑定到本地线程中bindResource方法
+
+##### 业务代码使用事务
+
+业务代码使用事务的方式有如下2种，一种是编程式事务，另一种是AOP事务。
+
+###### 编程式事务
+
+编程式事务要求开发人员手动使用事务管理器，创建事务，开始事务和结束事务。Spring只需要提前配置并实例化好事务管理器Bean，然后注入到Service中即可。参考如下案例代码：insertUser()方法为主要业务方法，其中调用了2个方法分别负责插入用户和插入业务日志。
+
+```java
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private PlatformTransactionManager txManager;
+
+	@Autowired
+	private LogService logService;
+
+	@Transactional
+	public void insertUser(User u) {
+
+		// 1、创建事务定义
+		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+
+		// 2、根据定义开启事务
+		TransactionStatus status = txManager.getTransaction(definition);
+
+		try {
+			this.userDao.insert(u);
+			Log log = new Log(System.currentTimeMillis() + "", System.currentTimeMillis() + "-" + u.getUserName());
+			// this.doAddUser(u);
+			this.logService.insertLog(log);
+			// 3、提交事务
+			txManager.commit(status);
+		} catch (Exception e) {
+			// 4、异常了，回滚事务
+			txManager.rollback(status);
+			throw e;
+		}
+	}
+```
+
+###### AOP事务
+
+接下来是AOP事务，给事务方法加上@Transactional注解之后。来看看在Spring中这块是如何处理的。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/ab7ee927c3424e0485c1667a1119ebc3.png)
+
+通过Debug的方式可以看到，在调用@Transactional标记的方法之前，Spring自动创建了Cglib代理对象，调用的是代理对象的insertUser方法，处理的关键流程 `org.springframework.transaction.interceptor.TransactionInterceptor` 就是事务处理的Advisor。下面是的他的invoke方法。
+
+```java
+@Override
+	@Nullable
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		// Work out the target class: may be {@code null}.
+		// The TransactionAttributeSource should be passed the target class
+		// as well as the method, which may be from an interface.
+		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
+
+		// Adapt to TransactionAspectSupport's invokeWithinTransaction...
+		return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
+	}
+```
+
+进入到TransactionAspectSupport.invokeWithinTransaction()方法中，其中第46行，会调用具体的业务方法完成事务操作。
+
+```java
+	@Nullable
+	protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
+			final InvocationCallback invocation) throws Throwable {
+
+		// If the transaction attribute is null, the method is non-transactional.
+		// 获取我们的事务属性源对象
+		TransactionAttributeSource tas = getTransactionAttributeSource();
+		// 通过事务属性源对象获取到当前方法的事务属性信息
+		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+		// 获取我们配置的事务管理器对象
+		final TransactionManager tm = determineTransactionManager(txAttr);
+
+		if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
+			ReactiveTransactionSupport txSupport = this.transactionSupportCache.computeIfAbsent(method, key -> {
+				if (KotlinDetector.isKotlinType(method.getDeclaringClass()) && KotlinDelegate.isSuspend(method)) {
+					throw new TransactionUsageException(
+							"Unsupported annotated transaction on suspending function detected: " + method +
+							". Use TransactionalOperator.transactional extensions instead.");
+				}
+				ReactiveAdapter adapter = this.reactiveAdapterRegistry.getAdapter(method.getReturnType());
+				if (adapter == null) {
+					throw new IllegalStateException("Cannot apply reactive transaction to non-reactive return type: " +
+							method.getReturnType());
+				}
+				return new ReactiveTransactionSupport(adapter);
+			});
+			return txSupport.invokeWithinTransaction(
+					method, targetClass, invocation, txAttr, (ReactiveTransactionManager) tm);
+		}
+
+		PlatformTransactionManager ptm = asPlatformTransactionManager(tm);
+		// 获取连接点的唯一标识  类名+方法名
+		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
+
+		// 声明式事务处理
+		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
+			// Standard transaction demarcation with getTransaction and commit/rollback calls.
+			// 创建TransactionInfo
+			TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
+
+			Object retVal;
+			try {
+				// This is an around advice: Invoke the next interceptor in the chain.
+				// This will normally result in a target object being invoked.
+				// 执行被增强方法,调用具体的业务处理逻辑
+				retVal = invocation.proceedWithInvocation();
+			}
+			catch (Throwable ex) {
+				// target invocation exception
+				// 异常回滚
+				completeTransactionAfterThrowing(txInfo, ex);
+				throw ex;
+			}
+			finally {
+				//清除事务信息，恢复线程私有的老的事务信息
+				cleanupTransactionInfo(txInfo);
+			}
+
+			if (retVal != null && vavrPresent && VavrDelegate.isVavrTry(retVal)) {
+				// Set rollback-only in case of Vavr failure matching our rollback rules...
+				TransactionStatus status = txInfo.getTransactionStatus();
+
+				if (status != null && txAttr != null) {
+					retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
+				}
+			}
+
+			//成功后提交，会进行资源储量，连接释放，恢复挂起事务等操作
+			commitTransactionAfterReturning(txInfo);
+			return retVal;
+		}
+
+		else {
+			// 编程式事务处理
+			Object result;
+			final ThrowableHolder throwableHolder = new ThrowableHolder();
+
+			// It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
+			try {
+				result = ((CallbackPreferringPlatformTransactionManager) ptm).execute(txAttr, status -> {
+					TransactionInfo txInfo = prepareTransactionInfo(ptm, txAttr, joinpointIdentification, status);
+					try {
+						Object retVal = invocation.proceedWithInvocation();
+						if (retVal != null && vavrPresent && VavrDelegate.isVavrTry(retVal)) {
+							// Set rollback-only in case of Vavr failure matching our rollback rules...
+							retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
+						}
+						return retVal;
+					}
+					catch (Throwable ex) {
+						if (txAttr.rollbackOn(ex)) {
+							// A RuntimeException: will lead to a rollback.
+							if (ex instanceof RuntimeException) {
+								throw (RuntimeException) ex;
+							}
+							else {
+								throw new ThrowableHolderException(ex);
+							}
+						}
+						else {
+							// A normal return value: will lead to a commit.
+							throwableHolder.throwable = ex;
+							return null;
+						}
+					}
+					finally {
+						cleanupTransactionInfo(txInfo);
+					}
+				});
+			}
+			catch (ThrowableHolderException ex) {
+				throw ex.getCause();
+			}
+			catch (TransactionSystemException ex2) {
+				if (throwableHolder.throwable != null) {
+					logger.error("Application exception overridden by commit exception", throwableHolder.throwable);
+					ex2.initApplicationException(throwableHolder.throwable);
+				}
+				throw ex2;
+			}
+			catch (Throwable ex2) {
+				if (throwableHolder.throwable != null) {
+					logger.error("Application exception overridden by commit exception", throwableHolder.throwable);
+				}
+				throw ex2;
+			}
+
+			// Check result state: It might indicate a Throwable to rethrow.
+			if (throwableHolder.throwable != null) {
+				throw throwableHolder.throwable;
+			}
+			return result;
+		}
+	}
+```
+
+然后进入到createTransactionIfNecessary方法中
+
+```java
+	protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
+			@Nullable TransactionAttribute txAttr, final String joinpointIdentification) {
+
+		// If no name specified, apply method identification as transaction name.
+		// 如果没有名称指定则使用方法唯一标识，并使用DelegatingTransactionAttribute封装txAttr
+		if (txAttr != null && txAttr.getName() == null) {
+			txAttr = new DelegatingTransactionAttribute(txAttr) {
+				@Override
+				public String getName() {
+					return joinpointIdentification;
+				}
+			};
+		}
+
+		TransactionStatus status = null;
+		if (txAttr != null) {
+			if (tm != null) {
+				// 获取TransactionStatus事务状态信息
+				status = tm.getTransaction(txAttr);
+			}
+			else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skipping transactional joinpoint [" + joinpointIdentification +
+							"] because no transaction manager has been configured");
+				}
+			}
+		}
+		// 根据指定的属性与status准备一个TransactionInfo，
+		return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
+	}
+```
+
+其中第19行，进入 getTransaction()这个方法，开始事务。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/a0af6c811b074cf782580ccdf38e90de.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/1ba112271bd84fc2b81fe23fce18b781.png)
+
+核心的是doBegin方法。完成 自动提交的关闭和 本地线程 对象的存储
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/0b073b2cd1b94972bc126d0c3f6fe128.png)
+
+##### TransactionInterceptor
+
+既然事务是通过TransactionInterceptor来创建的。那TransactionInterceptor是如何注入到容器中的？
+
+首先来看看事务的开启注解@EnableTransactionManagement
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/873078b64d084742b11b5f02f988041a.png)
+
+可以看到这个注解导入了一个TransactionManagementConfigurationSelector类。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/7900ce15958745c58d18b9c31c4a5df6.png)
+
+这个TransactionManagementConfigurationSelector的selectImports方法内部，引入了一个重要类，ProxyTransactionManagementConfiguration
+
+```java
+	@Override
+	protected String[] selectImports(AdviceMode adviceMode) {
+		switch (adviceMode) {
+			case PROXY:
+				return new String[] {AutoProxyRegistrar.class.getName(),
+						ProxyTransactionManagementConfiguration.class.getName()};
+			case ASPECTJ:
+				return new String[] {determineTransactionAspectClass()};
+			default:
+				return null;
+		}
+	}
+```
+
+这个类是一个配置类，注册了事务的一些相关类，上文提到的TransactionInterceptor是其中之一。
+
+```java
+/**
+ * 代理事务配置，注册事务需要用的一些类，而且Role=ROLE_INFRASTRUCTURE都是属于内部级别的
+ */
+@Configuration(proxyBeanMethods = false)
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration {
+
+	/**
+	 * 配置事务属性通知器，存放事务注解的方法相关的属性
+	 * @return
+	 */
+	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(
+			TransactionAttributeSource transactionAttributeSource, TransactionInterceptor transactionInterceptor) {
+
+		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
+		advisor.setTransactionAttributeSource(transactionAttributeSource);
+		advisor.setAdvice(transactionInterceptor);
+		if (this.enableTx != null) {
+			advisor.setOrder(this.enableTx.<Integer>getNumber("order"));
+		}
+		return advisor;
+	}
+
+	@Bean
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public TransactionAttributeSource transactionAttributeSource() {
+		return new AnnotationTransactionAttributeSource();
+	}
+
+	/**
+	 * 配置事务拦截器，实现了方法拦截器
+	 */
+	@Bean
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public TransactionInterceptor transactionInterceptor(TransactionAttributeSource transactionAttributeSource) {
+		TransactionInterceptor interceptor = new TransactionInterceptor();
+		interceptor.setTransactionAttributeSource(transactionAttributeSource);
+		if (this.txManager != null) {
+			interceptor.setTransactionManager(this.txManager);
+		}
+		return interceptor;
+	}
+}
+```
+
+到这分析结束。
 
 
 
 #### Spring中事务的失效场景
 
 [文章参考](https://baijiahao.baidu.com/s?id=1714667126401049636&wfr=spider&for=pc)
-
-事务不生效
 
 1. 类未被spring容器管理。例如：未用有效注解标记@Service。
 
@@ -3434,10 +4379,14 @@ Spring事务的本质其实就是数据库对事务的支持，只不过Spring�
 2.  声明式事务管理建立在AOP之上的，使用较多。
 
 声明式事务本质是通过AOP功能对方法前后进行拦截，将事务处理的功能编织到拦截的方法中，也就是在目标方法开始之前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
- 声明式事务最大的优点就是不需要在业务逻辑代码中掺杂事务管理的相关代码，只需在配置文件中做相关的事务规则声明或通过@Transactional注解的方式，便可以将事务规则应用到业务逻辑中。
- 声明式事务管理要优于编程式事务管理，这正是spring倡导的非侵入式的开发方式，使业务代码不受污染，只要加上注解就可以获得完全的事务支持。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。
- 透彻的掌握 Spring 中@Transactional 的使用
- https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html
+
+声明式事务最大的优点就是不需要在业务逻辑代码中掺杂事务管理的相关代码，只需在配置文件中做相关的事务规则声明或通过@Transactional注解的方式，便可以将事务规则应用到业务逻辑中。
+
+声明式事务管理要优于编程式事务管理，这正是spring倡导的非侵入式的开发方式，使业务代码不受污染，只要加上注解就可以获得完全的事务支持。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。
+
+透彻的掌握 Spring 中@Transactional 的使用
+
+https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html
 
 
 
@@ -3470,7 +4419,7 @@ Spring事务的本质其实就是数据库对事务的支持，只不过Spring�
 
 
 
-Spring中的隔离级别
+#### Spring中的隔离级别
 
  （1） ISOLATION_DEFAULT：这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。
  （2） ISOLATION_READ_UNCOMMITTED：读未提交，允许另外一个事务可以看到这个事务未提交的数据。
@@ -3486,15 +4435,93 @@ Spring中的隔离级别
 
 #### BeanFactory和FactoryBean的区别
 
+##### Bean Factory
+
+在Spring中，Bean Factory是负责创建和管理Bean实例的核心容器。它是Spring框架的基础，提供了依赖注入和控制反转等重要特性。Bean Factory负责根据配置信息创建和维护Bean对象的生命周期。
+
+Bean Factory的主要作用是将Bean的定义、依赖关系和配置信息解耦，使得应用程序的组件可以通过接口而不是直接依赖具体的实现类。它使用了延迟初始化和懒加载的策略，只有在需要时才会创建Bean实例。
+
+##### FactoryBean
+
+FactoryBean是一个特殊的Bean，它实现了Spring的FactoryBean接口。通过实现这个接口，我们可以自定义Bean的创建过程，灵活地控制Bean的实例化和配置。
+
+FactoryBean的实现类是一个工厂，它负责产生其他Bean的实例。当我们在Spring配置文件中定义一个FactoryBean时，实际上创建的是这个工厂Bean本身。当需要使用这个Bean时，Spring容器会调用FactoryBean的getObject()方法来获取由工厂Bean产生的实例对象。
+
+相比于普通的Bean，FactoryBean更加灵活和强大。我们可以在getObject()方法中编写自定义的逻辑来决定实例化哪个对象，并可以对其进行进一步的配置和处理。
+
+##### 相同点：都是用来创建bean对象的
+
+无论是beanFactory还是FactoryBean，**它们的共同点在于都是用来创建bean对象的。**beanFactory是Spring框架中的一个顶级接口，提供了创建和管理bean的基本功能。而FactoryBean则是一个扩展接口，通过实现该接口，我们可以对bean的创建过程进行更加灵活的控制。
+
+那么，beanFactory和FactoryBean有哪些区别呢？下面我们详细对比一下它们的不同点。
+
+##### 区别一：生命周期流程的“严格性”
+
+使用beanFactory创建对象时，需要遵循严格的生命周期流程。它会按照预定的顺序执行各个生命周期阶段，包括实例化、属性填充、初始化和销毁等。这种**严格的生命周期管理确保了bean的正确创建和销毁，但也使得自定义对象的创建变得复杂。**
+
+而在FactoryBean中，我们可以更加自由地定义对象的创建过程。通过实现FactoryBean接口，我们可以在getObject()方法中编写自定义的创建逻辑，从而实现更加灵活的对象创建方式。这使得我们能够**根据需求定制对象的创建过程，而不需要遵循严格的生命周期流程。**
+
+##### 区别二：对象的管理方式
+
+**使用beanFactory创建的对象由Spring容器负责管理，我们无需过多关心对象的创建和销毁。**Spring容器会在需要时自动创建bean，并在容器关闭时销毁它们。
+
+而FactoryBean创建的对象**同样由Spring容器管理，**但我们**需要明确地将FactoryBean注册到容器中。**这意味着我们可以通过配置文件或编码的方式明确指定要创建的bean是一个FactoryBean。Spring容器会自动检测到FactoryBean接口，并调用其getObject()方法获取实际的bean对象。
+
+##### 总结
+
+通过上述的对比，我们可以看出，beanFactory和FactoryBean在创建对象的方式、生命周期管理和对象的管理方式等方面存在一些差异。
+
+如果只需使用Spring提供的默认生命周期管理，那么直接使用beanFactory即可满足需求。但如果你希望自定义某个对象的创建过程，并将创建的对象交给Spring容器管理，那么FactoryBean将是一个更好的选择。通过实现FactoryBean接口，你可以灵活地控制对象的创建过程，满足个性化的需求。
+
+好了，本期的技术分享就到这里啦！通过对比beanFactory和FactoryBean的区别，我们更深入地理解了Spring框架中的对象创建和管理机制。希望本文能给你带来一些启发和帮助。
+
+##### 应用场景
+
+生成AOP[代理对象](https://so.csdn.net/so/search?q=代理对象&spm=1001.2101.3001.7020)的ProxyFactoryBean
+
+生成mapper代理对象的MapperFactoryBean
+
+比如 MyBatis3 提供 mybatis-spring项目中的org.mybatis.spring.SqlSessionFactoryBean
+
+```java
+public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+	// ...省略其他代码
+	
+	public SqlSessionFactory getObject() throws Exception {
+        if (this.sqlSessionFactory == null) {
+          afterPropertiesSet();
+        }
+
+		return this.sqlSessionFactory;
+	}
+    
+    public void afterPropertiesSet() throws Exception {
+        // buildSqlSessionFactory()方法会根据mybatis的配置进行初始化。
+        this.sqlSessionFactory = buildSqlSessionFactory();
+    }
+
+}
+```
+
+
+
 
 
 #### InitializingBean的功能和使用场景
 
-InitializingBean是一个Spring提供的一个扩展接口。接口需要实现在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
+InitializingBean是一个Spring提供的一个扩展接口。实现这个接口需要实现一个afterPropertiesSet方法。这个方法的调用时机：
+
+- 在实例化以及属性赋值之后
+- BeanPostProcessor和before和after方法之间
+- invokeInitMethods方法之前调用
+
+应用场景
 
 afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作。
 
-这个方法可以在Bean中为static修饰的静态成员变量赋值（我们知道如果直接用@Auowired注解是不能为static修饰的成员变量赋值的）。看过spring整合mybatis的源码的可以知道很多地方都用到这个方法，例如：SqlSessionFactoryBean.afterPropertiesSet()就是对它的巧妙应用
+这个方法可以在Bean中为static修饰的静态成员变量赋值（我们知道如果直接用@Auowired注解是不能为static修饰的成员变量赋值的）。
+
+看过spring整合mybatis的源码的可以知道很多地方都用到这个方法，例如：SqlSessionFactoryBean.afterPropertiesSet()就是对它的巧妙应用
 
 
 
@@ -3502,57 +4529,31 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 Spring框架中常用的注解有：
 
-1. @Autowired：自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
-2. @Component：声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
-3. @Controller：声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
-4. @Service：声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
-5. @Repository：声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
-6. @Configuration：声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象。
+1. @ComponentScan(basePackages="")：扫包,也可以进行类扫描
+2. @Configuration：声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象。
+3. @Component：声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
+4. @Controller：声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
+5. @Service：声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
+6. @Repository：声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
 7. @Bean：声明一个Bean，用于在Java配置类中定义需要注入IOC容器中的Bean实例对象。
-8. @RequestMapping：用于将HTTP请求映射到对应的控制器中的处理方法上。
-9. @Value：用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
+8. @Scope(scopeName=“prototype”)：多例
+9. @Lazy(value=true) ：延迟加载
+10. @Value：用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
+11. @Autowired：自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
+12. @Qualifier：给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
+13. @Inject：和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
+14. @Named：相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
+15. MVC
+    1. @RequestMapping：用于将HTTP请求映射到对应的控制器中的处理方法上。
 
-以上是Spring框架中常用的注解，可以帮助开发者快速实现依赖注入、Bean管理、Spring MVC等功能。
-
-
-
-#### 常见Spring注解
-
- @Controller：只能用控制器类上
- @Service：只能用在业务类上
- @Repository：只能用在dao类上
- @Component：工具类的组件使用此注解
- @Bean：在方法上面使用@Bean注解代表声明一个创建bean的工厂方法，并且交给Spring容器管理；当使用此Bean时直接使用@Autowire进行注入即可。
- @Aspect：表明整个类是一个切面。
- @Component：标记该类是一个组件，spring扫描注解配置时，会标记这些类要生成bean
- @Pointcut：注解声明对应的方法为切入点。
- @Inject：和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
- @Named：相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
-
- @Component：是一个标识类是IOC容器的一个组件确保被扫描器识别,注入进来
- @Repossitory：声明dao层
- @Lazy(value=true) ：延迟加载
- @Configuration：起到配置定义的作用,细节就是@Bean创建了JavaBean的细节信息
- @ComponentScan(basePackages="")：扫包,也可以进行类扫描
- @Scope(scopeName=“singleton”)：单例
- @Scope(scopeName=“prototype”)：多例
- @Service：声明业务类
- @Autowrite：反射注入，如果找不到符合的JavaBean对象时,控制台会出现NoSuchBeanDefinitionException
- @Primary：当Spring不知道具体注入那个实现类对象,使用这个设置优先级
- @Qualifier：给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
- @Resource官方：可以使用byName或byType形式进行注入
- @ImportResource(value=“ac.xml”)：在Java类中导入xml文件中的配置
-
- 注解的分类
-
- 注解分为两类：
- 1、一类是使用Bean，即是把已经在xml文件中配置好的Bean拿来用，完成属性、方法的组装；比如@Autowired , @Resource，可以通过byTYPE（@Autowired）、byNAME（@Resource）的方式获取Bean；
- 2、一类是注册Bean,@Component , @Repository , @ Controller , @Service ,  @Configration这些注解都是把你要实例化的对象转化成一个Bean，放在IoC容器中，等你要用的时候，它会和上面的@Autowired , @Resource配合到一起，把对象、属性、方法完美组装。
-
-
-
-#### @Import注解的作用与原理
-
+16. AOP
+    1. @Aspect：表明整个类是一个切面
+    2. @Pointcut：定义切点
+    3. @Before：前置通知
+    4. @Around：环绕通知
+    5. @After：后置通知
+    6. @AfterThrowing：异常通知
+    7. @AfterReturning：返回通知
 
 
 
@@ -3568,6 +4569,12 @@ Spring框架中常用的注解有：
  @Autowired注解是按照类型（byType）装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它的required属性为false。如果我们想使用按照名称（byName）来装配，可以结合@Qualifier注解一起使用。
  （2）@Resource
   @Resource默认按照ByName自动注入，由J2EE提供，需要导入包javax.annotation.Resource。@Resource有两个重要的属性：name和type，而Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以，如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不制定name也不制定type属性，这时将通过反射机制使用byName自动注入策略。
+
+
+
+#### @Import注解的作用与原理
+
+
 
 
 
@@ -4236,6 +5243,12 @@ seata
 
 
 # 数据库
+
+## 公共
+
+#### 事务的4个基本特性
+
+
 
 ## MySQL
 
