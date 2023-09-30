@@ -473,6 +473,7 @@ public class TestPopulate {
 			throws BeansException {
 		// 调用父类构造方法，对成员变量进行初始化，进行相关的对象创建等操作。
 		super(parent);
+        // 设置应用程序上下文的配置文件路径，解析多环境
 		setConfigLocations(configLocations);
 		if (refresh) {
 			refresh();
@@ -496,7 +497,7 @@ public class TestPopulate {
 
 #### setConfigLocations
 
-设置应用程序上下文的配置文件路径。
+设置应用程序上下文的配置文件路径，解析多环境。
 
 - Spring支持通过spring.profiles.actvie多环境配置。程序需要读到正确的配置文件。
 - Spring支持在配置文件中使用占位符。例如：application-${username}.xml。程序需要根据环境变量替换。
@@ -611,10 +612,10 @@ bf1[ObtainBeanFactory初始化]-->bf2[prepareBeanFactory准备]-->bf3[[postProce
 end
 
 subgraph Bean
-bf4-->bean1[registerBeanPostProcessors]-->message>initMessageSource初始化国际化资源]-->app[initApplicationEventMulticaster初始化事件多播器]-->onrefresh[[onRefresh留给子类实现]]-->regListen[registerListeners]-->finish
+bf4-->bean1[registerBeanPostProcessors]-->message>initMessageSource初始化国际化资源]-->app[initApplicationEventMulticaster初始化事件多播器]-->onrefresh[[onRefresh留给子类实现]]-->regListen[registerListeners]-->finishBeanFactoryInitialization
 end
 
-finish-->finishRefresh-->reset[resetCommonCaches]
+finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
 ```
 
 ##### prepareRefresh()

@@ -9,9 +9,9 @@
 | 编制日期     | 2021-07-07     |
 | 编制单位     | 无             |
 | 文档分类     | 求职-面试-Java |
-| 版本号       | 1.2            |
+| 版本号       | 1.3            |
 | 最后更新人   | namelessmyth   |
-| 最后更新日期 | 2023-09-19     |
+| 最后更新日期 | 2023-09-30     |
 
 
 
@@ -21,8 +21,8 @@
 | ---- | ------------ | ---------- | ------------------------------------------ |
 | 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题   |
 | 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构     |
-| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分拆分出去。 |
-|      |              |            |                                            |
+| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分独立出去。 |
+| 1.3  | namelessmyth | 2023-09-30 | 完成Spring Framework面试题的初步整理。     |
 |      |              |            |                                            |
 |      |              |            |                                            |
 |      |              |            |                                            |
@@ -36,7 +36,7 @@
 
 #### 两个有序char数组，找出不一致的那一个元素
 
-例如：[a,b,c,d,e, f, g]，[a,b,c,d,f,g]
+例如：[a, b, c, d, e, f, g]，[a, b, c, d, f, g]
 
 
 
@@ -1315,39 +1315,39 @@ spring-->da["Data Access"]-->dad["提供对数据访问和系统集成的支持�
 spring-->Web-->webd["提供Web基础能力以及对MVC的支持"]
 ```
 
-spring beans
+###### spring beans
 
 负责Bean的定义（BeanDefinition），Bean的装配（BeanFactory），Bean的解析（BeanDefinitionReader）。Spring是面向Bean编程的，所以Bean是Spring的核心主角。
 
-Spring Context
+###### Spring Context
 
 spring-context模块构架于核心模块之上，扩展了BeanFactory，为它添加了Bean生命周期控制、框架事件体系及资源加载透明化等功能。此外，该模块还提供了许多企业级支持，如邮件访问、远程访问、任务调度等，ApplicationContext是该模块的核心接口，它的超类是BeanFactory。与BeanFactory不同，ApplicationContext实例化后会自动对所有的单实例Bean进行实例化与依赖关系的装配，使之处于待用状态。
 
-Spring Core
+###### Spring Core
 
 这个模块是其他模块基本都依赖的公共核心模块，为他们提供基础能力。
 
-Spring Expression
+###### Spring Expression
 
 SpEL，Spring的一种表达式。用来动态的获取，值、对象等。例如：@value("#{'system.key.value'}")
 
-Spring AOP
+###### Spring AOP
 
 通过配置方式将面向切面编程技术集成到了框架之中；例如：事务切面
 
-Spring aspects
+###### Spring aspects
 
 模块集成自 AspectJ 框架，主要是为 Spring AOP 提供多种 AOP 实现方法。
 
-Spring instrument
+###### Spring instrument
 
 模块是基于 JAVA SE 中的 java.lang.instrument 进行设计的，应该算是AOP 的一个支援模块，主要作用是在 JVM 启用时，生成一个代理类，程序员通过代理类在运行时修改类的字节，从而改变一个类的功能，实现 AOP 的功能。在分类里，我把他分在了 AOP 模块下，在 Spring 官方文档里对这个地方也有点含糊不清。
 
-Spring Data Access/Integration
+###### Spring Data Access/Integration
 
 此模块主要负责数据访问以及和其他系统的集成。例如：JDBC，ORM，事务，JMS的支持；在Spring源码中对应着很多子模块。
 
-Spring Web
+###### Spring Web
 
 由 spring-web、spring-webmvc、spring-websocket和spring-webflux 4个模块组成。
 spring-web 模块为 Spring 提供了最基础 Web 支持，主要建立于核心容器之上，通过 Servlet 或者 Listeners 来初始化 IOC 容器，也包含一些与 Web 相关的支持。
@@ -1355,7 +1355,7 @@ spring-webmvc 模块是一个的Web-Servlet 模 块 ， 实现了Spring MVC（mo
 spring-websocket 模块主要是与 Web 前端的全双工通讯的协议。
 spring-webflux 是一个新的非堵塞函数式 Reactive Web 框架，可以用来建立异步的，非阻塞，事件驱动的服务，并且扩展性非常好。
 
-Spring messaging
+###### Spring messaging
 
 从 Spring4 开始新加入的一个模块，主要职责是为 Spring 框架集成一些基础的报文传送应用。
 
@@ -1392,9 +1392,27 @@ IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化�
 
 在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
 
-在Spring中，BeanFactory和ApplicationContext之间的区别在于ApplicationContext在BeanFactory的基础上提供了更多的特性，例如国际化、事件机制、AOP和自动装配等功能。此外，ApplicationContext还可以管理生命周期和资源，提供了更方便的方法来管理Spring应用程序。
-
 在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
+
+##### ClassPathXmlApplicationContext初始化流程
+
+~~~mermaid
+flowchart TB
+prepareRefresh-->bf1
+
+subgraph BeanFactory
+direction LR
+bf1[ObtainBeanFactory初始化]-->bf2[prepareBeanFactory准备]-->bf3[[postProcessBeanFactory]]-->bf4[invokeBeanFactoryPostProcessors]
+end
+
+subgraph Bean
+bf4-->bean1[registerBeanPostProcessors]-->message>initMessageSource初始化国际化资源]-->app[initApplicationEventMulticaster初始化事件多播器]-->onrefresh[[onRefresh留给子类实现]]-->regListen[registerListeners]-->finishBeanFactoryInitialization
+end
+
+finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
+~~~
+
+
 
 [参考文章](https://zhuanlan.zhihu.com/p/523343141?utm_id=0)
 
@@ -1468,12 +1486,12 @@ subgraph Initialization[初始化]
         BeanNameAware-->BeanClassLoaderAware-->BeanFactoryAware
     end
     subgraph bppbefore["执行BPP的before方法"]
-    	subgraph ApplicationAwarePostPRocessor
+    	subgraph ApplicationAwarePostProcessor
     		direction TB
     		EnvironmentAware-->EmbeddedValueResolverAware-->ResourceLoaderAware
     		-->ApplicationEventPublisherAware-->MessageSourceAware-->ApplicationContextAware
     	end
-        ApplicationAwarePostPRocessor-->CommonAnnotationBeanPostProcessor["CommonAnnotationBeanPostProcessor
+        ApplicationAwarePostProcessor-->CommonAnnotationBeanPostProcessor["CommonAnnotationBeanPostProcessor
         负责解析@Resource、@WebServiceRef
         、@EJB三个注解，这三个注解定义在javax.*包下"]
     end
@@ -1637,7 +1655,7 @@ https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=12
 
 
 
-#### Bean循环依赖，三级缓存，统一解答
+#### Bean循环依赖，三级缓存
 
 ##### 本文目的
 
@@ -2291,13 +2309,66 @@ if (mbd.isSingleton()) {
 
 
 
+#### Bean的作用域
+
+Bean的作用域是指Bean在Spring整个框架中的某种行为模式，比如singleton单例作用域，就表示Bean在整个Spring中只有一份，它是全局共享的，当其他人修改了这个值之后，另一个人读取到的就是被修改的值。
+Spring容器在初始化一个Bean的实例时，同时会指定该实例的作用域，Spring有六种作用域，其中有四种是基于Spring MVC 生效的，Bean的六种作用域：
+1，singleton ： 单例作用域
+2，prototype：原型作用域（多例作用域）
+3，request：请求作用域
+4，session：回话作用域
+5，application：全局作用域
+6，websocket： HTTP WebSocket 作用域
+
+##### singleton（单例作用域）
+
+● 官⽅说明：(Default) Scopes a single bean definition to a single object instance for each Spring IoC container.
+● 描述：该作⽤域下的Bean在IoC容器中只存在⼀个实例：获取Bean（即通过applicationContext.getBean等⽅法获取）及装配Bean（即通过@Autowired注⼊）都是同⼀个对象。
+● 场景：通常⽆状态的Bean使⽤该作⽤域。⽆状态表示Bean对象的属性状态不需要更新
+● 备注：Spring默认选择该作⽤域
+
+##### prototype（原型作用域（多例））
+
+● 官⽅说明：Scopes a single bean definition to any number of object instances.
+● 描述：每次对该作⽤域下的Bean的请求都会创建新的实例：获取Bean（即通过applicationContext.getBean等⽅法获取）及装配Bean（即通过@Autowired注⼊）都是新的对象实例。
+● 场景：通常有状态的Bean使⽤该作⽤域
+
+##### request（请求作用域）
+
+● 官⽅说明：Scopes a single bean definition to the lifecycle of a single HTTP request. That is, each HTTP request has its own instance of a bean created off the back of a single bean definition. Only valid in the context of a web-aware Spring ApplicationContext.
+● 描述：每次http请求会创建新的Bean实例，类似于prototype
+● 场景：⼀次http的请求和响应的共享Bean
+● 备注：限定SpringMVC中使⽤
+
+##### session（回话作用域）
+
+● 官⽅说明：Scopes a single bean definition to the lifecycle of an HTTP Session. Only valid in the context of a web-aware Spring ApplicationContext.
+● 描述：在⼀个http session中，定义⼀个Bean实例
+● 场景：⽤户回话的共享Bean, ⽐如：记录⼀个⽤户的登陆信息
+● 备注：限定SpringMVC中使⽤
+
+##### application（全局作用域）
+
+● 官⽅说明：Scopes a single bean definition to the lifecycle of a ServletContext. Only valid in the context of a web-aware Spring ApplicationContext.
+● 描述：在⼀个http servlet Context中，定义⼀个Bean实例
+● 场景：Web应⽤的上下⽂信息，⽐如：记录⼀个应⽤的共享信息
+● 备注：限定SpringMVC中使⽤
+
+##### websocket（ HTTP WebSocket 作用域）
+
+● 官⽅说明：Scopes a single bean definition to the lifecycle of a WebSocket. Only valid in the context of a web-aware Spring ApplicationContext.
+● 描述：在⼀个HTTP WebSocket的⽣命周期中，定义⼀个Bean实例
+● 场景：WebSocket的每次会话中，保存了⼀个Map结构的头信息，将⽤来包裹客户端消息
+头。第⼀次初始化后，直到WebSocket结束都是同⼀个Bean。
+● 备注：限定Spring WebSocket中使⽤
+
 
 
 #### Spring Bean的注入方式
 
-##### 基于XML的注入
-
 [文章参考](https://blog.csdn.net/a745233700/article/details/89307518)。
+
+##### 基于XML的注入
 
 - 属性注入，需要提供Set方法。无参构造函数；
 - 构造器注入；
@@ -2314,22 +2385,18 @@ if (mbd.isSingleton()) {
 
 
 
-Bean的作用域
-
-
-
-#### Spring的自动装配有哪些
+#### Spring自动装配方式
 
 在spring中，对象无需自己查找或创建与其关联的其他对象，由容器负责把需要相互协作的对象引用赋予各个对象，使用autowire来配置自动装载模式。
 
-**在Spring框架xml配置中共有5种装配方式：**
+**xml配置中共有5种装配方式：**
  （1）no：默认的方式是不进行自动装配的，需要通过手工设置ref属性来进行装配bean。
  （2）byName：通过bean的名称进行自动装配，如果一个bean的 property 与另一bean 的name 相同，就进行自动装配。
  （3）byType：通过参数的数据类型进行自动装配。使用@autowire。
  （4）constructor：利用构造函数进行装配，并且构造函数的参数通过byType进行装配。
  （5）autodetect：自动探测，如果有构造方法，通过 construct的方式自动装配，否则使用  byType的方式自动装配。参考：https://www.yiibai.com/spring/spring-autowiring-by-autodetect.html
 
-**在Spring框架中使用注解的装配方式：**
+**使用注解的装配方式：**
  使用@Autowired注解来自动装配指定的bean。在使用@Autowired注解之前需要在Spring配置文件进行配置：
  <context:annotation-config />。
  在启动spring  IoC时，容器自动装载了一个AutowiredAnnotationBeanPostProcessor后置处理器，当容器扫描到@Autowied、@Resource或@Inject时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性。
@@ -2360,18 +2427,44 @@ Bean的作用域
 
 
 
-#### 延迟和立即加载的优点
+#### 延迟加载和立即加载
 
- 延迟实例化的优点（BeanFactory）
- 应用启动的时候占用资源很少；对资源要求较高的应有，比较有优势
- 立即实例化的优点（ApplicationContext）
- 1.所有的Bean在启动的时候都加载，系统运行的速度快
- 2.在启动的时候所有Bean都加载，就能在系统启动的时候尽早的发现系统中的配置问题
- 3.建议web应用中，在启动的时候就把所有的Bean都加载了（把费时操作放到系统启动中完成）
+##### 引言
 
+在使用Spring框架进行开发时，掌握加载策略是至关重要的。Spring框架提供了两种主要的加载策略：立即加载（Eager Loading）和延迟加载（Lazy  Loading）。这两种加载策略在不同的场景下有各自的优势和适用性。本文将深入探讨Spring框架中的立即加载和延迟加载，并解释它们的用途和使用方法。
 
+##### 立即加载（Eager Loading）
 
-#### Bean实现延迟加载的方式
+立即加载是指在容器启动时就完成Bean的创建和初始化。当Spring容器启动时，会一次性创建所有配置的Bean，并将它们准备好供使用。这种加载策略适用于那些在应用程序启动时就需要被使用的Bean，如数据源、缓存、日志记录器等。立即加载确保了这些Bean在应用程序运行期间的可用性，但也可能导致资源的浪费，特别是对于那些在应用程序中很少被使用的Bean。 
+
+在Spring中，可以通过在Bean定义中使用`@Component`、`@Service`、`@Repository`等注解或在配置文件中使用`<bean>`元素来实现立即加载。例如：
+
+```java
+@Component
+public class DataSource {
+    // ...
+}
+```
+
+##### 延迟加载（Lazy Loading）
+
+延迟加载是指在第一次访问时才完成Bean的创建和初始化。相比于立即加载，延迟加载策略可以提高应用程序的启动速度和性能，因为只有当需要使用某个Bean时才会进行创建和初始化操作。延迟加载适用于那些占用资源较多、初始化较慢、或者在应用程序运行时可能不被用到的Bean。
+
+在Spring中，可以通过在Bean定义中使用`@Lazy`注解或在配置文件中使用`lazy-init="true"`属性来实现延迟加载。例如：
+
+```java
+@Component
+@Lazy
+public class HeavyResource {
+    // ...
+}
+```
+
+##### 如何选择加载策略
+
+选择合适的加载策略需要根据具体的应用场景进行考虑。一般而言，对于那些应用程序启动时必须要使用的Bean，应该选择立即加载策略。而对于那些资源消耗较大、使用频率较低、或者在特定条件下才会被使用的Bean，延迟加载策略是更好的选择。
+
+此外，还可以结合使用这两种加载策略，例如通过立即加载一部分关键的Bean，而将其他不太重要或不常用的Bean设置为延迟加载，以达到更好的性能和资源利用的平衡。
 
 
 
@@ -4499,6 +4592,205 @@ Spring框架中常用的注解有：
 
 
 
+#### 获取ApplicationContext的方式
+
+##### 属性注入
+
+@Autowired
+
+```java
+@Component
+public class Test {
+    @Autowired
+    private ApplicationContext applicationContext;
+}
+```
+
+该方式注入的实例对象在Java内存中加载顺序在静态代码块之后，所以无法使用在loadingcache等缓存操作中。
+
+##### 构造器方法注入
+
+    2、
+    
+    @Component
+    public class Test{
+        private ApplicationContext applicationContext;
+     
+        public Test(ApplicationContext applicationContext) {
+            this.applicationContext = applicationContext;
+        }
+    }
+
+ 这种方式没使用过，在此仅做记录，有这种方式可以注入ApplicationContext实例对象。
+
+##### 实现ApplicationContextAware接口
+
+手动构建类实现接口，可以设置静态属性。
+
+```java
+@Component
+public class SpringContextHolder implements ApplicationContextAware {
+ 
+    private static ApplicationContext applicationContext;
+ 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if(this.applicationContext==null){
+            this.applicationContext = applicationContext;
+        }
+    }
+ 
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+ 
+   /**
+     * 通过name获取Bean
+     *
+     * @param name
+     * @return Object 一个以所给名字注册的bean的实例
+     * @throws BeansException
+     */
+    public static Object getBean(String name) throws BeansException {
+        return getApplicationContext().getBean(name);
+    }
+    
+    public static <T> T getBean(Class<T> clazz) {
+		return context.getBean(clazz);
+	}
+ 
+	public static <T> T getBean(String name, Class<T> clazz) {
+		return context.getBean(name, clazz);
+	}
+ 
+}
+```
+
+封装SpringContextUtil 工具类
+
+```java
+@Component
+public class SpringContextUtil implements ApplicationContextAware {
+    
+    private static ApplicationContext applicationContext;
+ 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if(this.applicationContext==null){
+            this.applicationContext = applicationContext;
+        }
+    }
+ 
+    // 获取applicationContext
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+ 
+    /**
+     * 通过name获取Bean
+     *
+     * @param name
+     * @return Object 一个以所给名字注册的bean的实例
+     * @throws BeansException
+     */
+    public static Object getBean(String name) throws BeansException {
+        return getApplicationContext().getBean(name);
+    }
+ 
+    /**
+     * 通过class获取Bean.
+     * @param <T>
+     * @param clazz
+     * @return
+     */
+    public static <T> T getBean(Class<T> clazz){
+        return getApplicationContext().getBean(clazz);
+    }
+ 
+    /**
+     * 获取类型为requiredType的对象 如果bean不能被类型转换，相应的异常将会被抛出（BeanNotOfRequiredTypeException）
+     *
+     * @param name bean注册名
+     * @param requiredType 返回对象类型
+     * @return Object 返回requiredType类型对象
+     * @throws BeansException
+     */
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        return getApplicationContext().getBean(name, requiredType);
+    }
+ 
+    /**
+     * 如果BeanFactory包含一个与所给名称匹配的bean定义，则返回true
+     *
+     * @param name
+     * @return boolean
+     */
+    public boolean containsBean(String name) {
+        return getApplicationContext().containsBean(name);
+    }
+ 
+    /**
+     * 判断以给定名字注册的bean定义是一个singleton还是一个prototype。
+     * 如果与给定名字相应的bean定义没有被找到，将会抛出一个异常（NoSuchBeanDefinitionException）
+     *
+     * @param name
+     * @return boolean
+     * @throws NoSuchBeanDefinitionException
+     */
+    public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
+        return getApplicationContext().isSingleton(name);
+    }
+ 
+    /**
+     * @param name
+     * @return Class 注册对象的类型
+     * @throws NoSuchBeanDefinitionException
+     */
+    public Class getType(String name) throws NoSuchBeanDefinitionException {
+        return getApplicationContext().getType(name);
+    }
+ 
+    /**
+     * 如果给定的bean名字在bean定义中有别名，则返回这些别名
+     *
+     * @param name
+     * @return
+     * @throws NoSuchBeanDefinitionException
+     */
+    public String[] getAliases(String name) throws NoSuchBeanDefinitionException {
+        return getApplicationContext().getAliases(name);
+    }
+ 
+    /**
+     * 获取配置文件配置项的值
+     *
+     * @param key 配置项key
+     */
+    public String getEnvironmentProperty(String key) {
+        return getApplicationContext().getEnvironment().getProperty(key);
+    }
+ 
+    /**
+     * 获取配置文件配置项的值，未获取到时返回默认值
+     *
+     * @param key 配置项key
+     */
+    public String getEnvironmentProperty(String key, String defaultVal) {
+        return getEnvironmentProperty(key) == null ? defaultVal : getEnvironmentProperty(key);
+    }
+ 
+    /**
+     * 获取spring.profiles.active
+     */
+    public String getActiveProfile() {
+        return getApplicationContext().getEnvironment().getActiveProfiles()[0];
+    }
+ 
+}
+```
+
+
+
 #### @Import注解的作用与原理
 
 @Import就是用来向Spring容器中导入bean的，可以导入实现了ImportSelector接口的类、实现了ImportBeanDefinitionRegistrar接口的类 ，也可以导入一个普通类。
@@ -4761,14 +5053,6 @@ protected final SourceClass doProcessConfigurationClass(
 
 
 
-
-
-
-
-
-
-
-
 #### Spring的SpEL表达式的使用
 
 - 在@Value注解中使用
@@ -4783,52 +5067,729 @@ https://blog.csdn.net/JokerLJG/article/details/124434854
 
 ### 架构设计
 
-#### Spring事件机制是怎样的？
+#### Spring事件机制
 
-https://zhuanlan.zhihu.com/p/599880227
+##### 参考文章
 
-https://blog.51cto.com/u_13540373/6167344
+[聊透Spring事件机制](https://zhuanlan.zhihu.com/p/599880227)，[spring中的事件你真的懂吗？](https://zhuanlan.zhihu.com/p/547593002?utm_id=0)
 
-https://zhuanlan.zhihu.com/p/547593002?utm_id=0
+##### 应用场景
+
+例如：用户注册业务，当用户创建成功后，需要发邮件通知同时发送优惠卷给这个用户。参考代码如下：
+
+```java
+public void registerUser(UserModel user){
+    //新增用户方法
+    this.createUser(user);
+    //发送邮件
+    this.sendEmail(user);
+    //发送优惠卷
+    this.sendCoupon(user);
+}
+```
+
+当功能开发测试通过后，如果后续业务有调整不发送优惠卷了，你会怎么怎么做？注释发送优惠卷的代码？那邮件也不需要发了呢？继续注释？然后又要发了呢？？就会来来回回修改代码。同时这么写的话还有一个问题，就是后面2个业务发生异常，还会导致用户注册失败。
+
+使用事件机制就可以解决这个问题。当用户创建成功后可以广播一条用户注册成功的消息，后续业务A和B相当于一个监听者，只负责监听用户注册成功的消息，当听到有这个消息产生的时候，A和B就去做自己的事情。这里面注册器是感知不到A/B存在的，A和B也不用感知注册器的存在，A/B只用关注是否有人广播：`XXX注册成功了`的消息，当AB听到有人广播注册成功的消息，他们才做出反应，其他时间闲着休息。
+
+当不想给用户发送优惠券的时候，只需要将B去掉就行了，此时基本上也不用测试，注册一下B的代码就行了。若注册成功之后需要更多业务，比如还需要给用户增加积分，只需新增一个监听者C，监听到注册成功消息后，负责给用户添加积分，此时根本不用去调整注册的代码，开发者和测试人员只需要确保监听者C中的正确性就可以了。
+
+以上就是事件模式的作用。类似MQ的异步解耦，只是这个不需要额外安装消息中间件服务。
+
+##### 概述
+
+事件机制的几个概念：事件、发布器、监听器。事件是主体，发布器负责发布事件，监听器负责处理事件。
+
+```mermaid
+flowchart LR
+root["Spring事件机制"]
+root-->event["事件"]
+root-->eventPub["事件发布"]
+root-->eventListen["事件监听"]
+root-->eventProblem["事件机制问题"]
+
+event-->自定义事件
+event-->内置事件
+
+自定义事件-->继承ApplicationEvent
+自定义事件-->unknown["不指定事件类型，默认包装为<br>PayloadApplicationEvent"]
+内置事件-->ContextRefreshedEvent
+内置事件-->ContextStartedEvent
+内置事件-->ContextStoppedEvent
+内置事件-->ContextClosedEvent
+
+eventPub-->getPublisher["获取发布器"]
+eventPub-->publisher["事件广播器"]
+
+getPublisher-->autowire["通过@Autowired注入"]
+getPublisher-->awarePub["实现ApplicationEventPublisherAware接口"]
+publisher-->PubListener["事件通过广播器发送给监听器"]
+publisher-->matchListener["事件通过事件类型匹配监听器"]
+
+eventListen-->listenerDef["定义监听器"]
+eventListen-->listenAsyn["异步处理"]
+eventListen-->listenException["全局异常处理"]
+listenerDef-->实现ApplicationListener
+listenerDef-->eventListener["使用@EventListener"]
+listenAsyn-->asyncListen["使用@Async"]
+listenAsyn-->asyncTask["注入TaskExecutor"]
+listenException-->setErrHandler["setErrorHandler设置统一异常处理器"]
+
+eventProblem-->pubBlock["发布阻塞"]
+eventProblem-->pubCustom["不能定制执行线程数"]
+```
+
+##### 自定义事件
+
+流程
+
+```mermaid
+flowchart LR
+定义事件-->定义监听器关联事件-->发布事件
+```
+
+**定义自定义事件**
+
+自定义一个事件在使用上很简单，继承ApplicationEvent即可:
+
+```java
+ // 事件需要继承ApplicationEvent 
+public class MyApplicationEvent extends ApplicationEvent {
+    private Long id;
+    public MyApplicationEvent(Long id) {
+        super(id);
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+}
+```
+
+**处理自定义事件**
+
+事件发布了，谁负责处理事件呢？当然是监听器了，Spring要求监听器需要实现`ApplicationListener`接口，同时需要`通过泛型参数指定处理的事件类型`。有了监听器需要处理的事件类型信息，Spring在进行事件广播的时候，就能找到需要广播的监听器了，从而准确传递事件了。
+
+```java
+// 需要继承ApplicationListener，并指定事件类型
+public class MyEventListener implements ApplicationListener<MyApplicationEvent> {
+    // 处理指定类型的事件
+    @Override
+    public void onApplicationEvent(MyApplicationEvent event) {
+        System.out.println(Thread.currentThread().getName() + "接受到事件:"+event.getSource());
+    }
+}
+```
+
+**发布自定义事件**
+
+现在自定义事件已经有了，该如何进行发布呢？Spring提供了`ApplicationEventPublisher`进行事件的发布，我们平常使用最多的`ApplicationContext`也继承了该发布器，所以我们可以直接使用applicationContext进行事件的发布。
+
+[获取ApplicationContext的方式](#获取ApplicationContext的方式)，以下为参考代码。
+
+```java
+@RestController
+public class TestController {
+  @Autowired
+  private ApplicationContext applicationContext;
+ 
+  @GetMapping("/hello")
+  public void hello() {
+    System.out.println("业务完成，准备发送事件");
+    applicationContext.publishEvent(new MyApplicationEvent(1L));
+    System.out.println("事件发送完毕");
+  }
+}
+```
 
 
 
-#### Spring中有哪些事件？
+##### Spring内置事件
 
-https://blog.csdn.net/u012060033/article/details/111830424
+**ContextRefreshedEvent**
 
-Spring 提供了以下5种标准的事件：
-（1）上下文更新事件（ContextRefreshedEvent）：在调用ConfigurableApplicationContext 接口中的refresh()方法时被触发。
-（2）上下文开始事件（ContextStartedEvent）：当容器调用ConfigurableApplicationContext的Start()方法开始/重新开始容器时触发该事件。
-（3）上下文停止事件（ContextStoppedEvent）：当容器调用ConfigurableApplicationContext的Stop()方法停止容器时触发该事件。
-（4）上下文关闭事件（ContextClosedEvent）：当ApplicationContext被关闭时触发该事件。容器被关闭时，其管理的所有单例Bean都被销毁。
-（5）请求处理事件（RequestHandledEvent）：在Web应用中，当一个http请求（request）结束触发该事件。
-如果一个bean实现了ApplicationListener接口，当一个ApplicationEvent 被发布以后，bean会自动被通知。
+在`ConfigurableApplicationContext`的`refresh()`执行完成时，会发出`ContextRefreshedEvent`事件。refresh()是Spring最核心的方法，该方法内部完成的Spring容器的启动，是研究Spring的重中之重。在该方法内部，当Spring容器启动完成，会在finishRefresh()发出ContextRefreshedEvent事件，通知容器刷新完成。我们一起来看一下源码：
+
+```java
+// ConfigurableApplicationContext.java
+public void refresh() throws BeansException, IllegalStateException {
+    try {
+        // ...省略部分非关键代码
+        //完成普通单例Bean的实例化(非延迟的)
+        this.finishBeanFactoryInitialization(beanFactory);
+
+        // 初始化声明周期处理器,并发出对应的时间通知
+        this.finishRefresh();
+    }
+}
+
+protected void finishRefresh() {
+    // ...省略部分非核心代码
+    // 发布上下文已经刷新完成的事件
+    this.publishEvent(new ContextRefreshedEvent(this));
+}
+```
+
+其实这是Spring提供给我们的拓展点，此时容器已经启动完成，容器中的bean也已经创建完成，对应的属性、init()、Aware回调等，也全部执行。很适合我们做一些系统启动后的准备工作，此时我们就可以监听该事件，作为系统启动后初始预热的契机。其实Spring内部也是这样使用ContextRefreshedEvent的， 比如我们常用的Spring内置的调度器，就是在接收到该事件后，才进行调度器的执行的。
+
+```java
+public class ScheduledAnnotationBeanPostProcessor implements ApplicationListener<ContextRefreshedEvent> {
+  	@Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+      if (event.getApplicationContext() == this.applicationContext) {
+        finishRegistration();
+      }
+    }
+}
+```
+
+**ContextStartedEvent**
+
+在`ConfigurableApplicationContext`的`start()`执行完成时，会发出ContextStartedEvent事件。
+
+```java
+@Override
+public void start() {
+    this.getLifecycleProcessor().start();
+    this.publishEvent(new ContextStartedEvent(this));
+}
+```
+
+`ContextRefreshedEvent`事件的触发是所有的单例bean创建完成后发布，此时实现了`Lifecycle`接口的bean还没有回调start()，当这些`start()`被调用后，才会发布`ContextStartedEvent`事件。
+
+**ContextClosedEvent**
+
+在`ConfigurableApplicationContext`的`close()`执行完成时，会发出ContextStartedEvent事件。此时IOC容器已经关闭，但尚未销毁所有的bean。
+
+```java
+@Override
+public void close() {
+    synchronized (this.startupShutdownMonitor) {
+        this.doClose();
+    }
+}
+
+protected void doClose() {
+    // 发布ContextClosedEvent事件
+    this.publishEvent(new ContextClosedEvent(this));
+}
+```
+
+**ContextStoppedEvent**
+
+在`ConfigurableApplicationContext`的`stop()`执行完成时，会发出ContextStartedEvent事件。
+
+```java
+@Override
+public void stop() {
+    this.getLifecycleProcessor().stop();
+    this.publishEvent(new ContextStoppedEvent(this));
+}
+```
+
+
+该事件在ContextClosedEvent事件触发之后才会触发，此时单例bean还没有被销毁，要先把他们都停掉才可以释放资源，销毁bean。
+
+
+
+##### Spring事件原理
+
+在上述章节，我们直接通过`applicationContext`发布了事件，同时也提到了，它之所以能发布事件，是因为它是`ApplicationEventPublisher`的子类，因此是具备事件发布能力的。但按照接口隔离原则，如果我们只需要进行事件发布，`applicationContext`提供的能力太多，还是推荐直接使用`ApplicationEventPublisher`进行操作。
+
+###### 获取事件发布器
+
+先来`ApplicationEventPublisher`的提供的能力，它是一个接口，结构如下：
+
+```java
+@FunctionalInterface
+public interface ApplicationEventPublisher {
+    //发布ApplicationEvent事件
+    default void publishEvent(ApplicationEvent event) {
+        publishEvent((Object) event);
+    }
+
+    //发布PayloadApplicationEvent事件
+    void publishEvent(Object event);
+}
+```
+
+通过源码我们发现`ApplicationEventPublisher`仅仅提供了事件发布的能力，支持自定义类型和`PayloadApplicationEvent`类型(如果没有定义事件类型，默认包装为该类型)。那我们如何获取该发布器呢，我们最常使用的`@Autowired`注入是否可以呢？
+
+**通过@Autowired注入ApplicationEventPublisher**
+
+通过debug，可以看到：是可以的。而且注入的就是ApplicationContext实例。也就是说注入`ApplicationContext`和注入`ApplicationEventPublisher`是等价的，都是一个ApplicationContext实例。
+
+**通过ApplicationEventPublisherAware获取**
+
+除了`@Autowired`注入，Spring还提供了使用`ApplicationEventPublisherAware`获取 `ApplicationEventPublisher`的方式，如果实现了这个感知接口，Spring会在合适的时机，回调`setApplicationEventPublisher()`，将`applicationEventPublisher`传递给我们。使用起来也很方便。代码所示：
+
+```java
+public class UserService implements ApplicationEventPublisherAware {
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    public void login(String username, String password){
+        // 1： 进行登录处理
+        ...
+        // 2： 发送登录事件，用于记录操作
+        applicationEventPublisher.publishEvent(new UserLoginEvent(userId));
+    }
+
+    // Aware接口回调注入applicationEventPublisher
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+            this.applicationEventPublisher = applicationEventPublisher;
+    }
+}
+```
+
+**区别**
+
+通过`@Autowired`和`ApplicationEventPublisherAware`回调都能获取到事件发布器，两种有什么区别吗?  其实区别不大，主要是调用时机的细小差别，另外就是某些特殊场景下，@Autowired注入可能无法正常注入，实际开发中完成可以忽略不计。所以优先推荐小伙伴们使用ApplicationEventPublisherAware，如果觉得麻烦，使用@Autowired也未尝不可。
+
+###### 事件的广播方式
+
+现在已经知道，可以通过`ApplicationEventPublisher`发送事件了，那么这个事件发送后肯定是要分发给对应的监听器处理啊，谁处理这个分发逻辑呢？又是怎么匹配对应的监听器的呢？我们带着这两个问题来看`ApplicationEventMulticaster`。
+
+**事件是如何广播的**
+
+要探查事件是如何广播的，需要跟随事件发布后的逻辑一起看一下：
+
+```java
+@Override
+public void publishEvent(ApplicationEvent event) {
+    this.publishEvent(event, null);
+}
+
+protected void publishEvent(Object event, @Nullable ResolvableType eventType) {
+    // ...省略部分代码
+    if (this.earlyApplicationEvents != null) {
+      this.earlyApplicationEvents.add(applicationEvent);
+    }
+    else {
+      // 将事件广播给Listener
+      this.getApplicationEventMulticaster().multicastEvent(applicationEvent, eventType);
+    }
+}
+
+// 获取事件广播器
+ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalStateException {
+    if (this.applicationEventMulticaster == null) {
+      throw new IllegalStateException("ApplicationEventMulticaster not initialized - " +
+                                      "call 'refresh' before multicasting events via the context: " + this);
+    }
+    return this.applicationEventMulticaster;
+}
+```
+
+  通过上面源码，我们发现发布器直接把事件转交给applicationEventMulticaster了，我们再去里面看一下广播器里面做了什么。
+
+```java
+// SimpleApplicationEventMulticaster.java
+public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) {
+    // ...省略部分代码
+    // getApplicationListeners 获取符合的监听器
+    for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+        // 执行每个监听器的逻辑
+        invokeListener(listener, event);
+    }
+}
+
+private void doInvokeListener(ApplicationListener listener, ApplicationEvent event) {
+    try {
+      // 调用监听器的onApplicationEvent方法进行处理
+      listener.onApplicationEvent(event);
+    }
+}
+```
+
+看到这里，我们发现事件的分发逻辑：先找到匹配的监听器，然后逐个循环调用onApplicationEvent()进行事件处理。
+
+```mermaid
+flowchart LR
+事件源-->发布器-->|转交|广播器-->|筛选匹配之后广播|多个监听器
+```
+
+###### 事件和监听器如何匹配
+
+通过上述源码，我们发现通过getApplicationListeners(event, type)找到了所有匹配的监听器，我们继续跟踪看一下是如何匹配的。
+
+```java
+protected Collection<ApplicationListener<?>> getApplicationListeners(
+      ApplicationEvent event, ResolvableType eventType) {
+   // 省略缓存相关代码
+   return retrieveApplicationListeners(eventType, sourceType, newRetriever);
+}
+
+
+private Collection<ApplicationListener<?>> retrieveApplicationListeners(
+ResolvableType eventType, @Nullable Class<?> sourceType, @Nullable CachedListenerRetriever retriever) {
+    // 1: 获取所有的ApplicationListener
+    Set<ApplicationListener<?>> listeners;
+    Set<String> listenerBeans;
+    synchronized (this.defaultRetriever) {
+        listeners = new LinkedHashSet<>(this.defaultRetriever.applicationListeners);
+        listenerBeans = new LinkedHashSet<>(this.defaultRetriever.applicationListenerBeans);
+    }
+
+    for (ApplicationListener<?> listener : listeners) {
+        // 2: 遍历判断是否匹配
+        if (supportsEvent(listener, eventType, sourceType)) {
+            if (retriever != null) {
+                filteredListeners.add(listener);
+            }
+            allListeners.add(listener);
+        }
+    }
+}
+
+protected boolean supportsEvent(
+  ApplicationListener<?> listener, ResolvableType eventType, @Nullable Class<?> sourceType) {
+  GenericApplicationListener smartListener = (listener instanceof GenericApplicationListener ?
+                                              (GenericApplicationListener) listener : new GenericApplicationListenerAdapter(listener));
+  // supportsEventType 根据ApplicationListener的泛型, 和事件类型,看是否匹配
+  // supportsSourceType 根据事件源类型，判断是否匹配
+  return (smartListener.supportsEventType(eventType) && smartListener.supportsSourceType(sourceType));
+}
+```
+
+通过源码跟踪，我们发现监听器匹配是根据事件类型匹配的，先获取容器中所有的监听器，在用supportsEvent()去判断对应的监听器是否匹配事件。这里匹配主要看两点，如果两者都匹配，就转发给处理器处理：
+
+1. 判断事件类型和监听器上的泛型类型，是否匹配(子类也能匹配)。
+
+2. 监听器是否支持事件源类型，默认情况下，都是支持的。
+
+###### 事件监听器
+
+监听器是负责处理事件的，在广播器将对应的事件广播给它之后，它正式上岗开始处理事件。
+
+Spring默认的监听器是同步执行的，并且支持一个事件由多个监听器处理，并可通过`@Order`指定监听器处理顺序。
+
+定义监听器的方式
+
+**实现ApplicationListener定义监听器**
+
+第一种方式定义的方式当然是通过直接继承`ApplicationListener`，同时不要忘记通过泛型指定事件类型，它可是将事件广播给监听器的核心匹配标志。注意：通过ApplicationListener定义的监听器，本质上是一个单事件监听器，也就是只能处理一种类型的事件。
+
+```java
+public class MyEventListener implements ApplicationListener<MyApplicationEvent> {
+    @Override
+    public void onApplicationEvent(MyApplicationEvent event) {
+            System.out.println(Thread.currentThread().getName() + "接受到事件:"+event.getSource());
+    }
+}
+```
+
+**使用@EventListener定义监听器**
+
+第二种方式我们还可以使用`@EventListener`标注方法为监听器，该注解标注的方法上，方法参数为事件类型，标注该监听器要处理的事件类型。
+
+```java
+@Component
+public class AnnotationEventListener {
+    // 使用@EventListener标注方法为监听器，参数类型为事件类型
+    @EventListener
+    public void onApplicationEvent(MyApplicationEvent event) {
+        System.out.println(Thread.currentThread().getName() + "接受到事件:"+event.getSource());
+    }
+
+    @EventListener
+    public void onApplicationEvent(PayloadApplicationEvent payloadApplicationEvent) {
+        System.out.println(Thread.currentThread().getName() + "接受到事件:"+payloadApplicationEvent.getPayload());
+    }
+}
+```
+
+> 通过广播器分发事件的逻辑，我们知道事件只能分发给ApplicationListener类型的监听器实例处理，这里仅仅是标注了@EventListener的方法，也能被是识别成ApplicationListener类型的监听器吗？答案是肯定的，只是Spring在底层进行了包装，偷偷把@EventListener标注的方法包装成了`ApplicationListenerMethodAdapter`，它也是ApplicationListener的子类，这样就成功的把方法转换成ApplicationListener实例了。
+
+
+
+###### 异步处理事件
+
+我们知道事件在广播时是同步执行的，广播流程为：先找到匹配的监听器 -> 逐个调用onApplicationEvent()进行事件处理，整个过程是同步处理的。现在的系统动辄就要求毫秒计返回，QPS没有1000+你都不好意思出门，哪怕只有十个用户 。
+
+除了性能问题，我们基于真实业务场景出发，考虑一下什么场景下，我们使用事件比较合适。个人使用最多的场景是：在执行某个业务时，需要通知别的业务方，该业务的执行情况时，会使用事件机制进行通知。就拿这个场景来说，我们考虑几个问题：
+
+1. 我们是否关心监听者的执行时机？
+2. 我们是否关心监听者的执行结果？
+
+大多数情况下，其实我们并不关心的监听者什么时候执行，执行结果如何的。如果对执行结果有依赖，通常直接调用了，如果有可能，还能享受事务的便利，还借助事件干什么呢。所以这里其实有个需求，希望Spring事件的处理是异步的，那如何实现呢？
+
+**通过注入taskExecutor**
+
+通过前文的分析，我们知道事件的广播是由ApplicationEventMulticaster进行处理的，那我们去看看，是否支持异步处理呢。
+
+```java
+@Override
+public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) {
+    // 获取执行线程池
+    Executor executor = getTaskExecutor();
+    for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+        // 如果存在线程池，使用线程池异步执行
+        if (executor != null) {
+            executor.execute(() -> invokeListener(listener, event));
+        }
+        // 如果不存在线程池，同步执行
+        else {
+            invokeListener(listener, event);
+        }
+    }
+}
+
+// 获取线程池
+protected Executor getTaskExecutor() {
+    return this.taskExecutor;
+}
+
+// 设置线程池
+public void setTaskExecutor(@Nullable Executor taskExecutor) {
+    this.taskExecutor = taskExecutor;
+}
+```
+
+通过源码我们发现，其实Spring提供了使用线程池异步执行的逻辑，前提是需要先设置线程池，只是这里设置线程池的方式稍微麻烦些，需要通过applicationEventMulticaster实例的setTaskExecutor()设置，下面我们试一下是否可行。
+
+```java
+public void applicationListenerTest(){
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    context.register(AnnotationEventListener.class);
+    context.refresh();
+    ApplicationEventMulticaster multicaster = context.getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
+    if (multicaster instanceof SimpleApplicationEventMulticaster) {
+        ((SimpleApplicationEventMulticaster) multicaster).setTaskExecutor(Executors.newFixedThreadPool(10));
+    }
+    System.out.printf("线程:[%s],时间:[%s],开始发布事件\n", new Date(), Thread.currentThread().getName());
+    context.publishEvent(new MyApplicationEvent(1L));
+    System.out.printf("线程:[%s],时间:[%s],发布事件完成\n", new Date(), Thread.currentThread().getName());
+    context.stop();
+}
+
+public class AnnotationEventListener {
+    @EventListener
+    @Order(1)
+    public void onApplicationEvent(MyApplicationEvent event) {
+        Date start = new Date();
+        Thread.sleep(3000);
+        System.out.printf("线程:[%s],监听器1,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+
+    @EventListener
+    @Order(2)
+    public void onApplicationEvent2(MyApplicationEvent event) {
+        Date start = new Date();
+        System.out.printf("线程:[%s],监听器2,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+}
+
+// 输出信息:
+// 线程:[main],时间[22:57:13],开始发布事件
+// 线程:[main],时间[22:57:13],，发布事件完成
+// 线程:[pool-2-thread-1],监听器2,接收时间:[22:57:13]，处理完成时间:[22:57:13],接收到事件:1
+// 线程:[pool-2-thread-2],监听器1,接收时间:[22:57:13]，处理完成时间:[22:57:16],接收到事件:1
+```
+
+经过测试发现：设置了线程池之后，监听器确实是异步执行的，并且是全局生效，对所有类型的监听器都适用。只是这里的设置稍显不便，需要先获取到applicationEventMulticaster这个bean之后，再使用内置方法设置。
+
+**使用@Async异步注解**
+
+通过注入线程池，是全局生效的。如果我们项目中有些事件需要异步处理，又有些事件需要同步执行的，怎么办，总不能告诉你的leader做不了吧。NO，那不是显得我很没有用。面对这种情况，我们可以借助@Async注解，使单个监听器异步执行。我们测试一下：
+
+```java
+// 使用@EnableAsync开启异步
+@EnableAsync
+public class AnnotationEventListener {
+
+    @EventListener
+    @Order(1)
+    public void onApplicationEvent(MyApplicationEvent event) {
+        Date start = new Date();
+        Thread.sleep(3000);
+        System.out.printf("线程:[%s],监听器1,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+
+    @EventListener
+    @Order(2)
+    public void onApplicationEvent2(MyApplicationEvent event) {
+        Date start = new Date();
+        Thread.sleep(1000);
+        System.out.printf("线程:[%s],监听器2,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+}
+
+// 输出信息:
+// 线程:[main],时间[23:18:32],开始发布事件
+// 线程:[main],监听器1,接收时间:[23:18:32]，处理完成时间:[23:18:35],接收到事件:1
+// 线程:[main],时间[23:18:35],，发布事件完成
+// 线程:[SimpleAsyncTaskExecutor-1],监听器2,接收时间:[23:18:35]，处理完成时间:[23:18:36],接收到事件:1
+```
+
+经过测试发现：在@Async的加持下，确实可以控制某个监听器异步执行。其实@Async也是使用了线程池执行的，对@Async感兴趣的同学可以自行查阅资料，这里我们不做展开了。
+
+###### 全局异常处理
+
+Spring事件的处理，默认是同步依次执行。那如果前面的监听器出现了异常，并且没有处理异常，会对后续的监听器还能顺利接收该事件吗？其实不能的，因为异常中断了事件的发送了。
+
+如果我们设置了异步执行呢，还会有影响吗，对线程池有所了解的同学肯定可以给出答案：不会，因为不是一个线程执行，是不会互相影响的。
+
+难道同步执行我们就要在每个监听器都try catch一下，避免相互影响吗，不能全局处理吗？当前可以了，贴心的Spring为了简化我们的开发逻辑，特意提供了ErrorHandler来统一处理，话不多说，我们赶紧来试一下吧。
+
+```java
+public class AnnotationEventListener {
+
+    @EventListener
+    @Order(1)
+    public void onApplicationEvent(MyApplicationEvent event) {
+        Date start = new Date();
+        // 制造异常
+        int i = 1/0;
+        System.out.printf("线程:[%s],监听器1,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+
+    @EventListener
+    @Order(2)
+    public void onApplicationEvent2(MyApplicationEvent event) {
+        Date start = new Date();
+        System.out.printf("线程:[%s],监听器2,接收时间:[%s],处理完成时间:[%s],接收到事件:%s\n", Thread.currentThread().getName(), start, new Date(), event.getSource());
+    }
+}
+
+// 测试方法
+public void applicationListenerTest() throws InterruptedException {
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    context.register(AnnotationEventListener.class);
+    context.refresh();
+    ApplicationEventMulticaster multicaster = context.getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
+    if (multicaster instanceof SimpleApplicationEventMulticaster) {
+      	// 简单打印异常信息
+      	((SimpleApplicationEventMulticaster) multicaster).setErrorHandler(t -> System.out.println(t));
+    }
+   System.out.printf("线程:[%s],时间:[%s],开始发布事件\n", new Date(), Thread.currentThread().getName());
+    context.publishEvent(new MyApplicationEvent(1L));
+    System.out.printf("线程:[%s],时间:[%s],发布事件完成\n", new Date(), Thread.currentThread().getName());
+    context.stop();
+}
+
+// 输出信息:
+// 线程:[main],时间[23:35:15],开始发布事件
+// java.lang.ArithmeticException: / by zero
+// 线程:[main],监听器2,接收时间:[23:35:15]，处理完成时间:[23:35:15],接收到事件:1
+// 线程:[main],时间[23:35:15],，发布事件完成
+```
+
+经过测试发现：设置了ErrorHandler之后，确实可以对异常进行统一的管理了，再也不用繁琐的try  catch了，今天又多了快乐划水五分钟的理由呢。老规矩，我们不光要做到知其然，还要做到知其所以然，我们探究一下为什么加了ErrorHandler之后，就可以全局处理呢？
+
+```java
+protected void invokeListener(ApplicationListener<?> listener, ApplicationEvent event) {
+    // 获取ErrorHandler
+    ErrorHandler errorHandler = getErrorHandler();
+    // 如果ErrorHandler存在，监听器执行出现异常，交给errorHandler处理，不会传递向上抛出异常。
+    if (errorHandler != null) {
+        try {
+            doInvokeListener(listener, event);
+        }
+        catch (Throwable err) {
+            errorHandler.handleError(err);
+        }
+    }
+    else {
+        // 调用监听器处理
+        doInvokeListener(listener, event);
+    }
+}
+```
+
+经过阅读源码，我们发现：Sring先查找是否配置了ErrorHandler，如果配置了，在发生异常的时候，把异常信息转交给errorHandler处理，并且不会在向上传递异常了。这样可以达到异常全局处理的效果了。
+
+##### 事件机制问题
+
+###### 发布阻塞
+
+Spring发布事件的时候，由applicationEventMulticaster来处理分发逻辑，这是单线程处理，处理逻辑我们分析过，就是：找到事件对应的监听器(有缓存) -> 逐个分发给监听器处理(默认同步，可异步)。我们考虑一下这种设计会不会有性能问题了？同步执行的情况我们就不讨论了，对应的场景一定是事件发生频率较低，这种场景讨论性能没有意义。
+
+我们主要讨论异步模式，无论是@Async还是注入线程池，本质都是：通过线程池执行，并且线程池的线程是所有监听器共同使用的(@Async对应的线程池供所有加了@Async的方法使用)。我们都清楚线程池的执行流程：先创建线程执行任务，之后会放到缓冲队列，最后可能直接拒绝。
+
+基于共享线程池执行的监听器的模式，有什么问题呢？**最严重的问题**就是：监听器的执行速度会互相影响、甚至会发生阻塞。假如某一个监听器执行的很慢，把线程池中线程都占用了，此时其他的事件虽然发布但没有资源执行，只能在缓存队列等待线程释放，哪怕该事件的处理很快、很重要，也不行。
+
+其实这里可以参考Netty的boss-work工作模型，广播器只负责分发事件，调度执行监听器的逻辑交给由具体的work线程负责会更合适。
+
+###### 无法订制监听器执行线程数
+
+正是由于每种事件产生的数量、处理逻辑、处理速度差异化可能很大，所以每个监听器都有适合自己场景的线程数，所以为每个监听器配置线程池就显得尤为重要。Spring事件机制，无法单独为事件(或者监听器)设置线程池，只能共用线程池，无法做到精准控制，线程拥堵或者线程浪费出现的几率极大。当然，我们也可以在监听器内部，接收到事件后使用自定义的线程池处理，但是我们更希望简单化配置就能支持。
+
+重启异常丢失？
+
+集群环境下是否会重复监听？
+
+
+
+##### 案例
+
+###### 电商订单创建
+
+直接将这个注解标注在一个bean的方法上，那么这个方法就可以用来处理感兴趣的事件，使用更简单，如下，注册成功之后：来2个监听器：一个负责发送邮件、一个负责发送优惠券。
+
+```java
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+ 
+/**
+ * 用户注册监听器
+ */
+@Component
+public class UserRegisterListener {
+    @EventListener
+    public void sendMail(UserRegisterEvent event) {
+        System.out.println(String.format("给用户【%s】发送注册成功邮件!", event.getUserName()));
+    }
+ 
+    @EventListener
+    public void sendCoupon(UserRegisterEvent event) {
+        System.out.println(String.format("给用户【%s】发送优惠券!", event.getUserName()));
+    }
+}
+```
+
+
 
 
 
 #### Spring的钩子接口和应用
 
-在bean的生命周期之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
+在[bean的生命周期](#Spring Bean的生命周期)之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
+
+```mermaid
+flowchart LR
+BeanFactory-->BeanFactoryPostProcessor
+Bean-->实例化前后-->InstantiationAwareBeanPostProcessor
+Bean-->初始化-->3个Aware接口
+初始化-->前-->BeanPostProcessor前置方法-->6个Aware接口
+初始化-->initBean["InitializingBean.afterPropertiesSet()"]
+初始化-->InitMethod
+初始化-->后-->BeanPostProcessor后置方法
+初始化-->顺序-->PriorityOrdered
+顺序-->Ordered
+Bean-->销毁-->DestructionAwareBPP["DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()"]
+销毁-->DisposableBean["DisposableBean.destroy()"]
+销毁-->detroyMethod[自定义的destoryMethod]
+```
+
+
 
 ##### 可以影响多个Bean的
 
 InstantiationAwareBeanPostProcessor
 
-作用于**实例化**阶段的前后
+作用于实例化阶段的前后
 
 BeanPostProcessor
 
-作用于**初始化**阶段的前后
-
-两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
+作用于初始化阶段的前后，两个方法postProcessBeforeInitialization和postProcessBeforeInitialization对所有Bean都会拦截。
 
 有多个的时候可以implement了PriorityOrdered和Ordered接口，按照这两个的顺序来排序（PriorityOrdered优先于Ordered）
-InitializingBean.afterPropertiesSet
 
 BeanFactoryPostProcessor
 
-比执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
+比实例化执行时机更早。是一个可以对BeanFactory修改的方法。修改这个context的beanfactory的properties value
 
 SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
 
@@ -4836,11 +5797,13 @@ SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现�
 
 Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
 
-具体来说分2组，一组是在初始化方法最前面调用的。还有一组是通过BeanPostProcess的before方法调用的。
+具体来说分2组，一组是在初始化方法最前面调用的。
 
 BeanNameAware,
 BeanClassLoaderAware,
 BeanFactoryAware,
+
+还有一组是通过BeanPostProcess的before方法调用的。
 
 EnvironmentAware,
 EmbeddedValueResolverAware,
@@ -4850,15 +5813,19 @@ MessageSourceAware,
 ApplicationContextAware,
 ServletContextAware,
 
-下面2个是生命周期接口，在
-
-InitializingBean
+下面2个是生命周期接口，
 
 在before和after之间的invokeInitMethods方法中调用，当BeanFactory 设置完所有的Bean属性之后才会调用
 
-afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
+InitializingBean的afterPropertiesSet方法里面可以添加自定义的初始化方法或者做一些资源初始化操作
 
-DisposableBean在bean销毁时调用
+Bean销毁时
+
+DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()方法
+
+单个bean：DisposableBean.destroy()方法，
+
+单个bean：detroyMethod方法通过配置指定。
 
 
 
@@ -5152,10 +6119,6 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
 }
 ```
-
-
-
-
 
 
 
