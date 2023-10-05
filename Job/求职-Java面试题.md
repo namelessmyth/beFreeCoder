@@ -1412,8 +1412,6 @@ end
 finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
 ~~~
 
-
-
 [参考文章](https://zhuanlan.zhihu.com/p/523343141?utm_id=0)
 
 
@@ -1441,8 +1439,8 @@ Bean的生命周期宏观上可以表达为：
   - @Configuration的配置类
   - 解析@ComponentScan扫描的包
   - 解析@Import注解
-- 从上可以看出，Bean工厂的实例化的过程和Bean的生命周期是有关系的。
-- 下面就用这个完整的Bean生命周期流程图来说明。（使用mermaid语法绘制）
+- 所以这个类可能会增加Bean的数量。
+- 下面是完整的Bean生命周期流程图来说明。（使用mermaid语法绘制）
 
 ```mermaid
 flowchart TB
@@ -1829,8 +1827,6 @@ put2-->cache2
 finishB-->initA
 
 ```
-
-
 
 ###### 二级缓存在其中的作用
 
@@ -3022,8 +3018,6 @@ https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
 https://www.cnblogs.com/jtlgb/p/9882772.html
 
-注意：上面的文章是2018年发布的。实际工作中只有老项目才会使用这种xml文件配置事务的方式。可以参考[SpringBoot事务配置](#234)
-
 Spring配置文件中关于事务配置总是由三个组成部分，分别是DataSource、TransactionManager和代理机制这三部分，无论哪种配置方式，一般变化的只是代理机制这部分。
 
 DataSource、TransactionManager这两部分只是会根据数据访问方式有所变化，比如使用Hibernate进行数据访问时，DataSource实际为SessionFactory，TransactionManager的实现为HibernateTransactionManager。
@@ -3386,7 +3380,7 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
        * 配置全局事务
        */
       @Aspect
-      @Component
+      @Configuration
       public class TransactionManagerConfig {
       
           private final static Logger logger = LoggerFactory.getLogger(TransactionManagerConfig.class);
@@ -4545,35 +4539,113 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 
 
-#### Spring Framework中常用的注解有哪些？
+#### Spring中常用注解说明？
 
-Spring框架中常用的注解有：
+##### @Configuration
 
-1. @ComponentScan(basePackages="")：扫包,也可以进行类扫描
-2. @Configuration：声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象。
-3. @Component：声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
-4. @Controller：声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
-5. @Service：声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
-6. @Repository：声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
-7. @Bean：声明一个Bean，用于在Java配置类中定义需要注入IOC容器中的Bean实例对象。
-8. @Scope(scopeName=“prototype”)：多例
-9. @Lazy(value=true) ：延迟加载
-10. @Value：用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
-11. @Autowired：自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
-12. @Qualifier：给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
-13. @Inject：和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
-14. @Named：相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
-15. MVC
-    1. @RequestMapping：用于将HTTP请求映射到对应的控制器中的处理方法上。
+声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象，相当于applicationContext.xml。
 
-16. AOP
-    1. @Aspect：表明整个类是一个切面
-    2. @Pointcut：定义切点
-    3. @Before：前置通知
-    4. @Around：环绕通知
-    5. @After：后置通知
-    6. @AfterThrowing：异常通知
-    7. @AfterReturning：返回通知
+##### @ComponentScan
+
+配置包扫描路径，也可以进行类扫描。不然Spring不会自动扫描包下面的@Controller，@Service等注解。用来取代配置文件中的`<context:component-scan base-pacage="com.xxx" />`
+
+默认包路径为注解所在类的包路径。可以通过basePackages="com.xxx"来指定。
+
+##### @Bean
+
+声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
+
+##### @Component
+
+声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
+
+##### @Controller
+
+声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
+
+##### @Service
+
+声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
+
+##### @Repository
+
+声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
+
+##### @Scope
+
+@Scope(scopeName=“prototype”)：配置bean的作用域，多例
+
+##### @Lazy
+
+@Lazy(value=true)，配置bean的延迟加载。
+
+##### @Value
+
+用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
+
+##### @Autowired
+
+自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
+
+##### @Qualifier
+
+给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
+
+##### @Inject
+
+和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
+
+##### @Named
+
+相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
+
+
+
+##### **Enable注解**
+
+@Enable系列注解基本都是通过内部的@Import注解实现动态导入相关联的类的。在Springboot中搭配starter使用。
+
+##### @EnableTransactionManagement
+
+
+
+##### @EnableAsync
+
+
+
+##### @EnableScheduling
+
+
+
+##### @EnableWebSocket
+
+
+
+##### @EnableCaching
+
+
+
+**MVC注解**
+
+##### @RequestMapping
+
+用于将HTTP请求映射到对应的控制器中的处理方法上。
+
+##### AOP注解
+
+@Aspect：表明整个类是一个切面
+
+@Pointcut：定义切点
+
+@Before：前置通知
+
+@Around：环绕通知
+
+@After：后置通知
+
+@AfterThrowing：异常通知
+
+@AfterReturning：返回通知
 
 
 
@@ -4803,6 +4875,8 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 ##### 普通类
 
+如果@Import的是一个普通类，那直接会把这个类加入到Spring容器中。下面是案例。
+
 定义普通java类
 
 ```java
@@ -4851,6 +4925,8 @@ public class AppConfig {
 ##### 实现了ImportSelector接口的类
 
 https://blog.csdn.net/elim168/article/details/88131614
+
+如果@Import的是实现了ImportSelector接口，那不会把这个类加入到Spring容器中。而是selectImports方法的返回值中的类。
 
 先来看下这个接口源码
 
@@ -4943,6 +5019,28 @@ public class HelloImportSelector implements ImportSelector {
 ##### 实现ImportBeanDefinitionRegistrar接口
 
 https://blog.csdn.net/hsz2568952354/article/details/124172318
+
+如果@Import的是实现了ImportBeanDefinitionRegistrar接口，那不会把这个类加入到Spring容器中。而是需要在接口方法中通过代码自行将需要的bean注入到容器中。方法参数中会比ImportSelector接口多一个BeanDefinitionRegistry参数，通过这个就可以将bean注入到容器中。例如：
+
+```java
+public class AttributeClassRegistrar implements ImportBeanDefinitionRegistrar {
+
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        RootBeanDefinition beanDefinition = new RootBeanDefinition();
+		beanDefinition.setBeanClass(Teacher.class);
+		registry.registerBeanDefinition("teacher", beanDefinition);
+        
+        BeanDefinition definition = BeanDefinitionBuilder.genericBeanDefinition(
+                RawWithAbstractObjectTypeFactoryBean.class).getBeanDefinition();
+        definition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, MyBean.class);
+        registry.registerBeanDefinition("myBean", definition);
+    }
+
+}
+```
+
+
 
 
 
@@ -6147,6 +6245,12 @@ Spring启动成功后，单例是否线程安全取决于Bean的写法。Spring�
 
 ## SpringMVC
 
+#### SpringMVC的工作原理
+
+https://cloud.fynote.com/share/s/IXvrMNIN
+
+
+
 #### SpringMVC响应请求时无状态的，但是到了dao层，数据库连接池是有状态的，两者怎么管理的呢
 
 每个请求会独占一个连接池的连接，用完就归还，多个请求之间不会相互影响，这样就保证了每个请求都是无状态的。
@@ -6212,6 +6316,8 @@ SpringBoot：IoC  需要清楚Spring的加载过程
 
 BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
 
+
+
 #### @Import注解的作用
 
 1。@Import注解的由来： xml  import标签--> 配置类转变 3.0 @Configuration @Import替换import标签的作用  3.1 扫描注解
@@ -6226,21 +6332,37 @@ ImportSelector 和 ImportBeanDefinitionRegistrar的区别
 
 3。@Import注解的应用：SpringBoot的自动装配
 
+
+
 #### SpringBoot中为什么用DeferredImportSelector?
 
 为什么? 为什么要延迟加载？  本身逻辑代码是在BeanFactory的后置处理器中完成的
 
 BeanFactory的后置处理器本身的作用就是要完善BeanDefinition的定义。所以我们需要在所有对应都完成了定义信息的加载后再去注入实例到容器中
 
+
+
 #### SpringBoot和SpringMVC的关系
 
 SpringBoot是一个基于Spring的脚手架工具。我们要创建一个Web项目。那么我们需要引入spring-boot-starter-web 这个依赖。在这个依赖中会完成相关的SpringMVC和Spring的关联配置
+
+
 
 #### SpringBoot和Tomcat的关系
 
 https://www.mashibing.com/course/1767
 
 通过SpringBoot构建一个Web项目。默认依赖的Web容器就是Tomcat
+
+
+
+#### SpringBoot事务配置
+
+
+
+
+
+### SpringSecurity
 
 #### SpringSecurity中是如何实现自定义认证的
 
@@ -6251,8 +6373,6 @@ https://www.mashibing.com/course/1767
 https://www.mashibing.com/course/1834
 
 
-
-#### SpringBoot事务配置
 
 
 
