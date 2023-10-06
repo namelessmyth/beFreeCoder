@@ -4555,6 +4555,58 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
 
+##### @Conditional
+
+配合@Bean使用，有条件的注册bean。注解内的Class必须实现Condition接口，并实现matches方法，方法返回true时才会注入bean
+
+应用场景案例：
+
+```java
+/**
+ * 定义一个 Condition 接口的是实现
+ */
+public class MyCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        try{
+            //如果类路径中存在某个类就返回true。
+            Class.forName("com.bobo.test.test666");
+            return true;
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return false; // 默认返回false
+    }
+}
+```
+
+##### @Indexed
+
+https://blog.csdn.net/securitit/article/details/110039718
+
+Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`@ComponentScan`扫描的`package`包含的类越来越多的时候，Spring启动时模式注解解析时间就会变得越长。因此，Spring5.0引入@Indexed，为Spring模式注解添加索引。
+
+当我们在项目中使用了 `@Indexed`之后，编译打包的时候会在项目中自动生成 `META-INT/spring.components`文件。当Spring应用上下文执行 `ComponentScan`扫描时，`META-INT/spring.components`将会被 `CandidateComponentsIndexLoader` 读取并加载，转换为 `CandidateComponentsIndex`对象，这样的话 `@ComponentScan`不在扫描指定的package，而是读取 `CandidateComponentsIndex`对象，从而达到提升性能的目的。
+
+若要开启`@Indexed`索引功能，首先需要引入`spring-context-indexer`。
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-indexer</artifactId>
+    <version>${spring.version}</version>
+    <optional>true</optional>
+</dependency>
+```
+
+使用@Indexed注解
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/cc1f8dd821e741b19b6c1ab23eb56abe.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/fc77363593f44366b507c358a18a6b6c.png)
+
+
+
 ##### @Component
 
 声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
@@ -6318,19 +6370,23 @@ BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
 
 
 
-#### @Import注解的作用
+#### SpringBoot常用注解
 
-1。@Import注解的由来： xml  import标签--> 配置类转变 3.0 @Configuration @Import替换import标签的作用  3.1 扫描注解
+##### @Conditional
 
-2。@Import注解的作用：1。导入第三方的其他配置类  2。可以直接将某个Class的对象注入到容器中 @Import(User.class)  3. 动态注入，注入的类型如果实现了下面的接口。就不会把该类型的对象注入进去
+以下的注解都是基于Spring的@Conditional注解
 
-ImportSelector：接口 ： 把selectImports方法返回的字符串数组的类型注入到容器中
+**@ConditionalOnClass**
 
-ImportBeanDefinitionRegistrar：接口  在抽象方法中直接提供了注册器。我们在方法体中完成注入
+只有当指定的Class在类路径中存在时才会注入。
 
-ImportSelector 和 ImportBeanDefinitionRegistrar的区别
+**@ConditionalOnBean**
 
-3。@Import注解的应用：SpringBoot的自动装配
+只有当指定的Bean在Spring容器中存在时才会注入。
+
+**@ConditionalOnMissingBean**
+
+只有当指定的Bean不存在时才会注入
 
 
 
