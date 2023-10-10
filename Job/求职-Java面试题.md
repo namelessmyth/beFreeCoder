@@ -6758,6 +6758,14 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
 7. 分析结束
 
+
+
+###### selectImports方法没有走？
+
+参考文章：https://zhuanlan.zhihu.com/p/458533586
+
+
+
 ##### 总结
 
 1. SpringBoot通过`@EnableAutoConfiguration`开启自动装配

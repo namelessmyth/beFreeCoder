@@ -3231,6 +3231,458 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
 7. 分析结束
 
+
+
+#### selectImports方法没有走？
+
+参考文章：https://zhuanlan.zhihu.com/p/458533586
+
+上面我们在分析自动装配实现原理的时候说过，`@EnableAutoConfiguration`注解通过 `@Import`注解导入了一个 `ImportSelector`接口的实现类 `AutoConfigurationImportSelector`。按照我们对 `@Import` 注解的理解，应该会执行 `selectImports` 接口方法，但调试的时候，执行的情况好像和我们期待的不一样哦，没有走 `selectImports()`方法中。但是实际确实能进到`getAutoConfigurationEntry()`方法中。那这是为什么呢？原因就在于AutoConfigurationImportSelector实现的这个接口DeferredImportSelector有点特殊。
+
+##### DeferredImportSelector
+
+```mermaid
+classDiagram
+AutoConfigurationImportSelector..|>DeferredImportSelector
+DeferredImportSelector..|>ImportSelector
+
+```
+
+从上面的类图中可以看到。DeferredImportSelector接口是ImportSelector的子接口，所以他也具备ImportSelector的功能。
+
+如果我们仅仅是实现了DeferredImportSelector接口，重写了selectImports方法，那么selectImports方法是会被执行的。
+
+我们可以用代码测试一下。
+
+```java
+public class MyDeferredImportSelector implements DeferredImportSelector {
+
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+        System.out.println("MyDeferredImportSelector.selectImports()方法执行...");
+        return new String[0];
+    }
+}
+
+/**
+ * SpringBoot应用启动类
+ */
+@Import(MyDeferredImportSelector.class)
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+
+//启动执行效果：
+2023-10-10 17:40:04.653  INFO 14304 --- [           main] c.sjj.mashibing.springboot.Application   : No active profile set, falling back to 1 default profile: "default"
+MyDeferredImportSelector.selectImports()方法执行...
+2023-10-10 17:40:05.257  INFO 14304 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2023-10-10 17:40:05.262  INFO 14304 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-10-10 17:40:05.263  INFO 14304 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
+    
+```
+
+所以AutoConfigurationImportSelector中应该是做了什么特殊处理导致的没进入selectImports()方法。进一步观察源码会发现，AutoConfigurationImportSelector类内部还覆盖了getImportGroup()方法，同时还返回了它自己内部的一个实现了Group接口的静态内部类的Class对象。然后我们在自己创建的类内部也模仿这覆盖一下这个方法试试。覆盖getImportGroup()方法，同时返回静态内部类。
+
+```java
+public class MyDeferredImportSelector implements DeferredImportSelector {
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+        System.out.println("MyDeferredImportSelector.selectImports()方法执行...");
+        return new String[0];
+    }
+
+    @Override
+    public Class<? extends Group> getImportGroup() {
+        System.out.println("MyDeferredImportSelector.getImportGroup()方法执行...");
+        return MyDeferredImportSelectorGroup.class;
+    }
+
+    public static class MyDeferredImportSelectorGroup implements Group{
+        private final List<Entry> imports = new ArrayList<>();
+        @Override
+        public void process(AnnotationMetadata metadata, DeferredImportSelector selector) {
+            System.out.println("MyDeferredImportSelectorGroup.process()");
+        }
+
+        @Override
+        public Iterable<Entry> selectImports() {
+            System.out.println("MyDeferredImportSelectorGroup.selectImports()");
+            return imports;
+        }
+    }
+}
+```
+
+然后运行项目就会发现同样的现象出现了，MyDeferredImportSelector的selectImports方法没有执行。执行的是getImportGroup()方法和MyDeferredImportSelectorGroup中的process()和selectImports()方法。
+
+```java
+2023-10-10 17:56:20.711  INFO 16552 --- [           main] c.sjj.mashibing.springboot.Application   : No active profile set, falling back to 1 default profile: "default"
+MyDeferredImportSelector.getImportGroup()方法执行...
+MyDeferredImportSelectorGroup.process()
+MyDeferredImportSelectorGroup.selectImports()
+2023-10-10 17:56:21.286  INFO 16552 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+```
+
+至此我们就可以推导出一个结论：
+
+如果一个类实现了DeferredImportSelector接口，如果它没有实现getImportGroup()接口方法的话（这个接口方法有default实现，所以可以不实现），那就会走入getImportGroup()方法。
+
+如果他实现了getImportGroup()方法，那就不会走自己的selectImports()方法。而是会走入getImportGroup()这个方法返回类型的内部类的实现方法中。
+
+##### 源码分析
+
+上文我们是通过现象推断出的结论，那么SpringBoot是在哪里对DeferredImportSelector接口做的特殊处理？又为什么要这么设计呢？
+
+我们可以继续分析源码，这个就需要追溯到@Import注解的实现原理了。
+
+有一个简单办法，可以快速追溯到调用路径，就是使用IDEA在进行debug的时候，在debug窗口是可以看到方法调用堆栈的。
+
+我们可以将断点先设置在getAutoConfigurationEntry()方法中，然后当进入到断点看Debugger窗口，如下图：
+
+![image-20231010230937488](沈俊杰-马士兵-spring.assets/image-20231010230937488.png)
+
+从方法调用堆栈中可以看到@Import注解是在这里被处理：
+
+1. 首先是启动项目的main方法，然后调用run方法。
+
+2. 接着会调用AbstractApplicationContext.refresh()进行ioc容器的初始化
+
+3. 然后进入到refresh的第四个方法invokeBeanFactoryPostProcessors()中，这里会调用所有的BeanFactory后处理器
+
+4. 接着进入到负责处理@Configuration、@Import等注解的ConfigurationClassPostProcessor类中。
+
+5. 然后重点关注的代码来了。ConfigurationClassParser.parse()方法。我们来看下这里面的代码：
+
+6. ```java
+   	public void parse(Set<BeanDefinitionHolder> configCandidates) {
+   		// 循环遍历configCandidates
+   		for (BeanDefinitionHolder holder : configCandidates) {
+   			// 获取BeanDefinition
+   			BeanDefinition bd = holder.getBeanDefinition();
+   			// 根据BeanDefinition类型的不同，调用parse不同的重载方法，实际上最终都是调用processConfigurationClass()方法
+   			try {
+   				if (bd instanceof AnnotatedBeanDefinition) {
+   					// 解析注解类型（@Import注解就在这里解析）
+   					parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
+   				}
+   				else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+   					// 解析有class对象的
+   					parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+   				}
+   				else {
+   					parse(bd.getBeanClassName(), holder.getBeanName());
+   				}
+   			}
+   			catch (BeanDefinitionStoreException ex) {
+   				throw ex;
+   			}
+   			catch (Throwable ex) {
+   				throw new BeanDefinitionStoreException(
+   						"Failed to parse configuration class [" + bd.getBeanClassName() + "]", ex);
+   			}
+   		}
+   
+   		// 执行找到的DeferredImportSelector
+   		// ImportSelector被设计成和@Import注解同样的效果，但是实现了ImportSelector的类可以条件性的决定导入某些配置
+   		// DeferredImportSelector的设计是在所有其他的配置类被处理后才进行处理
+   		this.deferredImportSelectorHandler.process();
+   	}
+   ```
+
+7. 然后注解类的解析会进入到第一个if分支的parse方法中。最终都是调用processConfigurationClass方法
+
+8. ```java
+   protected void  processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
+   		// 判断是否跳过解析
+   		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+   			return;
+   		}
+   
+   		// 第一次进入的时候，configurationClass的size为0，existingClass肯定为null，在此处处理configuration重复import
+   		// 如果同一个配置类被处理两次，两次都属于被import的则合并导入类，返回，如果配置类不是被导入的，则移除旧的使用新的配置类
+   		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+   		if (existingClass != null) {
+   			if (configClass.isImported()) {
+   				if (existingClass.isImported()) {
+   					// 如果要处理的配置类configclass在已经分析处理的配置类记录中已存在，合并两者的importBy属性
+   					existingClass.mergeImportedBy(configClass);
+   				}
+   				return;
+   			}
+   			else {
+   				this.configurationClasses.remove(configClass);
+   				this.knownSuperclasses.values().removeIf(configClass::equals);
+   			}
+   		}
+   		// 处理配置类，由于配置类可能存在父类(若父类的全类名是以java开头的，则除外)，所有需要将configClass变成sourceClass去解析，然后返回sourceClass的父类。
+   		// 如果此时父类为空，则不会进行while循环去解析，如果父类不为空，则会循环的去解析父类
+   		// SourceClass的意义：简单的包装类，目的是为了以统一的方式去处理带有注解的类，不管这些类是如何加载的
+   		// 如果无法理解，可以把它当做一个黑盒，不会影响看spring源码的主流程
+   		SourceClass sourceClass = asSourceClass(configClass, filter);
+   		do {
+   			// 解析各种注解
+   			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
+   		}
+   		while (sourceClass != null);
+   
+   		// 将解析的配置类存储起来，这样回到parse方法时，能取到值
+   		this.configurationClasses.put(configClass, configClass);
+   	}
+   ```
+
+9. 接下来就到处理各种配置注解的总方法doProcessConfigurationClass()了
+
+10. ```java
+    	protected final SourceClass doProcessConfigurationClass(
+    			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
+    			throws IOException {
+    		// @Configuration继承了@Component
+    		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
+    			// Recursively process any member (nested) classes first
+    			// 递归处理内部类，因为内部类也是一个配置类，配置类上有@configuration注解，该注解继承@Component，if判断为true，调用processMemberClasses方法，递归解析配置类中的内部类
+    			processMemberClasses(configClass, sourceClass, filter);
+    		}
+    
+    		// Process any @PropertySource annotations
+    		// 如果配置类上加了@PropertySource注解，那么就解析加载properties文件，并将属性添加到spring上下文中
+    		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
+    				sourceClass.getMetadata(), PropertySources.class,
+    				org.springframework.context.annotation.PropertySource.class)) {
+    			if (this.environment instanceof ConfigurableEnvironment) {
+    				processPropertySource(propertySource);
+    			}
+    			else {
+    				logger.info("Ignoring @PropertySource annotation on [" + sourceClass.getMetadata().getClassName() +
+    						"]. Reason: Environment must implement ConfigurableEnvironment");
+    			}
+    		}
+    
+    		// Process any @ComponentScan annotations
+    		// 处理@ComponentScan或者@ComponentScans注解，并将扫描包下的所有bean转换成填充后的ConfigurationClass
+    		// 此处就是将自定义的bean加载到IOC容器，因为扫描到的类可能也添加了@ComponentScan和@ComponentScans注解，因此需要进行递归解析
+    		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
+    				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
+    		if (!componentScans.isEmpty() &&
+    				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
+    			for (AnnotationAttributes componentScan : componentScans) {
+    				// The config class is annotated with @ComponentScan -> perform the scan immediately
+    				// 解析@ComponentScan和@ComponentScans配置的扫描的包所包含的类
+    				// 比如 basePackages = com.mashibing, 那么在这一步会扫描出这个包及子包下的class，然后将其解析成BeanDefinition
+    				// (BeanDefinition可以理解为等价于BeanDefinitionHolder)
+    				Set<BeanDefinitionHolder> scannedBeanDefinitions =
+    						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
+    				// Check the set of scanned definitions for any further config classes and parse recursively if needed
+    				// 通过上一步扫描包com.mashibing，有可能扫描出来的bean中可能也添加了ComponentScan或者ComponentScans注解.
+    				//所以这里需要循环遍历一次，进行递归(parse)，继续解析，直到解析出的类上没有ComponentScan和ComponentScans
+    				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
+    					BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
+    					if (bdCand == null) {
+    						bdCand = holder.getBeanDefinition();
+    					}
+    					// 判断是否是一个配置类，并设置full或lite属性
+    					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
+    						// 通过递归方法进行解析
+    						parse(bdCand.getBeanClassName(), holder.getBeanName());
+    					}
+    				}
+    			}
+    		}
+    
+    		// Process any @Import annotations
+    		// 处理@Import注解
+    		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
+    
+    		// Process any @ImportResource annotations
+    		// 处理@ImportResource注解，导入spring的配置文件
+    		AnnotationAttributes importResource =
+    				AnnotationConfigUtils.attributesFor(sourceClass.getMetadata(), ImportResource.class);
+    		if (importResource != null) {
+    			String[] resources = importResource.getStringArray("locations");
+    			Class<? extends BeanDefinitionReader> readerClass = importResource.getClass("reader");
+    			for (String resource : resources) {
+    				String resolvedResource = this.environment.resolveRequiredPlaceholders(resource);
+    				configClass.addImportedResource(resolvedResource, readerClass);
+    			}
+    		}
+    
+    		// Process individual @Bean methods
+    		// 处理加了@Bean注解的方法，将@Bean方法转化为BeanMethod对象，保存再集合中
+    		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
+    		for (MethodMetadata methodMetadata : beanMethods) {
+    			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
+    		}
+    
+    		// Process default methods on interfaces
+    		// 处理接口的默认方法实现，从jdk8开始，接口中的方法可以有自己的默认实现，因此如果这个接口的方法加了@Bean注解，也需要被解析
+    		processInterfaces(configClass, sourceClass);
+    
+    		// Process superclass, if any
+    		// 解析父类，如果被解析的配置类继承了某个类，那么配置类的父类也会被进行解析
+    		if (sourceClass.getMetadata().hasSuperClass()) {
+    			String superclass = sourceClass.getMetadata().getSuperClassName();
+    			if (superclass != null && !superclass.startsWith("java") &&
+    					!this.knownSuperclasses.containsKey(superclass)) {
+    				this.knownSuperclasses.put(superclass, configClass);
+    				// Superclass found, return its annotation metadata and recurse
+    				return sourceClass.getSuperClass();
+    			}
+    		}
+    
+    		// No superclass -> processing is complete
+    		return null;
+    	}
+    ```
+
+11. 可以看到@Import注解是在processImports()方法中处理的。在这之前要先处理@Configuration,@ComponentScan等注解。
+
+12. 然后我们进入到processImports()方法中。可以看到在处理时分成了3个部分。实现了ImportSelector接口的，实现ImportBeanDefinitionRegistrar接口的。else就是普通类。然后我们直接看本次讨论的重点代码就是ImportSelector接口部分。
+
+13. ```java
+    // 检验配置类Import引入的类是否是ImportSelector子类
+    if (candidate.isAssignable(ImportSelector.class)) {
+        // Candidate class is an ImportSelector -> delegate to it to determine imports
+        // 候选类是一个导入选择器->委托来确定是否进行导入
+        Class<?> candidateClass = candidate.loadClass();
+        // 通过反射生成一个ImportSelect对象
+        ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class,
+                this.environment, this.resourceLoader, this.registry);
+        // 获取选择器的额外过滤器
+        Predicate<String> selectorFilter = selector.getExclusionFilter();
+        if (selectorFilter != null) {
+            exclusionFilter = exclusionFilter.or(selectorFilter);
+        }
+        // 判断引用选择器是否是DeferredImportSelector接口的实例
+        // 如果是则应用选择器将会在所有的配置类都加载完毕后加载
+        if (selector instanceof DeferredImportSelector) {
+            // 将选择器添加到deferredImportSelectorHandler实例中，预留到所有的配置类加载完成后统一处理自动化配置类
+            this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector);
+        }
+        else {
+            // 获取引入的类，然后使用递归方式将这些类中同样添加了@Import注解引用的类
+            String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
+            Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames, exclusionFilter);
+            // 递归处理，被Import进来的类也有可能@Import注解
+            processImports(configClass, currentSourceClass, importSourceClasses, exclusionFilter, false);
+        }
+    }
+    ```
+
+14. 如果是DeferredImportSelector实现类会进入到deferredImportSelectorHandler.handle方法中。这个方法只是注册和存储，并不会执行。但如果是非DeferredImportSelector实现类就会直接调用selectImports方法执行。
+
+15. ```java
+    public void handle(ConfigurationClass configClass, DeferredImportSelector importSelector) {
+        DeferredImportSelectorHolder holder = new DeferredImportSelectorHolder(configClass, importSelector);
+        if (this.deferredImportSelectors == null) {
+            DeferredImportSelectorGroupingHandler handler = new DeferredImportSelectorGroupingHandler();
+            handler.register(holder);
+            handler.processGroupImports();
+        }
+        else {
+            this.deferredImportSelectors.add(holder);
+        }
+    }
+    ```
+
+16. 那DeferredImportSelector的方法会在哪里调用呢？其实就是在我们刚刚分析过的parse方法的最后一行中。大家可以回过头去看步骤6，最后有一行：`this.deferredImportSelectorHandler.process();`
+
+17. ```java
+    public void process() {
+        // 此处获取前面存储的deferredImportSelector实例
+        List<DeferredImportSelectorHolder> deferredImports = this.deferredImportSelectors;
+        this.deferredImportSelectors = null;
+        try {
+            if (deferredImports != null) {
+                //获取处理器
+                DeferredImportSelectorGroupingHandler handler = new DeferredImportSelectorGroupingHandler();
+                deferredImports.sort(DEFERRED_IMPORT_COMPARATOR);
+                //注册所有的import，关键方法，进入
+                deferredImports.forEach(handler::register);
+                // 核心处理类，此处完成自动配置功能
+                handler.processGroupImports();
+            }
+        }
+        finally {
+            this.deferredImportSelectors = new ArrayList<>();
+        }
+    }
+    ```
+
+18. 先看register方法
+
+19. ```java
+        public void register(DeferredImportSelectorHolder deferredImport) {
+            //获取我们重写的getImportGroup方法返回值
+            Class<? extends Group> group = deferredImport.getImportSelector().getImportGroup();
+            //如果为空就说明没有重写，使用原来的deferredImport对象
+            DeferredImportSelectorGrouping grouping = this.groupings.computeIfAbsent(
+                    (group != null ? group : deferredImport),
+                    key -> new DeferredImportSelectorGrouping(createGroup(group)));
+            //到这里放进去的要么是默认的，要么是我们自定义重写的类。
+            grouping.add(deferredImport);
+            this.configurationClasses.put(deferredImport.getConfigurationClass().getMetadata(),
+                    deferredImport.getConfigurationClass());
+        }
+    ```
+
+20. 再看processGroupImports方法，重点在getImports()方法。
+
+21. ```java
+    public void processGroupImports() {
+        for (DeferredImportSelectorGrouping grouping : this.groupings.values()) {
+            Predicate<String> exclusionFilter = grouping.getCandidateFilter();
+            // getImports()方法内部会调用默认的或者我们覆盖过的process方法和selectImports方法
+            grouping.getImports().forEach(entry -> {
+                ConfigurationClass configurationClass = this.configurationClasses.get(entry.getMetadata());
+                try {
+                    // 配置类中可能会包含@Import注解引入的类，通过此方法将引入的类注入
+                    processImports(configurationClass, asSourceClass(configurationClass, exclusionFilter),
+                            Collections.singleton(asSourceClass(entry.getImportClassName(), exclusionFilter)),
+                            exclusionFilter, false);
+                }
+                catch (BeanDefinitionStoreException ex) {
+                    throw ex;
+                }
+                catch (Throwable ex) {
+                    throw new BeanDefinitionStoreException(
+                            "Failed to process import candidates for configuration class [" +
+                                    configurationClass.getMetadata().getClassName() + "]", ex);
+                }
+            });
+        }
+    }
+    ```
+
+22. getImports()方法内部调用了process()方法，然后process()调用了getAutoConfigurationEntry()方法
+
+23. ```java
+    public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
+        Assert.state(deferredImportSelector instanceof AutoConfigurationImportSelector,
+                () -> String.format("Only %s implementations are supported, got %s",
+                        AutoConfigurationImportSelector.class.getSimpleName(),
+                        deferredImportSelector.getClass().getName()));
+        AutoConfigurationEntry autoConfigurationEntry = ((AutoConfigurationImportSelector) deferredImportSelector)
+            //这里调用了我们设置断点的地方
+                .getAutoConfigurationEntry(annotationMetadata);
+        this.autoConfigurationEntries.add(autoConfigurationEntry);
+        for (String importClassName : autoConfigurationEntry.getConfigurations()) {
+            this.entries.putIfAbsent(importClassName, annotationMetadata);
+        }
+    }
+    ```
+
+24. 至此，我们就应该知道为什么默认的selectImports没走，而是走的内部类的方法了。
+
+##### 设计目的
+
+可能有人会问，Spring设计这个DeferredImportSelector类的目的是什么？通过上面的分析可知DeferredImportSelector是在处理了所有配置注解之后才执行的，而ImportSelector是在处理完@Configuration,@ComponentScan就执行了。SpringBoot设计这个类，应该是为了某些特殊场景下，让DeferredImportSelector执行的时候可以配合后面的注解一起使用。例如：@Bean，@ImportResource，父类注解等等。但实际工作中，我也没遇到过必须要用DeferredImportSelector的场景。
+
+
+
 ### 总结
 
 1. SpringBoot通过`@EnableAutoConfiguration`开启自动装配
