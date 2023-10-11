@@ -5341,17 +5341,23 @@ public class MyEventListener implements ApplicationListener<MyApplicationEvent> 
 ```java
 @RestController
 public class TestController {
-  @Autowired
-  private ApplicationContext applicationContext;
+   	@Autowired
+   	private ApplicationContext applicationContext;
+    
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
  
   @GetMapping("/hello")
   public void hello() {
     System.out.println("业务完成，准备发送事件");
     applicationContext.publishEvent(new MyApplicationEvent(1L));
+    applicationEventPublisher.publishEvent(new MyApplicationEvent(2L));
     System.out.println("事件发送完毕");
   }
 }
 ```
+
+除了`@Autowired`注入，Spring还提供了使用`ApplicationEventPublisherAware`获取 `ApplicationEventPublisher`的方式，如果实现了这个感知接口，Spring会在合适的时机，回调`setApplicationEventPublisher()`，将`applicationEventPublisher`传递给我们。
 
 
 
