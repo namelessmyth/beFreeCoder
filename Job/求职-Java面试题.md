@@ -7144,7 +7144,9 @@ https://www.mashibing.com/course/1767
 
 
 
-#### SpringBoot事务配置
+#### SpringBoot配置文件优先级
+
+https://www.cnblogs.com/hans-hu/archive/2022/05/08/16247235.html
 
 
 

@@ -3691,7 +3691,1087 @@ MyDeferredImportSelectorGroup.selectImports()
 
 
 
+## 源码环境
+
+对于想要研究SpringBoot源码的小伙伴来说，在本地编译源码环境，然后在研究源码的时候可以添加对应的注释是必须的，本文就给大家来介绍下如何来搭建我们的源码环境。
+
+### 1.官方源码下载
+
+&emsp;&emsp;首先大家要注意SpringBoot项目在2.3.0之前是使用Maven构建项目的，在2.3.0之后是使用Gradle构建项目的。后面分析的源码以SpringBoot2.2.5为案例，所以本文就介绍下SpringBoot2.2.5的编译过程。
+
+&emsp;&emsp;官网地址：https://github.com/spring-projects/spring-boot
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/8ba6242338ba47359d42f49f02bf2c46.png)
+
+直接下载对于的压缩文件即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/a8bb863fd5554adca18462cbb7ce4637.png)
+
+&emsp;&emsp;下载后直接解压缩即可
+
+### 2.本地源码编译
+
+&emsp;&emsp;把解压缩的源码直接导入到IDEA中，修改pom文件中的版本号。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/83fc4aa579934ae0b49bbfc528a00536.png)
+
+pom文件中提示 `disable.checks`属性找不到，我们添加一个即可。
+
+```xml
+	<properties>
+		<revision>2.2.5.snapshot</revision>
+		<main.basedir>${basedir}</main.basedir>
+		<!-- 添加属性 -->
+		<disable.checks>true</disable.checks>
+	</properties>
+```
+
+然后执行编译命令
+
+```cmd
+mvn clean install -DskipTests
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/cfe374e785e6464e9086c2eb8a726798.png)
+
+然后控制台出现如下错误
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/6c06bcd3d8504b1faa6c7eb0dff31c3a.png)
+
+按照提示，执行下面的 命令 就好了：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/932f457fc6164771b04356cc125bd8e7.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/a4dd313736b142f2bd1ebc60597bc26a.png)
+
+在执行编译命令就可以了
+
+mvn clean install -DskipTests
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/77bf19e0829543b2990fe521e91f2a79.png)
+
+### 3.源码环境使用
+
+&emsp;&emsp;既然源码已经编译好之后我们就可以在这个项目中来创建我们自己的SpringBoot项目了，我们在 `spring-boot-project`项目下创建 `module`,
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/f5c3299dc03a46b28f93f75c24d820d0.png)
+
+&emsp;&emsp;然后在我们的module中添加对应的start依赖
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/65b63c4b17b6414893cb65f2d1a87f2a.png)
+
+然后添加我们的启动类
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/e5c9b89e16fc4b678ae544a07ac1c43e.png)
+
+项目能够正常启动
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/4fb6b4805a7c4432a6dd9bbce48fc865.png)
+
+同时点击run方法进去，我们可以添加注释了：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/803c18a45fbf473db24bf0088e07b0a2.png)
+
+&emsp;&emsp;在其他项目使用我们编译的源码，这个可能是大家比较感兴趣的一个点了，我们也来介绍下，依赖我们还是可以使用官方的依赖即可，不过最好还是和我们编译的版本保持一致。
+
+&emsp;&emsp;主要是关联上我们编译的源码。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/ba46d4dee15d4b97a44ec0f10b40b331.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/7b535d425f4a457fb3bdca937fe3af97.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/b928eb29e7114392b9bb48f3864de917.png)
+
+修改代码
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/97e359f98c624052b3940a8b6b0e750f.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/c2674eec4de9458d8f90fc4e3410e538.png)
+
+好了到此我们就可以开启SpringBoot的源码探索之旅了哦。
+
+
+
+### 问题解决
+
+#### 执行命令mvn clean install报错
+
+```shell
+Run `spring-javaformat:apply` to fix.
+```
+
+执行命令：`mvn spring-javaformat:apply`
+
+
+
+#### 执行命令`mvn spring-javaformat:apply`报错
+
+```java
+[ERROR] Build scan background action failed:
+java.lang.RuntimeException: Process failed
+    at io.spring.ge.conventions.maven.GradleEnterpriseMavenExtension$ProcessBuilderProcessRunner.run (GradleEnterpriseMavenExtension.java:91)
+    at io.spring.ge.conventions.core.BuildScanConventions.run (BuildScanConventions.java:166)
+    at io.spring.ge.conventions.core.BuildScanConventions.addGitMetadata (BuildScanConventions.java:113)
+    at io.spring.ge.conventions.maven.MavenConfigurableBuildScan.lambda$background$0 (MavenConfigurableBuildScan.java:94)
+    at com.gradle.maven.scan.extension.internal.a.b.a (SourceFile:87)
+    at java.util.concurrent.Executors$RunnableAdapter.call (Executors.java:511)
+    at java.util.concurrent.FutureTask.run (FutureTask.java:266)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run (Thread.java:750)
+Caused by: java.io.IOException: Cannot run program "git": CreateProcess error=2, 系统找不到指定的文件。
+    at java.lang.ProcessBuilder.start (ProcessBuilder.java:1048)
+    at io.spring.ge.conventions.maven.GradleEnterpriseMavenExtension$ProcessBuilderProcessRunner.run (GradleEnterpriseMavenExtension.java:87)
+    at io.spring.ge.conventions.core.BuildScanConventions.run (BuildScanConventions.java:166)
+    at io.spring.ge.conventions.core.BuildScanConventions.addGitMetadata (BuildScanConventions.java:113)
+    at io.spring.ge.conventions.maven.MavenConfigurableBuildScan.lambda$background$0 (MavenConfigurableBuildScan.java:94)
+    at com.gradle.maven.scan.extension.internal.a.b.a (SourceFile:87)
+    at java.util.concurrent.Executors$RunnableAdapter.call (Executors.java:511)
+    at java.util.concurrent.FutureTask.run (FutureTask.java:266)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run (Thread.java:750)
+Caused by: java.io.IOException: CreateProcess error=2, 系统找不到指定的文件。
+    at java.lang.ProcessImpl.create (Native Method)
+    at java.lang.ProcessImpl.<init> (ProcessImpl.java:453)
+    at java.lang.ProcessImpl.start (ProcessImpl.java:140)
+    at java.lang.ProcessBuilder.start (ProcessBuilder.java:1029)
+    at io.spring.ge.conventions.maven.GradleEnterpriseMavenExtension$ProcessBuilderProcessRunner.run (GradleEnterpriseMavenExtension.java:87)
+    at io.spring.ge.conventions.core.BuildScanConventions.run (BuildScanConventions.java:166)
+    at io.spring.ge.conventions.core.BuildScanConventions.addGitMetadata (BuildScanConventions.java:113)
+    at io.spring.ge.conventions.maven.MavenConfigurableBuildScan.lambda$background$0 (MavenConfigurableBuildScan.java:94)
+    at com.gradle.maven.scan.extension.internal.a.b.a (SourceFile:87)
+    at java.util.concurrent.Executors$RunnableAdapter.call (Executors.java:511)
+    at java.util.concurrent.FutureTask.run (FutureTask.java:266)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run (Thread.java:750)
+[INFO] 
+[INFO] A build scan was not published as you have not authenticated with server 'ge.spring.io'.
+
+Process finished with exit code 0
+```
+
+将git.exe加入到path环境变量中，或者使用git安装包安装一下git。
+
+如果还报错，重启idea再重新执行一下命令。
+
+```java
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-starter-web-services ---
+[INFO] 
+[INFO] --------------< org.springframework.boot:spring-boot-cli >--------------
+[INFO] Building Spring Boot CLI 2.2.13.RELEASE                          [80/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-cli ---
+[INFO] 
+[INFO] -------------< org.springframework.boot:spring-boot-docs >--------------
+[INFO] Building Spring Boot Docs 2.2.13.RELEASE                         [81/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-docs ---
+[INFO] 
+[INFO] ------------< org.springframework.boot:spring-boot-project >------------
+[INFO] Building Spring Boot Project 2.2.13.RELEASE                      [82/89]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-project ---
+[INFO] 
+[INFO] ------< org.springframework.boot:spring-boot-smoke-tests-invoker >------
+[INFO] Building Spring Boot Smoke Tests Invoker 2.2.13.RELEASE          [83/89]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-smoke-tests-invoker ---
+[INFO] 
+[INFO] -------------< org.springframework.boot:spring-boot-tests >-------------
+[INFO] Building Spring Boot Tests 2.2.13.RELEASE                        [84/89]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-tests ---
+[INFO] 
+[INFO] -------< org.springframework.boot:spring-boot-integration-tests >-------
+[INFO] Building Spring Boot Integration Tests 2.2.13.RELEASE            [85/89]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-integration-tests ---
+[INFO] 
+[INFO] --< org.springframework.boot:spring-boot-configuration-processor-tests >--
+[INFO] Building Spring Boot Configuration Processor Tests 2.2.13.RELEASE [86/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-configuration-processor-tests ---
+[INFO] 
+[INFO] --------< org.springframework.boot:spring-boot-devtools-tests >---------
+[INFO] Building Spring Boot DevTools Tests 2.2.13.RELEASE               [87/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-devtools-tests ---
+[INFO] 
+[INFO] ---------< org.springframework.boot:spring-boot-server-tests >----------
+[INFO] Building Spring Boot Server Tests 2.2.13.RELEASE                 [88/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-server-tests ---
+[INFO] 
+[INFO] ------< org.springframework.boot:spring-boot-launch-script-tests >------
+[INFO] Building Spring Boot Launch Script Integration Tests 2.2.13.RELEASE [89/89]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spring-javaformat-maven-plugin:0.0.26:apply (default-cli) @ spring-boot-launch-script-tests ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Spring Boot Build 2.2.13.RELEASE:
+[INFO] 
+[INFO] Spring Boot Build .................................. SUCCESS [  0.378 s]
+[INFO] Spring Boot Dependencies ........................... SUCCESS [  0.011 s]
+[INFO] Spring Boot Parent ................................. SUCCESS [  0.021 s]
+[INFO] Spring Boot Tools .................................. SUCCESS [  0.012 s]
+[INFO] Spring Boot Testing Support ........................ SUCCESS [  0.649 s]
+[INFO] Spring Boot Configuration Processor ................ SUCCESS [  0.501 s]
+[INFO] Spring Boot ........................................ SUCCESS [  2.062 s]
+[INFO] Spring Boot Test ................................... SUCCESS [  0.420 s]
+[INFO] Spring Boot Auto-Configure Annotation Processor .... SUCCESS [  0.021 s]
+[INFO] Spring Boot AutoConfigure .......................... SUCCESS [  1.187 s]
+[INFO] Spring Boot Actuator ............................... SUCCESS [  0.482 s]
+[INFO] Spring Boot Actuator AutoConfigure ................. SUCCESS [  0.453 s]
+[INFO] Spring Boot Developer Tools ........................ SUCCESS [  0.173 s]
+[INFO] Spring Boot Configuration Metadata ................. SUCCESS [  0.024 s]
+[INFO] Spring Boot Properties Migrator .................... SUCCESS [  0.015 s]
+[INFO] Spring Boot Test Auto-Configure .................... SUCCESS [  0.196 s]
+[INFO] Spring Boot Loader ................................. SUCCESS [  0.109 s]
+[INFO] Spring Boot Loader Tools ........................... SUCCESS [  0.062 s]
+[INFO] Spring Boot Gradle Plugin .......................... SUCCESS [  0.080 s]
+[INFO] Spring Boot Gradle Plugin Marker Artifact .......... SUCCESS [  0.005 s]
+[INFO] Spring Boot Antlib ................................. SUCCESS [  0.013 s]
+[INFO] Spring Boot Configuration Docs ..................... SUCCESS [  0.014 s]
+[INFO] Spring Boot Maven Plugin ........................... SUCCESS [  0.048 s]
+[INFO] Spring Boot Starters ............................... SUCCESS [  0.014 s]
+[INFO] Spring Boot Logging Starter ........................ SUCCESS [  0.004 s]
+[INFO] Spring Boot Starter ................................ SUCCESS [  0.008 s]
+[INFO] Spring Boot ActiveMQ Starter ....................... SUCCESS [  0.005 s]
+[INFO] Spring Boot AMQP Starter ........................... SUCCESS [  0.005 s]
+[INFO] Spring Boot AOP Starter ............................ SUCCESS [  0.005 s]
+[INFO] Spring Boot Artemis Starter ........................ SUCCESS [  0.005 s]
+[INFO] Spring Boot JDBC Starter ........................... SUCCESS [  0.005 s]
+[INFO] Spring Boot Batch Starter .......................... SUCCESS [  0.005 s]
+[INFO] Spring Boot Cache Starter .......................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Spring Cloud Connectors Starter ........ SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Cassandra Starter ................. SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Cassandra Reactive Starter ........ SUCCESS [  0.004 s]
+[INFO] Spring Boot Data Couchbase Starter ................. SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Couchbase Reactive Starter ........ SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Elasticsearch Starter ............. SUCCESS [  0.003 s]
+[INFO] Spring Boot Data JDBC Starter ...................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Data JPA Starter ....................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Data LDAP Starter ...................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Data MongoDB Starter ................... SUCCESS [  0.005 s]
+[INFO] Spring Boot Data MongoDB Reactive Starter .......... SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Neo4j Starter ..................... SUCCESS [  0.005 s]
+[INFO] Spring Boot Data Redis Starter ..................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Data Redis Reactive Starter ............ SUCCESS [  0.004 s]
+[INFO] Spring Boot Json Starter ........................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Tomcat Starter ......................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Validation Starter ..................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Web Starter ............................ SUCCESS [  0.003 s]
+[INFO] Spring Boot Data REST Starter ...................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Data Solr Starter ...................... SUCCESS [  0.005 s]
+[INFO] Spring Boot FreeMarker Starter ..................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Groovy Templates Starter ............... SUCCESS [  0.003 s]
+[INFO] Spring Boot HATEOAS Starter ........................ SUCCESS [  0.004 s]
+[INFO] Spring Boot Integration Starter .................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Jersey Starter ......................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Jetty Starter .......................... SUCCESS [  0.003 s]
+[INFO] Spring Boot JOOQ Starter ........................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Atomikos JTA Starter ................... SUCCESS [  0.006 s]
+[INFO] Spring Boot Bitronix JTA Starter ................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Log4j 2 Starter ........................ SUCCESS [  0.003 s]
+[INFO] Spring Boot Mail Starter ........................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Mustache Starter ....................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Actuator Starter ....................... SUCCESS [  0.003 s]
+[INFO] Spring Boot OAuth2/OpenID Connect Client Starter ... SUCCESS [  0.003 s]
+[INFO] Spring Boot OAuth2 Resource Server Starter ......... SUCCESS [  0.002 s]
+[INFO] Spring Boot Starter Parent ......................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Quartz Starter ......................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Reactor Netty Starter .................. SUCCESS [  0.003 s]
+[INFO] Spring Boot RSocket Starter ........................ SUCCESS [  0.004 s]
+[INFO] Spring Boot Security Starter ....................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Test Starter ........................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Thymeleaf Starter ...................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Undertow Starter ....................... SUCCESS [  0.004 s]
+[INFO] Spring Boot WebFlux Starter ........................ SUCCESS [  0.004 s]
+[INFO] Spring Boot WebSocket Starter ...................... SUCCESS [  0.003 s]
+[INFO] Spring Boot Web Services Starter ................... SUCCESS [  0.003 s]
+[INFO] Spring Boot CLI .................................... SUCCESS [  0.148 s]
+[INFO] Spring Boot Docs ................................... SUCCESS [  0.067 s]
+[INFO] Spring Boot Project ................................ SUCCESS [  0.003 s]
+[INFO] Spring Boot Smoke Tests Invoker .................... SUCCESS [  0.004 s]
+[INFO] Spring Boot Tests .................................. SUCCESS [  0.003 s]
+[INFO] Spring Boot Integration Tests ...................... SUCCESS [  0.019 s]
+[INFO] Spring Boot Configuration Processor Tests .......... SUCCESS [  0.008 s]
+[INFO] Spring Boot DevTools Tests ......................... SUCCESS [  0.024 s]
+[INFO] Spring Boot Server Tests ........................... SUCCESS [  0.030 s]
+[INFO] Spring Boot Launch Script Integration Tests ........ SUCCESS [  0.014 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.983 s
+[INFO] Finished at: 2023-10-12T16:39:17+08:00
+[INFO] ------------------------------------------------------------------------
+[INFO] 89 goals, 89 executed
+[INFO] 
+[INFO] A build scan was not published as you have not authenticated with server 'ge.spring.io'.
+
+Process finished with exit code 0
+```
+
+
+
+#### archive is not a ZIP archive
+
+执行maven clean install 时报错
+
+```java
+[INFO] Spring Boot Launch Script Integration Tests ........ SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:21 min
+[INFO] Finished at: 2023-10-12T16:56:28+08:00
+[INFO] ------------------------------------------------------------------------
+[INFO] 204 goals, 204 executed
+[INFO] 
+[INFO] A build scan was not published as you have not authenticated with server 'ge.spring.io'.
+[ERROR] Failed to execute goal com.googlecode.maven-download-plugin:download-maven-plugin:1.4.2:wget (unpack-doc-resources) on project spring-boot-gradle-plugin: IO Error: Error while expanding D:\Workspace\idea\spring\spring-boot-2.2.13.RELEASE\spring-boot-project\spring-boot-tools\spring-boot-gradle-plugin\target\refdocs\asciidoc\spring-doc-resources-0.1.3.RELEASE.zip: archive is not a ZIP archive -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :spring-boot-gradle-plugin
+
+Process finished with exit code 1
+```
+
+
+
+
+
+
+
+## 源码分析
+
+我们要分析一个框架的源码不可能通过一篇文章就搞定的，本文我们就来分析下SpringBoot源码中的主线流程。先掌握SpringBoot项目启动的核心操作，然后我们再深入每一个具体的实现细节，注：本系列源码都以SpringBoot2.2.5.RELEASE版本来讲解
+
+### 主线分析
+
+#### SpringBoot启动的入口
+
+当我们启动一个SpringBoot项目的时候，入口程序就是main方法，而在main方法中就执行了一个run方法。
+
+```java
+@SpringBootApplication
+public class StartApp {
+
+	public static void main(String[] args) {
+		SpringApplication.run(StartApp.class);
+	}
+}
+```
+
+#### run方法
+
+&emsp;&emsp;然后我们进入run()方法中看。代码比较简单
+
+```java
+	public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
+		// 调用重载的run方法，将传递的Class对象封装为了一个数组
+		return run(new Class<?>[] { primarySource }, args);
+	}
+```
+
+&emsp;&emsp;调用了重载的一个run()方法，将我们传递进来的类对象封装为了一个数组，仅此而已。我们再进入run()方法。
+
+```java
+	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
+		// 创建了一个SpringApplication对象，并调用其run方法
+		// 1.先看下构造方法中的逻辑
+		// 2.然后再看run方法的逻辑
+		return new SpringApplication(primarySources).run(args);
+	}
+```
+
+br
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640171593000/e70d3fe03ded4228abaf0abeb83ac7c0.png)
+
+&emsp;&emsp;在该方法中创建了一个SpringApplication对象。同时调用了SpringApplication对象的run方法。这里的逻辑有分支，先看下SpringApplication的构造方法中的逻辑
+
+#### SpringApplication构造器
+
+我们进入SpringApplication的构造方法，看的核心代码为
+
+```java
+	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
+		// 传递的resourceLoader为null
+		this.resourceLoader = resourceLoader;
+		Assert.notNull(primarySources, "PrimarySources must not be null");
+		// 记录主方法的配置类名称
+		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		// 记录当前项目的类型
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();
+		// 加载配置在spring.factories文件中的ApplicationContextInitializer对应的类型并实例化
+		// 并将加载的数据存储在了 initializers 成员变量中。
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		// 初始化监听器 并将加载的监听器实例对象存储在了listeners成员变量中
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		// 反推main方法所在的Class对象 并记录在了mainApplicationClass对象中
+		this.mainApplicationClass = deduceMainApplicationClass();
+	}
+```
+
+&emsp;&emsp;在本方法中完成了几个核心操作
+
+1. 推断当前项目的类型
+2. 加载配置在spring.factories文件中的ApplicationContextInitializer中的类型并实例化后存储在了initializers中。
+3. 和2的步骤差不多，完成监听器的初始化操作，并将实例化的监听器对象存储在了listeners成员变量中
+4. 通过StackTrace反推main方法所在的Class对象
+
+&emsp;&emsp;上面的核心操作具体的实现细节我们在后面的详细文章会给大家剖析
+
+### run方法
+
+&emsp;&emsp;接下来我们在回到SpringApplication.run()方法中。
+
+```java
+	public ConfigurableApplicationContext run(String... args) {
+		// 创建一个任务执行观察器
+		StopWatch stopWatch = new StopWatch();
+		// 开始执行记录执行时间
+		stopWatch.start();
+		// 声明 ConfigurableApplicationContext 对象
+		ConfigurableApplicationContext context = null;
+		// 声明集合容器用来存储 SpringBootExceptionReporter 启动错误的回调接口
+		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+		// 设置了一个名为java.awt.headless的系统属性
+		// 其实是想设置该应用程序,即使没有检测到显示器,也允许其启动.
+		//对于服务器来说,是不需要显示器的,所以要这样设置.
+		configureHeadlessProperty();
+		// 获取 SpringApplicationRunListener 加载的是 EventPublishingRunListener
+		// 获取启动时到监听器
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		// 触发启动事件
+		listeners.starting();
+		try {
+			// 构造一个应用程序的参数持有类
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			// 创建并配置环境
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			// 配置需要忽略的BeanInfo信息
+			configureIgnoreBeanInfo(environment);
+			// 输出的Banner信息
+			Banner printedBanner = printBanner(environment);
+			// 创建应用上下文对象
+			context = createApplicationContext();
+			// 加载配置的启动异常处理器
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+					new Class[] { ConfigurableApplicationContext.class }, context);
+			// 刷新前操作
+			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			// 刷新应用上下文 完成Spring容器的初始化
+			refreshContext(context);
+			// 刷新后操作
+			afterRefresh(context, applicationArguments);
+			// 结束记录启动时间
+			stopWatch.stop();
+			if (this.logStartupInfo) {
+				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
+			}
+			// 事件广播 启动完成了
+			listeners.started(context);
+			callRunners(context, applicationArguments);
+		}
+		catch (Throwable ex) {
+			// 事件广播启动出错了
+			handleRunFailure(context, ex, exceptionReporters, listeners);
+			throw new IllegalStateException(ex);
+		}
+		try {
+			// 监听器运行中
+			listeners.running(context);
+		}
+		catch (Throwable ex) {
+			handleRunFailure(context, ex, exceptionReporters, null);
+			throw new IllegalStateException(ex);
+		}
+		// 返回上下文对象--> Spring容器对象
+		return context;
+	}
+```
+
+&emsp;&emsp;在这个方法中完成了SpringBoot项目启动的很多核心的操作，我们来总结下上面的步骤
+
+1. 创建了一个任务执行的观察器，统计启动的时间
+2. 声明ConfigurableApplicationContext对象
+3. 声明集合容器来存储SpringBootExceptionReporter即启动错误的回调接口
+4. 设置java.awt.headless的系统属性
+5. 获取我们之间初始化的监听器(EventPublishingRunListener),并触发starting事件
+6. 创建ApplicationArguments这是一个应用程序的参数持有类
+7. 创建ConfigurableEnvironment这时一个配置环境的对象
+8. 配置需要忽略的BeanInfo信息
+9. 配置Banner信息对象
+10. 创建对象的上下文对象
+11. 加载配置的启动异常的回调异常处理器
+12. 刷新应用上下文，本质就是完成Spring容器的初始化操作
+13. 启动结束记录启动耗时
+14. 完成对应的事件广播
+15. 返回应用上下文对象。
+
+
+&emsp;&emsp;到此SpringBoot项目的启动初始化的代码的主要流程就介绍完成了。细节部分后面详细讲解。
+
+
+### SpringApplication构造器
+
+前面给大家介绍了SpringBoot启动的核心流程，本文开始给大家详细的来介绍SpringBoot启动中的具体实现的相关细节。 https://www.processon.com/view/link/61eab8f47d9c085d604e614d
+
+![SpringBoot2.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/20233d78473344abb911d4740c7e2643.png)
+
+&emsp;&emsp;首先我们来看下在SpringApplication的构造方法中是如何帮我们完成这4个核心操作的。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/d27c903f4a0d416da247e96f4a9d06b1.png)
+
+```java
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
+		// 传递的resourceLoader为null
+		this.resourceLoader = resourceLoader;
+		Assert.notNull(primarySources, "PrimarySources must not be null");
+		// 记录主方法的配置类名称
+		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		// 记录当前项目的类型
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();
+		// 加载配置在spring.factories文件中的ApplicationContextInitializer对应的类型并实例化
+		// 并将加载的数据存储在了 initializers 成员变量中。
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		// 初始化监听器 并将加载的监听器实例对象存储在了listeners成员变量中
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		// 反推main方法所在的Class对象 并记录在了mainApplicationClass对象中
+		this.mainApplicationClass = deduceMainApplicationClass();
+	}
+```
+
+#### 1.webApplicationType
+
+&emsp;&emsp;首先来看下webApplicationType是如何来推导出当前启动的项目的类型。通过代码可以看到是通过deduceFromClassPath()方法根据ClassPath来推导出来的。
+
+```java
+this.webApplicationType = WebApplicationType.deduceFromClasspath();
+```
+
+&emsp;&emsp;跟踪进去看代码
+
+```java
+	static WebApplicationType deduceFromClasspath() {
+		if (ClassUtils.isPresent(WEBFLUX_INDICATOR_CLASS, null)
+				&& !ClassUtils.isPresent(WEBMVC_INDICATOR_CLASS, null)
+				&& !ClassUtils.isPresent(JERSEY_INDICATOR_CLASS, null)) {
+			return WebApplicationType.REACTIVE;
+		}
+		for (String className : SERVLET_INDICATOR_CLASSES) {
+			if (!ClassUtils.isPresent(className, null)) {
+				return WebApplicationType.NONE;
+			}
+		}
+		return WebApplicationType.SERVLET;
+	}
+```
+
+&emsp;&emsp;在看整体的实现逻辑之前，我们先分别看两个内容，第一就是在上面的代码中使用到了相关的静态变量。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/11c608e5613b47478aef40ba9fac2f7a.png)
+
+&emsp;&emsp;这些静态变量其实就是一些绑定的Java类的全类路径。第二个就是 `ClassUtils.isPresent()`方法，该方法的逻辑也非常简单，就是通过反射的方式获取对应的类型的Class对象，如果存在返回true，否则返回false
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/34b735dda8e545809eb13c3a95bc4fe7.png)
+
+&emsp;&emsp;所以到此推导的逻辑就非常清楚了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ed287633a72f4cbf914546f00a4deaf2.png)
+
+#### 2.setInitializers
+
+&emsp;&emsp;然后我们再来看下如何实现加载初始化器的。
+
+```java
+// 加载配置在spring.factories文件中的ApplicationContextInitializer对应的类型并实例化
+		// 并将加载的数据存储在了 initializers 成员变量中。
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+```
+
+&emsp;&emsp;首先所有的初始化器都实现了 `ApplicationContextInitializer`接口,也就是根据这个类型来加载相关的实现类。
+
+```java
+public interface ApplicationContextInitializer<C extends ConfigurableApplicationContext> {
+    void initialize(C var1);
+}
+```
+
+&emsp;&emsp;然后加载的关键方法是 `getSpringFactoriesInstances()`方法。该方法会加载 `spring.factories`文件中的key为 `org.springframework.context.ApplicationContextInitializer` 的值。
+
+spring-boot项目下
+
+```properties
+# Application Context Initializers
+org.springframework.context.ApplicationContextInitializer=\
+org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer,\
+org.springframework.boot.context.ContextIdApplicationContextInitializer,\
+org.springframework.boot.context.config.DelegatingApplicationContextInitializer,\
+org.springframework.boot.rsocket.context.RSocketPortInfoApplicationContextInitializer,\
+org.springframework.boot.web.context.ServerPortInfoApplicationContextInitializer
+```
+
+spring-boot-autoconfigure项目下
+
+```properties
+# Initializers
+org.springframework.context.ApplicationContextInitializer=\
+org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,\
+org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
+
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/b5facc54c9854f3995cecfa7cee14a8f.png)
+
+&emsp;&emsp;具体的加载方法为 `getSpringFacotiesInstance()`方法，我们进入查看
+
+```java
+	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
+		// 获取当前上下文类加载器
+		ClassLoader classLoader = getClassLoader();
+		// 获取到的扩展类名存入set集合中防止重复
+		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		// 创建扩展点实例
+		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
+		AnnotationAwareOrderComparator.sort(instances);
+		return instances;
+	}
+```
+
+&emsp;&emsp;先进入 `SpringFactoriesLoader.loadFactoryNames(type, classLoader)`中具体查看加载文件的过程.
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/264e6321f8734d16b02aea25d9004cfa.png)
+
+&emsp;&emsp;然后我们来看下 `loadSpringFactories`方法
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/e48b0dd8e7024f2a8912f83606b1afa1.png)
+
+&emsp;&emsp;通过Debug的方式查看会更清楚哦
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/335ab7d63ccc49188c7176b9c49fbb54.png)
+
+&emsp;&emsp;通过 `loadSpringFactories` 方法我们看到把 `spring.factories`文件中的所有信息都加载到了内存中了，但是我们现在只需要加载 `ApplicationContextInitializer`类型的数据。这时我们再通过 `getOrDefault()`方法来查看。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/661ec6eb875e4931804b30e5f2608ace.png)
+
+&emsp;&emsp;进入方法中查看
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ae25bcc8768840b4866bc416ba725da4.png)
+
+&emsp;&emsp;然后会根据反射获取对应的实例对象。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ba90364b8faa4f839d308b8856d7cd30.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/5fd5c8871194447da7de114e196fcf94.png)
+
+&emsp;&emsp;好了到这其实我们就清楚了 `getSpringFactoriesInstances`方法的作用就是帮我们获取定义在 `META-INF/spring.factories`文件中的可以为 `ApplicationContextInitializer` 的值。并通过反射的方式获取实例对象。然后把实例的对象信息存储在了SpringApplication的 `initializers`属性中。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/682f31c036c2438392e56f70d58866aa.png)
+
+#### 3.setListeners
+
+&emsp;&emsp;清楚了 `setInitializers()`方法的作用后，再看 `setListeners()`方法就非常简单了，都是调用了 `getSpringFactoriesInstances`方法，只是传入的类型不同。也就是要获取的 `META-INF/spring.factories`文件中定义的不同信息罢了。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/5fb3f99fd2fb4c448ee8ee666d8fde9a.png)
+
+&emsp;&emsp;即加载定义在 `META-INF/spring.factories`文件中声明的所有的监听器，并将获取后的监听器存储在了 `SpringApplication`的 `listeners`属性中。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/d0c88a1d7e3c451c9740424117516dfb.png)
+
+&emsp;&emsp;默认加载的监听器为：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/563d2fbf30af4d68b6d92dde9e2564d0.png)
+
+#### 4.mainApplicationClass
+
+&emsp;&emsp;最后我们来看下 `duduceMainApplicaitonClass()`方法是如何反推导出main方法所在的Class对象的。通过源码我们可以看到是通过 `StackTrace`来实现的。
+
+> ```txt
+> StackTrace:
+> 我们在学习函数调用时，都知道每个函数都拥有自己的栈空间。
+> 一个函数被调用时，就创建一个新的栈空间。那么通过函数的嵌套调用最后就形成了一个函数调用堆栈
+> ```
+
+&emsp;&emsp;`StackTrace`其实就是记录了程序方法执行的链路。通过Debug方式可以更直观的来呈现。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/9ce11b1720254826810c4e189c209dff.png)
+
+&emsp;&emsp;那么相关的调用链路我们都可以获取到，剩下的就只需要获取每链路判断执行的方法名称是否是 `main`就可以了。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/f65ee0c2e1bc4d3f86b551bfc0ae4536.png)
+
+
+
+### 监听器
+
+#### 监听器设计
+
+##### 1.观察者模式
+
+&emsp;&emsp;监听器的设计会使用到Java设计模式中的观察者模式，所以在搞清楚SpringBoot中的监听器的设计之前我们还是非常有必要把观察者模式先弄清楚。
+
+&emsp;&emsp;观察者模式又称为发布/订阅(Publish/Subscribe)模式,在对象之间定义了一对多的依赖，这样一来，当一个对象改变状态，依赖它的对象会收到通知并自动更新.
+
+&emsp;&emsp;在java.util包中包含有基本的Observer接口和Observable抽象类.功能上和Subject接口和Observer接口类似.不过在使用上,就方便多了,因为许多功能比如说注册,删除,通知观察者的那些功能已经内置好了.
+
+###### 1.1 定义具体被观察者
+
+```java
+package com.dpb.observer2;
+
+import java.util.Observable;
+
+/**
+ * 目标对象
+ * 继承 Observable
+ * @author dengp
+ *
+ */
+public class ConcreteSubject extends Observable {
+
+	private int state; 
+
+	public void set(int s){
+		state = s;  //目标对象的状态发生了改变
+		setChanged();  //表示目标对象已经做了更改
+		notifyObservers(state);  //通知所有的观察者
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+}
+
+```
+
+观察者只需要继承Observable父类。发送消息的方式执行如下两行代码即可
+
+```java
+setChanged();  //表示目标对象已经做了更改
+notifyObservers(state);  //通知所有的观察者
+```
+
+Observable源码对应的是：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190216234306676.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4NTI2NTcz,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190216234428190.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4NTI2NTcz,size_16,color_FFFFFF,t_70)
+
+###### 1.2 定义具体观察者
+
+```java
+package com.dpb.observer2;
+
+import java.util.Observable;
+import java.util.Observer;
+/**
+ * 观察者模式：观察者(消息订阅者)
+ * 实现Observer接口
+ * @author dengp
+ *
+ */
+public class ObserverA implements Observer {
+
+	private int myState;
+
+	@Override
+	public void update(Observable o, Object arg) {
+		myState = ((ConcreteSubject)o).getState();
+	}
+	public int getMyState() {
+		return myState;
+	}
+	public void setMyState(int myState) {
+		this.myState = myState;
+	}
+}
+```
+
+观察者也就是订阅者只需要实现Observer接口并重写相关update方法即可，在目标实现中我们发现触发的时候执行的就是观察者的update方法。
+
+###### 1.3 测试
+
+```java
+package com.dpb.observer2;
+
+public class Client {
+	public static void main(String[] args) {
+		//创建目标对象Obserable
+		ConcreteSubject subject = new ConcreteSubject();
+
+		//创建观察者
+		ObserverA obs1 = new ObserverA();
+		ObserverA obs2 = new ObserverA();
+		ObserverA obs3 = new ObserverA();
+
+		//将上面三个观察者对象添加到目标对象subject的观察者容器中
+		subject.addObserver(obs1);
+		subject.addObserver(obs2);
+		subject.addObserver(obs3);
+
+		//改变subject对象的状态
+		subject.set(3000);
+		System.out.println("===============状态修改了！");
+		//观察者的状态发生了变化
+		System.out.println(obs1.getMyState());
+		System.out.println(obs2.getMyState());
+		System.out.println(obs3.getMyState());
+
+		subject.set(600);
+		System.out.println("===============状态修改了！");
+		//观察者的状态发生了变化
+		System.out.println(obs1.getMyState());
+		System.out.println(obs2.getMyState());
+		System.out.println(obs3.getMyState());
+
+		//移除一个订阅者
+		subject.deleteObserver(obs2);
+		subject.set(100);
+		System.out.println("===============状态修改了！");
+		//观察者的状态发生了变化
+		System.out.println(obs1.getMyState());
+		System.out.println(obs2.getMyState());
+		System.out.println(obs3.getMyState());
+	}
+}
+
+```
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190216235018273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4NTI2NTcz,size_16,color_FFFFFF,t_70)
+&emsp;&emsp;这样就实现了官方提供观察者模式.
+
+##### 2.SpringBoot中监听器的设计
+
+&emsp;&emsp;然后我们来看下SpringBoot启动这涉及到的监听器这块是如何实现的。
+
+###### 2.1 初始化操作
+
+&emsp;&emsp;通过前面的介绍我们知道在SpringApplication的构造方法中会加载所有声明在spring.factories中的监听器。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/6b458524aaf546eb9084434519c7ef0d.png)
+
+&emsp;&emsp;通过Debug模式我们可以看到加载的监听器有哪些。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/76e9dcc5e9104561aeceeb91405ef447.png)
+
+&emsp;&emsp;其实就是加载的spring.factories文件中的key为ApplicationListener的value
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/f1cffe9621c24e91a8ef27d761d409a7.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/2789a2faaba44ee690b23e3e2b14371e.png)
+
+&emsp;&emsp;通过对这些内置监听器的源码查看我们发现这些监听器都实现了 `ApplicationEvent`接口。也就是都会监听 `ApplicationEvent`发布的相关的事件。ApplicationContext事件机制是观察者设计模式的实现，通过ApplicationEvent类和ApplicationListener接口，可以实现ApplicationContext事件处理。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/035e9e1d7361441ca0b88aa0945045a0.png)
+
+###### 2.2 run方法
+
+&emsp;&emsp;然后我们来看下在SpringApplication.run()方法中是如何发布对应的事件的。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/64f69bc57a564148a66d4a9c3ac7abd5.png)
+
+&emsp;&emsp;首先会通过getRunListeners方法来获取我们在spring.factories中定义的SpringApplicationRunListener类型的实例。也就是EventPublishingRunListener.
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/1ea1d66e450b41c4918aaddd6ef9b2f5.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/fa15b74df90e4695a6c7ebf84f6b845a.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/baf819379bd5489fa4e0ff241ed15274.png)
+
+&emsp;&emsp;加载这个类型的时候会同步的完成实例化。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/7f7fdbf0dc6d4856bae9c8eb85adf0a3.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/5f832aed53344b04bff2f36367bc933b.png)
+
+&emsp;&emsp;实例化操作就会执行EventPublishingRunListener.
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/d2970e863b784cfdb89d8dff92f78b32.png)
+
+&emsp;&emsp;在这个构造方法中会绑定我们前面加载的11个过滤器。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/53658b78f3bf453f9f7455c32834f90b.png)
+
+&emsp;&emsp;到这其实我们就已经清楚了EventPublishingRunListener和我们前面加载的11个监听器的关系了。然后在看事件发布的方法。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/ee3af2c5febd4e6abc30a35d3aa5b2a0.png)
+
+查看starting()方法。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/41e3034fe63c47d18d8b89d1ef533e17.png)
+
+再进入
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/f0e9438cd1194f3cbfa205f936856402.png)
+
+进入到multicastEvent中方法中我们可以看到具体的触发逻辑
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/01a7d30aa5ff4e05af862413a2d241c6.png)
+
+在这儿以ConfigFileApplicationListener为例。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/a52f6503a0b040f280240eb49eb260e3.png)
+
+触发会进入ConfigFileApplicationListener对象的onApplicationEvent方法中，
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/dd68d5a821d243a0bb91652f5c80bcbc.png)
+
+通过代码我们可以发现当前的事件是ApplicationStartingEvent事件，都不满足，所以ConfigFileApplicationListener在SpringBoot项目开始启动的时候就不会做任何的操作。而当我们在配置环境信息的时候，会发布对应的事件来触发
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/6ba12346ba634f7089031aede43c6bb5.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/fe354248666d422187a756f5f511e384.png)
+
+继续进入
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/fee9bdfad79f44b883a575a01e17e589.png)
+
+继续进入
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/cff0163367d5440e9e03799efdc550b4.png)
+
+然后再触发ConfigFileApplicationListener监听器的时候就会触发如下方法了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/666a39112134400992c1e2ab43d74cb3.png)
+
+&emsp;&emsp;其实到这儿，后面的事件发布与监听器的处理逻辑就差不多是一致了。到这儿对应SpringBoot中的监听器这块就分析的差不错了。像SpringBoot的属性文件中的信息什么时候加载的就是在这些内置的监听器中完成的。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/2bf30239816c46fbb8105250c952ab26.png)
+
+官方内置的事件有：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/55fe63f0dc334bf2bd96fa62185e9bc8.png)
+
+&emsp;&emsp;好了本文就给大家介绍到这里，希望能对你有所帮助哦。
+
+
+
+#### 自定义监听器
+
+&emsp;&emsp;前面我们系统的给大家介绍了SpringBoot中的监听器机制，清楚的知道了SpringBoot中默认给我们提供了多个监听器，提供了一个默认的事件发布器，还有很多默认的事件，本文我们就在前面的基础上来，来看下如果我们要自定义监听器如何来实现。
+
+##### 1.SpringBoot中默认的监听器
+
+&emsp;&emsp;首先来回顾下SpringBoot中给我们提供的默认的监听器，这些都定义在spring.factories文件中。
+
+| 监听器                                     | 监听事件                                                     | 说明                                                         |
+| ------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ClearCachesApplicationListener             | ContextRefreshedEvent                                        | 当触发ContextRefreshedEvent事件会清空应用的缓存              |
+| ParentContextCloserApplicationListener     | ParentContextAvailableEvent                                  | 触发ParentContextAvailableEvent事件会完成父容器关闭的监听器  |
+| CloudFoundryVcapEnvironmentPostProcessor   | ApplicationPreparedEvent                                     | 判断环境中是否存在VCAP_APPLICATION或者VCAP_SERVICES。如果有就添加Cloud Foundry的配置；没有就不执行任何操作。 |
+| FileEncodingApplicationListener            | ApplicationEnvironmentPreparedEvent                          | 文件编码的监听器                                             |
+| AnsiOutputApplicationListener              | ApplicationEnvironmentPreparedEvent                          | 根据 `spring.output.ansi.enabled`参数配置 `AnsiOutput`       |
+| ConfigFileApplicationListener              | ApplicationEnvironmentPreparedEvent `<br>`ApplicationPreparedEvent | 完成相关属性文件的加载，application.properties<br />application.yml<br />前面源码内容详细讲解过 |
+| DelegatingApplicationListener              | ApplicationEnvironmentPreparedEvent                          | 监听到事件后转发给环境变量 `context.listener.classes`指定的那些事件监听器 |
+| ClasspathLoggingApplicationListener        | ApplicationEnvironmentPreparedEvent `<br>`ApplicationFailedEvent | 一个SmartApplicationListener,对环境就绪事件ApplicationEnvironmentPreparedEvent/应用失败事件ApplicationFailedEvent做出响应，往日志DEBUG级别输出TCCL(thread context class loader)的classpath。 |
+| LoggingApplicationListener                 | ApplicationStartingEvent `<br>`ApplicationEnvironmentPreparedEvent `<br>`ApplicationPreparedEvent `<br>`ContextClosedEvent `<br>`ApplicationFailedEvent | 配置 `LoggingSystem`。使用 `logging.config`环境变量指定的配置或者缺省配置 |
+| LiquibaseServiceLocatorApplicationListener | ApplicationStartingEvent                                     | 使用一个可以和Spring Boot可执行jar包配合工作的版本替换liquibase ServiceLocator |
+| BackgroundPreinitializer                   | ApplicationStartingEvent `<br>`ApplicationReadyEvent `<br>`ApplicationFailedEvent | 尽早触发一些耗时的初始化任务，使用一个后台线程               |
+
+##### 2.SpringBoot中的事件类型
+
+&emsp;&emsp;然后我们来看下对应的事件类型，SpringBoot中的所有的事件都是继承于 `ApplicationEvent`这个抽象类，在SpringBoot启动的时候会发布如下的相关事件，而这些事件其实都实现了 `SpringApplicationContext`接口。
+
+| 事件                                | 说明                       |
+| ----------------------------------- | -------------------------- |
+| ApplicationStartingEvent            | 容器启动的事件             |
+| ApplicationEnvironmentPreparedEvent | 应用处理环境变量相关的事件 |
+| ApplicationContextInitializedEvent  | 容器初始化的事件           |
+| ApplicationPreparedEvent            | 应用准备的事件             |
+| ApplicationFailedEvent              | 应用启动出错的事件         |
+| ApplicationStartedEvent             | 应用Started状态事件        |
+| ApplicationReadyEvent               | 应用准备就绪的事件         |
+
+也就是这些事件都是属于SpringBoot启动过程中涉及到的相关的事件
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/3716d2d823e74f70a9a61a9587fe9baa.png)
+
+&emsp;&emsp;当然在启动过程中还会发布其他的相关事件，大家可以自行查阅相关源码哦
+
+##### 3.自定义事件
+
+&emsp;&emsp;接下来我们通过几个自定义事件来加深下对事件监听机制的理解
+
+###### 3.1 监听所有事件
+
+&emsp;&emsp;我们先创建一个自定义监听器，来监听所有的事件。创建一个Java类，实现ApplicationListener接口在泛型中指定要监听的事件类型即可，如果要监听所有的事件，那么泛型就写ApplicationEvent。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/fb6afb1146674c2e94fa99891610751f.png)
+
+&emsp;&emsp;之后为了在容器启动中能够发下我们的监听器并且添加到SimpleApplicationEventMulticaster中，我们需要在spring.factories中注册自定义的监听器
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/2bace08cd74e415a8351d4c95c1c8641.png)
+
+&emsp;&emsp;这样当我们启动服务的时候就可以看到相关事件发布的时候，我们的监听器被触发了。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/b85ff088faa04871b357cda1b33abc33.png)
+
+###### 3.1 监听特定事件
+
+&emsp;&emsp;那如果是监听特定的事件呢，我们只需要在泛型出制定即可。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/70c4ba2ed30849bea2838fb8bca6abb6.png)
+
+启动服务查看
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/cab7fbe8798c4b7595f999a231649fb1.png)
+
+###### 3.2 自定义事件
+
+&emsp;&emsp;那如果我们想要通过自定义的监听器来监听自定义的事件呢？首先创建自定义的事件类，非常简单，只需要继承ApplicationEvent即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/c0156f3ff75d44b5b4d689dc5dbc7bac.png)
+
+然后在自定义的监听器中监听自定义的事件。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/b61d8c9f0320462195d2e3f342ac07dc.png)
+
+同样的别忘了在spring.factories中注册哦
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/6643f4e7ca124a94b7450dc6cf1b29c8.png)
+
+之后我们就可以在我们特定的业务场景中类发布对应的事件了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/721e760f63434fba91ef64f16b71f9d8.png)
+
+然后当我们提交请求后
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/bce4861eb66f4ebfbbada9877c64d45c.png)
+
+可以看到对应的监听器触发了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/beafdfe5e82042528fee0cd75edf52d6.png)
+
+这样一来不光搞清楚了SpringBoot中的监听机制，而且也可以扩展应用到我们业务开发中了。好了本文就给大家介绍到这里，希望对你有所帮助。
+
+
+
 ## SpringBoot启动流程
+
+启动流程分再进入启动方法run()之前
 
 
 
