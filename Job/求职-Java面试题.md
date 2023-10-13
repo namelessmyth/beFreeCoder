@@ -9,271 +9,25 @@
 | 编制日期     | 2021-07-07     |
 | 编制单位     | 无             |
 | 文档分类     | 求职-面试-Java |
-| 版本号       | 1.3            |
+| 版本号       | 1.4            |
 | 最后更新人   | namelessmyth   |
-| 最后更新日期 | 2023-09-30     |
+| 最后更新日期 | 2023-10-13     |
 
 
 
-## 文档更新记录
+## 更新记录
 
-| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）               |
-| ---- | ------------ | ---------- | ------------------------------------------ |
-| 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题   |
-| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构     |
-| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分独立出去。 |
-| 1.3  | namelessmyth | 2023-09-30 | 完成Spring Framework面试题的初步整理。     |
-|      |              |            |                                            |
-|      |              |            |                                            |
-|      |              |            |                                            |
+| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）                     |
+| ---- | ------------ | ---------- | ------------------------------------------------ |
+| 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题         |
+| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构           |
+| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分独立出去。       |
+| 1.3  | namelessmyth | 2023-09-30 | 完成Spring Framework面试题的初步整理。           |
+| 1.4  | namelessmyth | 2023-10-14 | 补充SpringBoot和SpringMVC面试题，将题目提升至3级 |
+|      |              |            |                                                  |
+|      |              |            |                                                  |
 
 
-
-
-# 算法
-
-## 数组
-
-#### 两个有序char数组，找出不一致的那一个元素
-
-例如：[a, b, c, d, e, f, g]，[a, b, c, d, f, g]
-
-
-
-10万条数据，基于数组或者链表，如何占用最少内存排序
-
-
-
-## 链表
-
-#### 反转一个链表
-
-例如：输入：1，2，3，4，5，输出：5，4，3，2，1
-
-```java
-public class ListNode {
-	int val;
-	ListNode next;
-    
-    public ListNode(int val){
-        this.val = val;
-    }
-}
-
-public class solution {
-    public ListNode reverseList(ListNode head){
-        
-    }
-}
-```
-
-
-
-#### 使用链表来实现2数相加
-
-用2个链表来表示2个数字，例如：
-
-输入：2->4->3，5->6->4
-
-输出：7->0->8
-
-原因：342+465=807
-
-```java
-public class ListNode {
-	int val;
-	ListNode next;
-    
-    public ListNode(int val){
-        this.val = val;
-    }
-}
-
-public class solution {
-    public ListNode addTwoNumbers(ListNode head){
-        
-    }
-}
-```
-
-
-
-
-
-
-
-## 动态规划
-
-#### 高楼扔鸡蛋
-
-https://zhuanlan.zhihu.com/p/92288604
-
-
-
-#### LeetCode 45 跳跃游戏 II
-
-https://zhuanlan.zhihu.com/p/82831669
-
-
-
-
-
-# 软件设计
-
-
-
-### LRU
-
-Least Recently Used，最近最少使用。判断最近被使用的时间，离目前最远的数据优先被淘汰。
-
-Redis LRU对传统的LRU算法进行了改良，通过随机采样来调整算法的精度。如果淘汰策略是LRU，则根据配置的采样值maxmemory_samples(默认是5个)，随机从数据库中选择m个key，淘汰其中热度最低的 key对应的缓存数据。所以采样参数m配置的数值越大，就越能精确的查找到待淘汰的缓存数据,但是也消耗更多的CPU计算,执行效率降低。
-
-问题：如何找出热度最低的数据?
-Redis 中所有对象结构都有一个lru字段且使用了unsigned的低24位,这个字段用来记录对象的热度。对象被创建时会记录lru值。在被访问的时候也会更新lru的值。但并不是获取系统当前的时间戳，而是设置为全局变量server.Ilruclock的值。
-
-### LFU
-
-Least Frequently Used，最不常用，按照使用频率删除
-
-同样使用lru字段，但是前16位表示多久时间未访问，后8位表示访问次数（默认五次），长时间未访问，则次数会减少，最少为0，类似于心悦等级，长时间不充钱，就会降低，当次数小于5时，每次访问次数都会+1，当访问次数大于5时，随着访问次数越来越多，访问次数+1的概率就越来越小，最多加到255次，就会直接返回；
-
-
-
-lru如何用链表实现
-
-
-
-#### LeetCode146 写一个LRU算法
-
-解答：
-
-
-
-#### Leetcode 1249 移除无效的括号
-
-#### 示例 1：
-
-#### 输入：s = “lee(to)de)”
-
-#### 输出：“lee(to)de”
-
-解答：http://t.zoukankan.com/coding-gaga-p-12920164.html
-
-
-
-#### LeetCode1135 最低成本联通所有城市
-
-想象一下你是个城市基建规划者，地图上有 N 座城市，它们按以 1 到 N 的次序编号。
-
-给你一些可连接的选项 conections，其中每个选项 conections[i] = [city1, city2, cost] 表示将城市 city1 和城市 city2 连接所要的成本。（连接是双向的，也就是说城市 city1 和城市 city2 相连也同样意味着城市 city2 和城市 city1 相连）。
-
-返回使得每对城市间都存在将它们连接在一起的连通路径（可能长度为 1 的）最小成本。该最小成本应该是所用全部连接代价的综合。如果根据已知条件无法完成该项任务，则请你返回 -1。
-
-示例1：
-输入：N = 3, conections = [[1,2,5],[1,3,6],[2,3,1]]
-输出：6
-解释：
-选出任意 2 条边都可以连接所有城市，我们从中选取成本最小的 2 条
-
-解答：参考[LeetCode1135](https://michael.blog.csdn.net/article/details/107796632)
-
-
-
-paxos
-
-
-
-raft
-
-
-
-zxid
-
-
-
-myid
-
-
-
-epoch
-
-
-
-有一栋100层高的大楼，给你两个完全相同的玻璃球，假设从某一层开始丢下玻璃球会摔碎,怎么利用手中的两个玻璃球，用什么最优策略(最坏情况下最少次数）知道这个临界的层是第几层
-
-
-
-
-
-## 功能设计
-
-#### 写个门票限时销售系统，架构图，业务流程图，随意发挥
-
-
-
-#### 直播、会议、在线教育这种功能的解决方案有哪些？
-
-这种功能一般不用Java来做，涉及转码，视频数据存储，还要铺网，基建都要几千万起。目前比较成熟的解决方案有：保利威，七牛，网易云信
-
-#### 微信抢红包、红包雨实现
-
-
-
-#### 如何设计秒杀系统？场景：100万并发、100个商品
-
-
-
-#### 项目流量增大1000倍，项目如何架构升级
-
-说了应用集群、拆分。缓存、搜索引擎。数据库集群，读写分离等）面试官说太简单了
-
-
-
-#### 抛开所有组件，如何从文件中10万条手机号找出想要的那个
-
-
-
-#### 设计一个商业停车场数据库表结构
-
-然后进一步，划分公共的，公司的，公益的，如何计算收益
-
-
-
-#### 系统设计一个系统，输入hash查询注册名称
-
-1、数据查询接口:
-现有一张数据表(数据内容有11亿条),表格中的内容举例如下:
-
-| ID    | 注册号码    | 注册名称 |
-| ----- | ----------- | -------- |
-| 10036 | 18972303692 | 张三     |
-| 27999 | 18672352674 | 李四     |
-| 33394 | 13681473563 | 王五     |
-
-经常被查询的数据量在200万条以内，200万条数据中会有1%的数据会经常变化成其他的数据，变化之后会稳定一段时间，时间从8小时到数天不等，其余的数据基本上不会改变，请开发一个系统，输入注册号码的hash值，就能够查询到注册名称和ID。(特别注意，为保护数据，不允许直接传入注册号码作为输入）。
-
-
-
-#### 路由策略设计
-
-场景:我们需要将2000w的商品信息缓存在redis中， key为uuid,value为商品基本信息。现有8台redis服务器，分成4组，每组两台(一主一从),每组存放的数据量为500w台。
-设计一种路由策略。要求:
-1、重复输入同一个uuid，路由到的redis服务组地址不变。
-2、当数据量激增，增加redis机器时不会造成大规模的缓存雪崩。
-
-
-
-#### 查询功能设计原则
-
-
-
-## 设计模式
-
-### 单例模式
-
-#### 单例模式的介绍
-
-#### 写一个线程安全的单例模式
 
 
 
@@ -340,15 +94,15 @@ public Node getLoopNode(Node head){
 
 ## 面向对象
 
-#### HashMap的底层结构
+### HashMap的底层结构
 
-#### HashMap1.8与1.7区别
+### HashMap1.8与1.7区别
 
     [参考答案1](https://blog.csdn.net/qq_36520235/article/details/82417949) ，[参考答案2](https://blog.csdn.net/weixin_44141495/article/details/108402128)
 
-#### 只重写equals不重写hashcode会有什么问题？
+### 只重写equals不重写hashcode会有什么问题？
 
-#### Exception, Throwable, Error, RuntimeException的区别
+### Exception, Throwable, Error, RuntimeException的区别
 
 
 
@@ -356,9 +110,9 @@ public Node getLoopNode(Node head){
 
 ### 基础
 
-#### 原子性，可见性，有序性解释
+### 原子性，可见性，有序性解释
 
-#### 并发和并行
+### 并发和并行
 
 并发，指的是多个任务，在同一时间段内同时发生了。 
 
@@ -370,25 +124,25 @@ public Node getLoopNode(Node head){
 
 
 
-#### 线程的创建方式有哪些
+### 线程的创建方式有哪些
 
-#### 线程的生命周期
+### 线程的生命周期
 
-#### 启动线程调用start还是run方法, 为什么?
+### 启动线程调用start还是run方法, 为什么?
 
-#### Callable和Runnable有啥区别
+### Callable和Runnable有啥区别
 
 Callable有返回值，另一个没有。
 
 
 
-#### 有t1、t2、t3三个线程怎么确保他的顺序。
+### 有t1、t2、t3三个线程怎么确保他的顺序。
 
 可以通过join()或者callable+future来得到返回值。
 
 
 
-#### 线程什么时候抛出InterruptedException
+### 线程什么时候抛出InterruptedException
 
 调用interrupt方法时。
 抛出InterruptedException应该怎么处理
@@ -396,7 +150,7 @@ Callable有返回值，另一个没有。
 
 
 
-#### interrupt()的作用？线程复位及其方式
+### interrupt()的作用？线程复位及其方式
 
  interrupt()的作用是中断线程。将线程变量interrupt标记为true，
 
@@ -406,13 +160,13 @@ Callable有返回值，另一个没有。
 
 
 
-#### java如何停止一个线程，interrupt，interrupted，isInterrupted()区别
+### java如何停止一个线程，interrupt，interrupted，isInterrupted()区别
 
 
 
-#### 讲一下JMM
+### 讲一下JMM
 
-##### 硬件层面原因
+#### 硬件层面原因
 
 由于CPU和内存之间几个量级的速度差异。引入了告诉缓存，但由于CPU每个核心的高速缓存互相之间的不可见性。出现缓存一致性问题。解决缓存一致性问题有2个方案：总线锁和MESI协议。
 
@@ -424,7 +178,7 @@ MESI协议，当CPU0修改变量时如果发现当前变量是共享状态（S�
 
 虽然写缓冲器虽然进一步优化了性能，但还是会带来可见性问题。这就需要借助内存屏障来配合解决可见性问题。
 
-##### JMM介绍
+#### JMM介绍
 
 由于存在上述硬件层面问题。JMM规定了JVM和计算机内存的协同工作方式。例如：一个线程何时和如何看到另一个线程的修改过的共享变量的值。如何的同步的访问共享变量。JMM屏蔽了各种硬件和操作系统对系统内存的访问方式。让Java可以跨平台的实现多线程并发操作的一致性。
 
@@ -446,27 +200,27 @@ Volatile的解决可见性问题。当共享变量在修改时会使用写屏障
 
 ### 并发
 
-#### 什么是线程安全
+### 什么是线程安全
 
 当多个线程访问某一个类（对象或方法）时，对象对应的公共数据区始终都能表现正确，那么这个类（对象或方法）就是线程安全的。
 
-#### 对volatile的理解
+### 对volatile的理解
 
-#### 新建t1, t2, t3三个线程, 如何保证他们按顺序执行?
+### 新建t1, t2, t3三个线程, 如何保证他们按顺序执行?
 
-#### Synchronized加锁的范围有哪些?
-
-
-
-#### synchronized和重入锁实现原理以及区别？
+### Synchronized加锁的范围有哪些?
 
 
 
-#### Synchronized在JDK1.6之后的优化
+### synchronized和重入锁实现原理以及区别？
 
 
 
-#### 多线程中wait()和sleep(), part()的区别
+### Synchronized在JDK1.6之后的优化
+
+
+
+### 多线程中wait()和sleep(), part()的区别
 
 sleep是会设置超时时间的。超时自动进入就绪状态
 
@@ -474,7 +228,7 @@ park和sleep不会释放锁，wait会释放
 
 
 
-#### sleep，join，yield的区别。
+### sleep，join，yield的区别。
 
 sleep：睡眠指定时间，睡眠期间不会释放锁，超时后让出CPU时间片；
 
@@ -484,25 +238,25 @@ join：让调用该方法的线程的执行结果对主线程可见，内部基�
 
 
 
-#### Java中的++操作是线程安全的么？
+### Java中的++操作是线程安全的么？
 
 不是。原子性，可见性，有序性。++操作不符合原子性。
 
-#### java如何实现多线程之间通讯和协作
+### java如何实现多线程之间通讯和协作
 
-#### 死锁的4个必要条件
+### 死锁的4个必要条件
 
-#### 写个死锁
+### 写个死锁
 
-#### 怎么样唤醒一个阻塞的线程?
+### 怎么样唤醒一个阻塞的线程?
 
-#### 是否能创建volatile数组？
+### 是否能创建volatile数组？
 
 可以，但volatile仅针对引用可见，数组中的数组不可见。
 
-#### happens-Before介绍
+### happens-Before介绍
 
-#### ThreadLocal是什么?原理?
+### ThreadLocal是什么?原理?
 
 线程隔离机制，用于保证在多线程环境下对于共享变量的访问的安全性。
 
@@ -512,7 +266,7 @@ join：让调用该方法的线程的执行结果对主线程可见，内部基�
 
 
 
-#### ThreadLocal怎么共享父线程的变量
+### ThreadLocal怎么共享父线程的变量
 
 https://blog.csdn.net/hewenbo111/article/details/80487252
 
@@ -520,21 +274,21 @@ https://blog.csdn.net/hewenbo111/article/details/80487252
 
 ### JUC
 
-#### ConcurrentHashMap实现原理
+### ConcurrentHashMap实现原理
 
 
 
 ### 线程池
 
-#### 线程池的Submit()和execute() 区别
+### 线程池的Submit()和execute() 区别
 
-#### 
+### 
 
-#### 
+### 
 
-#### 谈下ThreadLocal的内存泄漏问题, 怎么解决?
+### 谈下ThreadLocal的内存泄漏问题, 怎么解决?
 
-#### 线程池执行任务的过程原理
+### 线程池执行任务的过程原理
 
 无论是哪种类型的线程池最终都会创建一个ThreadPoolExecutor（线程池执行器），只是不同的线程池传入的参数不一样。
 
@@ -698,31 +452,31 @@ final void runWorker(Worker w) {
 
 
 
-#### 什么是ReentrantLock?底层怎么实现锁的?
+### 什么是ReentrantLock?底层怎么实现锁的?
 
-#### 什么是公平锁和非公平锁? 怎么体现? Synchronize属于公平还是非公平锁?
+### 什么是公平锁和非公平锁? 怎么体现? Synchronize属于公平还是非公平锁?
 
-#### cas是什么, 会有什么问题? 如何解决?
+### cas是什么, 会有什么问题? 如何解决?
 
-#### Java中你
+### Java中你
 
-#### Semaphore的作用是什么?
+### Semaphore的作用是什么?
 
-#### 什么是线程池, 有哪些创建线程池的方式, 说说有哪些参数?
+### 什么是线程池, 有哪些创建线程池的方式, 说说有哪些参数?
 
-#### 线程池的作用，如何设置线程池大小。
+### 线程池的作用，如何设置线程池大小。
 
-#### 项目中的线程池怎么设置？
+### 项目中的线程池怎么设置？
 
-#### ConcurrentHashmap和JDK1.7和1.8的区别?
+### ConcurrentHashmap和JDK1.7和1.8的区别?
 
-#### 线程间进行数据传递，有时候可以直接用对象进行传值，有时候要ThreadLocal，为什么不直接用ThreadLocal？
+### 线程间进行数据传递，有时候可以直接用对象进行传值，有时候要ThreadLocal，为什么不直接用ThreadLocal？
 
       ThreadLocal只能在同一个线程内部或者父子线程之间进行值传递，一开始就用它会有局限性。
 
 
 
-#### 多线程环境下，如何保证2个线程不重复处理相同的数据。
+### 多线程环境下，如何保证2个线程不重复处理相同的数据。
 
 1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
 2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
@@ -732,7 +486,7 @@ final void runWorker(Worker w) {
 
 ### 实战
 
-#### 为什么下面的源码在多个生产者的时候会超？怎么解决？
+### 为什么下面的源码在多个生产者的时候会超？怎么解决？
 
 有多个生产者时，当达到生产上限时，调用notify方法唤醒的可能不是消费者，而是其他生产者。
 
@@ -824,11 +578,11 @@ public void run() {
 
 ## JVM
 
-#### 内存溢出，内存泄漏遇到过吗？什么场景产生的，怎么解决的？
+### 内存溢出，内存泄漏遇到过吗？什么场景产生的，怎么解决的？
 
 
 
-#### jvm类加载器有哪些？
+### jvm类加载器有哪些？
 
 AppClassload：负责加载classpath指定的jar包，以及目录下的class文件。
 
@@ -840,17 +594,17 @@ CustomClassload：自定义类加载器。
 
 
 
-#### 自定义类加载器应用场景
+### 自定义类加载器应用场景
 
 比如，tomcat、jboss，都自定义了类加载器，确保每个war目录下的项目相互隔离
 
 
 
-#### 双亲委派机制，优缺点
+### 双亲委派机制，优缺点
 
 
 
-#### JVM内存中为什么会有新生代，老年代，新生代为什么有Eden跟Survivor?Survivor又有S0、S1
+### JVM内存中为什么会有新生代，老年代，新生代为什么有Eden跟Survivor?Survivor又有S0、S1
 
 分为新生代老年代的原因：
 
@@ -864,7 +618,7 @@ JVM垃圾收集采用分代回收算法，根据对象存活周期的不同将�
 
 
 
-#### 请描述下JVM中的垃圾回收算法与垃圾回收器，各回收器的场景以及区别
+### 请描述下JVM中的垃圾回收算法与垃圾回收器，各回收器的场景以及区别
 
 垃圾回收算法：
 
@@ -924,7 +678,7 @@ JVM垃圾收集采用分代回收算法，根据对象存活周期的不同将�
 
 
 
-#### 怎么去判断一个对象能够进行GC回收
+### 怎么去判断一个对象能够进行GC回收
 
 引用计数
 
@@ -948,9 +702,9 @@ Thread-活着的线程
 
 
 
-#### JVM的参数有哪些，并说明参数作用
+### JVM的参数有哪些，并说明参数作用
 
-##### 标准参数
+#### 标准参数
 
 不会随着JDK版本变化而变化，例如：
 
@@ -959,7 +713,7 @@ Thread-活着的线程
 -server
 -cp
 
-##### -X参数
+#### -X参数
 
 非标准参数，也就是在JDK各个版本中可能会变动
 
@@ -969,7 +723,7 @@ Thread-活着的线程
 
 -Xmixed
 
-##### -XX参数
+#### -XX参数
 
 使用得最多的参数类型。非标准化参数，相对不稳定，主要用于JVM调优和Debug  
 
@@ -982,7 +736,7 @@ b.非Boolean类型
 格式：-XX<name>=<value>表示name属性的值是value
 比如：-XX:MaxGCPauseMillis=500
 
-##### 其他参数
+#### 其他参数
 
 这块也相当于是-XX类型参数的简化版
 
@@ -994,17 +748,17 @@ b.非Boolean类型
 
 
 
-#### 一般会怎么进行JVM调优，怎么找问题并解决问题
+### 一般会怎么进行JVM调优，怎么找问题并解决问题
 
-##### 问题反馈
+#### 问题反馈
 
 用户反馈：正式环境使用一段时间后发现功能响应时间明显变慢了。甚至是直接无响应了。
 
-##### 问题发现
+#### 问题发现
 
 OOM，GC次数，吞吐量，平均GC时间，线程死锁，CPU占用率
 
-##### 原因排查
+#### 原因排查
 
 OOM，可以通过手动或自动的方式导出一份dump文件。通过MAT工具载入分析到底是哪段代码导致了OOM。
 
@@ -1014,7 +768,7 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 也可以在压测环境，使用jvisualvm，jconsole，arthas观察JVM状态。
 
-##### 解决问题
+#### 解决问题
 
 - 代码问题：
 
@@ -1038,7 +792,7 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 
 
-#### 类的生命周期是怎么样的？请说下类的装载机制
+### 类的生命周期是怎么样的？请说下类的装载机制
 
 类的生命周期
 
@@ -1054,15 +808,15 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 
 
-#### new一个对象的内存分配过程
+### new一个对象的内存分配过程
 
 
 
-#### 请谈谈JVM内存模型
+### 请谈谈JVM内存模型
 
 也叫运行时数据区，主要分为下面5个
 
-##### 方法区
+#### 方法区
 
 线程共享，主要存放：静态变量，类信息，常量，即时编译器编译后的代码
 
@@ -1070,27 +824,27 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 线程共享，主要存放对象和数组。
 
-##### 虚拟机栈
+#### 虚拟机栈
 
 线程私有，每一个线程都对应一个栈，每调用一个方法都会往栈中压入一个栈帧。栈帧中包含局部变量表，返回值地址，动态链接，操作数栈。方法返回则会弹出栈帧。
 
-##### 本地方法栈
+#### 本地方法栈
 
 线程私有，Native方法在这个地方存储。
 
-##### 程序计数器
+#### 程序计数器
 
 记录正在执行的线程信息和字节码指令信息。当cpu调度时可以衔接上。
 
 
 
-#### JVM中heap的内存划分是什么样的
+### JVM中heap的内存划分是什么样的
 
 分为新生代，老年代，新生代又分为Eden和S0，S1区
 
 
 
-#### 新生代、老年代垃圾回收过程以及原理
+### 新生代、老年代垃圾回收过程以及原理
 
 对象在被实例化之后，都是属于新生代Eden区。
 
@@ -1112,7 +866,7 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 
 
-#### 什么是内存泄露，什么是内存溢出，有什么区别
+### 什么是内存泄露，什么是内存溢出，有什么区别
 
 内存泄漏是指不再使用的对象无法得到及时的回收，持续占用内存空间，从而造成内存空间的浪费。
 
@@ -1120,7 +874,7 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 
 
-#### 请说下JDK的引用分类
+### 请说下JDK的引用分类
 
 + 强引用，只要gcroot可达，就不会被回收，会导致泄漏。
 + 软引用，内存不足时，会回收软引用对象
@@ -1129,17 +883,17 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 
 
-#### Minor GC和full GC分别在什么时候发生
+### Minor GC和full GC分别在什么时候发生
 
-##### minor GC
+#### minor GC
 
 对象刚创建时，如果Eden区空间不足则会触发minor GC
 
-##### major GC
+#### major GC
 
 Major GC在很多参考资料中是等价于 Full GC 的。精确的讲：Major GC不包括元空间垃圾回收
 
-##### Full GC
+#### Full GC
 
 一次 Full GC 将会对年轻代、老年代、元空间以及堆外内存进行垃圾回收
 
@@ -1155,7 +909,7 @@ Major GC在很多参考资料中是等价于 Full GC 的。精确的讲：Major 
 
 
 
-#### G1的回收过程
+### G1的回收过程
 
 
 
@@ -1163,59 +917,59 @@ Major GC在很多参考资料中是等价于 Full GC 的。精确的讲：Major 
 
 
 
-#### JVM有哪些调优命令，有哪些调优工具
+### JVM有哪些调优命令，有哪些调优工具
 
-##### jps
+#### jps
 
 查看java进程id
 
-##### jstat
+#### jstat
 
 用于监控java进程的各种资源和性能，命令行模式。
 
-##### jstack
+#### jstack
 
 用于排查线程问题，例如：线程死锁
 
-##### jinfo
+#### jinfo
 
 查看jvm进程的参数
 
-##### jmap
+#### jmap
 
 用来导出dump文件。分析oom问题原因。也可以查看jvm各种状态。
 
-##### jconsole
+#### jconsole
 
 图形化工具展现JVM运行情况。堆信息，类加载信息
 
-##### jvisualvm
+#### jvisualvm
 
 同上，只是各有千秋。还可以显示堆
 
-##### arthas
+#### arthas
 
 Alibaba开源的Java诊断工具，采用命令行交互模式，是排查jvm相关问题的利器
 
-##### mat
+#### mat
 
 分析dump文件的工具。
 
-##### heaphero
+#### heaphero
 
 在线dump文件分析工具
 
-##### GCViewer
+#### GCViewer
 
 本地分析GC日志的工具
 
-##### gceasy
+#### gceasy
 
 在线GC日志分析工具
 
 
 
-#### 正式环境CPU100%，如何排查和解决问题
+### 正式环境CPU100%，如何排查和解决问题
 
 步骤一、找到最耗CPU的进程
  执行top -c ，显示进程运行信息列表
@@ -1236,27 +990,27 @@ Alibaba开源的Java诊断工具，采用命令行交互模式，是排查jvm相
 
 
 
-#### 如何排查正式环境的内存溢出问题
+### 如何排查正式环境的内存溢出问题
 
 
 
-#### new一个对象的内存分配过程
+### new一个对象的内存分配过程
 
 ![image-20210611175807566](../../../文档/开发文档/面试题积累.assets/image-20210611175807566.png)
 
-#### 有哪些方式能查看堆的使用情况
+### 有哪些方式能查看堆的使用情况
 
 jconsole，jvisualvm，jmap，阿里的arthas
 
 
 
-#### GC log是怎么分析的？
+### GC log是怎么分析的？
 
 https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 
 
-#### 分代算法原理
+### 分代算法原理
 
 标记清除，标记整理，标记复制。并行，并发，串行。
 
@@ -1276,11 +1030,9 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 ## Framework
 
-### IOC
+### 对Spring框架的理解?
 
-#### 对Spring框架的理解?
-
-##### Spring发展历史
+#### Spring发展历史
 
 1. 2002 年，Rod Johnson 发表了他的专著 “Expert One-On-One J2EE Design and Development”，提出了 Spring 框架的思想。
 2. 2003 年，Johnson 和一些开发者创建了 Spring Framework 项目，并在 SourceForge 上发布了第一个版本。
@@ -1296,7 +1048,7 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1680070173055/4439cbc2c1b14ba1a3ffcfee99fde070.png)
 
-##### 模块介绍
+#### 模块介绍
 
 官网的Spring5模块结构图
 
@@ -1315,39 +1067,39 @@ spring-->da["Data Access"]-->dad["提供对数据访问和系统集成的支持�
 spring-->Web-->webd["提供Web基础能力以及对MVC的支持"]
 ```
 
-###### spring beans
+##### spring beans
 
 负责Bean的定义（BeanDefinition），Bean的装配（BeanFactory），Bean的解析（BeanDefinitionReader）。Spring是面向Bean编程的，所以Bean是Spring的核心主角。
 
-###### Spring Context
+##### Spring Context
 
 spring-context模块构架于核心模块之上，扩展了BeanFactory，为它添加了Bean生命周期控制、框架事件体系及资源加载透明化等功能。此外，该模块还提供了许多企业级支持，如邮件访问、远程访问、任务调度等，ApplicationContext是该模块的核心接口，它的超类是BeanFactory。与BeanFactory不同，ApplicationContext实例化后会自动对所有的单实例Bean进行实例化与依赖关系的装配，使之处于待用状态。
 
-###### Spring Core
+##### Spring Core
 
 这个模块是其他模块基本都依赖的公共核心模块，为他们提供基础能力。
 
-###### Spring Expression
+##### Spring Expression
 
 SpEL，Spring的一种表达式。用来动态的获取，值、对象等。例如：@value("#{'system.key.value'}")
 
-###### Spring AOP
+##### Spring AOP
 
 通过配置方式将面向切面编程技术集成到了框架之中；例如：事务切面
 
-###### Spring aspects
+##### Spring aspects
 
 模块集成自 AspectJ 框架，主要是为 Spring AOP 提供多种 AOP 实现方法。
 
-###### Spring instrument
+##### Spring instrument
 
 模块是基于 JAVA SE 中的 java.lang.instrument 进行设计的，应该算是AOP 的一个支援模块，主要作用是在 JVM 启用时，生成一个代理类，程序员通过代理类在运行时修改类的字节，从而改变一个类的功能，实现 AOP 的功能。在分类里，我把他分在了 AOP 模块下，在 Spring 官方文档里对这个地方也有点含糊不清。
 
-###### Spring Data Access/Integration
+##### Spring Data Access/Integration
 
 此模块主要负责数据访问以及和其他系统的集成。例如：JDBC，ORM，事务，JMS的支持；在Spring源码中对应着很多子模块。
 
-###### Spring Web
+##### Spring Web
 
 由 spring-web、spring-webmvc、spring-websocket和spring-webflux 4个模块组成。
 spring-web 模块为 Spring 提供了最基础 Web 支持，主要建立于核心容器之上，通过 Servlet 或者 Listeners 来初始化 IOC 容器，也包含一些与 Web 相关的支持。
@@ -1355,13 +1107,13 @@ spring-webmvc 模块是一个的Web-Servlet 模 块 ， 实现了Spring MVC（mo
 spring-websocket 模块主要是与 Web 前端的全双工通讯的协议。
 spring-webflux 是一个新的非堵塞函数式 Reactive Web 框架，可以用来建立异步的，非阻塞，事件驱动的服务，并且扩展性非常好。
 
-###### Spring messaging
+##### Spring messaging
 
 从 Spring4 开始新加入的一个模块，主要职责是为 Spring 框架集成一些基础的报文传送应用。
 
 
 
-#### 对SpringIoC的理解
+### 对SpringIoC的理解
 
 IOC（Inversion of control），即：控制反转，是指创建对象的控制权的转移，以前创建对象的主动权和时机是由自己把控的，而现在这种权力转移到Spring容器中，并由容器根据配置文件去创建实例和管理各个实例之间的依赖关系，对象与对象之间松散耦合DI依赖注入和IOC控制反转是同一个概念的不同角度的描述，即：应用程序在运行时依赖IoC容器来动态注入对象需要的外部资源。
 
@@ -1371,13 +1123,13 @@ IOC是一种设计思想（思想的转变）。最大的作用就是解耦（�
 
 
 
-#### Spring的IoC实现原理
+### Spring的IoC实现原理
 
-##### 介绍
+#### 介绍
 
 虽然问的是实现原理，但同一类型的题一般面试官会问一个。所以也可以讲下对IOC的理解。可以参考[对SpringIoC的理解](#对SpringIoC的理解)。讲了理解之后再讲实现。
 
-##### 实现过程
+#### 实现过程
 
 IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化。过程中主要涉及依赖注入，动态代理技术，反射技术。
 
@@ -1388,13 +1140,13 @@ IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化�
 5. Bean被实例化之后，需要给其属性进行赋值，属性的类型可能是另一个Bean，这个过程就是依赖注入。
 6. 依赖注入完成以后，就是执行每一个Bean的初始化流程。这个流程中Spring定义了一些列的回调方法允许使用者扩展。
 
-##### 源码层面
+#### 源码层面
 
 在源码层面，Spring IoC的核心组件是BeanFactory和BeanDefinition。BeanFactory是IoC容器的接口，它提供了管理和获取bean的方法。BeanDefinition是描述bean的元数据对象，包括bean的类型、作用域、依赖项和初始化参数等信息。BeanFactory通过BeanDefinition来创建、组装和管理bean。
 
 在源码中，Spring IoC通过使用反射、动态代理和BeanPostProcessor等技术来实现依赖注入和组件的创建和管理。在创建bean时，IoC容器会解析BeanDefinition，然后通过反射创建bean实例，设置bean的属性并执行初始化方法。对于需要注入其他bean的属性，容器会自动查找相应的bean实例并进行注入。在完成bean的创建和依赖注入后，容器将bean放入自己的容器中进行管理，同时可以根据需要进行销毁或重置。
 
-##### ClassPathXmlApplicationContext初始化流程
+#### ClassPathXmlApplicationContext初始化流程
 
 ~~~mermaid
 flowchart TB
@@ -1416,13 +1168,13 @@ finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
 
 
 
-#### Spring Bean的生命周期
+### Spring Bean的生命周期
 
-##### 本文作用
+#### 本文作用
 
 本文主要是为了说明Spring Bean的生命周期。这是一个高频面试题，这个问题即考察对Spring的微观了解，又考察对Spring的宏观认识，还考察对Spring源码的熟悉程度！
 
-##### 宏观认识
+#### 宏观认识
 
 Bean的生命周期宏观上可以表达为：
 
@@ -1511,7 +1263,7 @@ end
 finishInitial-->initantiation-->populate-->Initialization-->destruct
 ```
 
-##### Spring源码
+#### Spring源码
 
 其实在Spring源码的BeanFactory这个类的注释中，Spring源码的作者已经告诉我们Bean完整的生命周期了。
 
@@ -1643,7 +1395,7 @@ public interface BeanFactory {
 
 
 
-##### 参考说明
+#### 参考说明
 
 https://zhuanlan.zhihu.com/p/622803858?utm_id=0
 
@@ -1653,13 +1405,13 @@ https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=12
 
 
 
-#### Bean循环依赖，三级缓存
+### Bean循环依赖，三级缓存
 
-##### 本文目的
+#### 本文目的
 
 本文主要说明什么是Spring的循环依赖。哪些场景的循环依赖Spring可以解决。如何解决的。同时讲解了Spring的三级缓存。
 
-##### 类图
+#### 类图
 
 ```mermaid
 classDiagram
@@ -1681,7 +1433,7 @@ A --> B
 B --> A
 ```
 
-##### 什么是循环依赖
+#### 什么是循环依赖
 
 参考上面的类图，Spring要初始化A类，但A类中有一个类型为B的属性，所以此时要去创建类型B。但是B类中又有一个A类型的属性，所以反过来又需要初始化A，但A此时又没有初始化完成。这就是循环依赖问题。
 
@@ -1689,13 +1441,13 @@ B --> A
 
 如果不考虑Spring，循环依赖其实并不是问题，因为对象之间相互依赖是很正常的事情。但在Spring中，一个对象并不是简单new出来就可以了，而是会经过一系列的Bean的生命周期。正式因为Beand生命周期的存在，才会出现循环依赖问题。所以建议大家可以先了解下[Bean的生命周期](https://blog.csdn.net/namelessmyth/article/details/133139513?spm=1001.2014.3001.5501)。
 
-##### 如何解决
+#### 如何解决
 
 首先并不是所有场景的循环依赖Spring都能解决的。Spring只能解决单例对象且set方法的循环依赖。构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者向其他办法解决。
 
 接下来正式介绍Spring解决循环依赖的机制，叫做三级缓存。
 
-##### Spring三级缓存
+#### Spring三级缓存
 
 三级缓存说穿了，其实就是Spring中一个类的三个Map，
 
@@ -1733,7 +1485,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 }
 ~~~
 
-##### 三个缓存分别放的是什么？
+#### 三个缓存分别放的是什么？
 
 一级缓存（singletonObjects）中放的是已经初始化完成的bean对象。
 
@@ -1743,7 +1495,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 
 
-##### 如果只有二级缓存
+#### 如果只有二级缓存
 
 如果不考虑AOP对象代理，其实只需要二级缓存足以解决问题。
 
@@ -1783,7 +1535,7 @@ populatea-->getBeanb
 finishB-->initA
 ```
 
-##### 代理与三级缓存
+#### 代理与三级缓存
 
 既然二级缓存就能解决循环依赖，那为什么考虑了AOP代理之后就必须使用三级缓存了呢？首先要了解的一个知识就是Spring的AOP代理对象的产生是在填充属性后进入到初始化阶段才进行的，是通过后置处理器BeanPostProcessor来实现。如果用二级缓存来解决，那么就要在属性填充的时候，就要将代理对象生成好，放入二级缓存了。那这样就与Spring的Bean生命周期相悖了。所以这种方式不好，于是就引入了三级缓存以及ObjectFactory对象。
 
@@ -1828,7 +1580,7 @@ finishB-->initA
 
 ```
 
-###### 二级缓存在其中的作用
+##### 二级缓存在其中的作用
 
 假设AB相互依赖，AC相互依赖。那么B实例化后，就该进行C的实例化，这时C就可以从二级缓存来获取A的实例引用了，就不需要再从三级缓存获取工厂让其生产实例。
 
@@ -1836,11 +1588,11 @@ finishB-->initA
 
 
 
-##### 源码分析
+#### 源码分析
 
 接下来我们可以从Spring源码中印证上述想法的正确性。
 
-###### 创建对象之前先从缓存中查找
+##### 创建对象之前先从缓存中查找
 
 AbstractBeanFactory.doGetBean()方法。第15行，先调用getSingleton方法去缓存中找。
 
@@ -2078,7 +1830,7 @@ AbstractBeanFactory.doGetBean()方法。第15行，先调用getSingleton方法�
 	}
 ```
 
-###### 从一二三级缓存中依次查找对象
+##### 从一二三级缓存中依次查找对象
 
 DefaultSingletonBeanRegistry.getSingleton()方法。从三级缓存中找到对象之后还会调用ObjectFactory的getObject()方法得到单例对象。放到二级缓存中，同时从三级缓存中移除。
 
@@ -2119,7 +1871,7 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 	}
 ```
 
-###### 对象实例化时放入到三级缓存中
+##### 对象实例化时放入到三级缓存中
 
 AbstractAutowireCapableBeanFactory.doCreateBean()方法.对于符合循环依赖条件的bean，会往三级缓存中放入一个lambda表达式返回的ObjectFactory对象
 
@@ -2166,7 +1918,7 @@ catch (Throwable ex) {
 }
 ```
 
-###### 何时放入一级缓存
+##### 何时放入一级缓存
 
 AbstractBeanFactory的doGetBean()方法中。运行createBean方法后，会调用getSingleton方法。
 
@@ -2305,7 +2057,7 @@ if (mbd.isSingleton()) {
 
 
 
-#### Bean的作用域
+### Bean的作用域
 
 Bean的作用域是指Bean在Spring整个框架中的某种行为模式，比如singleton单例作用域，就表示Bean在整个Spring中只有一份，它是全局共享的，当其他人修改了这个值之后，另一个人读取到的就是被修改的值。
 Spring容器在初始化一个Bean的实例时，同时会指定该实例的作用域，Spring有六种作用域，其中有四种是基于Spring MVC 生效的，Bean的六种作用域：
@@ -2316,41 +2068,41 @@ Spring容器在初始化一个Bean的实例时，同时会指定该实例的作�
 5，application：全局作用域
 6，websocket： HTTP WebSocket 作用域
 
-##### singleton（单例作用域）
+#### singleton（单例作用域）
 
 ● 官⽅说明：(Default) Scopes a single bean definition to a single object instance for each Spring IoC container.
 ● 描述：该作⽤域下的Bean在IoC容器中只存在⼀个实例：获取Bean（即通过applicationContext.getBean等⽅法获取）及装配Bean（即通过@Autowired注⼊）都是同⼀个对象。
 ● 场景：通常⽆状态的Bean使⽤该作⽤域。⽆状态表示Bean对象的属性状态不需要更新
 ● 备注：Spring默认选择该作⽤域
 
-##### prototype（原型作用域（多例））
+#### prototype（原型作用域（多例））
 
 ● 官⽅说明：Scopes a single bean definition to any number of object instances.
 ● 描述：每次对该作⽤域下的Bean的请求都会创建新的实例：获取Bean（即通过applicationContext.getBean等⽅法获取）及装配Bean（即通过@Autowired注⼊）都是新的对象实例。
 ● 场景：通常有状态的Bean使⽤该作⽤域
 
-##### request（请求作用域）
+#### request（请求作用域）
 
 ● 官⽅说明：Scopes a single bean definition to the lifecycle of a single HTTP request. That is, each HTTP request has its own instance of a bean created off the back of a single bean definition. Only valid in the context of a web-aware Spring ApplicationContext.
 ● 描述：每次http请求会创建新的Bean实例，类似于prototype
 ● 场景：⼀次http的请求和响应的共享Bean
 ● 备注：限定SpringMVC中使⽤
 
-##### session（回话作用域）
+#### session（回话作用域）
 
 ● 官⽅说明：Scopes a single bean definition to the lifecycle of an HTTP Session. Only valid in the context of a web-aware Spring ApplicationContext.
 ● 描述：在⼀个http session中，定义⼀个Bean实例
 ● 场景：⽤户回话的共享Bean, ⽐如：记录⼀个⽤户的登陆信息
 ● 备注：限定SpringMVC中使⽤
 
-##### application（全局作用域）
+#### application（全局作用域）
 
 ● 官⽅说明：Scopes a single bean definition to the lifecycle of a ServletContext. Only valid in the context of a web-aware Spring ApplicationContext.
 ● 描述：在⼀个http servlet Context中，定义⼀个Bean实例
 ● 场景：Web应⽤的上下⽂信息，⽐如：记录⼀个应⽤的共享信息
 ● 备注：限定SpringMVC中使⽤
 
-##### websocket（ HTTP WebSocket 作用域）
+#### websocket（ HTTP WebSocket 作用域）
 
 ● 官⽅说明：Scopes a single bean definition to the lifecycle of a WebSocket. Only valid in the context of a web-aware Spring ApplicationContext.
 ● 描述：在⼀个HTTP WebSocket的⽣命周期中，定义⼀个Bean实例
@@ -2360,11 +2112,11 @@ Spring容器在初始化一个Bean的实例时，同时会指定该实例的作�
 
 
 
-#### Spring Bean的注入方式
+### Spring Bean的注入方式
 
 [文章参考](https://blog.csdn.net/a745233700/article/details/89307518)。
 
-##### 基于XML的注入
+#### 基于XML的注入
 
 - 属性注入，需要提供Set方法。无参构造函数；
 - 构造器注入；
@@ -2373,7 +2125,7 @@ Spring容器在初始化一个Bean的实例时，同时会指定该实例的作�
 
 构造函数注入存在循环依赖问题。构造函数灵活性不强，需要为属性赋null值。
 
-##### 基于注解的注入
+#### 基于注解的注入
 
 @Resource
 
@@ -2381,7 +2133,7 @@ Spring容器在初始化一个Bean的实例时，同时会指定该实例的作�
 
 
 
-#### Spring自动装配方式
+### Spring自动装配方式
 
 在spring中，对象无需自己查找或创建与其关联的其他对象，由容器负责把需要相互协作的对象引用赋予各个对象，使用autowire来配置自动装载模式。
 
@@ -2423,13 +2175,19 @@ Spring容器在初始化一个Bean的实例时，同时会指定该实例的作�
 
 
 
-#### 延迟加载和立即加载
+### 为什么不建议字段注入
 
-##### 引言
+
+
+
+
+### 延迟加载和立即加载
+
+#### 引言
 
 在使用Spring框架进行开发时，掌握加载策略是至关重要的。Spring框架提供了两种主要的加载策略：立即加载（Eager Loading）和延迟加载（Lazy  Loading）。这两种加载策略在不同的场景下有各自的优势和适用性。本文将深入探讨Spring框架中的立即加载和延迟加载，并解释它们的用途和使用方法。
 
-##### 立即加载（Eager Loading）
+#### 立即加载（Eager Loading）
 
 立即加载是指在容器启动时就完成Bean的创建和初始化。当Spring容器启动时，会一次性创建所有配置的Bean，并将它们准备好供使用。这种加载策略适用于那些在应用程序启动时就需要被使用的Bean，如数据源、缓存、日志记录器等。立即加载确保了这些Bean在应用程序运行期间的可用性，但也可能导致资源的浪费，特别是对于那些在应用程序中很少被使用的Bean。 
 
@@ -2442,7 +2200,7 @@ public class DataSource {
 }
 ```
 
-##### 延迟加载（Lazy Loading）
+#### 延迟加载（Lazy Loading）
 
 延迟加载是指在第一次访问时才完成Bean的创建和初始化。相比于立即加载，延迟加载策略可以提高应用程序的启动速度和性能，因为只有当需要使用某个Bean时才会进行创建和初始化操作。延迟加载适用于那些占用资源较多、初始化较慢、或者在应用程序运行时可能不被用到的Bean。
 
@@ -2456,7 +2214,7 @@ public class HeavyResource {
 }
 ```
 
-##### 如何选择加载策略
+#### 如何选择加载策略
 
 选择合适的加载策略需要根据具体的应用场景进行考虑。一般而言，对于那些应用程序启动时必须要使用的Bean，应该选择立即加载策略。而对于那些资源消耗较大、使用频率较低、或者在特定条件下才会被使用的Bean，延迟加载策略是更好的选择。
 
@@ -2464,25 +2222,23 @@ public class HeavyResource {
 
 
 
-### AOP
-
-#### 对Spring AOP的理解
+### 对Spring AOP的理解
 
 [介绍，AOP是什么？](#介绍，AOP是什么？)
 
 
 
-#### Spring中AOP的实现原理
+### Spring中AOP的实现原理
 
 [Spring AOP原理剖析](https://zhuanlan.zhihu.com/p/523107068)，[76 张图，剖析 Spring AOP 源码](https://zhuanlan.zhihu.com/p/572503780)，[Spring源码之AOP源码解析](https://blog.csdn.net/CX610602108/article/details/105904591)
 
-##### 介绍，AOP是什么？
+#### 介绍，AOP是什么？
 
 AOP称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的那些公共行为和逻辑进行抽取并封装为一个可重用的模块，这个模块被命名为“切面（Aspect）”。切面可以减少系统中的重复代码，降低模块间的耦合度，同时提高系统的可维护性。可用于权限认证、日志、事务处理。
 
 OOP面向对象其中一个优势就是继承，父类的代码可以被子类所复用，但平级关系类中使用相同的功能代码时会出现大量代码的重复，不利于各个模块的复用，这种情况可以使用AOP技术来解决。
 
-#####  AOP概念
+####  AOP概念
 
 ```mermaid
 flowchart LR
@@ -2517,7 +2273,7 @@ Advice-->AroundAdvice["围绕通知(Around)"]
 
 
 
-##### AOP应用场景
+#### AOP应用场景
 
 1. 日志记录：通过AOP可以在方法执行前后记录日志，避免在每个方法中手动编写日志记录代码。
 2. 事务管理：通过AOP可以在方法执行前后进行事务管理，避免在每个方法中手动编写事务管理代码。
@@ -2531,7 +2287,7 @@ Advice-->AroundAdvice["围绕通知(Around)"]
 
 
 
-##### 使用案例
+#### 使用案例
 
 文章参考：https://blog.csdn.net/weixin_45203607/article/details/120248631
 
@@ -2656,13 +2412,13 @@ public class AspectTest {
 }
 ```
 
-##### 源码分析
+#### 源码分析
 
-###### 流程图（mermaid）
+##### 流程图（mermaid）
 
 https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
-###### 详细步骤解析
+##### 详细步骤解析
 
 1. 从配置中的AOP配置，封装成BeanDefinition对象。aop的在xml中的配置是`<aop:config />`。
 
@@ -3014,7 +2770,7 @@ https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
 
 
-#### Spring事务配置方法
+### Spring事务配置方法
 
 https://www.cnblogs.com/jtlgb/p/9882772.html
 
@@ -3061,7 +2817,7 @@ DataSource、TransactionManager这两部分只是会根据数据访问方式有�
 
  
 
-#####   1-每个Bean都有一个代理
+####   1-每个Bean都有一个代理
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3110,7 +2866,7 @@ DataSource、TransactionManager这两部分只是会根据数据访问方式有�
 
  
 
-##### 2-所有Bean共享一个代理基类
+#### 2-所有Bean共享一个代理基类
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3162,7 +2918,7 @@ DataSource、TransactionManager这两部分只是会根据数据访问方式有�
 
 
 
-##### 3-使用拦截器
+#### 3-使用拦截器
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3221,7 +2977,7 @@ DataSource、TransactionManager这两部分只是会根据数据访问方式有�
 
  
 
-##### 4-使用tx标签配置的拦截器-声明式事务
+#### 4-使用tx标签配置的拦截器-声明式事务
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3269,7 +3025,7 @@ DataSource、TransactionManager这两部分只是会根据数据访问方式有�
 
  
 
-##### 5-全注解配置
+#### 5-全注解配置
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3329,7 +3085,7 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
 }
 ```
 
-##### 6-SpringBoot事务配置
+#### 6-SpringBoot事务配置
 
 在SpringBoot中，事务可以使用全注解的配置方式，不需要用到配置文件。
 
@@ -3451,15 +3207,15 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
 
 
 
-#### Spring中事务的实现原理？
+### Spring中事务的实现原理？
 
-##### 什么是事务
+#### 什么是事务
 
 一般所指的事务是数据库事务，是指一批不可分割的数据库操作序列，也是数据库并发控制的基本单位。其执行的结果必须使数据库从一种一致性状态到另一种一致性状态。事务必须满足[4个基本特性](#事务的4个基本特性)，即`ACID`（原子性、一致性、隔离性、持久性）。
 
 
 
-##### Spring事务管理
+#### Spring事务管理
 
 Spring并不直接支持事务，只有当数据库支持事务时，Spring才支持。他只是通过AOP简化了开发人员使用事务的步骤。
 
@@ -3469,11 +3225,11 @@ Spring可通过xml和注解配置和一些关键类，确保bean中涉及数据�
 
 
 
-##### Spring事务实现原理
+#### Spring事务实现原理
 
 首先介绍Spring中和事务实现密切相关的重要类。
 
-###### 事务管理器
+##### 事务管理器
 
 事务管理器的顶层接口是TransactionManager。以下是他的类图。
 
@@ -3513,7 +3269,7 @@ public interface PlatformTransactionManager extends TransactionManager {
 }
 ```
 
-###### 事务定义
+##### 事务定义
 
 事务定义类为`TransactionDefinition`，在事务管理器获取事务时作为参数传入。它定义了事务的 传播属性，隔离级别，超时时间，是否只读等属性。
 
@@ -3644,7 +3400,7 @@ DefaultTransactionAttribute：扩展了TransactionAttribute中的属性的实现
 
 
 
-###### 事务的开启
+##### 事务的开启
 
 在`PlatformTransactionManager`中获取事务的时候返回的是`TransactionStatus`对象。我们来看看这个对象。
 
@@ -3656,7 +3412,7 @@ DefaultTransactionAttribute：扩展了TransactionAttribute中的属性的实现
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/fe5219e1378246eca34107103c8cae1a.png)
 
-###### 事务核心方法
+##### 事务核心方法
 
 事务核心方法： `AbstractPlatformTransactionManager.getTransaction()`
 
@@ -3975,7 +3731,7 @@ doBegin方法开启和连接事务
 
 注意：在上述doBegin方法源码中的第42行关闭了自动提交，同时第60行把连接绑定到本地线程中bindResource方法
 
-###### 业务代码使用事务
+##### 业务代码使用事务
 
 业务代码使用事务的方式有如下2种，一种是编程式事务，另一种是AOP事务。
 
@@ -4223,7 +3979,7 @@ doBegin方法开启和连接事务
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1665474496079/0b073b2cd1b94972bc126d0c3f6fe128.png)
 
-###### TransactionInterceptor
+##### TransactionInterceptor
 
 既然事务是通过TransactionInterceptor来创建的。那TransactionInterceptor是如何注入到容器中的？
 
@@ -4306,7 +4062,7 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 
 
-#### Spring中事务的失效场景
+### Spring中事务的失效场景
 
 [文章参考](https://baijiahao.baidu.com/s?id=1714667126401049636&wfr=spider&for=pc)
 
@@ -4385,7 +4141,7 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 
 
-#### Spring事务处理有哪两种方式
+### Spring事务处理有哪两种方式
 
 Spring事务的本质其实就是数据库对事务的支持，只不过Spring框架进行了封装，如果没有底层数据库对事务的支持，spring是无法提供事务功能的。Spring支持编程式事务管理和声明式事务管理两种方式
 
@@ -4404,7 +4160,7 @@ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/ind
 
 
 
-#### spring的事务传播行为
+### spring的事务传播行为
 
  spring事务的传播行为说的是，当多个事务同时存在的时候，spring如何处理这些事务的行为。
  （1）PROPAGATION_REQUIRED：如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置。
@@ -4433,7 +4189,7 @@ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/ind
 
 
 
-#### Spring中的隔离级别
+### Spring中的隔离级别
 
  （1） ISOLATION_DEFAULT：这是个 PlatfromTransactionManager 默认的隔离级别，使用数据库默认的事务隔离级别。
  （2） ISOLATION_READ_UNCOMMITTED：读未提交，允许另外一个事务可以看到这个事务未提交的数据。
@@ -4443,19 +4199,15 @@ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/ind
 
 
 
+### BeanFactory和FactoryBean的区别
 
-
-### 类&接口
-
-#### BeanFactory和FactoryBean的区别
-
-##### Bean Factory
+#### Bean Factory
 
 在Spring中，Bean Factory是负责创建和管理Bean实例的核心容器。它是Spring框架的基础，提供了依赖注入和控制反转等重要特性。Bean Factory负责根据配置信息创建和维护Bean对象的生命周期。
 
 Bean Factory的主要作用是将Bean的定义、依赖关系和配置信息解耦，使得应用程序的组件可以通过接口而不是直接依赖具体的实现类。它使用了延迟初始化和懒加载的策略，只有在需要时才会创建Bean实例。
 
-##### FactoryBean
+#### FactoryBean
 
 FactoryBean是一个特殊的Bean，它实现了Spring的FactoryBean接口。通过实现这个接口，我们可以自定义Bean的创建过程，灵活地控制Bean的实例化和配置。
 
@@ -4463,25 +4215,25 @@ FactoryBean的实现类是一个工厂，它负责产生其他Bean的实例。�
 
 相比于普通的Bean，FactoryBean更加灵活和强大。我们可以在getObject()方法中编写自定义的逻辑来决定实例化哪个对象，并可以对其进行进一步的配置和处理。
 
-##### 相同点：都是用来创建bean对象的
+#### 相同点：都是用来创建bean对象的
 
 无论是beanFactory还是FactoryBean，**它们的共同点在于都是用来创建bean对象的。**beanFactory是Spring框架中的一个顶级接口，提供了创建和管理bean的基本功能。而FactoryBean则是一个扩展接口，通过实现该接口，我们可以对bean的创建过程进行更加灵活的控制。
 
 那么，beanFactory和FactoryBean有哪些区别呢？下面我们详细对比一下它们的不同点。
 
-##### 区别一：生命周期流程的“严格性”
+#### 区别一：生命周期流程的“严格性”
 
 使用beanFactory创建对象时，需要遵循严格的生命周期流程。它会按照预定的顺序执行各个生命周期阶段，包括实例化、属性填充、初始化和销毁等。这种**严格的生命周期管理确保了bean的正确创建和销毁，但也使得自定义对象的创建变得复杂。**
 
 而在FactoryBean中，我们可以更加自由地定义对象的创建过程。通过实现FactoryBean接口，我们可以在getObject()方法中编写自定义的创建逻辑，从而实现更加灵活的对象创建方式。这使得我们能够**根据需求定制对象的创建过程，而不需要遵循严格的生命周期流程。**
 
-##### 区别二：对象的管理方式
+#### 区别二：对象的管理方式
 
 **使用beanFactory创建的对象由Spring容器负责管理，我们无需过多关心对象的创建和销毁。**Spring容器会在需要时自动创建bean，并在容器关闭时销毁它们。
 
 而FactoryBean创建的对象**同样由Spring容器管理，**但我们**需要明确地将FactoryBean注册到容器中。**这意味着我们可以通过配置文件或编码的方式明确指定要创建的bean是一个FactoryBean。Spring容器会自动检测到FactoryBean接口，并调用其getObject()方法获取实际的bean对象。
 
-##### 总结
+#### 总结
 
 通过上述的对比，我们可以看出，beanFactory和FactoryBean在创建对象的方式、生命周期管理和对象的管理方式等方面存在一些差异。
 
@@ -4489,7 +4241,7 @@ FactoryBean的实现类是一个工厂，它负责产生其他Bean的实例。�
 
 好了，本期的技术分享就到这里啦！通过对比beanFactory和FactoryBean的区别，我们更深入地理解了Spring框架中的对象创建和管理机制。希望本文能给你带来一些启发和帮助。
 
-##### 应用场景
+#### 应用场景
 
 生成AOP[代理对象](https://so.csdn.net/so/search?q=代理对象&spm=1001.2101.3001.7020)的ProxyFactoryBean
 
@@ -4521,7 +4273,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
 
 
-#### InitializingBean的功能和使用场景
+### InitializingBean的功能和使用场景
 
 InitializingBean是一个Spring提供的一个扩展接口。实现这个接口需要实现一个afterPropertiesSet方法。这个方法的调用时机：
 
@@ -4539,23 +4291,23 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 
 
 
-#### Spring中常用注解说明？
+### Spring中常用注解说明？
 
-##### @Configuration
+#### @Configuration
 
 声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象，相当于applicationContext.xml。
 
-##### @ComponentScan
+#### @ComponentScan
 
 配置包扫描路径，也可以进行类扫描。不然Spring不会自动扫描包下面的@Controller，@Service等注解。用来取代配置文件中的`<context:component-scan base-pacage="com.xxx" />`
 
 默认包路径为注解所在类的包路径。可以通过basePackages="com.xxx"来指定。
 
-##### @Bean
+#### @Bean
 
 声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
 
-##### @Conditional
+#### @Conditional
 
 配合@Bean使用，有条件的注册bean。注解内的Class必须实现Condition接口，并实现matches方法，方法返回true时才会注入bean
 
@@ -4580,7 +4332,7 @@ public class MyCondition implements Condition {
 }
 ```
 
-##### @Indexed
+#### @Indexed
 
 https://blog.csdn.net/securitit/article/details/110039718
 
@@ -4607,83 +4359,83 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 
 
-##### @Component
+#### @Component
 
 声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
 
-##### @Controller
+#### @Controller
 
 声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
 
-##### @Service
+#### @Service
 
 声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
 
-##### @Repository
+#### @Repository
 
 声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
 
-##### @Scope
+#### @Scope
 
 @Scope(scopeName=“prototype”)：配置bean的作用域，多例
 
-##### @Lazy
+#### @Lazy
 
 @Lazy(value=true)，配置bean的延迟加载。
 
-##### @Value
+#### @Value
 
 用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
 
-##### @Autowired
+#### @Autowired
 
 自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
 
-##### @Qualifier
+#### @Qualifier
 
 给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
 
-##### @Inject
+#### @Inject
 
 和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
 
-##### @Named
+#### @Named
 
 相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
 
 
 
-##### **Enable注解**
+#### **Enable注解**
 
 @Enable系列注解基本都是通过内部的@Import注解实现动态导入相关联的类的。在Springboot中搭配starter使用。
 
-##### @EnableTransactionManagement
+#### @EnableTransactionManagement
 
 
 
-##### @EnableAsync
+#### @EnableAsync
 
 
 
-##### @EnableScheduling
+#### @EnableScheduling
 
 
 
-##### @EnableWebSocket
+#### @EnableWebSocket
 
 
 
-##### @EnableCaching
+#### @EnableCaching
 
 
 
 **MVC注解**
 
-##### @RequestMapping
+#### @RequestMapping
 
 用于将HTTP请求映射到对应的控制器中的处理方法上。
 
-##### AOP注解
+#### AOP注解
 
 @Aspect：表明整个类是一个切面
 
@@ -4702,7 +4454,7 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 
 
-#### @autowired@resource区别
+### @autowired@resource区别
 
  1、共同点
  两者都可以写在字段和setter方法上。两者如果都写在字段上，那么就不需要再写setter方法。
@@ -4716,9 +4468,9 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 
 
-#### 获取ApplicationContext的方式
+### 获取ApplicationContext的方式
 
-##### 属性注入
+#### 属性注入
 
 @Autowired
 
@@ -4732,7 +4484,7 @@ public class Test {
 
 该方式注入的实例对象在Java内存中加载顺序在静态代码块之后，所以无法使用在loadingcache等缓存操作中。
 
-##### 构造器方法注入
+#### 构造器方法注入
 
     2、
     
@@ -4747,7 +4499,7 @@ public class Test {
 
  这种方式没使用过，在此仅做记录，有这种方式可以注入ApplicationContext实例对象。
 
-##### 实现ApplicationContextAware接口
+#### 实现ApplicationContextAware接口
 
 手动构建类实现接口，可以设置静态属性。
 
@@ -4915,7 +4667,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 
 
-#### @Import注解的作用与原理
+### @Import注解的作用与原理
 
 @Import就是用来向Spring容器中导入bean的，可以导入实现了ImportSelector接口的类、实现了ImportBeanDefinitionRegistrar接口的类 ，也可以导入一个普通类。
 
@@ -4925,7 +4677,7 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 接下来介绍@Import注解可以导入的类的区别
 
-##### 普通类
+#### 普通类
 
 如果@Import的是一个普通类，那直接会把这个类加入到Spring容器中。下面是案例。
 
@@ -4974,7 +4726,7 @@ public class AppConfig {
 
 
 
-##### 实现了ImportSelector接口的类
+#### 实现了ImportSelector接口的类
 
 https://blog.csdn.net/elim168/article/details/88131614
 
@@ -5068,7 +4820,7 @@ public class HelloImportSelector implements ImportSelector {
 
 
 
-##### 实现ImportBeanDefinitionRegistrar接口
+#### 实现ImportBeanDefinitionRegistrar接口
 
 https://blog.csdn.net/hsz2568952354/article/details/124172318
 
@@ -5096,7 +4848,7 @@ public class AttributeClassRegistrar implements ImportBeanDefinitionRegistrar {
 
 
 
-##### Spring解析@import的时机
+#### Spring解析@import的时机
 
 在IOC容器初始化过程中，在invokeBeanFactoryPostProcessors()方法中调用的，有一个BeanFactoryPostProcecessor叫做ConfigurationClassPostProcessor，这个类内部会调用到下面这个方法。第58行的processImports方法就是处理@import注解的。
 
@@ -5203,7 +4955,7 @@ protected final SourceClass doProcessConfigurationClass(
 
 
 
-#### Spring的SpEL表达式的使用
+### Spring的SpEL表达式的使用
 
 - 在@Value注解中使用
 - 在XML配置中使用
@@ -5215,15 +4967,13 @@ https://blog.csdn.net/JokerLJG/article/details/124434854
 
 
 
-### 架构设计
+### Spring事件机制
 
-#### Spring事件机制
-
-##### 参考文章
+#### 参考文章
 
 [聊透Spring事件机制](https://zhuanlan.zhihu.com/p/599880227)，[spring中的事件你真的懂吗？](https://zhuanlan.zhihu.com/p/547593002?utm_id=0)
 
-##### 应用场景
+#### 应用场景
 
 例如：用户注册业务，当用户创建成功后，需要发邮件通知同时发送优惠卷给这个用户。参考代码如下：
 
@@ -5246,7 +4996,7 @@ public void registerUser(UserModel user){
 
 以上就是事件模式的作用。类似MQ的异步解耦，只是这个不需要额外安装消息中间件服务。
 
-##### 概述
+#### 概述
 
 事件机制的几个概念：事件、发布器、监听器。事件是主体，发布器负责发布事件，监听器负责处理事件。
 
@@ -5289,7 +5039,7 @@ eventProblem-->pubBlock["发布阻塞"]
 eventProblem-->pubCustom["不能定制执行线程数"]
 ```
 
-##### 自定义事件
+#### 自定义事件
 
 流程
 
@@ -5361,7 +5111,7 @@ public class TestController {
 
 
 
-##### Spring内置事件
+#### Spring内置事件
 
 **ContextRefreshedEvent**
 
@@ -5449,11 +5199,11 @@ public void stop() {
 
 
 
-##### Spring事件原理
+#### Spring事件原理
 
 在上述章节，我们直接通过`applicationContext`发布了事件，同时也提到了，它之所以能发布事件，是因为它是`ApplicationEventPublisher`的子类，因此是具备事件发布能力的。但按照接口隔离原则，如果我们只需要进行事件发布，`applicationContext`提供的能力太多，还是推荐直接使用`ApplicationEventPublisher`进行操作。
 
-###### 获取事件发布器
+##### 获取事件发布器
 
 先来`ApplicationEventPublisher`的提供的能力，它是一个接口，结构如下：
 
@@ -5503,7 +5253,7 @@ public class UserService implements ApplicationEventPublisherAware {
 
 通过`@Autowired`和`ApplicationEventPublisherAware`回调都能获取到事件发布器，两种有什么区别吗?  其实区别不大，主要是调用时机的细小差别，另外就是某些特殊场景下，@Autowired注入可能无法正常注入，实际开发中完成可以忽略不计。所以优先推荐小伙伴们使用ApplicationEventPublisherAware，如果觉得麻烦，使用@Autowired也未尝不可。
 
-###### 事件的广播方式
+##### 事件的广播方式
 
 现在已经知道，可以通过`ApplicationEventPublisher`发送事件了，那么这个事件发送后肯定是要分发给对应的监听器处理啊，谁处理这个分发逻辑呢？又是怎么匹配对应的监听器的呢？我们带着这两个问题来看`ApplicationEventMulticaster`。
 
@@ -5566,7 +5316,7 @@ flowchart LR
 事件源-->发布器-->|转交|广播器-->|筛选匹配之后广播|多个监听器
 ```
 
-###### 事件和监听器如何匹配
+##### 事件和监听器如何匹配
 
 通过上述源码，我们发现通过getApplicationListeners(event, type)找到了所有匹配的监听器，我们继续跟踪看一下是如何匹配的。
 
@@ -5615,7 +5365,7 @@ protected boolean supportsEvent(
 
 2. 监听器是否支持事件源类型，默认情况下，都是支持的。
 
-###### 事件监听器
+##### 事件监听器
 
 监听器是负责处理事件的，在广播器将对应的事件广播给它之后，它正式上岗开始处理事件。
 
@@ -5660,7 +5410,7 @@ public class AnnotationEventListener {
 
 
 
-###### 异步处理事件
+##### 异步处理事件
 
 我们知道事件在广播时是同步执行的，广播流程为：先找到匹配的监听器 -> 逐个调用onApplicationEvent()进行事件处理，整个过程是同步处理的。现在的系统动辄就要求毫秒计返回，QPS没有1000+你都不好意思出门，哪怕只有十个用户 。
 
@@ -5781,7 +5531,7 @@ public class AnnotationEventListener {
 
 经过测试发现：在@Async的加持下，确实可以控制某个监听器异步执行。其实@Async也是使用了线程池执行的，对@Async感兴趣的同学可以自行查阅资料，这里我们不做展开了。
 
-###### 全局异常处理
+##### 全局异常处理
 
 Spring事件的处理，默认是同步依次执行。那如果前面的监听器出现了异常，并且没有处理异常，会对后续的监听器还能顺利接收该事件吗？其实不能的，因为异常中断了事件的发送了。
 
@@ -5856,9 +5606,9 @@ protected void invokeListener(ApplicationListener<?> listener, ApplicationEvent 
 
 经过阅读源码，我们发现：Sring先查找是否配置了ErrorHandler，如果配置了，在发生异常的时候，把异常信息转交给errorHandler处理，并且不会在向上传递异常了。这样可以达到异常全局处理的效果了。
 
-##### 事件机制问题
+#### 事件机制问题
 
-###### 发布阻塞
+##### 发布阻塞
 
 Spring发布事件的时候，由applicationEventMulticaster来处理分发逻辑，这是单线程处理，处理逻辑我们分析过，就是：找到事件对应的监听器(有缓存) -> 逐个分发给监听器处理(默认同步，可异步)。我们考虑一下这种设计会不会有性能问题了？同步执行的情况我们就不讨论了，对应的场景一定是事件发生频率较低，这种场景讨论性能没有意义。
 
@@ -5868,7 +5618,7 @@ Spring发布事件的时候，由applicationEventMulticaster来处理分发逻�
 
 其实这里可以参考Netty的boss-work工作模型，广播器只负责分发事件，调度执行监听器的逻辑交给由具体的work线程负责会更合适。
 
-###### 无法订制监听器执行线程数
+##### 无法订制监听器执行线程数
 
 正是由于每种事件产生的数量、处理逻辑、处理速度差异化可能很大，所以每个监听器都有适合自己场景的线程数，所以为每个监听器配置线程池就显得尤为重要。Spring事件机制，无法单独为事件(或者监听器)设置线程池，只能共用线程池，无法做到精准控制，线程拥堵或者线程浪费出现的几率极大。当然，我们也可以在监听器内部，接收到事件后使用自定义的线程池处理，但是我们更希望简单化配置就能支持。
 
@@ -5878,9 +5628,9 @@ Spring发布事件的时候，由applicationEventMulticaster来处理分发逻�
 
 
 
-##### 案例
+#### 案例
 
-###### 电商订单创建
+##### 电商订单创建
 
 直接将这个注解标注在一个bean的方法上，那么这个方法就可以用来处理感兴趣的事件，使用更简单，如下，注册成功之后：来2个监听器：一个负责发送邮件、一个负责发送优惠券。
 
@@ -5909,7 +5659,7 @@ public class UserRegisterListener {
 
 
 
-#### Spring的钩子接口和应用
+### Spring的钩子接口和应用
 
 在[bean的生命周期](#Spring Bean的生命周期)之中，Spring留给我们的一些回调方法，让我们可以Bean的生命周期之中执行我们的自定义方法和功能。
 
@@ -5931,7 +5681,7 @@ Bean-->销毁-->DestructionAwareBPP["DestructionAwareBeanPostProcessors.postProc
 
 
 
-##### 可以影响多个Bean的
+#### 可以影响多个Bean的
 
 InstantiationAwareBeanPostProcessor
 
@@ -5949,7 +5699,7 @@ BeanFactoryPostProcessor
 
 SpringBoot的自动装配还有Spring-Mybatis的适配都是靠这个来实现的
 
-##### 影响单个Bean的
+#### 影响单个Bean的
 
 Aware系列接口，是专门用来获取Spring的一些内部对象和属性的。所有的Aware方法都是在初始化阶段之前调用的
 
@@ -5985,11 +5735,11 @@ DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()方法
 
 
 
-#### Spring中的设计模式
+### Spring中的设计模式
 
-##### 工厂模式
+#### 工厂模式
 
-###### 简单工厂
+##### 简单工厂
 
 又叫做静态工厂方法（StaticFactory Method）模式，但不属于23种GOF设计模式之一。
 
@@ -5997,7 +5747,7 @@ DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()方法
 
 Spring中的BeanFactory就是简单工厂模式的体现，根据传入一个唯一的标识来获得Bean对象，但是否是在传入参数后创建还是传入参数前创建这个要根据具体情况来定。
 
-###### 工厂方法
+##### 工厂方法
 
 定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method使一个类的实例化延迟到其子类。
 
@@ -6011,19 +5761,19 @@ SqlSessionFactoryBean实现了FactoryBean接口，所以返回的不是的他自
 
 
 
-##### 单例模式
+#### 单例模式
 
 保证一个类仅有一个实例，并提供一个访问它的全局访问点。
 
 Spring中的单例模式完成了后半句话，即提供了全局的访问点BeanFactory。但没有从构造器级别去控制单例，这是因为Spring管理的是是任意的Java对象。
 
-##### 代理模式
+#### 代理模式
 
 从结构上来看和Decorator模式类似，但Proxy是控制，更像是一种对功能的限制，而Decorator是增加职责。
 
 Spring的Proxy模式在aop中有体现，比如JdkDynamicAopProxy和Cglib2AopProxy。
 
-##### 适配器
+#### 适配器
 
 `HandlerAdapter` 在 Spring MVC 中使用了适配器模式。`HandlerAdapter` 主要用于支持不同类型的处理器（如 Controller、HttpRequestHandler 或者 Servlet  等），让它们能够适配统一的请求处理流程。这样，Spring MVC 可以通过一个统一的接口来处理来自各种处理器的请求。在 Spring MVC  的工作流程中，`HandlerAdapter` 扮演了一个重要角色。以下是其工作原理的简化版：
 
@@ -6114,13 +5864,13 @@ SpringAOP中的AdvisorAdapter类，https://www.cnblogs.com/xcgShare/p/12190642.h
 
 
 
-##### 装饰器模式
+#### 装饰器模式
 
 动态地给一个对象添加一些额外的职责。就增加功能来说，Decorator模式相比生成子类更为灵活。
 
 Spring中用到的包装器模式在类名上有两种表现：一种是类名中含有Wrapper，另一种是类名中含有Decorator。基本上都是动态地给一个对象添加一些额外的职责。
 
-##### 观察者模式
+#### 观察者模式
 
 定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新。
 
@@ -6171,7 +5921,7 @@ public class DemoPublisher {
 
 
 
-##### 模版方法模式
+#### 模版方法模式
 
 定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。Template Method使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。
 
@@ -6187,7 +5937,7 @@ JdbcTemplate执行execute方法：
 
 类似的还有RedisTemplate类。
 
-##### 策略模式
+#### 策略模式
 
 Spring 的 BeanPostProcessor 就是基于策略模式实现的，通过在不同的时机调用不同的策略方法来实现对 bean 的后置处理。
 
@@ -6278,7 +6028,7 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
 
 
-#### Spring线程并发问题处理？
+### Spring线程并发问题处理？
 
  在一般情况下，只有无状态的Bean才可以在多线程环境下共享，在Spring中，绝大部分Bean都可以声明为singleton作用域，因为Spring对一些Bean中非线程安全状态采用ThreadLocal进行处理，解决线程安全问题。
  ThreadLocal和线程同步机制都是为了解决多线程中相同变量的访问冲突问题。同步机制采用了“时间换空间”的方式，仅提供一份变量，不同的线程在访问前需要获取锁，没获得锁的线程则需要排队。而ThreadLocal采用了“空间换时间”的方式。
@@ -6287,7 +6037,7 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
 
 
-#### Spring中的单例是线程安全的么？
+### Spring中的单例是线程安全的么？
 
 非线程安全。
 
@@ -6303,19 +6053,19 @@ Spring启动成功后，单例是否线程安全取决于Bean的写法。Spring�
 
 ## SpringMVC
 
-#### SpringMVC的工作原理
+### SpringMVC的工作原理
 
 https://cloud.fynote.com/share/s/IXvrMNIN
 
 
 
-#### SpringMVC响应请求时无状态的，但是到了dao层，数据库连接池是有状态的，两者怎么管理的呢
+### SpringMVC响应请求时无状态的，但是到了dao层，数据库连接池是有状态的，两者怎么管理的呢
 
 每个请求会独占一个连接池的连接，用完就归还，多个请求之间不会相互影响，这样就保证了每个请求都是无状态的。
 
 
 
-#### post为什么会发送两次请求
+### post为什么会发送两次请求
 
 1. 预检请求：在跨域请求中，浏览器为了确保安全，会首先发送一个OPTIONS请求，也被称为预检请求。如果预检请求成功，浏览器才会发出实际的POST请求。
 2. 代码问题：如果代码中不小心调用了两次POST请求，也会导致POST请求发送两次。
@@ -6330,7 +6080,7 @@ https://baijiahao.baidu.com/s?id=1777713292868376926&wfr=spider&for=pc
 
 ## SpringBoot
 
-#### 谈谈对SpringBoot的理解
+### 谈谈对SpringBoot的理解
 
 1.为什么会出现SpringBoot：
 
@@ -6346,9 +6096,36 @@ SSM：添加相关的依赖【依赖很大。版本兼容性问题】 添加各�
 
 
 
-#### SpringBoot自动装配
+### SpringBoot与Spring的区别
 
-##### 前言
+
+
+### SpringBoot3.0新特性
+
+这是一个非常非常重要的版本，意味着一个新的征程开始了！
+
+这是自 4 年半前发布 2.0 版本以来，Spring Boot 的第一次重大修订。这也是第一个支持 Spring Framework 6.0 和 GraalVM 的 Spring Boot GA 版本。
+
+由于这是 Spring Boot 的一个主要版本，因此升级现有应用程序可能比平时更复杂一些。官方整理了一份专门的迁移指南（迁移指南地址：https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide），以帮助升级现有的 Spring Boot 2.7 应用程序。如果你当前运行的是早期版本的 Spring Boot，建议先升级到 Spring Boot 2.7，然后再迁移到 Spring Boot 3.0。
+
+新版本的亮点包括：
+
+- **最低要求 Java 17 和 Java 19 支持** ：Spring Boot 3.0 要求 Java 17 作为最低版本。如果你当前使用的是 Java 8 或 Java 11，则需要先升级 JDK，然后才能开发 Spring Boot 3.0 应用程序。Spring Boot 3.0 运行良好，并已通过 JDK 19 测试。
+- **支持用 GraalVM 生成原生镜像，取代了实验性的 Spring Native 项目** ：Spring Boot 3.0 应用程序现在可以转换为 GraalVM native images，这可以提供显着的内存和启动性能改进。支持 GraalVM Native Images 是整个 Spring 产品组合中的一项重大工程工作。要开始使用 GraalVM native images，可参阅更新后的 Spring Boot 参考文档。
+- **通过 Micrometer 和 Micrometer 跟踪改进可观察性** ：Spring Boot 3.0 支持在 Micrometer 1.10 中引入的新的 observation APIs。新的 `ObservationRegistry` 接口可用于创建观测值，该 observations 为度量和跟踪提供了单个 API。Spring Boot 现在为您自动配置`ObservationRegistry`实例。并且，Spring Boot 现在为您自动配置 Micrometer Tracing。这包括对 Brave、opentelemeter、Zipkin 和 Wavefront 的支持。
+- **支持具有 EE 9 baseline 的 Jakarta EE 10** ：对于所有依赖项，Spring Boot 3.0 已从 Java EE 迁移到 Jakarta EE api。
+
+你可在 Spring Boot 的官方 wiki 中找到 3.0 版本的全面详细的新功能/新改进介绍，地址：https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes。
+
+可以在 start.spring.io上创建基于 Spring Boot 3.0 的项目了。
+
+![img](https://developer.qcloudimg.com/http-save/9118888/7ffdb121b3ceecbae2c4bc749cec915c.png)
+
+
+
+### SpringBoot自动装配
+
+#### 前言
 
 什么是自动装配？用过Spring的应该都知道，虽然后期Spring引入了注解功能，但开启某些特性或者功能的时候，还是不能完全省略xml配置文件。下面这些配置用过Spring的应该都很熟悉，几乎每个项目都有。
 
@@ -6399,7 +6176,7 @@ SSM：添加相关的依赖【依赖很大。版本兼容性问题】 添加各�
 
 而之所以如此简便就是得益于自动装配机制。
 
-##### 介绍
+#### 介绍
 
 什么是自动装配？自动装配其实在Spring Framework的后期版本中就实现了。Spring Boot只是在此基础上，使用SPI做了进一步优化。
 
@@ -6430,9 +6207,9 @@ spring:
 
 因此自动装配可以简单理解为：**通过starter、注解、配置等方式大大简化了Spring实现某些功能的步骤。**
 
-##### 实现原理
+#### 实现原理
 
-###### @SpringBootApplication
+##### @SpringBootApplication
 
 那么SpringBoot是怎么实现自动装配的呢？我们在SpringBoot的启动类中基本都会用到这个注解`@SpringBootApplication`，我们可以看下他的源码：
 
@@ -6493,7 +6270,7 @@ public @interface EnableAutoConfiguration {
 }
 ```
 
-###### @EnableAutoConfiguration
+##### @EnableAutoConfiguration
 
 @EnableAutoConfiguration的主要作用其实就是帮助springboot应用把所有符合条件的@Configuration配置都加载到当前SpringBoot的IoC容器中。
 
@@ -6766,13 +6543,13 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
 
 
-###### selectImports方法没有走？
+##### selectImports方法没有走？
 
 参考文章：https://zhuanlan.zhihu.com/p/458533586
 
 
 
-##### 总结
+#### 总结
 
 1. SpringBoot通过`@EnableAutoConfiguration`开启自动装配
 2. SpringBoot会加载所有Starter中`META-INF/spring.factories`文件中配置加载配置类
@@ -6780,14 +6557,14 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
 
 
-#### 自定义Starter
+### 自定义Starter
 
 这篇文章也写的不错，https://www.cnblogs.com/hello-shf/p/10864977.html
 
 
 我们通过自定义Starter来加深对于自动装配的理解
 
-##### 1.创建一个Maven项目，quick-starter
+#### 1.创建一个Maven项目，quick-starter
 
 定义相关的依赖
 
@@ -6806,7 +6583,7 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 </dependency>
 ```
 
-##### 2.定义Formate接口
+#### 2.定义Formate接口
 
 定义的格式转换的接口，并且定义两个实现类
 
@@ -6841,7 +6618,7 @@ public class StringFormatProcessor implements FormatProcessor {
 }
 ```
 
-##### 3.定义相关的配置类
+#### 3.定义相关的配置类
 
 首先定义格式化加载的Java配置类
 
@@ -6899,7 +6676,7 @@ public class HelloAutoConfiguration {
 }
 ```
 
-##### 4.创建spring.factories文件
+#### 4.创建spring.factories文件
 
 在resources下创建META-INF目录，再在其下创建spring.factories文件
 
@@ -6910,7 +6687,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 install 打包，然后就可以在SpringBoot项目中依赖改项目来操作了。
 
-##### 5.测试
+#### 5.测试
 
 在SpringBoot中引入依赖
 
@@ -6941,7 +6718,7 @@ public class UserController {
 }
 ```
 
-##### 6.自定义Starter关联配置信息
+#### 6.自定义Starter关联配置信息
 
 有些情况下我们可以需要用户在使用的时候动态的传递相关的配置信息，比如Redis的Ip，端口等等，这些信息显然是不能直接写到代码中的，这时我们就可以通过SpringBoot的配置类来实现。
 
@@ -7082,13 +6859,13 @@ public class HelloFormatTemplate {
 
 
 
-#### SpringBoot的启动流程
+### SpringBoot的启动流程
 
 
 
 
 
-#### SpringBoot工作原理
+### SpringBoot工作原理
 
 SpringBoot：IoC  需要清楚Spring的加载过程
 
@@ -7102,9 +6879,9 @@ BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
 
 
 
-#### SpringBoot常用注解
+### SpringBoot常用注解
 
-##### @Conditional
+#### @Conditional
 
 以下的注解都是基于Spring的@Conditional注解
 
@@ -7122,7 +6899,7 @@ BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
 
 
 
-#### SpringBoot中为什么用DeferredImportSelector?
+### SpringBoot中为什么用DeferredImportSelector?
 
 为什么? 为什么要延迟加载？  本身逻辑代码是在BeanFactory的后置处理器中完成的
 
@@ -7130,13 +6907,13 @@ BeanFactory的后置处理器本身的作用就是要完善BeanDefinition的定�
 
 
 
-#### SpringBoot和SpringMVC的关系
+### SpringBoot和SpringMVC的关系
 
 SpringBoot是一个基于Spring的脚手架工具。我们要创建一个Web项目。那么我们需要引入spring-boot-starter-web 这个依赖。在这个依赖中会完成相关的SpringMVC和Spring的关联配置
 
 
 
-#### SpringBoot和Tomcat的关系
+### SpringBoot和Tomcat的关系
 
 https://www.mashibing.com/course/1767
 
@@ -7144,17 +6921,51 @@ https://www.mashibing.com/course/1767
 
 
 
-#### SpringBoot配置文件优先级
+### SpringBoot配置文件优先级
 
 https://www.cnblogs.com/hans-hu/archive/2022/05/08/16247235.html
 
 
 
+### SpringBoot如何确保Bean的加载顺序
+
+从Bean初始化流程上来看，Bean有如下初始化时机：
+
+1. Spring容器按照顺序主动去初始化该Bean
+2. 被依赖的Bean，该Bean会先被初始化从。
+
+有如下办法确保加载顺序。
+
+**依赖**
+
+A依赖B，则B一定会在A之前初始化好。
+
+**@DependsOn注解**
+
+```java
+@Configuration
+public class AppConfiguration {
+    @Bean
+	@DependsOn("beanB")
+    public BeanA beanA(){
+        return new BeanA();
+    }
+}
+
+```
 
 
-### SpringSecurity
 
-#### SpringSecurity中是如何实现自定义认证的
+
+
+直接依赖某Bean
+如下代码所示:
+
+
+
+## SpringSecurity
+
+### SpringSecurity中是如何实现自定义认证的
 
 1。回答具体的应用过程
 
@@ -7172,7 +6983,7 @@ https://www.mashibing.com/course/1834
 
 ## MyBatis
 
-#### MyBatis的查询流程
+### MyBatis的查询流程
 
 Configuration对象会在项目启动就加载好，根据全局配置文件和映射配置文件解析得到。
 
@@ -7194,7 +7005,7 @@ Configuration对象会在项目启动就加载好，根据全局配置文件和�
 
 
 
-#### 简述MyBatis的工作流程
+### 简述MyBatis的工作流程
 
 1. 解析配置文件
 
@@ -7210,7 +7021,7 @@ Configuration对象会在项目启动就加载好，根据全局配置文件和�
 
 
 
-#### Mapper只有接口他的实现类如何生成？
+### Mapper只有接口他的实现类如何生成？
 
 1. 每一个Mapper 接口在SqlSessionFactory被build出来的时候，就已经注册到了一个缓存中（Map<Class<?>, MapperProxyFactory> knownMappers）
 2. 调用getMapper方法的时候，可以通过Mapper的class找到MapperProxyFactory。
@@ -7218,7 +7029,7 @@ Configuration对象会在项目启动就加载好，根据全局配置文件和�
 
 
 
-#### 如何找到执行的SQL语句？
+### 如何找到执行的SQL语句？
 
 1. 根据上面的描述实际执行的时Mapper接口的代理类方法。
 2. 代理类方法还是会委托SqlSession的执行器去执行SQL；
@@ -7226,25 +7037,25 @@ Configuration对象会在项目启动就加载好，根据全局配置文件和�
 
 
 
-#### Mapper接口中的方法定义能否通过方法签名重载？
+### Mapper接口中的方法定义能否通过方法签名重载？
 
 不能，接口名+方法名会生成唯一标识的StatementId
 
 
 
-#### #{}和${}的区别
+### #{}和${}的区别
 
 #{}会在SQL拼接占位符，有预编译的功能，有效避免SQL注入问题
 
 ${}是会直接将值写入到SQL中，有SQL注入的问题。
 
-#### MyBatis缓存
+### MyBatis缓存
 
 Mybatis缓存分一级和二级缓存。一级缓存是默认就开启的。
 
 缓存的基类是PerpetualCache，Mybatis通过装饰器给他增加了很多其他的功能。例如：LruCache，FifoCache
 
-##### 一级缓存
+#### 一级缓存
 
 使用条件，在一个session中然后sql语句要一样。如果session执行了更新语句或者提交就会失效。
 
@@ -7252,7 +7063,7 @@ Mybatis缓存分一级和二级缓存。一级缓存是默认就开启的。
 
 在的SqlSession的executor中，是在SimpleExecutor/ReuseExecutor/BatchExecutor的父类BaseExecutor中
 
-##### 二级缓存
+#### 二级缓存
 
 开启方式
 
@@ -7276,17 +7087,17 @@ session必须正确。
 
 
 
-#### Mybatis二级缓存的问题，如何解决？
+### Mybatis二级缓存的问题，如何解决？
 
 
 
-#### Mybatis插件原理
+### Mybatis插件原理
 
 
 
 ## Hibernate
 
-#### Hibernate延迟加载
+### Hibernate延迟加载
 
 通过设置属性`lazy=true`进行设置是否需要懒加载
 
@@ -7294,13 +7105,13 @@ session必须正确。
 
 
 
-#### Hibernate中如何配置类的关系？
+### Hibernate中如何配置类的关系？
 
 一对多 @OneToMany，多对一@ManyToOne
 
 
 
-#### hibernate的三种状态
+### hibernate的三种状态
 
 对象刚new出来是临时态
 
@@ -7312,23 +7123,23 @@ session必须正确。
 
 # 中间件
 
-#### 消息队列
+### 消息队列
 
-#### 消息队列的好处和作用
+### 消息队列的好处和作用
 
 
 
-#### 消息队列使用场景
+### 消息队列使用场景
 
 
 
 ## Tomcat
 
-#### tomcat热部署，怎么做到的热加载？
+### tomcat热部署，怎么做到的热加载？
 
 ​    
 
-#### tomcat类加载机制?
+### tomcat类加载机制?
 
 
 
@@ -7338,11 +7149,11 @@ session必须正确。
 
 ### MQ
 
-#### MQ的优缺点？作用？
+### MQ的优缺点？作用？
 
 MQ的作用其实就是他的优点。
 
-##### 优点
+#### 优点
 
 异步通信。
 
@@ -7362,7 +7173,7 @@ MQ的作用其实就是他的优点。
 
 
 
-##### 缺点
+#### 缺点
 
 增加运维成本。MQ系统需要独立的资源部署和维护。
 
@@ -7372,7 +7183,7 @@ MQ的作用其实就是他的优点。
 
 
 
-#### ActiveMQ、RabbitMQ、Kafka、RocketMQ 有什么优缺点？
+### ActiveMQ、RabbitMQ、Kafka、RocketMQ 有什么优缺点？
 
     ActiveMQ
     
@@ -7404,7 +7215,7 @@ MQ的作用其实就是他的优点。
 
 ​    
 
-#### 什么是消息的有序性跟重复性问题，一般怎么处理？
+### 什么是消息的有序性跟重复性问题，一般怎么处理？
 
     有序性：
     
@@ -7423,13 +7234,13 @@ MQ的作用其实就是他的优点。
 
 ### RabbitMQ
 
-#### RabbitMq基本概念有哪些
+### RabbitMq基本概念有哪些
 
      Broker：是指RabbitMQ提供的消息服务器。VHost：虚拟主机，为了解决服务相对独立的场景，提高了硬件资源利用率，也实现了资源的隔离和权限控制。Connection：无论是生产者发送消息，还是消费者接受消息， 都需要跟Broker建立一个TCP的长连接，就是Connection。Exchange：交换机，根据路由键路由消息给队列（可能是多个）Queue：队列，存生产者生产的消息的容器，RabbitMQ是使用数据库来存的。Consumer：消费者，消费消息，可以通过pull和push两种方式消费。Producer：生产者，生产消息Channel：应该是指一个TCP连接可以包含多个Channel，这样就不用使用多个TCP连接了，减少资源的消耗，channel是RabbitMQ原生API中最重要的接口。自定义交换机、队列、绑定关系这些都是调用的channel接口上的方法。
 
 ​    
 
-#### RabbitMq消息路由有哪些路由方式
+### RabbitMq消息路由有哪些路由方式
 
     1. Direct：直接类型，全字匹配routingKey才能收到
     
@@ -7440,7 +7251,7 @@ MQ的作用其实就是他的优点。
 
 ​        
 
-#### 哪种场景下rabbitmq会丢失数据。
+### 哪种场景下rabbitmq会丢失数据。
 
     生产者发送消息给rabbitmq服务器的时候。由于网络原因丢失；
     
@@ -7448,13 +7259,13 @@ MQ的作用其实就是他的优点。
     
     消费端接收到消息后异常了。也可能导致消息丢失。
 
-#### MQ消息如何保证幂等？
+### MQ消息如何保证幂等？
 
-#### RabbitMQ死信队列的使用和应用场景
+### RabbitMQ死信队列的使用和应用场景
 
-##### 实现订单延迟关闭
+#### 实现订单延迟关闭
 
-###### 业务场景
+##### 业务场景
 
 假设有一个业务场景:
 
@@ -7475,7 +7286,7 @@ RabbitMQ本身不支持延迟投递，总的来说有2种实现方案:
 
 这里我们要借助RabbitMQ消息的特性实现。
 
-###### Message TTL(Time To Live)
+##### Message TTL(Time To Live)
 
 队列的属性
 
@@ -7485,7 +7296,7 @@ RabbitMQ本身不支持延迟投递，总的来说有2种实现方案:
 
 所有队列中的消息超过时间未被消费时，都会过期。不管是谁的包裹都一视同仁。
 
-##### 死信
+#### 死信
 
 消息过期以后，如果没有任何配置，是会直接丢弃的。我们可以通过配置让这样的消息变成死信(Dead Letter)，在别的地方存储。
 
@@ -7518,9 +7329,9 @@ DLQ，就会路由到DLQ。路由到DLQ之后，我们就可以消费了。
 
 ### Quarts
 
-#### Quartz的核心组件有哪些？有什么作用
+### Quartz的核心组件有哪些？有什么作用
 
-#### 请简单描述下Quartz的运行时序！
+### 请简单描述下Quartz的运行时序！
 
 ### Elastic-Job
 
@@ -7546,9 +7357,9 @@ seata
 
 ## 分库分表
 
-#### 实现分布式ID的方案有哪些？
+### 实现分布式ID的方案有哪些？
 
-##### 雪花算法
+#### 雪花算法
 
 一个64bit的长整型。
 
@@ -7562,7 +7373,7 @@ seata
 
 ## 公共
 
-#### 事务的4个基本特性
+### 事务的4个基本特性
 
 
 
@@ -7570,7 +7381,7 @@ seata
 
 ### 结构和流程
 
-#### 查询语句的执行流程
+### 查询语句的执行流程
 
 连接层
 
@@ -7604,17 +7415,17 @@ MySQL5.5.5之前默认的存储引擎是MyISAM，之后默认的是InnoDB。
 
 
 
-#### 更新语句的执行流程
+### 更新语句的执行流程
 
 
 
-#### Innodb的结构，磁盘页和缓存区是怎么配合的？
+### Innodb的结构，磁盘页和缓存区是怎么配合的？
 
-#### 缓冲区和磁盘数据不一致怎么办，服务器突然宕机了数据会丢失么？
+### 缓冲区和磁盘数据不一致怎么办，服务器突然宕机了数据会丢失么？
 
-#### 
+### 
 
-#### Mysql字段char跟vachar的区别在哪
+### Mysql字段char跟vachar的区别在哪
 
 char长度固定， 即每条数据占用等长字节空间；适合用在身份证号码、手机号码等定。
 varchar可变长度，可以设置最大长度；适合用在长度可变的属性。
@@ -7623,7 +7434,7 @@ varchar可变长度，可以设置最大长度；适合用在长度可变的属�
 
 
 
-#### Mysql有哪些存储引擎？区别
+### Mysql有哪些存储引擎？区别
 
 innodb，5.5之后默认的存储引擎。支持表锁行锁，聚集索引，外键。不保存表的总行数。
 
@@ -7637,11 +7448,11 @@ Archive，一般用于存不会修改的归档数据。
 
 
 
-#### MySQL的binlog是在什么时候写入的？提交前提交后？
+### MySQL的binlog是在什么时候写入的？提交前提交后？
 
 
 
-#### MySQL锁的类型
+### MySQL锁的类型
 
 乐观锁和悲观锁。
 
@@ -7662,7 +7473,7 @@ Innodb实现：记录锁，间隙锁，临建锁
 
 ### 事务和锁
 
-#### 对ACID的理解
+### 对ACID的理解
 
 A，原子性。所有操作一起成功一起失败。不允许单个失败。
 
@@ -7674,7 +7485,7 @@ D，持久性。事务结束之后的结果会存储到硬盘上。不会改变�
 
 
 
-#### 事务并发产生的问题
+### 事务并发产生的问题
 
 脏读
 
@@ -7690,7 +7501,7 @@ D，持久性。事务结束之后的结果会存储到硬盘上。不会改变�
 
 
 
-#### 事务的4个隔离级别
+### 事务的4个隔离级别
 
 （1）RU，可以读取没有提交的数据，不能解决脏读、不可重复度和幻读的问题
 
@@ -7702,9 +7513,9 @@ D，持久性。事务结束之后的结果会存储到硬盘上。不会改变�
 
 
 
-#### 例举Mysql的锁！并简单说明
+### 例举Mysql的锁！并简单说明
 
-##### 按锁的范围分
+#### 按锁的范围分
 
 **表锁**
 
@@ -7726,7 +7537,7 @@ D，持久性。事务结束之后的结果会存储到硬盘上。不会改变�
 
 行锁+间隙锁，目的是为了解决幻读。
 
-##### 按锁的机制分
+#### 按锁的机制分
 
 **共享锁**
 
@@ -7740,7 +7551,7 @@ D，持久性。事务结束之后的结果会存储到硬盘上。不会改变�
 
 
 
-#### Mysql的innoDB是怎么解决幻读问题的？说下LBCC跟MVCC
+### Mysql的innoDB是怎么解决幻读问题的？说下LBCC跟MVCC
 
 MySQL的innoDB引擎默认隔离级别为RR，可重复读。
 
@@ -7763,16 +7574,16 @@ LBCC
 
 
 
-#### 为什么innoDB的RR能解决幻读问题
+### 为什么innoDB的RR能解决幻读问题
 
 - 在快照读读情况下，mysql通过mvcc来避免幻读。
 - 在当前读读情况下，mysql通过临建锁来避免幻读
 
-##### 快照读
+#### 快照读
 
 简单的select，没有明确加锁的。就属于快照读，不加锁。
 
-##### 当前读
+#### 当前读
 
 加了锁的select，该有更新语句。例如：select * from table_name where  lock in share mode 
 
@@ -7789,7 +7600,7 @@ MySQL每行记录都有两个隐藏列：创建版本号和删除版本号
 
 ### 索引
 
-#### InnoDB 索引结构，为什么要用？
+### InnoDB 索引结构，为什么要用？
 
 1.B+树只有叶子节点存放数据，非叶子节点可以有更多的空间存放关键字，从而使树变得更加矮胖，减少io次数。
 
@@ -7799,7 +7610,7 @@ MySQL每行记录都有两个隐藏列：创建版本号和删除版本号
 
 
 
-#### 什么是覆盖索引，什么是索引下推
+### 什么是覆盖索引，什么是索引下推
 
 覆盖索引
 
@@ -7813,7 +7624,7 @@ MySQL每行记录都有两个隐藏列：创建版本号和删除版本号
 
 
 
-#### 哪些情况会导致索引失效
+### 哪些情况会导致索引失效
 
 索引列使用了函数
 
@@ -7829,7 +7640,7 @@ like %出现在了最前面
 
 
 
-#### 一张表里面有ID自增主键，当insert了17条记录之后，删除了第15.16.17条记录，把Mysql重启，再insert一条记录，这条记录的ID是
+### 一张表里面有ID自增主键，当insert了17条记录之后，删除了第15.16.17条记录，把Mysql重启，再insert一条记录，这条记录的ID是
 
 如果是MyISAM引擎，自增值保存在数据库文件中。答案是18
 
@@ -7839,7 +7650,7 @@ like %出现在了最前面
 
 
 
-#### 聚集索引，非聚集索引以及区别
+### 聚集索引，非聚集索引以及区别
 
 聚集索引
 
@@ -7861,7 +7672,7 @@ like %出现在了最前面
 
 
 
-#### 索引创建注意点
+### 索引创建注意点
 
 尽量给离散度高的建立索引，而不是离散度低的。例如：性别
 
@@ -7879,7 +7690,7 @@ like %出现在了最前面
 
 MySQL表的设计原则
 
-#### 有没有关注过公司的慢SQL,怎么优化
+### 有没有关注过公司的慢SQL,怎么优化
 
 首先看SQL语句中有没有使用函数等会导致索引失效的问题。
 
@@ -7887,21 +7698,21 @@ MySQL表的设计原则
 
 然后再看索引建的是否合理，比如是否建立在了一个离散度很低的字段。
 
-#### mysql性能优化的实践经验？
+### mysql性能优化的实践经验？
 
 
 
 ### 实战
 
-#### MySQL 分表是怎么实现的？跨库join如何解决？数据量突增怎么解决？
+### MySQL 分表是怎么实现的？跨库join如何解决？数据量突增怎么解决？
 
-#### 公司的数据库的主键一般怎么设计
+### 公司的数据库的主键一般怎么设计
 
 一般会设计2个主键，一个业务主键一个逻辑主键即ID字段。一般采用自增。
 
 也有部分系统用的uuid方式。这种方式比较适合用在分库分表的场景下。
 
-#### 写一个再2018年5月发表博客文章最多的前十个人
+### 写一个再2018年5月发表博客文章最多的前十个人
 
 9. 怎么知道哪句SQL语句执行慢？
 
@@ -7919,33 +7730,33 @@ MySQL表的设计原则
 
 10. 分库分表之后如何分页。
 
-#### MySQL索引建立原则
+### MySQL索引建立原则
 
-##### 离散度高
+#### 离散度高
 
 有个公式count(distinct(column_name))/count(*)，列的全部不同值和所有数据行的比例。数据行数相同的情况下，分子越大，列的离散度就越高。
 
 简单来说，如果列的重复值越多，离散度就越低，重复值越少，离散度就越高。不建议在离散度低的字段上建立索引。
 
-##### 查询条件
+#### 查询条件
 
 在用于where判断、order排序和join的(on) 、group by的字段上创建索引
 
-##### 索引个数
+#### 索引个数
 
 索引并不是越多越好，会影响更新效率而且浪费空间。优先考虑联合索引并且尽量将离散度高的列放在最前面
 
-##### 更新频率
+#### 更新频率
 
 不要给频繁更新的字段建立索引。会有页分裂问题。
 
-##### 有序性
+#### 有序性
 
 不建议给随机无序的字段建立索引。例如：UUID。
 
 
 
-#### MySQL索引下推
+### MySQL索引下推
 
 假设有表tableA,字段有id，a，b，c 4个字段，a是字符型字段。b是数字型。有组合索引（a，b）
 
@@ -7963,7 +7774,7 @@ MySQL表的设计原则
 
 
 
-#### 聚集索引的叶子节点存的是什么？
+### 聚集索引的叶子节点存的是什么？
 
 聚集索引，叶子节点存的是整行数据，直接通过这个聚集索引的键值找到某行
 
@@ -7971,7 +7782,7 @@ MySQL表的设计原则
 
 
 
-#### 介绍一下回表
+### 介绍一下回表
 
 非主键索引，先通过索引找到主键索引的键值，再通过主键值查出索引里面没有的数据，它比基于主键索引的查询多扫描了一棵索引树，这个过程就叫回表。
 
@@ -7981,7 +7792,7 @@ MySQL表的设计原则
 
 
 
-#### MySQL事务隔离级别
+### MySQL事务隔离级别
 
 脏读，提交读，可重复读，序列化。
 
@@ -7989,7 +7800,7 @@ MySQL默认可重复读。如果sql语句中有锁则使用lbcc来实现，如�
 
 
 
-#### MySQL慢查询是怎么分析的
+### MySQL慢查询是怎么分析的
 
 开启慢查询日志。有2种方式。
 
@@ -8019,7 +7830,7 @@ slow_query_log_file =/var/lib/mysql/localhost-slow.log
 
 select * from large_user where phone like '%3423%'
 
-##### 日志内容分析
+#### 日志内容分析
 
 ```sh
 less /var/lib/mysql/localhost-slow.log
@@ -8059,7 +7870,7 @@ PS：有的时候查询慢，不一定是SQL语句的问题，也有可能是服
 
 
 
-#### MySQL服务器CPU占用率高怎么解决？
+### MySQL服务器CPU占用率高怎么解决？
 
 首先使用top命令看看是否是MySQL的进程占用CPU过多。
 
@@ -8081,13 +7892,13 @@ PS：有的时候查询慢，不一定是SQL语句的问题，也有可能是服
 
 ## Redis
 
-#### Redis内存在什么情况下会满？
+### Redis内存在什么情况下会满？
 
 内存里面的数据超过指定的最大内存。例如：key没有指定过期时间但一直在往里面新增key。或者有过期时间！但是短时间加的速度很快也会导致内存占满。
 
 
 
-#### Redis哨兵机制的原理
+### Redis哨兵机制的原理
 
 哨兵+主从实现Redis集群高可用
 集群监控:负责监控Redis master和slave进程是否正常工作
@@ -8097,13 +7908,13 @@ PS：有的时候查询慢，不一定是SQL语句的问题，也有可能是服
 
 
 
-#### Redis主从同步原理
+### Redis主从同步原理
 
 启动一台slave实例后，slave会发送一个psync命令给master，如果该slave是第一次连接到master，那么就会触发一个全量复制,master节点fork一个子进程生成RDB快照，在快照生成过程中，会把新的请求全部写到Redis缓冲池中，RDB文件生成之后，master会将文件发送到slave, slave拿到文件后写入本地磁盘，然后再加载到内存中，待RDB文件同步完成后，会通知master， master再将缓冲池中新的写命令发送到slave进行同步，待完成后slave正式进入集群对外提供服务
 
 
 
-#### 请例举Redis常用的数据类型以及使用场景
+### 请例举Redis常用的数据类型以及使用场景
 
 String
 
@@ -8137,7 +7948,7 @@ GEO
 
 
 
-#### 请说明Redis基本数据类型底层的数据结构
+### 请说明Redis基本数据类型底层的数据结构
 
 String
 
@@ -8197,7 +8008,7 @@ ziplist+skiplist，如果元素个数大于128，或者任意一个元素大于6
 
 ​    
 
-#### redisKey的最大容量是多少，value存储最大容量是多少？
+### redisKey的最大容量是多少，value存储最大容量是多少？
 
 redisKey：512m；
 
@@ -8206,7 +8017,7 @@ String的value存储最大位512m，list中value存储最大为2^32-1（约40亿
 
 ​    
 
-#### Redis为什么快？
+### Redis为什么快？
 
 1、在内存中存储数据；
 
@@ -8217,7 +8028,7 @@ String的value存储最大位512m，list中value存储最大为2^32-1（约40亿
 
 ​    
 
-#### 为什么Redis用单线程就快
+### 为什么Redis用单线程就快
 
 Redis本身是内存型数据库，速度本身要比磁盘快很多。性能瓶颈不在CPU，而是内存大小和网络。
 
@@ -8225,9 +8036,9 @@ Redis本身是内存型数据库，速度本身要比磁盘快很多。性能瓶
 
 
 
-#### Redis过期策略，淘汰策略
+### Redis过期策略，淘汰策略
 
-##### 过期策略
+#### 过期策略
 
 过期策略主要针对设置了过期时间的key，策略分为三类，立即策略、惰性策略和定期策略。
 
@@ -8287,14 +8098,14 @@ expire.c 123行
 
 合理设置删除操作的执行时长（每次删除执行多长时间）和执行频率（每隔多长时间做一次删除）（这个要根据服务器运行情况来定了）
 
-##### 总结
+#### 总结
 
 Redis同时使用了惰性策略和定期策略，并不会到期立即删除过期key
 
 
 ​    
 
-##### 淘汰策略
+#### 淘汰策略
 
 redis中还有很多Key没有设置过期时间，通过过期策略也不能保证内存不会满。所以还需要淘汰策略。
 
@@ -8306,35 +8117,35 @@ Redis当内存使用达到最大内存极限时，需要使用淘汰算法来决
 
 LRU，LFU，RANDOM，TTL。
 
-###### volatile-lru
+##### volatile-lru
 
 当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，移除最近最少使用的key。
 
-###### allkeys-lru
+##### allkeys-lru
 
 当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的key（这个是最常用的）。
 
-###### volatile-lfu
+##### volatile-lfu
 
 当内存不足以容纳新写入数据时，在过期密集的键中，使用LFU算法进行删除key。
 
-###### allkeys-lfu
+##### allkeys-lfu
 
 当内存不足以容纳新写入数据时，使用LFU算法移除所有的key。
 
-###### volatile-random
+##### volatile-random
 
 当内存不足以容纳新写入数据时，在设置了过期的键中，随机删除一个key。
 
-###### allkeys-random
+##### allkeys-random
 
 当内存不足以容纳新写入数据时，随机删除一个或者多个key。
 
-###### volatile-ttl
+##### volatile-ttl
 
 当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，有更早过期时间的key优先移除。
 
-###### noeviction
+##### noeviction
 
 默认的淘汰策略。对于写请求不再提供服务，直接返回错误（DEL请求和部分特殊请求除外）。
 
@@ -8343,7 +8154,7 @@ LRU，LFU，RANDOM，TTL。
 
 ​    
 
-#### Redis持久化的方式有哪些，有什么区别
+### Redis持久化的方式有哪些，有什么区别
 
     RDB
     
@@ -8414,7 +8225,7 @@ LRU，LFU，RANDOM，TTL。
 
 ​    
 
-#### Redis高并发的缓存问题与解决方案？
+### Redis高并发的缓存问题与解决方案？
 
     缓存雪崩
     
@@ -8436,15 +8247,15 @@ LRU，LFU，RANDOM，TTL。
     
     解决方法：为key设置空串或者一种标识符进行拦截，比如&&；
 
-#### 缓存雪崩
+### 缓存雪崩
 
-#### 缓存穿透
+### 缓存穿透
 
-#### 缓存穿透
+### 缓存穿透
 
 
 
-#### 什么是缓存数据一致性问题?怎么解决的？
+### 什么是缓存数据一致性问题?怎么解决的？
 
     redis缓存的数据和db数据不一致，导致客户端读取的数据过时导致一致性问题；
     
@@ -8461,7 +8272,7 @@ LRU，LFU，RANDOM，TTL。
 
 ​    
 
-#### Redis集群方案有哪些？用的是哪个？优势在哪里
+### Redis集群方案有哪些？用的是哪个？优势在哪里
 
     1.Sentinel哨兵集群
     
@@ -8484,7 +8295,7 @@ LRU，LFU，RANDOM，TTL。
 
 ​    
 
-#### redis中String的底层数据结构是什么？优势在哪里
+### redis中String的底层数据结构是什么？优势在哪里
 
     SDS：简单动态字符串；
     
@@ -8496,7 +8307,7 @@ LRU，LFU，RANDOM，TTL。
     
     支持扩容，有空间预分配和惰性空间释放机制
 
-#### 说说Redis的哈希槽概念
+### 说说Redis的哈希槽概念
 
     Redis 集群没有使用一致性hash，而是引入了哈希槽（slot）的概念。
     
@@ -8512,7 +8323,7 @@ LRU，LFU，RANDOM，TTL。
     
     在这一点上，我们以后新增或移除节点的时候不用先停掉所有的 redis 服务。
 
-#### redis集群，为什么是16384个slot？
+### redis集群，为什么是16384个slot？
 
      (1)因为每秒钟，redis节点需要发送一定数量的ping消息作为心跳包，如果槽位为65536，这个ping消息的消息头太大了，浪费带宽。如果槽位为65536，发送心跳信息的消息头达8k，发送的心跳包过于庞大。
     
@@ -8527,13 +8338,13 @@ LRU，LFU，RANDOM，TTL。
       Redis主节点的配置信息中，它所负责的哈希槽是通过一张bitmap的形式来保存的，在传输过程中，会对bitmap进行压缩，但是如果bitmap的填充率slots / N很高的话(N表示节点数)，bitmap的压缩率就很低。
       如果节点数很少，而哈希槽数量很多的话，bitmap的压缩率就很低。
 
-#### redis的分布式锁怎么实现
+### redis的分布式锁怎么实现
 
      setnx命令+lua脚本，同时加上redis的单线程命令执行
     
      redission封装的分布式锁，底层也属于lua脚本
 
-#### redis主从复制过程以及原理
+### redis主从复制过程以及原理
 
      首先slave与master建立连接，slave会在本地保存master的ip和端口，通过定时任务检测是否有master节点需要连接和复制；
     
@@ -8543,7 +8354,7 @@ LRU，LFU，RANDOM，TTL。
     
      后续会根据偏移量等节点信息来进行增量复制；
 
-#### Redis哨兵机制如何实现故障自动转移
+### Redis哨兵机制如何实现故障自动转移
 
      首先哨兵集群需要选举一个leader来进行redis节点的master节点选举与数据同步等操作；
     
@@ -8571,7 +8382,7 @@ LRU，LFU，RANDOM，TTL。
     
      4、前边都相同，进程id最小的成为master；
 
-#### 你对Redis rehash的理解
+### 你对Redis rehash的理解
 
      dictht有两个，dictht[0]、dictht[1]
     
@@ -8601,15 +8412,252 @@ LRU，LFU，RANDOM，TTL。
 
 ## SpringCloudAlibaba
 
-#### SpringCloud核心组件介绍与使用
+### SpringCloud核心组件介绍与使用
 
-#### 微服务如何保证事务的一致性
+### 微服务如何保证事务的一致性
 
 
 
 ### GateWay
 
-#### gateway实现原理，画图
+### gateway实现原理，画图
+
+
+
+# 软件设计
+
+## 功能设计
+
+### 写个门票限时销售系统，架构图，业务流程图，随意发挥
+
+
+
+### 直播、会议、在线教育这种功能的解决方案有哪些？
+
+这种功能一般不用Java来做，涉及转码，视频数据存储，还要铺网，基建都要几千万起。目前比较成熟的解决方案有：保利威，七牛，网易云信
+
+### 微信抢红包、红包雨实现
+
+
+
+### 如何设计秒杀系统？场景：100万并发、100个商品
+
+
+
+### 项目流量增大1000倍，项目如何架构升级
+
+说了应用集群、拆分。缓存、搜索引擎。数据库集群，读写分离等）面试官说太简单了
+
+
+
+### 抛开所有组件，如何从文件中10万条手机号找出想要的那个
+
+
+
+### 设计一个商业停车场数据库表结构
+
+然后进一步，划分公共的，公司的，公益的，如何计算收益
+
+
+
+### 系统设计一个系统，输入hash查询注册名称
+
+1、数据查询接口:
+现有一张数据表(数据内容有11亿条),表格中的内容举例如下:
+
+| ID    | 注册号码    | 注册名称 |
+| ----- | ----------- | -------- |
+| 10036 | 18972303692 | 张三     |
+| 27999 | 18672352674 | 李四     |
+| 33394 | 13681473563 | 王五     |
+
+经常被查询的数据量在200万条以内，200万条数据中会有1%的数据会经常变化成其他的数据，变化之后会稳定一段时间，时间从8小时到数天不等，其余的数据基本上不会改变，请开发一个系统，输入注册号码的hash值，就能够查询到注册名称和ID。(特别注意，为保护数据，不允许直接传入注册号码作为输入）。
+
+
+
+### 路由策略设计
+
+场景:我们需要将2000w的商品信息缓存在redis中， key为uuid,value为商品基本信息。现有8台redis服务器，分成4组，每组两台(一主一从),每组存放的数据量为500w台。
+设计一种路由策略。要求:
+1、重复输入同一个uuid，路由到的redis服务组地址不变。
+2、当数据量激增，增加redis机器时不会造成大规模的缓存雪崩。
+
+
+
+### 查询功能设计原则
+
+
+
+## 设计模式
+
+### 单例模式
+
+### 单例模式的介绍
+
+### 写一个线程安全的单例模式
+
+
+
+# 算法
+
+## 数组
+
+### 两个有序char数组，找出不一致的那一个元素
+
+例如：[a, b, c, d, e, f, g]，[a, b, c, d, f, g]
+
+
+
+10万条数据，基于数组或者链表，如何占用最少内存排序
+
+
+
+## 链表
+
+### 反转一个链表
+
+例如：输入：1，2，3，4，5，输出：5，4，3，2，1
+
+```java
+public class ListNode {
+	int val;
+	ListNode next;
+    
+    public ListNode(int val){
+        this.val = val;
+    }
+}
+
+public class solution {
+    public ListNode reverseList(ListNode head){
+        
+    }
+}
+```
+
+
+
+### 使用链表来实现2数相加
+
+用2个链表来表示2个数字，例如：
+
+输入：2->4->3，5->6->4
+
+输出：7->0->8
+
+原因：342+465=807
+
+```java
+public class ListNode {
+	int val;
+	ListNode next;
+    
+    public ListNode(int val){
+        this.val = val;
+    }
+}
+
+public class solution {
+    public ListNode addTwoNumbers(ListNode head){
+        
+    }
+}
+```
+
+
+
+
+
+## 动态规划
+
+### 高楼扔鸡蛋
+
+https://zhuanlan.zhihu.com/p/92288604
+
+
+
+### LeetCode 45 跳跃游戏 II
+
+https://zhuanlan.zhihu.com/p/82831669
+
+
+
+有一栋100层高的大楼，给你两个完全相同的玻璃球，假设从某一层开始丢下玻璃球会摔碎,怎么利用手中的两个玻璃球，用什么最优策略(最坏情况下最少次数）知道这个临界的层是第几层
+
+
+
+### LRU
+
+Least Recently Used，最近最少使用。判断最近被使用的时间，离目前最远的数据优先被淘汰。
+
+Redis LRU对传统的LRU算法进行了改良，通过随机采样来调整算法的精度。如果淘汰策略是LRU，则根据配置的采样值maxmemory_samples(默认是5个)，随机从数据库中选择m个key，淘汰其中热度最低的 key对应的缓存数据。所以采样参数m配置的数值越大，就越能精确的查找到待淘汰的缓存数据,但是也消耗更多的CPU计算,执行效率降低。
+
+问题：如何找出热度最低的数据?
+Redis 中所有对象结构都有一个lru字段且使用了unsigned的低24位,这个字段用来记录对象的热度。对象被创建时会记录lru值。在被访问的时候也会更新lru的值。但并不是获取系统当前的时间戳，而是设置为全局变量server.Ilruclock的值。
+
+### LFU
+
+Least Frequently Used，最不常用，按照使用频率删除
+
+同样使用lru字段，但是前16位表示多久时间未访问，后8位表示访问次数（默认五次），长时间未访问，则次数会减少，最少为0，类似于心悦等级，长时间不充钱，就会降低，当次数小于5时，每次访问次数都会+1，当访问次数大于5时，随着访问次数越来越多，访问次数+1的概率就越来越小，最多加到255次，就会直接返回；
+
+
+
+lru如何用链表实现
+
+
+
+
+
+### 移除无效的括号
+
+示例 1：
+
+输入：s = “lee(to)de)”
+
+输出：“lee(to)de”
+
+解答：http://t.zoukankan.com/coding-gaga-p-12920164.html
+
+
+
+### LeetCode1135 最低成本联通所有城市
+
+想象一下你是个城市基建规划者，地图上有 N 座城市，它们按以 1 到 N 的次序编号。
+
+给你一些可连接的选项 conections，其中每个选项 conections[i] = [city1, city2, cost] 表示将城市 city1 和城市 city2 连接所要的成本。（连接是双向的，也就是说城市 city1 和城市 city2 相连也同样意味着城市 city2 和城市 city1 相连）。
+
+返回使得每对城市间都存在将它们连接在一起的连通路径（可能长度为 1 的）最小成本。该最小成本应该是所用全部连接代价的综合。如果根据已知条件无法完成该项任务，则请你返回 -1。
+
+示例1：
+输入：N = 3, conections = [[1,2,5],[1,3,6],[2,3,1]]
+输出：6
+解释：
+选出任意 2 条边都可以连接所有城市，我们从中选取成本最小的 2 条
+
+解答：参考[LeetCode1135](https://michael.blog.csdn.net/article/details/107796632)
+
+
+
+### paxos
+
+
+
+### raft
+
+
+
+### zxid
+
+
+
+### myid
+
+
+
+### epoch
+
+
 
 
 
@@ -8617,7 +8665,7 @@ LRU，LFU，RANDOM，TTL。
 
 # 网络
 
-#### TCP和UDP的区别
+### TCP和UDP的区别
 
 TCP与UDP区别总结：
 
@@ -8633,7 +8681,7 @@ UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速�
 
 
 
-#### http和https的区别
+### http和https的区别
 
 1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
 2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
@@ -8642,13 +8690,13 @@ UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速�
 
 
 
-#### 有没有排查解决过网络方面的问题。
+### 有没有排查解决过网络方面的问题。
 
 没有
 
 
 
-# 未分类
+# 待分类
 
 ## 北京30K面试题
 

@@ -2115,13 +2115,97 @@ public abstract class AopConfigUtils {
 
 # SpringMVC
 
+#### 什么是MVC？
+
+MVC是指Model-View-Controller，是一种软件设计思想，它将应用程序分为三个部分: M是指模型，V是视图，C则是控制器。
+
+MVC目的是使M和V分开，同一个应用程序可以有不同表现形式，同一个界面也可以有不同的数据模型。
+
+模型(Model)：表示应用程序的核心业务逻和数据。模型通常包含一些数据结构和逻辑规则，用于处理数据的输入、输出、更新和存储等操作。模型并不关心数据的显示或用户的交互方式，它只关注数据本身以及对数据的操作作。
+
+视图(View)：表示应用程序的用户界面，用于显示模型中的数据。视图通常包含一些控件和元素，用于展示数据，并且可以与用户进行交互。视图并不关心数据的处理或存储方式，它只关注如何呈现数据以及如何与用户进行交互。
+
+控制器(Controller)：表示应用程序的处理逻辑，用于控制视图和模型之间的交互。控制器通常包含一些事生外理和动作钟发等操作，用于响应用户的输入或视图的变化，并对模型进行操作。控制器通过将用户的输入转化为对模型的操作，从而实现了视图和模型之间的解耦。
+
+
+
+#### SpringMVC处理流程
+
+![v2-62c917d3c5eaada5122746bf66e46f2d_1440w](https://pic2.zhimg.com/80/v2-62c917d3c5eaada5122746bf66e46f2d_1440w.jpg)
+
+1. 用户发送请求给到前端控制器 `DispatchServlet` ；
+2. `DispatchServlet` 收到请求后，调用`HandlerMapping` 处理器映射器查找对应负责处理请求的 Handler；
+3. `HandlerMapping` 将找到的具体的处理器 Handler 生成处理器对象以及处理器拦截器（如果有则生成），一起返回给 `DispatchServlet`；
+4. `DispatchServlet`调用`HandlerAdapter` 处理器适配器，请求执行具体的 Handler；
+5. `HandlerAdapter` 将具体 Handler 执行返回的模型和视图返回给到 `DispatchServlet`；
+6. 此时 `DispatchServlet` 已经得到具体的 视图名称了，然后向 `ViewResolver` 发起请求，请求解析视图，返回已经解析好的视图对象；
+7. `DispatchServlet` 对视图进行渲染，将 model 与view 进行渲染；
+8. `DispatchServlet` 返回响应给到用户浏览器；
+
+>  前端控制器 `DispatcherServlet`：接收请求、响应结果，相当于转发器，有了`DispatcherServlet`能够减少了其它组件之间的耦合度。
+> 处理器映射器 `HandlerMapping`：根据请求的URL来查找Handler
+> 处理器适配器 `HandlerAdapter`：负责执行Handler
+> 处理器 Handler：处理器，需要程序员开发
+> 视图解析器 `ViewResolver`：进行视图的解析，根据视图逻辑名将ModelAndView解析成真正的视图（view）
+> 视图View：View是一个接口， 它的实现类支持不同的视图类型，如jsp，freemarker，pdf等等
+
+
+
+SpringMVC拦截器的应用场景
+
+
+
+#### Controller的返回值有哪些
+
+
+
+
+
+#### SpringMVC的常用注解
+
+##### @RequestMapping
+
+RequestMapping是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。
+
+RequestMapping注解有六个属性，下面我们把她分成三类进行说明（下面有相应示例）。
+
+value， method
+
+value： 指定请求的实际地址，指定的地址可以是URI Template 模式（后面将会说明）；
+
+method： 指定请求的method类型， GET、POST、PUT、DELETE等；
+
+consumes： 指定处理请求的提交内容类型（Content-Type），例如application/json, text/html;
+
+produces: 指定返回的内容类型，仅当request请求头中的(Accept)类型中包含该指定类型才返回；
+
+params： 指定request中必须包含某些参数值是，才让该方法处理。
+
+headers： 指定request中必须包含某些指定的header值，才能让该方法处理请求
+
+##### @ResponseBody
+
+该注解用于将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为指定格式后，写入到Response对象的body数据区。
+
+使用时机：返回的数据不是html标签的页面，而是其他某种格式的数据时（如json、xml等）使用；
+
+##### @RequestBody
+
+注解实现接收http请求的json数据，将json转换为java对象。默认的入参只能封装一层。
+
+##### @PathVariable
+
+##### @RequestParam
+
+
+
 
 
 # SpringBoot
 
 ## 参考说明
 
-本文内容主要来源于马士兵教育视频教程（[SpringBoot源码2022-邓鹏波](https://www.mashibing.com/study?courseNo=1288&sectionNo=49808)），结合了老师的笔记以及自己的实践做了一些修改。
+本文内容主要来源于马士兵教育视频教程（[SpringBoot源码2022-邓鹏波](https://www.mashibing.com/study?courseNo=1288)），结合了老师的笔记以及自己的实践做了一些修改。
 
 
 
@@ -3697,9 +3781,9 @@ MyDeferredImportSelectorGroup.selectImports()
 
 ### 1.官方源码下载
 
-&emsp;&emsp;首先大家要注意SpringBoot项目在2.3.0之前是使用Maven构建项目的，在2.3.0之后是使用Gradle构建项目的。后面分析的源码以SpringBoot2.2.5为案例，所以本文就介绍下SpringBoot2.2.5的编译过程。
+首先大家要注意SpringBoot项目在2.3.0之前是使用Maven构建项目的，在2.3.0之后是使用Gradle构建项目的。后面分析的源码以SpringBoot2.2.5为案例，所以本文就介绍下SpringBoot2.2.5的编译过程。
 
-&emsp;&emsp;官网地址：https://github.com/spring-projects/spring-boot
+官网地址：https://github.com/spring-projects/spring-boot
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/8ba6242338ba47359d42f49f02bf2c46.png)
 
@@ -3707,11 +3791,11 @@ MyDeferredImportSelectorGroup.selectImports()
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/a8bb863fd5554adca18462cbb7ce4637.png)
 
-&emsp;&emsp;下载后直接解压缩即可
+下载后直接解压缩即可
 
 ### 2.本地源码编译
 
-&emsp;&emsp;把解压缩的源码直接导入到IDEA中，修改pom文件中的版本号。
+把解压缩的源码直接导入到IDEA中，修改pom文件中的版本号。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/83fc4aa579934ae0b49bbfc528a00536.png)
 
@@ -3752,11 +3836,11 @@ mvn clean install -DskipTests
 
 ### 3.源码环境使用
 
-&emsp;&emsp;既然源码已经编译好之后我们就可以在这个项目中来创建我们自己的SpringBoot项目了，我们在 `spring-boot-project`项目下创建 `module`,
+既然源码已经编译好之后我们就可以在这个项目中来创建我们自己的SpringBoot项目了，我们在 `spring-boot-project`项目下创建 `module`,
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/f5c3299dc03a46b28f93f75c24d820d0.png)
 
-&emsp;&emsp;然后在我们的module中添加对应的start依赖
+然后在我们的module中添加对应的start依赖
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/65b63c4b17b6414893cb65f2d1a87f2a.png)
 
@@ -3772,9 +3856,9 @@ mvn clean install -DskipTests
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/803c18a45fbf473db24bf0088e07b0a2.png)
 
-&emsp;&emsp;在其他项目使用我们编译的源码，这个可能是大家比较感兴趣的一个点了，我们也来介绍下，依赖我们还是可以使用官方的依赖即可，不过最好还是和我们编译的版本保持一致。
+在其他项目使用我们编译的源码，这个可能是大家比较感兴趣的一个点了，我们也来介绍下，依赖我们还是可以使用官方的依赖即可，不过最好还是和我们编译的版本保持一致。
 
-&emsp;&emsp;主要是关联上我们编译的源码。
+主要是关联上我们编译的源码。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1639986555000/ba46d4dee15d4b97a44ec0f10b40b331.png)
 
@@ -4082,7 +4166,7 @@ public class StartApp {
 
 #### run方法
 
-&emsp;&emsp;然后我们进入run()方法中看。代码比较简单
+然后我们进入run()方法中看。代码比较简单
 
 ```java
 	public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
@@ -4091,7 +4175,7 @@ public class StartApp {
 	}
 ```
 
-&emsp;&emsp;调用了重载的一个run()方法，将我们传递进来的类对象封装为了一个数组，仅此而已。我们再进入run()方法。
+调用了重载的一个run()方法，将我们传递进来的类对象封装为了一个数组，仅此而已。我们再进入run()方法。
 
 ```java
 	public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
@@ -4106,7 +4190,7 @@ br
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640171593000/e70d3fe03ded4228abaf0abeb83ac7c0.png)
 
-&emsp;&emsp;在该方法中创建了一个SpringApplication对象。同时调用了SpringApplication对象的run方法。这里的逻辑有分支，先看下SpringApplication的构造方法中的逻辑
+在该方法中创建了一个SpringApplication对象。同时调用了SpringApplication对象的run方法。这里的逻辑有分支，先看下SpringApplication的构造方法中的逻辑
 
 #### SpringApplication构造器
 
@@ -4131,18 +4215,18 @@ br
 	}
 ```
 
-&emsp;&emsp;在本方法中完成了几个核心操作
+在本方法中完成了几个核心操作
 
 1. 推断当前项目的类型
 2. 加载配置在spring.factories文件中的ApplicationContextInitializer中的类型并实例化后存储在了initializers中。
 3. 和2的步骤差不多，完成监听器的初始化操作，并将实例化的监听器对象存储在了listeners成员变量中
 4. 通过StackTrace反推main方法所在的Class对象
 
-&emsp;&emsp;上面的核心操作具体的实现细节我们在后面的详细文章会给大家剖析
+上面的核心操作具体的实现细节我们在后面的详细文章会给大家剖析
 
 ### run方法
 
-&emsp;&emsp;接下来我们在回到SpringApplication.run()方法中。
+接下来我们在回到SpringApplication.run()方法中。
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -4210,7 +4294,7 @@ br
 	}
 ```
 
-&emsp;&emsp;在这个方法中完成了SpringBoot项目启动的很多核心的操作，我们来总结下上面的步骤
+在这个方法中完成了SpringBoot项目启动的很多核心的操作，我们来总结下上面的步骤
 
 1. 创建了一个任务执行的观察器，统计启动的时间
 2. 声明ConfigurableApplicationContext对象
@@ -4229,7 +4313,7 @@ br
 15. 返回应用上下文对象。
 
 
-&emsp;&emsp;到此SpringBoot项目的启动初始化的代码的主要流程就介绍完成了。细节部分后面详细讲解。
+到此SpringBoot项目的启动初始化的代码的主要流程就介绍完成了。细节部分后面详细讲解。
 
 
 ### SpringApplication构造器
@@ -4238,7 +4322,7 @@ br
 
 ![SpringBoot2.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/20233d78473344abb911d4740c7e2643.png)
 
-&emsp;&emsp;首先我们来看下在SpringApplication的构造方法中是如何帮我们完成这4个核心操作的。
+首先我们来看下在SpringApplication的构造方法中是如何帮我们完成这4个核心操作的。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/d27c903f4a0d416da247e96f4a9d06b1.png)
 
@@ -4264,13 +4348,13 @@ br
 
 #### 1.webApplicationType
 
-&emsp;&emsp;首先来看下webApplicationType是如何来推导出当前启动的项目的类型。通过代码可以看到是通过deduceFromClassPath()方法根据ClassPath来推导出来的。
+首先来看下webApplicationType是如何来推导出当前启动的项目的类型。通过代码可以看到是通过deduceFromClassPath()方法根据ClassPath来推导出来的。
 
 ```java
 this.webApplicationType = WebApplicationType.deduceFromClasspath();
 ```
 
-&emsp;&emsp;跟踪进去看代码
+跟踪进去看代码
 
 ```java
 	static WebApplicationType deduceFromClasspath() {
@@ -4288,21 +4372,21 @@ this.webApplicationType = WebApplicationType.deduceFromClasspath();
 	}
 ```
 
-&emsp;&emsp;在看整体的实现逻辑之前，我们先分别看两个内容，第一就是在上面的代码中使用到了相关的静态变量。
+在看整体的实现逻辑之前，我们先分别看两个内容，第一就是在上面的代码中使用到了相关的静态变量。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/11c608e5613b47478aef40ba9fac2f7a.png)
 
-&emsp;&emsp;这些静态变量其实就是一些绑定的Java类的全类路径。第二个就是 `ClassUtils.isPresent()`方法，该方法的逻辑也非常简单，就是通过反射的方式获取对应的类型的Class对象，如果存在返回true，否则返回false
+这些静态变量其实就是一些绑定的Java类的全类路径。第二个就是 `ClassUtils.isPresent()`方法，该方法的逻辑也非常简单，就是通过反射的方式获取对应的类型的Class对象，如果存在返回true，否则返回false
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/34b735dda8e545809eb13c3a95bc4fe7.png)
 
-&emsp;&emsp;所以到此推导的逻辑就非常清楚了
+所以到此推导的逻辑就非常清楚了
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ed287633a72f4cbf914546f00a4deaf2.png)
 
 #### 2.setInitializers
 
-&emsp;&emsp;然后我们再来看下如何实现加载初始化器的。
+然后我们再来看下如何实现加载初始化器的。
 
 ```java
 // 加载配置在spring.factories文件中的ApplicationContextInitializer对应的类型并实例化
@@ -4310,7 +4394,7 @@ this.webApplicationType = WebApplicationType.deduceFromClasspath();
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
 ```
 
-&emsp;&emsp;首先所有的初始化器都实现了 `ApplicationContextInitializer`接口,也就是根据这个类型来加载相关的实现类。
+首先所有的初始化器都实现了 `ApplicationContextInitializer`接口,也就是根据这个类型来加载相关的实现类。
 
 ```java
 public interface ApplicationContextInitializer<C extends ConfigurableApplicationContext> {
@@ -4318,7 +4402,7 @@ public interface ApplicationContextInitializer<C extends ConfigurableApplication
 }
 ```
 
-&emsp;&emsp;然后加载的关键方法是 `getSpringFactoriesInstances()`方法。该方法会加载 `spring.factories`文件中的key为 `org.springframework.context.ApplicationContextInitializer` 的值。
+然后加载的关键方法是 `getSpringFactoriesInstances()`方法。该方法会加载 `spring.factories`文件中的key为 `org.springframework.context.ApplicationContextInitializer` 的值。
 
 spring-boot项目下
 
@@ -4344,7 +4428,7 @@ org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingL
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/b5facc54c9854f3995cecfa7cee14a8f.png)
 
-&emsp;&emsp;具体的加载方法为 `getSpringFacotiesInstance()`方法，我们进入查看
+具体的加载方法为 `getSpringFacotiesInstance()`方法，我们进入查看
 
 ```java
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
@@ -4359,53 +4443,53 @@ org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingL
 	}
 ```
 
-&emsp;&emsp;先进入 `SpringFactoriesLoader.loadFactoryNames(type, classLoader)`中具体查看加载文件的过程.
+先进入 `SpringFactoriesLoader.loadFactoryNames(type, classLoader)`中具体查看加载文件的过程.
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/264e6321f8734d16b02aea25d9004cfa.png)
 
-&emsp;&emsp;然后我们来看下 `loadSpringFactories`方法
+然后我们来看下 `loadSpringFactories`方法
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/e48b0dd8e7024f2a8912f83606b1afa1.png)
 
-&emsp;&emsp;通过Debug的方式查看会更清楚哦
+通过Debug的方式查看会更清楚哦
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/335ab7d63ccc49188c7176b9c49fbb54.png)
 
-&emsp;&emsp;通过 `loadSpringFactories` 方法我们看到把 `spring.factories`文件中的所有信息都加载到了内存中了，但是我们现在只需要加载 `ApplicationContextInitializer`类型的数据。这时我们再通过 `getOrDefault()`方法来查看。
+通过 `loadSpringFactories` 方法我们看到把 `spring.factories`文件中的所有信息都加载到了内存中了，但是我们现在只需要加载 `ApplicationContextInitializer`类型的数据。这时我们再通过 `getOrDefault()`方法来查看。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/661ec6eb875e4931804b30e5f2608ace.png)
 
-&emsp;&emsp;进入方法中查看
+进入方法中查看
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ae25bcc8768840b4866bc416ba725da4.png)
 
-&emsp;&emsp;然后会根据反射获取对应的实例对象。
+然后会根据反射获取对应的实例对象。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/ba90364b8faa4f839d308b8856d7cd30.png)
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/5fd5c8871194447da7de114e196fcf94.png)
 
-&emsp;&emsp;好了到这其实我们就清楚了 `getSpringFactoriesInstances`方法的作用就是帮我们获取定义在 `META-INF/spring.factories`文件中的可以为 `ApplicationContextInitializer` 的值。并通过反射的方式获取实例对象。然后把实例的对象信息存储在了SpringApplication的 `initializers`属性中。
+好了到这其实我们就清楚了 `getSpringFactoriesInstances`方法的作用就是帮我们获取定义在 `META-INF/spring.factories`文件中的可以为 `ApplicationContextInitializer` 的值。并通过反射的方式获取实例对象。然后把实例的对象信息存储在了SpringApplication的 `initializers`属性中。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/682f31c036c2438392e56f70d58866aa.png)
 
 #### 3.setListeners
 
-&emsp;&emsp;清楚了 `setInitializers()`方法的作用后，再看 `setListeners()`方法就非常简单了，都是调用了 `getSpringFactoriesInstances`方法，只是传入的类型不同。也就是要获取的 `META-INF/spring.factories`文件中定义的不同信息罢了。
+清楚了 `setInitializers()`方法的作用后，再看 `setListeners()`方法就非常简单了，都是调用了 `getSpringFactoriesInstances`方法，只是传入的类型不同。也就是要获取的 `META-INF/spring.factories`文件中定义的不同信息罢了。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/5fb3f99fd2fb4c448ee8ee666d8fde9a.png)
 
-&emsp;&emsp;即加载定义在 `META-INF/spring.factories`文件中声明的所有的监听器，并将获取后的监听器存储在了 `SpringApplication`的 `listeners`属性中。
+即加载定义在 `META-INF/spring.factories`文件中声明的所有的监听器，并将获取后的监听器存储在了 `SpringApplication`的 `listeners`属性中。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/d0c88a1d7e3c451c9740424117516dfb.png)
 
-&emsp;&emsp;默认加载的监听器为：
+默认加载的监听器为：
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/563d2fbf30af4d68b6d92dde9e2564d0.png)
 
 #### 4.mainApplicationClass
 
-&emsp;&emsp;最后我们来看下 `duduceMainApplicaitonClass()`方法是如何反推导出main方法所在的Class对象的。通过源码我们可以看到是通过 `StackTrace`来实现的。
+最后我们来看下 `duduceMainApplicaitonClass()`方法是如何反推导出main方法所在的Class对象的。通过源码我们可以看到是通过 `StackTrace`来实现的。
 
 > ```txt
 > StackTrace:
@@ -4413,11 +4497,11 @@ org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingL
 > 一个函数被调用时，就创建一个新的栈空间。那么通过函数的嵌套调用最后就形成了一个函数调用堆栈
 > ```
 
-&emsp;&emsp;`StackTrace`其实就是记录了程序方法执行的链路。通过Debug方式可以更直观的来呈现。
+`StackTrace`其实就是记录了程序方法执行的链路。通过Debug方式可以更直观的来呈现。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/9ce11b1720254826810c4e189c209dff.png)
 
-&emsp;&emsp;那么相关的调用链路我们都可以获取到，剩下的就只需要获取每链路判断执行的方法名称是否是 `main`就可以了。
+那么相关的调用链路我们都可以获取到，剩下的就只需要获取每链路判断执行的方法名称是否是 `main`就可以了。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640256880000/f65ee0c2e1bc4d3f86b551bfc0ae4536.png)
 
@@ -4429,11 +4513,11 @@ org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingL
 
 ##### 1.观察者模式
 
-&emsp;&emsp;监听器的设计会使用到Java设计模式中的观察者模式，所以在搞清楚SpringBoot中的监听器的设计之前我们还是非常有必要把观察者模式先弄清楚。
+监听器的设计会使用到Java设计模式中的观察者模式，所以在搞清楚SpringBoot中的监听器的设计之前我们还是非常有必要把观察者模式先弄清楚。
 
-&emsp;&emsp;观察者模式又称为发布/订阅(Publish/Subscribe)模式,在对象之间定义了一对多的依赖，这样一来，当一个对象改变状态，依赖它的对象会收到通知并自动更新.
+观察者模式又称为发布/订阅(Publish/Subscribe)模式,在对象之间定义了一对多的依赖，这样一来，当一个对象改变状态，依赖它的对象会收到通知并自动更新.
 
-&emsp;&emsp;在java.util包中包含有基本的Observer接口和Observable抽象类.功能上和Subject接口和Observer接口类似.不过在使用上,就方便多了,因为许多功能比如说注册,删除,通知观察者的那些功能已经内置好了.
+在java.util包中包含有基本的Observer接口和Observable抽象类.功能上和Subject接口和Observer接口类似.不过在使用上,就方便多了,因为许多功能比如说注册,删除,通知观察者的那些功能已经内置好了.
 
 ###### 1.1 定义具体被观察者
 
@@ -4561,39 +4645,39 @@ public class Client {
 ```
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190216235018273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4NTI2NTcz,size_16,color_FFFFFF,t_70)
-&emsp;&emsp;这样就实现了官方提供观察者模式.
+这样就实现了官方提供观察者模式.
 
 ##### 2.SpringBoot中监听器的设计
 
-&emsp;&emsp;然后我们来看下SpringBoot启动这涉及到的监听器这块是如何实现的。
+然后我们来看下SpringBoot启动这涉及到的监听器这块是如何实现的。
 
 ###### 2.1 初始化操作
 
-&emsp;&emsp;通过前面的介绍我们知道在SpringApplication的构造方法中会加载所有声明在spring.factories中的监听器。
+通过前面的介绍我们知道在SpringApplication的构造方法中会加载所有声明在spring.factories中的监听器。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/6b458524aaf546eb9084434519c7ef0d.png)
 
-&emsp;&emsp;通过Debug模式我们可以看到加载的监听器有哪些。
+通过Debug模式我们可以看到加载的监听器有哪些。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/76e9dcc5e9104561aeceeb91405ef447.png)
 
-&emsp;&emsp;其实就是加载的spring.factories文件中的key为ApplicationListener的value
+其实就是加载的spring.factories文件中的key为ApplicationListener的value
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/f1cffe9621c24e91a8ef27d761d409a7.png)
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/2789a2faaba44ee690b23e3e2b14371e.png)
 
-&emsp;&emsp;通过对这些内置监听器的源码查看我们发现这些监听器都实现了 `ApplicationEvent`接口。也就是都会监听 `ApplicationEvent`发布的相关的事件。ApplicationContext事件机制是观察者设计模式的实现，通过ApplicationEvent类和ApplicationListener接口，可以实现ApplicationContext事件处理。
+通过对这些内置监听器的源码查看我们发现这些监听器都实现了 `ApplicationEvent`接口。也就是都会监听 `ApplicationEvent`发布的相关的事件。ApplicationContext事件机制是观察者设计模式的实现，通过ApplicationEvent类和ApplicationListener接口，可以实现ApplicationContext事件处理。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/035e9e1d7361441ca0b88aa0945045a0.png)
 
 ###### 2.2 run方法
 
-&emsp;&emsp;然后我们来看下在SpringApplication.run()方法中是如何发布对应的事件的。
+然后我们来看下在SpringApplication.run()方法中是如何发布对应的事件的。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/64f69bc57a564148a66d4a9c3ac7abd5.png)
 
-&emsp;&emsp;首先会通过getRunListeners方法来获取我们在spring.factories中定义的SpringApplicationRunListener类型的实例。也就是EventPublishingRunListener.
+首先会通过getRunListeners方法来获取我们在spring.factories中定义的SpringApplicationRunListener类型的实例。也就是EventPublishingRunListener.
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/1ea1d66e450b41c4918aaddd6ef9b2f5.png)
 
@@ -4601,21 +4685,21 @@ public class Client {
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/baf819379bd5489fa4e0ff241ed15274.png)
 
-&emsp;&emsp;加载这个类型的时候会同步的完成实例化。
+加载这个类型的时候会同步的完成实例化。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/7f7fdbf0dc6d4856bae9c8eb85adf0a3.png)
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/5f832aed53344b04bff2f36367bc933b.png)
 
-&emsp;&emsp;实例化操作就会执行EventPublishingRunListener.
+实例化操作就会执行EventPublishingRunListener.
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/d2970e863b784cfdb89d8dff92f78b32.png)
 
-&emsp;&emsp;在这个构造方法中会绑定我们前面加载的11个过滤器。
+在这个构造方法中会绑定我们前面加载的11个过滤器。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/53658b78f3bf453f9f7455c32834f90b.png)
 
-&emsp;&emsp;到这其实我们就已经清楚了EventPublishingRunListener和我们前面加载的11个监听器的关系了。然后在看事件发布的方法。
+到这其实我们就已经清楚了EventPublishingRunListener和我们前面加载的11个监听器的关系了。然后在看事件发布的方法。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/ee3af2c5febd4e6abc30a35d3aa5b2a0.png)
 
@@ -4657,7 +4741,7 @@ public class Client {
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/666a39112134400992c1e2ab43d74cb3.png)
 
-&emsp;&emsp;其实到这儿，后面的事件发布与监听器的处理逻辑就差不多是一致了。到这儿对应SpringBoot中的监听器这块就分析的差不错了。像SpringBoot的属性文件中的信息什么时候加载的就是在这些内置的监听器中完成的。
+其实到这儿，后面的事件发布与监听器的处理逻辑就差不多是一致了。到这儿对应SpringBoot中的监听器这块就分析的差不错了。像SpringBoot的属性文件中的信息什么时候加载的就是在这些内置的监听器中完成的。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/2bf30239816c46fbb8105250c952ab26.png)
 
@@ -4665,17 +4749,17 @@ public class Client {
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1640324549000/55fe63f0dc334bf2bd96fa62185e9bc8.png)
 
-&emsp;&emsp;好了本文就给大家介绍到这里，希望能对你有所帮助哦。
+好了本文就给大家介绍到这里，希望能对你有所帮助哦。
 
 
 
 #### 自定义监听器
 
-&emsp;&emsp;前面我们系统的给大家介绍了SpringBoot中的监听器机制，清楚的知道了SpringBoot中默认给我们提供了多个监听器，提供了一个默认的事件发布器，还有很多默认的事件，本文我们就在前面的基础上来，来看下如果我们要自定义监听器如何来实现。
+前面我们系统的给大家介绍了SpringBoot中的监听器机制，清楚的知道了SpringBoot中默认给我们提供了多个监听器，提供了一个默认的事件发布器，还有很多默认的事件，本文我们就在前面的基础上来，来看下如果我们要自定义监听器如何来实现。
 
 ##### 1.SpringBoot中默认的监听器
 
-&emsp;&emsp;首先来回顾下SpringBoot中给我们提供的默认的监听器，这些都定义在spring.factories文件中。
+首先来回顾下SpringBoot中给我们提供的默认的监听器，这些都定义在spring.factories文件中。
 
 | 监听器                                     | 监听事件                                                     | 说明                                                         |
 | ------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -4693,7 +4777,7 @@ public class Client {
 
 ##### 2.SpringBoot中的事件类型
 
-&emsp;&emsp;然后我们来看下对应的事件类型，SpringBoot中的所有的事件都是继承于 `ApplicationEvent`这个抽象类，在SpringBoot启动的时候会发布如下的相关事件，而这些事件其实都实现了 `SpringApplicationContext`接口。
+然后我们来看下对应的事件类型，SpringBoot中的所有的事件都是继承于 `ApplicationEvent`这个抽象类，在SpringBoot启动的时候会发布如下的相关事件，而这些事件其实都实现了 `SpringApplicationContext`接口。
 
 | 事件                                | 说明                       |
 | ----------------------------------- | -------------------------- |
@@ -4709,29 +4793,29 @@ public class Client {
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/3716d2d823e74f70a9a61a9587fe9baa.png)
 
-&emsp;&emsp;当然在启动过程中还会发布其他的相关事件，大家可以自行查阅相关源码哦
+当然在启动过程中还会发布其他的相关事件，大家可以自行查阅相关源码哦
 
 ##### 3.自定义事件
 
-&emsp;&emsp;接下来我们通过几个自定义事件来加深下对事件监听机制的理解
+接下来我们通过几个自定义事件来加深下对事件监听机制的理解
 
 ###### 3.1 监听所有事件
 
-&emsp;&emsp;我们先创建一个自定义监听器，来监听所有的事件。创建一个Java类，实现ApplicationListener接口在泛型中指定要监听的事件类型即可，如果要监听所有的事件，那么泛型就写ApplicationEvent。
+我们先创建一个自定义监听器，来监听所有的事件。创建一个Java类，实现ApplicationListener接口在泛型中指定要监听的事件类型即可，如果要监听所有的事件，那么泛型就写ApplicationEvent。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/fb6afb1146674c2e94fa99891610751f.png)
 
-&emsp;&emsp;之后为了在容器启动中能够发下我们的监听器并且添加到SimpleApplicationEventMulticaster中，我们需要在spring.factories中注册自定义的监听器
+之后为了在容器启动中能够发下我们的监听器并且添加到SimpleApplicationEventMulticaster中，我们需要在spring.factories中注册自定义的监听器
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/2bace08cd74e415a8351d4c95c1c8641.png)
 
-&emsp;&emsp;这样当我们启动服务的时候就可以看到相关事件发布的时候，我们的监听器被触发了。
+这样当我们启动服务的时候就可以看到相关事件发布的时候，我们的监听器被触发了。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/b85ff088faa04871b357cda1b33abc33.png)
 
 ###### 3.1 监听特定事件
 
-&emsp;&emsp;那如果是监听特定的事件呢，我们只需要在泛型出制定即可。
+那如果是监听特定的事件呢，我们只需要在泛型出制定即可。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/70c4ba2ed30849bea2838fb8bca6abb6.png)
 
@@ -4741,7 +4825,7 @@ public class Client {
 
 ###### 3.2 自定义事件
 
-&emsp;&emsp;那如果我们想要通过自定义的监听器来监听自定义的事件呢？首先创建自定义的事件类，非常简单，只需要继承ApplicationEvent即可
+那如果我们想要通过自定义的监听器来监听自定义的事件呢？首先创建自定义的事件类，非常简单，只需要继承ApplicationEvent即可
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641277469000/c0156f3ff75d44b5b4d689dc5dbc7bac.png)
 
@@ -4769,9 +4853,1195 @@ public class Client {
 
 
 
-## SpringBoot启动流程
+### 配置文件
 
-启动流程分再进入启动方法run()之前
+
+
+
+
+### 内置Tomcat
+
+#### 一、Tomcat基础
+
+我们想要搞清楚在SpringBoot启动中到的是如何集成的Tomcat容器，这个就需要我们先对Tomcat本身要有所了解，不然这个就没办法分析了，所以我们先来回顾下Tomcat的基础内容。Tomcat版本是8.5.73
+
+##### 1.目录结构
+
+先简单的回顾下一个Tomcat文件的目录结构
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/220c333eed974afcb0fbeee3bea197d7.png)
+
+这个非常基础和简单就快速过掉。
+
+##### 2.启动流程
+
+Tomcat的架构相关的内容在本文中不再赘述，可以查阅Tomcat源码专题的内容，我们来看下当我们要启动一个Tomcat服务，我们其实是执行的bin目录下的脚本程序，`startup.bat`和 `startup.sh`.一个是windows的脚本，一个是Linux下的脚本，同样还可以看到两个停止的脚本 `shutdown.bat` 和 `shutdown.sh`.
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/77a2a5f08c264884a9063073f4fc5f4b.png)
+
+为了比较直观的来查看脚本的内容，我们通过VSCode来查看吧。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/533dfa39250c466db98a5b7630ef9fb4.png)
+
+查看 `startup.bat`
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/020204598c2f429fb37da26d15751e35.png)
+
+可以看到在这个脚本中调用了 `catalina.bat`这个脚本文件，继续进入，配置信息很多，找核心的脚本
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/13c041772ce44436850baa000114218e.png)
+
+对应的我们进入到doStart方法中
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/810ea415a22f4cbb985446d5fb2472d1.png)
+
+最后会执行的程序是
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/0a031b7997e442be95f4b9778e8c9ffa.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/7fd05509f8ea423d86c190fabe6f0387.png)
+
+而这个MAINCLASS变量是前面定义的有的
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/53d0e527e29f41a482c9d80d64c76163.png)
+
+其实前面看了这么一堆的脚本文件，都是在做一些环境的检测和运行时的参数，最终执行的是Bootstrap中的main方法。
+
+##### 3.Bootstrap类
+
+###### 3.1 架构图
+
+在分析具体的源码流程之前还是需要对Tomcat的架构图要有所了解的
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/d7b2ea97a64a44dfa352b655614f3fd7.png)
+
+###### 3.2 流程分析
+
+接下来我们需要查看下Bootstrap中的main方法了，这时我们需要下载对应的源码文件了。可以官网自行下载，也可以在课件资料中找到。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/4dcd2cf5b95f4b3f97b599a2c1fc5ef4.png)
+
+本文不详解介绍，只为SpringBoot中内容做铺垫。
+
+```java
+bootstrap.init(); // 初始化类加载器
+bootstrap.load(); // 间接调用Catalina，创建对象树，然后调用生命周期的init方法初始化整个对象树
+bootstrap.start(); // 间接调用Catalina的start方法，然后调用生命周期的start方法启动整个对象树
+```
+
+#### 二、SpringBoot中详解
+
+##### 1.自动装配
+
+首先我们来看下在spring.factories中注入了哪些和Web容器相关的配置类。
+
+###### 1.1 EmbeddedWebServerFactoryCustomizerAutoConfiguration
+
+第一个是EmbeddedWebServerFactoryCustomizerAutoConfiguration。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/6ad955b9def440a38642dfb71ed0d381.png)
+
+查看代码，比较容易
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/cc832ec25e5143628f899e54081c0d4c.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/073ccd01abd54d49acf52eb30182f039.png)
+
+在这个配置类里面就是根据我们的配置来内嵌对应的Web容器，比如Tomcat或者Jetty等。
+
+###### 1.2 ServletWebServerFactoryAutoConfiguration
+
+然后来看下ServletWebServerFactoryAutoConfiguration这个配置类。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/f4de06c39ad14006a37981cd11cc5b08.png)
+
+首先来看下在类的头部引入和一些核心的信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/f1889a654caa41c99e1804fd3069abf8.png)
+
+重点我们需要看下EmbeddedTomcat这个内部类。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/f6c696be699641cb95ae165691367cd8.png)
+
+看到的核心其实是创建了一个TomcatServletWebServerFactory对象并注入到了Spring容器中。这块的内容非常重要，是我们后面串联的时候的一个切入点。
+
+##### 2.启动流程
+
+有了上面的自动配置类的支持我们就可以看看在SpringBoot的run方法中是在哪个位置帮我们内嵌了Tomcat容器呢？首先我们从SpringBoot的run方法的刷新上下文的方法进入。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/55282711a0d14bb2810a5b392fcfab17.png)
+
+这部分其实就是Spring的核心代码了，我们进入到refresh()方法。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/6011bb9f5ee045c895e6cc22978ed67c.png)
+
+继续进入：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/ef4d5c6b8b744438887e0bce9c7b6640.png)
+
+然后我们进入ServletWebServerApplicationContext对象的onRefresh方法中。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/8580555ce650489d8d3b7ad484e53a0f.png)
+
+核心方法 createWebServer() 创建我们的Tomcat容器。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/107c6d0fd15840b7aa4b8e75826a4362.png)
+
+可以看到，从容器中获取的工厂对象其实就我们上面注入的对象，然后根据工厂对象获取到了一个TomcatWebServer实例，也就是Tomcat服务对象。关键点我们需要看下getWebServer方法的逻辑
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/d142625dfef34d029cc1ab4e0bbcd575.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/095fee2481224aae989ff158f33697d2.png)
+
+然后继续进入到 getTomcatWebServer方法中。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/345a830f044f492bb45a6e039f0f58b3.png)
+
+进入构造方法查看
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/f1f0157abc14418b9d7fff8ae46b19bc.png)
+
+进入Tomcat初始化的方法initialize方法
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/1e1b1927fb064f4aa81a20035408403d.png)
+
+进入start方法
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/c2320be3fd014984899447c4aae9f181.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/d9ee6b7b65f64682a32bba66f5d38729.png)
+
+到这儿后面的逻辑其实就是Tomcat自身启动的逻辑了。这就需要你的Tomcat基础了，到这SpringBoot启动是如何内嵌Tomcat容器的到这儿就结束了哦。
+
+
+
+## Actuator应用
+
+#### Actuator介绍
+
+通过前面的介绍我们明白了SpringBoot为什么能够很方便快捷的构建Web应用，那么应用部署上线后的健康问题怎么发现呢？在SpringBoot中给我们提供了Actuator来解决这个问题。
+
+官网地址：[https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html)
+
+> Spring Boot includes a number of additional features to help you monitor and manage your application when you push it to production. You can choose to manage and monitor your application by using HTTP endpoints or with JMX. Auditing, health, and metrics gathering can also be automatically applied to your application.
+>
+> Spring Boot包括许多附加特性，可以帮助您在将应用程序投入生产时监视和管理应用程序。您可以选择使用HTTP端点或使用JMX来管理和监视应用程序。审计、运行状况和度量收集也可以自动应用于您的应用程序。
+
+使用Actuator我们需要添加依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/3325ae08172f4345983edabbb346283c.png)
+
+#### 端点(Endpoints)
+
+  执行器端点（endpoints）可用于监控应用及与应用进行交互，Spring Boot包含很多内置的端点，你也可以添加自己的。例如，health端点提供了应用的基本健康信息。
+   每个端点都可以启用或禁用。这控制着端点是否被创建，并且它的bean是否存在于应用程序上下文中。要远程访问端点，还必须通过JMX或HTTP进行暴露,大部分应用选择HTTP，端点的ID映射到一个带 `/actuator`前缀的URL。例如，health端点默认映射到 `/actuator/health`。
+
+**注意**：
+  Spring Boot 2.0的端点基础路径由“/”调整到”/actuator”下,如：`/info`调整为 `/actuator/info` 可以通过以下配置改为和旧版本一致:
+
+```
+management.endpoints.web.base-path=/
+```
+
+  默认在只放开了 `health`和 `info`两个 Endpoint。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/2be2fa41795f444fbcd11f46b90c1ecb.png)
+
+  如果要放开更多的Endpoint，我们需要配置如下信息
+
+```
+management.endpoints.web.exposure.include=*
+```
+
+  以下是SpringBoot中提供的Endpoint。
+
+| ID             | 描述                                                         | 默认启用 |
+| -------------- | ------------------------------------------------------------ | -------- |
+| auditevents    | 显示当前应用程序的审计事件信息                               | Yes      |
+| beans          | 显示一个应用中 `所有Spring Beans`的完整列表                  | Yes      |
+| conditions     | 显示 `配置类和自动配置类`(configuration and auto-configuration classes)的状态及它们被应用或未被应用的原因 | Yes      |
+| configprops    | 显示一个所有 `@ConfigurationProperties`的集合列表            | Yes      |
+| env            | 显示来自Spring的 `ConfigurableEnvironment`的属性             | Yes      |
+| flyway         | 显示数据库迁移路径，如果有的话                               | Yes      |
+| health         | 显示应用的 `健康信息`（当使用一个未认证连接访问时显示一个简单的’status’，使用认证连接访问则显示全部信息详情） | Yes      |
+| info           | 显示任意的 `应用信息`                                        | Yes      |
+| liquibase      | 展示任何Liquibase数据库迁移路径，如果有的话                  | Yes      |
+| metrics        | 展示当前应用的 `metrics`信息                                 | Yes      |
+| mappings       | 显示一个所有 `@RequestMapping`路径的集合列表                 | Yes      |
+| scheduledtasks | 显示应用程序中的 `计划任务`                                  | Yes      |
+| sessions       | 允许从Spring会话支持的会话存储中检索和删除(retrieval and deletion)用户会话。使用Spring Session对反应性Web应用程序的支持时不可用。 | Yes      |
+| shutdown       | 允许应用以优雅的方式关闭（默认情况下不启用）                 | No       |
+| threaddump     | 执行一个线程dump                                             | Yes      |
+
+  shutdown端点默认是关闭的，我们可以打开它
+
+```
+# 放开 shutdown 端点
+management.endpoint.shutdown.enabled=true
+```
+
+  `shutdown`只支持post方式提交，我们可以使用 `POSTMAN`来提交或者使用IDEA中提供的工具来提交。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/9963fc54eefe4a88bd8b168432d8c64f.png)
+
+  如果使用web应用(Spring MVC, Spring WebFlux, 或者 Jersey)，你还可以使用以下端点：
+
+| ID         | 描述                                                         | 默认启用 |
+| ---------- | ------------------------------------------------------------ | -------- |
+| heapdump   | 返回一个GZip压缩的 `hprof`堆dump文件                         | Yes      |
+| jolokia    | 通过HTTP暴露 `JMX beans`（当Jolokia在类路径上时，WebFlux不可用） | Yes      |
+| logfile    | 返回 `日志文件内容`（如果设置了logging.file或logging.path属性的话），支持使用HTTP **Range**头接收日志文件内容的部分信息 | Yes      |
+| prometheus | 以可以被Prometheus服务器抓取的格式显示 `metrics`信息         | Yes      |
+
+  现在我们看的 `health`信息比较少，如果我们需要看更详细的信息，可以配置如下
+
+```
+# health 显示详情
+management.endpoint.health.show-details=always
+```
+
+  再访问测试
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/a0a26665947c4265a84e8d126c9abefa.png)
+
+  这样一来 `health`不仅仅可以监控SpringBoot本身的状态，还可以监控其他组件的信息，比如我们开启Redis服务。
+
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+  添加Redis的配置信息
+
+```
+# Redis的 host 信息
+spring.redis.host=192.168.100.120
+```
+
+  重启服务，查看 `http://localhost:8080/actuator/health`
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/3e4ae19304364baa9f458b92013d72a9.png)
+
+#### 3.监控类型
+
+  介绍几个监控中比较重要的类型
+
+##### 3.1 health
+
+  显示的系统的健康信息，这个在上面的案例中讲解的比较多，不再赘述。
+
+##### 3.2 metrics
+
+  metrics 端点用来返回当前应用的各类重要度量指标，比如内存信息，线程信息，垃圾回收信息等。如下：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/a77b0c3e670248e081e4dfa6eebeb218.png)
+
+各个指标信息的详细描述：
+
+| 序号       | 参数                                 | 参数说明                                            | 是否监控 | 监控手段                                                     | 重要度 |
+| ---------- | ------------------------------------ | --------------------------------------------------- | -------- | ------------------------------------------------------------ | ------ |
+| **JVM**    |                                      |                                                     |          |                                                              |        |
+| 1          | **jvm.memory.max**                   | **JVM** 最大内存                                    |          |                                                              |        |
+| 2          | **jvm.memory.committed**             | **JVM** 可用内存                                    | 是       | 展示并监控堆内存和**Metaspace**                              | 重要   |
+| 3          | **jvm.memory.used**                  | **JVM** 已用内存                                    | 是       | 展示并监控堆内存和**Metaspace**                              | 重要   |
+| 4          | **jvm.buffer.memory.used**           | **JVM** 缓冲区已用内存                              |          |                                                              |        |
+| 5          | **jvm.buffer.count**                 | 当前缓冲区数                                        |          |                                                              |        |
+| 6          | **jvm.threads.daemon**               | **JVM** 守护线程数                                  | 是       | 显示在监控页面                                               |        |
+| 7          | **jvm.threads.live**                 | **JVM** 当前活跃线程数                              | 是       | 显示在监控页面；监控达到阈值时报警                           | 重要   |
+| 8          | **jvm.threads.peak**                 | **JVM** 峰值线程数                                  | 是       | 显示在监控页面                                               |        |
+| 9          | **jvm.classes.loaded**               | 加载**classes** 数                                  |          |                                                              |        |
+| 10         | **jvm.classes.unloaded**             | 未加载的**classes** 数                              |          |                                                              |        |
+| 11         | **jvm.gc.memory.allocated**          | **GC** 时，年轻代分配的内存空间                     |          |                                                              |        |
+| 12         | **jvm.gc.memory.promoted**           | **GC** 时，老年代分配的内存空间                     |          |                                                              |        |
+| 13         | **jvm.gc.max.data.size**             | **GC** 时，老年代的最大内存空间                     |          |                                                              |        |
+| 14         | **jvm.gc.live.data.size**            | **FullGC** 时，老年代的内存空间                     |          |                                                              |        |
+| 15         | **jvm.gc.pause**                     | **GC** 耗时                                         | 是       | 显示在监控页面                                               |        |
+| **TOMCAT** |                                      |                                                     |          |                                                              |        |
+| 16         | **tomcat.sessions.created**          | **tomcat** 已创建 **session** 数                    |          |                                                              |        |
+| 17         | **tomcat.sessions.expired**          | **tomcat** 已过期 **session** 数                    |          |                                                              |        |
+| 18         | **tomcat.sessions.active.current**   | **tomcat** 活跃 **session** 数                      |          |                                                              |        |
+| 19         | **tomcat.sessions.active.max**       | **tomcat** 最多活跃 **session** 数                  | 是       | 显示在监控页面，超过阈值可报警或者进行动态扩容               | 重要   |
+| 20         | **tomcat.sessions.alive.max.second** | **tomcat** 最多活跃 **session** 数持续时间          |          |                                                              |        |
+| 21         | **tomcat.sessions.rejected**         | 超过**session** 最大配置后，拒绝的 **session** 个数 | 是       | 显示在监控页面，方便分析问题                                 |        |
+| 22         | **tomcat.global.error**              | 错误总数                                            | 是       | 显示在监控页面，方便分析问题                                 |        |
+| 23         | **tomcat.global.sent**               | 发送的字节数                                        |          |                                                              |        |
+| 24         | **tomcat.global.request.max**        | **request** 最长时间                                |          |                                                              |        |
+| 25         | **tomcat.global.request**            | 全局**request** 次数和时间                          |          |                                                              |        |
+| 26         | **tomcat.global.received**           | 全局**received** 次数和时间                         |          |                                                              |        |
+| 27         | **tomcat.servlet.request**           | **servlet** 的请求次数和时间                        |          |                                                              |        |
+| 28         | **tomcat.servlet.error**             | **servlet** 发生错误总数                            |          |                                                              |        |
+| 29         | **tomcat.servlet.request.max**       | **servlet** 请求最长时间                            |          |                                                              |        |
+| 30         | **tomcat.threads.busy**              | **tomcat** 繁忙线程                                 | 是       | 显示在监控页面，据此检查是否有线程夯住                       |        |
+| 31         | **tomcat.threads.current**           | **tomcat** 当前线程数（包括守护线程）               | 是       | 显示在监控页面                                               | 重要   |
+| 32         | **tomcat.threads.config.max**        | **tomcat** 配置的线程最大数                         | 是       | 显示在监控页面                                               | 重要   |
+| 33         | **tomcat.cache.access**              | **tomcat** 读取缓存次数                             |          |                                                              |        |
+| 34         | **tomcat.cache.hit**                 | **tomcat** 缓存命中次数                             |          |                                                              |        |
+| **CPU**    |                                      |                                                     |          |                                                              |        |
+| 35         | **system.cpu.count**                 | **CPU** 数量                                        |          |                                                              |        |
+| 36         | **system.load.average.1m**           | **load average**                                    | 是       | 超过阈值报警                                                 | 重要   |
+| 37         | **system.cpu.usage**                 | 系统**CPU** 使用率                                  |          |                                                              |        |
+| 38         | **process.cpu.usage**                | 当前进程**CPU** 使用率                              | 是       | 超过阈值报警                                                 |        |
+| 39         | **http.server.requests**             | **http** 请求调用情况                               | 是       | 显示**10** 个请求量最大，耗时最长的 **URL**；统计非 **200** 的请求量 | 重要   |
+| 40         | **process.uptime**                   | 应用已运行时间                                      | 是       | 显示在监控页面                                               |        |
+| 41         | **process.files.max**                | 允许最大句柄数                                      | 是       | 配合当前打开句柄数使用                                       |        |
+| 42         | **process.start.time**               | 应用启动时间点                                      | 是       | 显示在监控页面                                               |        |
+| 43         | **process.files.open**               | 当前打开句柄数                                      | 是       | 监控文件句柄使用率，超过阈值后报警                           | 重要   |
+
+如果要查看具体的度量信息的话，直接在访问地址后面加上度量信息即可：
+
+```
+http://localhost:8080/actuator/metrics/jvm.buffer.memory.used
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/a84345f8807249afbfa0513d257612f6.png)
+
+**添加自定义的统计指标**
+
+  
+
+```
+@RestController
+public class UserController {
+
+    static final Counter userCounter = Metrics.counter("user.counter.total","services","bobo");
+    private Timer timer = Metrics.timer("user.test.timer","timer","timersample");
+    private DistributionSummary summary = Metrics.summary("user.test.summary","summary","summarysample");
+
+    @GetMapping("/hello")
+    public String hello(){
+        // Gauge
+        Metrics.gauge("user.test.gauge",8);
+        // Counter
+        userCounter.increment(1);
+        // timer
+        timer.record(()->{
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        summary.record(2);
+        summary.record(3);
+        summary.record(4);
+        return "Hello";
+    }
+}
+```
+
+访问 [http://localhost:8080/hello](http://localhost:8080/hello) 这个请求后在看 metrics 信息
+
+
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/3dfa0e6fd79e49bab6d7dca4c42a3d0a.png)
+
+多出了我们自定义的度量信息。
+
+##### 3.3 loggers
+
+  loggers是用来查看当前项目每个包的日志级别的。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/18a95e6a972d4a938d34a8aaaf9c8621.png)
+
+默认的是info级别。
+
+修改日志级别：
+
+发送POST请求到 [http://localhost:8080/actuator/loggers/](http://localhost:8080/actuator/loggers/)[包路径]
+
+请求参数为
+
+```
+{
+    "configuredLevel":"DEBUG"
+}
+```
+
+通过POSTMAN来发送消息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/bcc5a6b4baea43a1bc9b91658d0223ea.png)
+
+然后再查看日志级别发现已经变动了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/c57556b887004522b31a255095513aae.png)
+
+控制台也可以看到
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/5c6a858e94fb4013983689197c63dd77.png)
+
+##### 3.4 info
+
+  显示任意的应用信息。我们可以在 properties 中来定义
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/9c30771845d04bfd905156365ea46ebe.png)
+
+访问：[http://localhost:8080/actuator/info](http://localhost:8080/actuator/info)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/af1b3d994ae34c5a8b462c21f70768a6.png)
+
+#### 4.定制端点
+
+##### 4.1 定制Health端点
+
+一般主流的框架组件都会提供对应的健康状态的端点，比如MySQL，Redis，Nacos等，但有时候我们自己业务系统或者自己封装的组件需要被健康检查怎么办，这时我们也可以自己来定义。先来看看 diskSpace磁盘状态的
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/864e7bfce119485498043dca60ede426.png)
+
+对应的端点是 DiskSpaceHealthIndicator
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/c742eeda1cf642d2a697e90128b083a7.png)
+
+有了上面的案例我们就可以自定义一个监控的健康状态的端点了。
+
+```java
+/**
+ * 自定义的health端点
+ */
+@Component
+public class DpbHealthIndicator extends AbstractHealthIndicator {
+    @Override
+    protected void doHealthCheck(Health.Builder builder) throws Exception {
+        boolean check = doCheck();
+        if(check){
+            builder.up();
+        }else {
+            builder.down();
+        }
+        builder.withDetail("total",666).withDetail("msg","自定义的HealthIndicator");
+
+    }
+
+    private boolean doCheck() {
+        return true;
+    }
+}
+
+```
+
+
+启动服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/5855e0e354a74b2a9048d296940b747d.png)
+
+在admin中也可以监控到
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/ad36c03b52654e6ab614c39bf5c8394e.png)
+
+
+##### 4.2 定制info端点
+
+info节点默认情况下就是空的
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/d226358228a745e88a9559e51fc35165.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/96a01e6c46694c82a1c9f823c5215f1d.png)
+
+这时我们可以通过info自定义来添加我们需要展示的信息，实现方式有两种
+
+###### 1.编写配置文件
+
+在属性文件中配置
+
+```properties
+info.author=bobo
+info.serverName=ActuatorDemo1
+info.versin=6.6.6
+info.mavneProjectName=@project.artifactId@
+```
+
+重启服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/13f30b1e90a04e66a6fb187e9d91ca96.png)
+
+admin中也一样
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/8632bdebc63343cfa921380626297a12.png)
+
+
+###### 2.编写InfoContributor
+
+上面的方式是直接写在配置文件中的，不够灵活，这时我们可以在自定义的Java类中类实现
+
+```java
+/**
+ * 自定义info 信息
+ */
+@Component
+public class DpbInfo implements InfoContributor {
+    @Override
+    public void contribute(Info.Builder builder) {
+        builder.withDetail("msg","hello")
+                .withDetail("时间",new Date())
+                .withDetail("地址","湖南长沙");
+    }
+}
+```
+
+然后启动测试
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/afb254a75cf64a979385061936e07077.png)
+
+
+
+
+##### 4.3 定制Metrics端点
+
+除了使用metrics端点默认的这些统计指标外，我们还可以实现自定义统计指标，metrics提供了4中基本的度量类型：
+
+* gauge 计量器，最简单的度量类型，只有一个简单的返回值，他用来记录一些对象或者事物的瞬时值。
+* Counter 计数器 简单理解就是一种只增不减的计数器，它通常用于记录服务的请求数量，完成的任务数量，错误的发生数量
+* Timer 计时器 可以同时测量一个特定的代码逻辑块的调用（执行）速度和它的时间分布。简单来说，就是在调用结束的时间点记录整个调用块执行的总时间，适用于测量短时间执行的事件的耗时分布，例如消息队列消息的消费速率。
+* Summary 摘要 用于跟踪事件的分布。它类似于一个计时器，但更一般的情况是，它的大小并不一定是一段时间的测量值。在**micrometer** 中，对应的类是**DistributionSummary**，它的用法有点像**Timer**，但是记录的值是需要直接指定，而不是通过测量一个任务的执行时间。
+
+测试：
+
+```java
+    @GetMapping("/hello")
+    public String hello(String username){
+        // 记录单个值，比如统计 MQ的消费者的数量
+        Metrics.gauge("dpb.gauge",100);
+        // 统计次数
+        Metrics.counter("dpb.counter","username",username).increment();
+        // Timer 统计代码执行的时间
+         Metrics.timer("dpb.Timer").record(()->{
+             // 统计业务代码执行的时间
+             try {
+                 Thread.sleep(new Random().nextInt(999));
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         });
+
+         Metrics.summary("dpb.summary").record(2.5);
+       
+        return "hello";
+    }
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/0759c8cb2e524fc7ad75315877d653dc.png)
+
+查看具体的指标信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/647e822bdcdd4c289735a8a5365b1f0b.png)
+
+查看对应的tag信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/c9806ed3c683411c812394b901e62f46.png)
+
+
+
+##### 4.4自定义Endpoint
+
+  如果我们需要扩展Endpoint，这时我们可以自定义实现，我们可以在类的头部定义如下的注解
+
+> @Endpoint
+> @WebEndpoint
+> @ControllerEndpoint
+> @RestControllerEndpoint
+> @ServletEndpoint
+
+  再给方法添加@ReadOperation，@ WritOperation或@DeleteOperation注释后，该方法将通过JMX自动公开，并且在Web应用程序中也通过HTTP公开。
+
+于方法的注解有以下三种，分别对应get post delete 请求
+
+| Operation        | HTTP method |
+| ---------------- | ----------- |
+| @ReadOperation   | GET         |
+| @WriteOperation  | POST        |
+| @DeleteOperation | DELETE      |
+
+案例：
+
+```java
+@Component
+@Endpoint(id = "dpb.sessions")
+public class DpbEndpoint {
+    Map<String,Object> map = new HashMap<>();
+    /**
+     * 读取操作
+     * @return
+     */
+    @ReadOperation
+    public Map<String,Object> query(){
+
+        map.put("username","dpb");
+        map.put("age",18);
+        return map;
+    }
+
+    @WriteOperation
+    public void save( String address){
+        map.put("address",address);
+    }
+}
+```
+
+
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/2ac84ab3442f4d29856d0479ad7b0ea8.png)
+
+写入操作：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/c20b41933ec744cbb360a485e7259bf7.png)
+
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/a13f2709ef9449b6b1c7ccebd446b806.png)
+
+
+#### 5.Actuator的两种监控形态
+
+* http
+* jmx  [Java Management Extensions] Java管理扩展
+
+放开jmx
+
+```
+# 放开 jmx 的 endpoint
+management.endpoints.jmx.exposure.include=*
+spring.jmx.enabled=true
+```
+
+通过jdk中提供的jconsole来查看
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/47a9d2cf36da4f77aa803af3c435363d.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/fe60ba967174455eb37ea207527f07c9.png)
+
+#### 6.监控系统
+
+  SpringBoot可以收集监控数据，但是查看不是很方便，这时我们可以选择开源的监控系统来解决，比如Prometheus
+
+* 数据采集
+* 数据存储
+* 可视化
+
+  Prometheus在可视化方面效果不是很好，可以使用grafana来实现
+
+##### 6.1 Prometheus
+
+  先来安装Prometheus：官网：[https://prometheus.io/download/](https://prometheus.io/download/) 然后通过wget命令来直接下载
+
+```
+wget https://github.com/prometheus/prometheus/releases/download/v2.28.1/prometheus-2.28.1.linux-amd64.tar.gz
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/c4657c6ea4724504b9c8d1fb43dbf939.png)
+
+然后配置Prometheus。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/edf4446604bb4f40943dcac959a1f6d2.png)
+
+```
+  - job_name: 'Prometheus'
+    static_configs:
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    - targets: ['192.168.127.1:8080']
+      labels:
+        instance: Prometheus
+
+```
+
+* job_name：任务名称
+* metrics_path： 指标路径
+* targets：实例地址/项目地址，可配置多个
+* scrape_interval： 多久采集一次
+* scrape_timeout： 采集超时时间
+
+执行脚本启动应用 boge_java
+
+```
+./prometheus --config.file=prometheus.yml
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/734fbaef8db44b3281817cc471a4484b.png)
+
+访问应用： [http://ip:9090](http://ip:9090)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/6874dd4f5370495488e3385c05bba259.png)
+
+然后在我们的SpringBoot服务中添加 Prometheus的端点,先添加必要的依赖
+
+```
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+```
+
+然后就会有该端点信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/28ae5b00f4e84066ba44ed2a8d1d02db.png)
+
+Prometheus服务器可以周期性的爬取这个endpoint来获取metrics数据,然后可以看到
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/d6faf9272892400db17cc4e46f0e6111.png)
+
+##### 6.2 Grafana
+
+  可视化工具：[https://grafana.com/grafana/download](https://grafana.com/grafana/download)
+
+通过wget命令下载
+
+```
+wget https://dl.grafana.com/oss/release/grafana-8.0.6-1.x86_64.rpm
+sudo yum install grafana-8.0.6-1.x86_64.rpm
+```
+
+启动命令
+
+```
+sudo service grafana-server start
+sudo service grafana-server status
+```
+
+访问的地址是 [http://ip:3000](http://ip:3000)  默认的帐号密码 admin/admin
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/fd9f6b4302ec4f9cb602ad58b24a67fa.png)
+
+登录进来后的页面
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/7fb4ce890d524c4d994414b43e5dd4f8.png)
+
+添加数据源：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/dcb985dce95e45b896e9409cd3eaa591.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/8b89fb6e4d50413281e2e99df2383f12.png)
+
+添加Dashboards  [https://grafana.com/grafana/dashboards](https://grafana.com/grafana/dashboards)  搜索SpringBoot的 Dashboards
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/3103c5f681c641c09ee42469001ea5b6.png)
+
+找到Dashboards的ID
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/416c50934ffc48a784ba6650d8c2a9db.png)
+
+然后导入即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/dfe09cde8db241e5bd9412a105c30182.png)
+
+点击Load出现如下界面
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/f1f7353953d346d28c7e61eb0dee551c.png)
+
+然后就可以看到对应的监控数据了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/f9d1097cc7374dda9bb75d348b308c94.png)
+
+#### 6.3 SpringBoot Admin
+
+基于SpringBootAdmin的开源产品很多，我们选择这个:https://github.com/codecentric/spring-boot-admin
+
+##### 6.3.1 搭建Admin服务器
+
+创建建对应的SpringBoot项目，添加相关依赖
+
+```xml
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+```
+
+然后放开Admin服务即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/f5d90d07c2044bbda753b81d072ce0e7.png)
+
+然后启动服务，即可访问
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/416169d6102946c3bb51d67a00efada2.png)
+
+这个时候没有服务注册，所以是空的，这时我们可以创建对应的客户端来监控
+
+##### 6.3.2 客户端配置
+
+创建一个SpringBoot项目整合Actuator后添加Admin的客户端依赖
+
+```xml
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+```
+
+然后在属性文件中添加服务端的配置和Actuator的基本配置
+
+```properties
+server.port=8081
+# 配置 SpringBoot Admin 服务端的地址
+spring.boot.admin.client.url=http://localhost:8080
+# Actuator的基本配置
+management.endpoints.web.exposure.include=*
+```
+
+然后我们再刷新Admin的服务端页面
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/1c217aeb23194590bf66a5f7f3e12358.png)
+
+那么我们就可以在这个可视化的界面来处理操作了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/15b1eca7a0eb472b938eb6ed4499f998.png)
+
+##### 6.3.3 服务状态
+
+我们可以监控下MySQL的状态，先添加对应的依赖
+
+```xml
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+```
+
+然后添加对应的jdbc配置
+
+```properties
+spring.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/mysql-base?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+spring.datasource.username=root
+spring.datasource.password=123456
+```
+
+然后我们在Admin中的health中就可以看到对应的数据库连接信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/ce15ab68845d470bb4fcdd26aca96929.png)
+
+注意当我把MySQL数据库关闭后，我们来看看
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/1677da6e4f6444e68b9e8fa3475cc33c.png)
+
+我们可以看到Admin中的应用墙变灰了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/8843ecd87c344526bb9100840ca8a629.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/450b97c1cf8b43d5a57e1390542a97bf.png)
+
+启动服务后，发现又正常了，然后我们修改下数据库连接的超时时间
+
+```properties
+# 数据库连接超时时间
+spring.datasource.hikari.connection-timeout=2000
+```
+
+关闭数据库后，我们发下应用变红了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/9ba464e3d8a14b99a14bc9a74609985f.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/9f5e6f53b7704f53ae35f1028839ed99.png)
+
+设置数据库连接超时后即可在有效的时间内发下应用的状态。
+
+* 绿色：正常状态
+* 灰色：连接客户端健康信息超时
+* 红色：可以看到具体的异常信息
+
+##### 6.3.4 安全防护
+
+其实我们可以发现在SpringBootAdmin的管理页面中我们是可以做很多的操作的，这时如果别人知道了对应的访问地址，想想是不是就觉得恐怖，所以必要的安全防护还是很有必要的，我们来看看具体应该怎么来处理呢？
+
+由于在分布式 web 应用程序中有几种解决身份验证和授权的方法，Spring Boot Admin 没有提供默认的方法。默认情况下，spring-boot-admin-server-ui 提供了一个登录页面和一个注销按钮。
+
+导入依赖：
+
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+```
+
+然后添加对应的配置类
+
+```java
+package com.bobo.admin.config;
+
+import de.codecentric.boot.admin.server.config.AdminServerProperties;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.UUID;
+
+@Configuration(proxyBeanMethods = false)
+public class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
+    private final AdminServerProperties adminServer;
+
+    private final SecurityProperties security;
+
+    public SecuritySecureConfig(AdminServerProperties adminServer, SecurityProperties security) {
+        this.adminServer = adminServer;
+        this.security = security;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setTargetUrlParameter("redirectTo");
+        successHandler.setDefaultTargetUrl(this.adminServer.path("/"));
+
+        http.authorizeRequests(
+                (authorizeRequests) -> authorizeRequests.antMatchers(this.adminServer.path("/assets/**")).permitAll()
+                        .antMatchers(this.adminServer.path("/actuator/info")).permitAll()
+                        .antMatchers(this.adminServer.path("/actuator/health")).permitAll()
+                        .antMatchers(this.adminServer.path("/login")).permitAll().anyRequest().authenticated()
+        ).formLogin(
+                (formLogin) -> formLogin.loginPage(this.adminServer.path("/login")).successHandler(successHandler).and()
+        ).logout((logout) -> logout.logoutUrl(this.adminServer.path("/logout"))).httpBasic(Customizer.withDefaults())
+                .csrf((csrf) -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                                new AntPathRequestMatcher(this.adminServer.path("/instances"),
+                                        HttpMethod.POST.toString()),
+                                new AntPathRequestMatcher(this.adminServer.path("/instances/*"),
+                                        HttpMethod.DELETE.toString()),
+                                new AntPathRequestMatcher(this.adminServer.path("/actuator/**"))
+                        ))
+                .rememberMe((rememberMe) -> rememberMe.key(UUID.randomUUID().toString()).tokenValiditySeconds(1209600));
+    }
+
+    // Required to provide UserDetailsService for "remember functionality"
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser(security.getUser().getName())
+                .password("{noop}" + security.getUser().getPassword()).roles("USER");
+    }
+}
+
+```
+
+然后对应的设置登录的账号密码
+
+```properties
+spring.security.user.name=user
+spring.security.user.password=123456
+```
+
+然后访问Admin管理页面
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/4f46b812c08d44aba1c850f26e222ea8.png)
+
+输入账号密码后可以进入，但是没有监控的应用了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/8461efb548f14036a700c07c009eb39b.png)
+
+原因是被监控的服务要连接到Admin服务端也是需要认证的
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/e5f517ef4a37487d90f3a5518160a48b.png)
+
+我们在客户端配置连接的账号密码即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/60388acc52a64f47ae511ad34554e9f4.png)
+
+重启后访问Admin服务管理页面
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/674848b6367d4d9e8739d23cf3f59c8b.png)
+
+搞定
+
+##### 6.3.5 注册中心
+
+实际开发的时候我们可以需要涉及到的应用非常多，我们也都会把服务注册到注册中心中，比如nacos，Eureka等，接下来我们看看如何通过注册中心来集成客户端。就不需要每个客户端来集成了。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/4c77c39ec1994161a7b4a11a5cb28a13.png)
+
+变为下面的场景
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/50346be5bebb4c7a9a83419c9cabd399.png)
+
+那么我们需要先启动一个注册中心服务，我们以Nacos为例
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/00089c3909f94ecb87588337a386c27a.png)
+
+然后访问下Nacos服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/cc684076866b4e499b1535f0e94e6c4f.png)
+
+暂时还没有服务注册，这时我们可以注册几个服务，用我之前写过的案例来演示。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/de2a39649d7343fea6bbe040305424b9.png)
+
+每个服务处理需要添加Nacos的注册中心配置外，我们还需要添加Actuator的配置
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/763bdeb99b3846919a3501da60fd50dc.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/472f99348de1409796dd05927893c72e.png)
+
+然后启动相关的服务，可以看到相关的服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/b553bcedb6bd421db13709c0172d744b.png)
+
+然后我们需要配置下Admin中的nacos
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.bobo</groupId>
+        <artifactId>ActuatorDemo</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.bobo</groupId>
+    <artifactId>AdminServer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>AdminServer</name>
+    <description>Demo project for Spring Boot</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>2020.0.1</spring-cloud.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+                <dependency>
+                    <groupId>com.alibaba.cloud</groupId>
+                    <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                    <version>2021.1</version>
+                    <type>pom</type>
+                    <scope>import</scope>
+                </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
+
+```
+
+```properties
+spring.application.name=spring-boot-admin-server
+spring.cloud.nacos.discovery.server-addr=192.168.56.100:8848
+spring.cloud.nacos.discovery.username=nacos
+spring.cloud.nacos.discovery.password=nacos
+```
+
+启动服务，我们就可以看到对应的服务了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/93387b084b5346ae8d60aed09191a761.png)
+
+要查看服务的详细监控信息，我们需要配置对应的Actuator属性
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/75beaeb5afbb4d32b86ea54566def4ef.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/76cfb02756644eb68e44690c473fef38.png)
+
+好了注册中心处理这块就介绍到这里
+
+##### 6.3.6 邮件通知
+
+如果监控的服务出现了问题，下线了，我们希望通过邮箱通知的方式来告诉维护人员，
+
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+```
+
+然后配置对应的邮箱信息
+
+```properties
+# 使用的邮箱服务  qq 163等
+spring.mail.host=smtp.qq.com
+# 发送者
+spring.mail.username=279583842@qq.com
+# 授权码
+spring.mail.password=rhcqzhfslkwjcach
+#收件人
+spring.boot.admin.notify.mail.to=1226203418@qq.com
+#发件人
+spring.boot.admin.notify.mail.from=279583842@qq.com
+
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/029b266be465485ea614f5de51c9bafb.png)
+
+发送短信开启
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/a5cb4b062d6e4fceafbc5b4b02890d11.png)
+
+然后启动服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/fac20ddecf7a4a709c8caa4d5e7d58f1.png)
+
+然后我们关闭服务然后查看服务和邮箱信息
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/3244ed3739e64e54a8137483c70adcca.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/dcb0488829184ebeb26cf59bb2398714.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1643100783000/1a8efd2a6fd94e57b67684bcd762f79c.png)
+
+好了对应的邮箱通知就介绍到这里，其他的通知方式可以参考官方网站
+
+
 
 
 
