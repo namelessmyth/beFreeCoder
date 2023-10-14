@@ -11,21 +11,21 @@
 | 文档分类     | 求职-面试-Java |
 | 版本号       | 1.4            |
 | 最后更新人   | namelessmyth   |
-| 最后更新日期 | 2023-10-13     |
+| 最后更新日期 | 2023-10-15     |
 
 
 
 ## 更新记录
 
-| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）                     |
-| ---- | ------------ | ---------- | ------------------------------------------------ |
-| 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题         |
-| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构           |
-| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分独立出去。       |
-| 1.3  | namelessmyth | 2023-09-30 | 完成Spring Framework面试题的初步整理。           |
-| 1.4  | namelessmyth | 2023-10-14 | 补充SpringBoot和SpringMVC面试题，将题目提升至3级 |
-|      |              |            |                                                  |
-|      |              |            |                                                  |
+| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）                         |
+| ---- | ------------ | ---------- | ---------------------------------------------------- |
+| 1.0  | namelessmyth | 2021-07-07 | 初稿，整理了本次找工作积累到的所有面试题             |
+| 1.1  | namelessmyth | 2023-09-15 | 合并马士兵的面试笔记，重新整理目录结构               |
+| 1.2  | namelessmyth | 2023-09-19 | 整理Spring部分，将简历和沟通部分独立出去。           |
+| 1.3  | namelessmyth | 2023-09-30 | 完成Spring Framework面试题的初步整理。               |
+| 1.4  | namelessmyth | 2023-10-15 | 补充SpringBoot和SpringMVC面试题，将所有题目提升至3级 |
+|      |              |            |                                                      |
+|      |              |            |                                                      |
 
 
 
@@ -2769,329 +2769,21 @@ https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
 
 
+### Spring事务启用方法
 
-### Spring事务配置方法
+Spring的事务分2种使用方式，声明式和编程式。目前普遍采用的是声明式。
 
-https://www.cnblogs.com/jtlgb/p/9882772.html
+#### 声明式事务
 
-Spring配置文件中关于事务配置总是由三个组成部分，分别是DataSource、TransactionManager和代理机制这三部分，无论哪种配置方式，一般变化的只是代理机制这部分。
+[这篇文章](https://www.cnblogs.com/jtlgb/p/9882772.html)中详细的记录了之前的老项目通过xml配置文件来配置事务方式。补充一个SpringBoot中配置。
 
-DataSource、TransactionManager这两部分只是会根据数据访问方式有所变化，比如使用Hibernate进行数据访问时，DataSource实际为SessionFactory，TransactionManager的实现为HibernateTransactionManager。
+##### SpringBoot事务配置
 
-具体如下图：
-
-[![Spring事务配置 (2)](http://www.blogjava.net/images/blogjava_net/robbie/WindowsLiveWriter/Spring_9C9C/Spring%E4%BA%8B%E5%8A%A1%E9%85%8D%E7%BD%AE%20(2)_thumb.jpg)](http://www.blogjava.net/images/blogjava_net/robbie/WindowsLiveWriter/Spring_9C9C/Spring事务配置 (2).jpg)
-
-根据代理机制的不同，总结了五种Spring事务的配置方式，配置文件如下：
-
-其中
-
-```xml
-<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-    <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-    <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-</bean> 
-```
-
-可以用下面的替换
-
-```xml
-<!-- 配置数据源，使用的是alibaba的Druid(德鲁伊)数据源 -->
-<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
-    <property name="driverClassName" value="${jdbc.driver}" />  
-    <property name="url" value="${jdbc.url}" />  
-    <property name="username" value="${jdbc.username}" />  
-    <property name="password" value="${jdbc.password}" /> 
-    <!-- 初始化连接大小 -->  
-    <property name="initialSize" value="${jdbc.initialSize}"></property>  
-    <!-- 连接池最大数量 -->  
-    <property name="maxActive" value="${jdbc.maxActive}"></property>  
-    <!-- 连接池最小空闲 -->  
-    <property name="minIdle" value="${jdbc.minIdle}"></property>  
-    <!-- 连接池最大空闲 -->  
-    <property name="maxIdle" value="${jdbc.maxIdle}"></property>  
-    <!-- 获取连接最大等待时间 -->  
-    <property name="maxWait" value="${jdbc.maxWait}"></property>  
-</bean>
-```
-
- 
-
-####   1-每个Bean都有一个代理
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
-    <bean id="sessionFactory"  
-            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-    </bean>  
-
-    <!-- 定义事务管理器（声明式的事务） -->  
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-    <!-- 配置DAO -->
-    <bean id="userDaoTarget" class="com.bluesky.spring.dao.UserDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-    <bean id="userDao"  
-        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">  
-           <!-- 配置事务管理器 -->  
-           <property name="transactionManager" ref="transactionManager" />     
-        <property name="target" ref="userDaoTarget" />  
-         <property name="proxyInterfaces" value="com.bluesky.spring.dao.GeneratorDao" />
-        <!-- 配置事务属性 -->  
-        <property name="transactionAttributes">  
-            <props>  
-                <prop key="*">PROPAGATION_REQUIRED</prop>
-            </props>  
-        </property>  
-    </bean>  
-</beans>
-```
-
- 
-
-#### 2-所有Bean共享一个代理基类
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
-    <bean id="sessionFactory"  
-            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-    </bean>  
-
-    <!-- 定义事务管理器（声明式的事务） -->  
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-    <bean id="transactionBase"  
-            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"  
-            lazy-init="true" abstract="true">  
-        <!-- 配置事务管理器 -->  
-        <property name="transactionManager" ref="transactionManager" />  
-        <!-- 配置事务属性 -->  
-        <property name="transactionAttributes">  
-            <props>  
-                <prop key="*">PROPAGATION_REQUIRED</prop>  
-            </props>  
-        </property>  
-    </bean>    
-   
-    <!-- 配置DAO -->
-    <bean id="userDaoTarget" class="com.bluesky.spring.dao.UserDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-    <bean id="userDao" parent="transactionBase" >  
-        <property name="target" ref="userDaoTarget" />   
-    </bean>
-</beans>
-```
-
-
-
-#### 3-使用拦截器
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
-    <bean id="sessionFactory"  
-            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-    </bean>  
-
-    <!-- 定义事务管理器（声明式的事务） -->  
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean> 
-   
-    <bean id="transactionInterceptor"  
-        class="org.springframework.transaction.interceptor.TransactionInterceptor">  
-        <property name="transactionManager" ref="transactionManager" />  
-        <!-- 配置事务属性 -->  
-        <property name="transactionAttributes">  
-            <props>  
-                <prop key="*">PROPAGATION_REQUIRED</prop>  
-            </props>  
-        </property>  
-    </bean>
-      
-    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">  
-        <property name="beanNames">  
-            <list>  
-                <value>*Dao</value>
-            </list>  
-        </property>  
-        <property name="interceptorNames">  
-            <list>  
-                <value>transactionInterceptor</value>  
-            </list>  
-        </property>  
-    </bean>  
-  
-    <!-- 配置DAO -->
-    <bean id="userDao" class="com.bluesky.spring.dao.UserDaoImpl">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-</beans>
-```
-
- 
-
-#### 4-使用tx标签配置的拦截器-声明式事务
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-
-    <context:annotation-config />
-    <context:component-scan base-package="com.bluesky" />
-
-    <bean id="sessionFactory"  
-            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-    </bean>  
-
-    <!-- 定义事务管理器（声明式的事务） -->  
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="delete*" propagation="REQUIRED" />             <tx:method name="save*" propagation="REQUIRED" />             <tx:method name="update*" propagation="REQUIRED" />             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
-        </tx:attributes>
-    </tx:advice>
-    
-    <aop:config>
-        <aop:pointcut id="interceptorPointCuts"
-            expression="execution(* com.bluesky.spring.dao.*.*(..))" />
-        <aop:advisor advice-ref="txAdvice"
-            pointcut-ref="interceptorPointCuts" />        
-    </aop:config>      
-</beans>
-```
-
- 
-
-#### 5-全注解配置
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-
-    <context:annotation-config />
-    <context:component-scan base-package="com.bluesky" />
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <bean id="sessionFactory"  
-            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
-        <property name="configLocation" value="classpath:hibernate.cfg.xml" />  
-        <property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
-    </bean>  
-
-    <!-- 定义事务管理器（声明式的事务） -->  
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    
-</beans>
-```
-
-此时在DAO上需加上@Transactional注解，如下：
-
-```java
-package com.bluesky.spring.dao;
-
-import java.util.List;
-
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-import org.springframework.stereotype.Component;
-
-import com.bluesky.spring.domain.User;
-
-@Transactional
-@Component("userDao")
-public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
-
-    public List<User> listUsers() {
-        return this.getSession().createQuery("from User").list();
-    }
-}
-```
-
-#### 6-SpringBoot事务配置
-
-在SpringBoot中，事务可以使用全注解的配置方式，不需要用到配置文件。
+在SpringBoot中，事务可使用全注解的配置方式，步骤如下：
 
 1. 确认项目依赖中有aop的依赖。
 
-2. 在一个@Configuration类中加入启用事务注解@EnableTransactionManagement
+2. 在@Configuration类中加入事务启用注解@EnableTransactionManagement
 
    1. ```java
       @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -3107,9 +2799,9 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
       }
       ```
 
-3. 在实际要使用事务的方法上加上注解@Transactional，此时事务已经生效
+3. 在实际要使用事务的方法上加上注解@Transactional，此时事务已经生效。
 
-4. （此步骤非必须）如果想配置全局事务，可以新建一个配置类。
+4. 以上方式需要开发人工加上事务注解，也可以参考xml的事务切面全局事务配置类。
 
    1. ```java
       package com.study.config;
@@ -3203,7 +2895,17 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
       }
       ```
 
-   2. 
+
+   
+
+在SpringBoot中声明式事务最常见。在大部分场景下，该方法已经够用了。但在有些场景下，我们需要获取事务的状态，是执行成功了还是失败回滚了，那么使用声明式事务就不够用了，需要编程式事务。
+
+Spring提供两种编程式事务管理方法，官方推荐第一种：
+
+1. 使用TransactionTemplate 或 TransactionalOperator
+2. 直接创建TransactionManager的实现
+
+详细可参考[这篇文章](https://www.cnblogs.com/yydxxg/p/15004879.html)。
 
 
 
@@ -4199,7 +3901,9 @@ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/ind
 
 
 
-### BeanFactory和FactoryBean的区别
+### BeanFactory和FactoryBean
+
+从字面意思区分，BeanFactory是Bean工厂，而FactroyBean是工厂Bean。
 
 #### Bean Factory
 
@@ -4211,7 +3915,7 @@ Bean Factory的主要作用是将Bean的定义、依赖关系和配置信息解�
 
 FactoryBean是一个特殊的Bean，它实现了Spring的FactoryBean接口。通过实现这个接口，我们可以自定义Bean的创建过程，灵活地控制Bean的实例化和配置。
 
-FactoryBean的实现类是一个工厂，它负责产生其他Bean的实例。当我们在Spring配置文件中定义一个FactoryBean时，实际上创建的是这个工厂Bean本身。当需要使用这个Bean时，Spring容器会调用FactoryBean的getObject()方法来获取由工厂Bean产生的实例对象。
+FactoryBean的实现类本身是一个工厂，它负责产生其他Bean的实例。当我们在Spring配置文件中定义一个FactoryBean时，实际上创建的是这个工厂Bean本身。当需要使用这个Bean时，Spring容器会调用FactoryBean的getObject()方法来获取由工厂Bean产生的实例对象。
 
 相比于普通的Bean，FactoryBean更加灵活和强大。我们可以在getObject()方法中编写自定义的逻辑来决定实例化哪个对象，并可以对其进行进一步的配置和处理。
 
@@ -4288,183 +3992,6 @@ afterPropertiesSet方法里面可以添加自定义的初始化方法或者做�
 这个方法可以在Bean中为static修饰的静态成员变量赋值（我们知道如果直接用@Auowired注解是不能为static修饰的成员变量赋值的）。
 
 看过spring整合mybatis的源码的可以知道很多地方都用到这个方法，例如：SqlSessionFactoryBean.afterPropertiesSet()就是对它的巧妙应用
-
-
-
-### Spring中常用注解说明？
-
-#### @Configuration
-
-声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象，相当于applicationContext.xml。
-
-#### @ComponentScan
-
-配置包扫描路径，也可以进行类扫描。不然Spring不会自动扫描包下面的@Controller，@Service等注解。用来取代配置文件中的`<context:component-scan base-pacage="com.xxx" />`
-
-默认包路径为注解所在类的包路径。可以通过basePackages="com.xxx"来指定。
-
-#### @Bean
-
-声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
-
-#### @Conditional
-
-配合@Bean使用，有条件的注册bean。注解内的Class必须实现Condition接口，并实现matches方法，方法返回true时才会注入bean
-
-应用场景案例：
-
-```java
-/**
- * 定义一个 Condition 接口的是实现
- */
-public class MyCondition implements Condition {
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        try{
-            //如果类路径中存在某个类就返回true。
-            Class.forName("com.bobo.test.test666");
-            return true;
-        }catch(ClassNotFoundException e){
-            e.printStackTrace();
-        }
-        return false; // 默认返回false
-    }
-}
-```
-
-#### @Indexed
-
-https://blog.csdn.net/securitit/article/details/110039718
-
-Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`@ComponentScan`扫描的`package`包含的类越来越多的时候，Spring启动时模式注解解析时间就会变得越长。因此，Spring5.0引入@Indexed，为Spring模式注解添加索引。
-
-当我们在项目中使用了 `@Indexed`之后，编译打包的时候会在项目中自动生成 `META-INT/spring.components`文件。当Spring应用上下文执行 `ComponentScan`扫描时，`META-INT/spring.components`将会被 `CandidateComponentsIndexLoader` 读取并加载，转换为 `CandidateComponentsIndex`对象，这样的话 `@ComponentScan`不在扫描指定的package，而是读取 `CandidateComponentsIndex`对象，从而达到提升性能的目的。
-
-若要开启`@Indexed`索引功能，首先需要引入`spring-context-indexer`。
-
-```xml
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-context-indexer</artifactId>
-    <version>${spring.version}</version>
-    <optional>true</optional>
-</dependency>
-```
-
-使用@Indexed注解
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/cc1f8dd821e741b19b6c1ab23eb56abe.png)
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/fc77363593f44366b507c358a18a6b6c.png)
-
-
-
-#### @Component
-
-声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
-
-#### @Controller
-
-声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
-
-#### @Service
-
-声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
-
-#### @Repository
-
-声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
-
-#### @Scope
-
-@Scope(scopeName=“prototype”)：配置bean的作用域，多例
-
-#### @Lazy
-
-@Lazy(value=true)，配置bean的延迟加载。
-
-#### @Value
-
-用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
-
-#### @Autowired
-
-自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
-
-#### @Qualifier
-
-给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
-
-#### @Inject
-
-和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
-
-#### @Named
-
-相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
-
-
-
-#### **Enable注解**
-
-@Enable系列注解基本都是通过内部的@Import注解实现动态导入相关联的类的。在Springboot中搭配starter使用。
-
-#### @EnableTransactionManagement
-
-
-
-#### @EnableAsync
-
-
-
-#### @EnableScheduling
-
-
-
-#### @EnableWebSocket
-
-
-
-#### @EnableCaching
-
-
-
-**MVC注解**
-
-#### @RequestMapping
-
-用于将HTTP请求映射到对应的控制器中的处理方法上。
-
-#### AOP注解
-
-@Aspect：表明整个类是一个切面
-
-@Pointcut：定义切点
-
-@Before：前置通知
-
-@Around：环绕通知
-
-@After：后置通知
-
-@AfterThrowing：异常通知
-
-@AfterReturning：返回通知
-
-
-
-
-### @autowired@resource区别
-
- 1、共同点
- 两者都可以写在字段和setter方法上。两者如果都写在字段上，那么就不需要再写setter方法。
-
- 2、不同点
- （1）@Autowired
- @Autowired为Spring提供的注解，需要导入包org.springframework.beans.factory.annotation.Autowired;只按照byType注入。
- @Autowired注解是按照类型（byType）装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它的required属性为false。如果我们想使用按照名称（byName）来装配，可以结合@Qualifier注解一起使用。
- （2）@Resource
-  @Resource默认按照ByName自动注入，由J2EE提供，需要导入包javax.annotation.Resource。@Resource有两个重要的属性：name和type，而Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以，如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不制定name也不制定type属性，这时将通过反射机制使用byName自动注入策略。
 
 
 
@@ -4664,6 +4191,12 @@ public class SpringContextUtil implements ApplicationContextAware {
  
 }
 ```
+
+
+
+### Spring中常用注解
+
+参考[SpringBoot常用注解](#SpringBoot常用注解)
 
 
 
@@ -5765,15 +5298,19 @@ SqlSessionFactoryBean实现了FactoryBean接口，所以返回的不是的他自
 
 保证一个类仅有一个实例，并提供一个访问它的全局访问点。
 
-Spring中的单例模式完成了后半句话，即提供了全局的访问点BeanFactory。但没有从构造器级别去控制单例，这是因为Spring管理的是是任意的Java对象。
+Spring中的单例模式完成了后半句话，即提供了全局的访问点BeanFactory。但没有从构造器级别去控制单例，我们依然可以创建该类的实例。Spring的单例指的是在他管理的IOC容器中是单例。
+
+
 
 #### 代理模式
 
 从结构上来看和Decorator模式类似，但Proxy是控制，更像是一种对功能的限制，而Decorator是增加职责。
 
-Spring的Proxy模式在aop中有体现，比如JdkDynamicAopProxy和Cglib2AopProxy。
+Spring的AOP就是动态代理的具体实现，Spring也可以根据情况使用不同的动态代理实现，例如：JdkDynamicAopProxy和Cglib2AopProxy。
 
-#### 适配器
+
+
+#### 适配器模式
 
 `HandlerAdapter` 在 Spring MVC 中使用了适配器模式。`HandlerAdapter` 主要用于支持不同类型的处理器（如 Controller、HttpRequestHandler 或者 Servlet  等），让它们能够适配统一的请求处理流程。这样，Spring MVC 可以通过一个统一的接口来处理来自各种处理器的请求。在 Spring MVC  的工作流程中，`HandlerAdapter` 扮演了一个重要角色。以下是其工作原理的简化版：
 
@@ -5929,13 +5466,13 @@ Template Method模式一般是需要继承的。这里想要探讨另一种对Te
 
 以下是一个具体的例子：
 
-JdbcTemplate中的execute方法：
-
 JdbcTemplate执行execute方法：
 
 ![3b190d1891e1548a99bcc32a8cd5e74f](https://img-blog.csdnimg.cn/img_convert/3b190d1891e1548a99bcc32a8cd5e74f.png)
 
-类似的还有RedisTemplate类。
+类似的还有RedisTemplate、TransactionTemplate
+
+
 
 #### 策略模式
 
@@ -6028,6 +5565,120 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
 
 
+#### 责任链模式
+
+对于SpringMVC来说，他会通过一系列的拦截器来处理请求执行前，执行后，以及结束的response，核心的类是handlerExecutionChain ，它封装了 HandlerAdapter 和一系列的过滤器。
+
+对于执行前的处理来说，DispatherServlet会先通过 handlerExecutionChain 获取所有的 HandlerIntercep然后再执行处理逻辑，如下代码所示:
+
+```java
+	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 实际处理时所用的request，如果不是上传请求，则直接使用接收到的request，否则封装成上传类型的request
+		HttpServletRequest processedRequest = request;
+		// 处理请求的处理器链(包含处理器和对应的interceptor)
+		HandlerExecutionChain mappedHandler = null;
+		try{
+			try {
+				// 检测请求是否为上传请求，如果是则通过multipartResolver将其封装成MultipartHttpServletRequest对象
+				processedRequest = checkMultipart(request);
+				// 设置上传请求的标志
+				multipartRequestParsed = (processedRequest != request);
+
+				// Determine handler for the current request.
+				// 获得请求对应的HandlerExecutionChain对象（HandlerMethod和HandlerInterceptor拦截器们）
+				mappedHandler = getHandler(processedRequest);
+				//  如果获取不到，则根据配置抛出异常或返回404错误
+				if (mappedHandler == null) {
+					noHandlerFound(processedRequest, response);
+					return;
+				}
+
+				// Determine handler adapter for the current request.
+				// 获得当前handler对应的HandlerAdapter对象
+				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+
+				// Process last-modified header, if supported by the handler.
+				// 处理GET、HEAD请求的Last-Modified,当浏览器第一次跟服务器请求资源时，服务器会在返回的请求头里包含一个last_modified的属性，
+				// 代表资源最后时什么时候修改的，在浏览器以后发送请求的时候，会同时发送之前接收到的Last_modified.服务器接收到带last_modified的请求后，
+				// 会跟实际资源的最后修改时间做对比，如果过期了返回新的资源，否则直接返回304表示未过期，直接使用之前缓存的结果即可
+				String method = request.getMethod();
+				boolean isGet = "GET".equals(method);
+				if (isGet || "HEAD".equals(method)) {
+					// 获取请求中服务器端最后被修改时间
+					long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+					if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
+						return;
+					}
+				}
+
+				// 执行响应的Interceptor的preHandler
+				// 注意：该方法如果有一个拦截器的前置处理返回false，则开始倒序触发所有的拦截器的 已完成处理
+				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+					return;
+				}
+
+				// Actually invoke the handler.
+				// 真正的调用handler方法，也就是执行对应的方法，并返回视图
+				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+
+				// 如果需要异步处理，直接返回
+				if (asyncManager.isConcurrentHandlingStarted()) {
+					return;
+				}
+
+				// 当view为空时，根据request设置默认的view
+				applyDefaultViewName(processedRequest, mv);
+				// 执行响应的interceptor的postHandler方法
+				mappedHandler.applyPostHandle(processedRequest, response, mv);
+			}
+			catch (Throwable err) {
+				...
+			}
+			// 处理返回结果，包括处理异常、渲染页面、触发Interceptor的afterCompletion
+			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+		}
+		catch (Exception ex) {
+			// 已完成处理 拦截器
+			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
+		}
+	}
+
+	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// 获取拦截器数组
+		HandlerInterceptor[] interceptors = getInterceptors();
+		if (!ObjectUtils.isEmpty(interceptors)) {
+			// 遍历拦截器数组
+			for (int i = 0; i < interceptors.length; i++) {
+				HandlerInterceptor interceptor = interceptors[i];
+				// 前置处理
+				if (!interceptor.preHandle(request, response, this.handler)) {
+					// 已完成处理拦截器
+					triggerAfterCompletion(request, response, null);
+					// 返回false，前置处理失败
+					return false;
+				}
+				// 标记interceptorIndex位置
+				this.interceptorIndex = i;
+			}
+		}
+		return true;
+	}
+```
+
+
+
+#### 组合模式
+
+组合模式在SpringMVC中用的比较多，其中的参数解析，响应值处理等模块就是使用了组合模式。拿参数解析模块举例：
+
+类图如下:
+
+![234234](https://cdn.nlark.com/yuque/0/2023/png/719664/1684339968357-8cd8cacd-3837-491f-a86c-d5d07451b85f.png)
+
+可以发现，整体的参数解析模块中，由一个接口 HandlerMethodArgumentResolver 负责。其中父节点会实现该接口，同时对所有的具体的子接口进行聚合。其实这个里面不止用了组合模式，接口还提供了#supportsParamerter方法，去判断是否执行该resolver，这也是策略模式的一种。
+
+
+
 ### Spring线程并发问题处理？
 
  在一般情况下，只有无状态的Bean才可以在多线程环境下共享，在Spring中，绝大部分Bean都可以声明为singleton作用域，因为Spring对一些Bean中非线程安全状态采用ThreadLocal进行处理，解决线程安全问题。
@@ -6049,9 +5700,33 @@ Spring启动成功后，单例是否线程安全取决于Bean的写法。Spring�
 
 
 
+### 举例说明Spring的应用场景
+
+这道题最好结合自身的项目情况，举一些实际的使用案例。@Controller，@Service这些可以不用提。包括但不仅限于如下场景：
+
+通过IOC容器来实现策略模式。例如：可以将实现类的Bean名字配置到配置文件或者数据库中通过Spring动态获取实现类。
+
+通过AOP实现，统一参数校验，日志打印，缓存，全局异常处理等等
+
+事务的应用。项目中事务切面的配置。
+
+通过事件来异步解耦。例如：注册成功之后邮件通知，短信发送
+
+
+
+### 如何统计Bean中某个方法的调用次数
+
+https://www.yuque.com/hollis666/vzy8n3/mnnadn
+
 
 
 ## SpringMVC
+
+### request是如何找到Controller的方法的
+
+https://www.yuque.com/hollis666/vzy8n3/kdhprf
+
+
 
 ### SpringMVC的工作原理
 
@@ -6076,6 +5751,10 @@ https://baijiahao.baidu.com/s?id=1777713292868376926&wfr=spider&for=pc
 
 
 
+### SpringMVC常用注解
+
+参考[SpringBoot常用注解](#SpringBoot常用注解)
+
 
 
 ## SpringBoot
@@ -6097,6 +5776,8 @@ SSM：添加相关的依赖【依赖很大。版本兼容性问题】 添加各�
 
 
 ### SpringBoot与Spring的区别
+
+https://www.yuque.com/hollis666/vzy8n3/meyfwphs8t6c3znd
 
 
 
@@ -6879,23 +6560,442 @@ BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
 
 
 
+### SpringBoot的main方法如何启动Web项目的
+
+https://www.yuque.com/hollis666/vzy8n3/xc2sq4
+
+
+
 ### SpringBoot常用注解
 
-#### @Conditional
+#### Spring注解
 
-以下的注解都是基于Spring的@Conditional注解
+##### @ComponentScan
 
-**@ConditionalOnClass**
+配置包扫描路径，也可以进行类扫描。不然Spring不会自动扫描包下面的@Controller，@Service等注解。用来取代配置文件中的`<context:component-scan base-pacage="com.xxx" />`
 
-只有当指定的Class在类路径中存在时才会注入。
+默认包路径为注解所在类的包路径。也可以通过`basePackages="com.xxx"`来指定路径。
 
-**@ConditionalOnBean**
+##### @Indexed
 
-只有当指定的Bean在Spring容器中存在时才会注入。
+https://blog.csdn.net/securitit/article/details/110039718
 
-**@ConditionalOnMissingBean**
+Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`@ComponentScan`扫描的`package`包含的类越来越多的时候，Spring启动时模式注解解析时间就会变得越长。因此，Spring5.0引入@Indexed，为Spring模式注解添加索引。
 
-只有当指定的Bean不存在时才会注入
+当我们在项目中使用了 `@Indexed`之后，编译打包的时候会在项目中自动生成 `META-INT/spring.components`文件。当Spring应用上下文执行 `ComponentScan`扫描时，`META-INT/spring.components`将会被 `CandidateComponentsIndexLoader` 读取并加载，转换为 `CandidateComponentsIndex`对象，这样的话 `@ComponentScan`不在扫描指定的package，而是读取 `CandidateComponentsIndex`对象，从而达到提升性能的目的。
+
+若要开启`@Indexed`索引功能，首先需要引入`spring-context-indexer`。
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-indexer</artifactId>
+    <version>${spring.version}</version>
+    <optional>true</optional>
+</dependency>
+```
+
+使用@Indexed注解
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/cc1f8dd821e741b19b6c1ab23eb56abe.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/fc77363593f44366b507c358a18a6b6c.png)
+
+
+
+##### @Configuration
+
+声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象，相当于applicationContext.xml。
+
+
+
+##### @Lazy
+
+@Lazy(value=true)，配置bean的延迟加载。
+
+##### @Value
+
+用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
+
+
+
+##### @Autowired
+
+自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
+
+##### @Qualifier
+
+给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
+
+
+
+##### @autowired@resource区别
+
+ **共同点**
+
+ 都可以将Bean注入到字段上，都可以写在字段和setter方法上。两者如果都写在字段上，那么就不需要再写setter方法。
+
+ **不同点**
+
+支持方不同，@Autowired为Spring提供的注解，必须添加Spring依赖才能使用。@Resource由JDK提供
+
+作用域不同，@Autowired还可以用在构造器上，但@Resource不行。
+
+匹配顺序不同，@Autowired在获取bean时，先byType再byName，如果通过类型匹配到多个在根据名字确定一个。@Resource则相反，默认先byName再byType，如果指定了type属性，才会通过type查找。
+
+
+
+##### @Inject
+
+和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
+
+##### @Named
+
+相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
+
+
+
+##### @Bean
+
+声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
+
+
+
+##### @Component
+
+声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
+
+
+
+##### @Controller
+
+声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
+
+
+
+##### @Service
+
+声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
+
+
+
+##### @Repository
+
+声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
+
+
+
+##### @Conditional
+
+配合@Bean使用，有条件的注册bean。注解内的Class必须实现Condition接口，并实现matches方法，方法返回true时才会注入bean
+
+应用场景案例：
+
+```java
+/**
+ * 定义一个 Condition 接口的实现
+ */
+public class MyCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        try{
+            //如果类路径中存在某个类就返回true。
+            Class.forName("com.bobo.test.test666");
+            return true;
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return false; // 默认返回false
+    }
+}
+```
+
+
+
+##### @Scope
+
+@Scope(scopeName=“prototype”)：配置bean的作用域，多例
+
+
+
+##### @Enable系列注解
+
+@Enable系列注解基本都是通过内部的@Import注解实现动态导入相关联的类的。在Springboot中还可以搭配starter使用。
+
+##### @EnableTransactionManagement
+
+开启事务支持。
+
+##### @EnableAsync
+
+开启异步支持。在方法上标注后，该方法将在新线程中执行
+
+##### @EnableScheduling
+
+开启Spring的定时调度支持，开启后可配合@Scheduled实现方法的定时调度。
+
+```java
+@Scheduled(cron = "0 1 0 * * ?")
+public void task1() {
+
+}
+```
+
+##### @EnableWebSocket
+
+
+
+##### @EnableCaching
+
+
+
+**MVC注解**
+
+##### @RequestMapping
+
+用于将HTTP请求映射到对应的控制器中的处理方法上。
+
+##### AOP注解
+
+@Aspect：表明整个类是一个切面
+
+@Pointcut：定义切点
+
+@Before：前置通知
+
+@Around：环绕通知
+
+@After：后置通知
+
+@AfterThrowing：异常通知
+
+@AfterReturning：返回通知
+
+
+
+#### SpringMVC注解
+
+##### @RequestMapping
+
+用来映射web请求（访问路径和参数），处理类和方法的。可以注解在类和方法上，注解在方法上的@RequestMapping路径会继承注解在类上的路径。同时支持Serlvet的request和response作为参数，也支持对request和response的媒体类型进行配置。其中有value(路径)，produces(定义返回的媒体类型和字符集)，method(指定请求方式)等属性。
+
+注意
+@GetMapping和@PostMapping是@RequestMapping的两种特例，一个是get方式请求，一个是post方式，此处不再描述。
+
+##### @RequestParam
+
+@RequestParam：将请求参数绑定到你控制器的方法参数上（是springmvc中接收普通参数的注解）
+
+语法1：
+
+@RequestParam(value=”参数名”,required=”true/false”,defaultValue=””)
+
+value：参数名
+
+required：是否包含该参数，默认为true，表示该请求路径中必须包含该参数，如果不包含就报错。
+
+defaultValue：默认参数值，如果设置了该值，required=true将失效，自动为false,如果没有传该参数，就使用默认值
+
+语法2：
+
+@RequestParam("参数名")
+
+```java
+	@RequestMapping("/test3")
+    @ResponseBody
+    public String test3(@RequestParam(value="name",required=true,defaultValue="hello")String name3){
+        System.out.println(name3);
+        return name3;
+    }
+```
+
+##### @PathVariable
+
+@PathVariable 放置在参数前，用来接受路径参数。
+
+```java
+@RequestMapping(value = "user/{username}")
+public String test(@PathVariable(value="username") String username) {
+	return "user"+username;
+}
+```
+
+这里的{username}就是我们定义的变量规则，username是变量的名字。例如：http://localhost/user/zhangsan，这时候username就等于`zhangsan`
+
+@RequestParam和@PathVariable区别
+
+前者是在url中以参数方式传输，后者在请求url路径中根据变量传输，二者的应用场景建议如下：
+
+    1、当URL指向的是某一具体业务资源（或资源列表），例如个人博客或者用户时，使用@PathVariable
+    2、当URL需要对资源或者资源列表进行过滤，筛选时，用@RequestParam
+
+例如我们会这样设计URL：
+
+    /blogs/{blogId} 这个对应的是@PathVariable
+    /blogs?state=publish 这个对应的是@RequestParam
+
+##### @ResponseBody
+
+将返回值放在response体内。返回的是数据而不是页面。在异步请求返回json数据时使用。
+
+##### @RequestBody
+
+允许request的参数在request体中，而不是在直接链接在地址的后面。此注解放置在参数前。比如：直接以String接收前端传过来的json数据：
+
+##### @RestController
+
+1）组合注解，组合了@Controller和@ResponseBody，当我们只开发一个和页面交互数据的控制层的时候可以使用此注解。
+2）使用此注解后，在方法层就不用添加@ResponseBody注解了，并且这个类中所有的方法都默认添加了@ResponseBody注解，都返回的是数据而不是界面。
+
+##### @ControllerAdvice
+
+类似@RestControllerAdvice
+
+##### @RestControllerAdvice
+
+作用是给Controller控制器添加统一的操作或处理，也可以理解成AOP的切面。同时也可以理解成@ControllerAdvice的子注解。
+
+比较常见的用法是结合@ExceptionHandler用于全局异常的处理，但其作用不止于此。@ControllerAdvice拆开来就是Controller  Advice，关于Advice，在Spring的AOP中，是用来封装一个切面所有属性的，包括切入点和需要织入的切面逻辑。这里ControllerAdvice也可以这么理解，其抽象级别应该是用于对Controller进行切面环绕的，而具体的业务织入方式则是通过结合其他的注解来实现的。@ControllerAdvice是在类上声明的注解，其用法主要有三点：
+
+1.结合方法型注解@ExceptionHandler，用于捕获Controller中抛出的指定类型的异常，从而达到不同类型的异常区别处理的目的。
+
+2.结合方法型注解@InitBinder，用于request中自定义参数解析方式进行注册，从而达到自定义指定格式参数的目的。
+
+3.结合方法型注解@ModelAttribute，表示其注解的方法将会在目标Controller方法执行之前执行。
+
+```java
+/**
+ * 全局异常处理器
+ * @author ruoyi
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /**
+     * 权限校验异常（ajax请求返回json，redirect请求跳转页面）
+     */
+    @ExceptionHandler(AuthorizationException.class)
+    public Object handleAuthorizationException(AuthorizationException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',权限校验失败'{}'", requestURI, e.getMessage());
+        if (ServletUtils.isAjaxRequest(request)) {
+            return AjaxResult.error(PermissionUtils.getMsg(e.getMessage()));
+        } else {
+            return new ModelAndView("error/unauth");
+        }
+    }
+
+    /**
+     * 系统异常
+     */
+    @ExceptionHandler(Exception.class)
+    public AjaxResult handleException(Exception e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',发生系统异常.", requestURI, e);
+        return AjaxResult.error(e.getMessage());
+    }
+
+    @ExceptionHandler(Error.class)
+    public AjaxResult handleException(Throwable e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',发生系统错误.", requestURI, e);
+        return AjaxResult.error(e.getMessage());
+    }
+}
+```
+
+
+
+#### SpringBoot注解
+
+##### @SpringBootApplication
+
+Springboot启动类注解，包含多个注解。
+
+##### @SpringBootConfiguration
+
+ 这个注解就是 @Configuration 注解的变体，在它基础上加了一个@Indexed注解。只是用来修饰Spring Boot的配置类而已，或者可利于 Spring Boot 后续的扩展。
+
+##### @EnableAutoConfiguration
+
+自动装配注解，包含在@SpringBootApplication中。详细原理参考：[自动装配](@SpringBoot自动装配)。
+
+##### **@AutoConfigureAfter**
+
+用在自动配置类上面，表示该自动配置类需要在另外指定的自动配置类配置完之后。
+
+如 Mybatis 的自动配置类，需要在数据源自动配置类之后。
+
+```java
+@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+public class MybatisAutoConfiguration {
+}
+```
+
+##### **@AutoConfigureBefore**
+
+ 这个和@AutoConfigureAfter注解使用相反，表示该自动配置类需要在另外指定的自动配置类配置之前。
+
+##### **@AutoConfigureOrder**
+
+ Spring Boot 1.3.0中有一个新的注解@AutoConfigureOrder，用于确定配置加载的优先级顺序。
+
+```less
+  @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE) // 自动配置里面的最高优先级
+  @Configuration
+  @ConditionalOnWebApplication // 仅限于web应用
+  @Import(BeanPostProcessorsRegistrar.class) // 导入内置容器的设置
+  public class EmbeddedServletContainerAutoConfiguration {
+      @Configuration
+      @ConditionalOnClass({ Servlet.class, Tomcat.class })
+      @ConditionalOnMissingBean(value = EmbeddedServletContainerFactory.class, search = SearchStrategy.CURRENT)
+      public static class EmbeddedTomcat {
+         // ...
+      }
+
+      @Configuration
+      @ConditionalOnClass({ Servlet.class, Server.class, Loader.class, WebAppContext.class })
+      @ConditionalOnMissingBean(value = EmbeddedServletContainerFactory.class, search = SearchStrategy.CURRENT)
+      public static class EmbeddedJetty {
+         // ...
+      }
+}
+```
+
+##### @ConfigurationProperties
+
+使用注解的方式将自定义的properties文件映射到实体bean中，比如config.properties文件。下面的例子将会读取yml文件中的slave数据源配置。如果spring.datasource.druid.slave的enable为true时才会注入bean，同时会将spring.datasource.druid.slave底下的属性都赋值到DataSource对象中。
+
+```java
+    @Bean
+    @ConfigurationProperties("spring.datasource.druid.slave")
+    @ConditionalOnProperty(prefix = "spring.datasource.druid.slave", name = "enabled", havingValue = "true")
+    public DataSource slaveDataSource(DruidProperties druidProperties)
+    {
+        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        return druidProperties.dataSource(dataSource);
+    }
+```
+
+##### @Conditional系列
+
+以下的注解是Springboot基于Spring的@Conditional注解衍生出来的
+
+1. `@ConditionalOnBean`：当容器里有指定 Bean 的条件下
+2. `@ConditionalOnMissingBean`：当容器里没有指定 Bean 的情况下
+3. `@ConditionalOnSingleCandidate`：当指定 Bean 在容器中只有一个，或者虽然有多个但是指定首选 Bean
+4. `@ConditionalOnClass`：当类路径下有指定类的条件下
+5. `@ConditionalOnMissingClass`：当类路径下没有指定类的条件下
+6. `@ConditionalOnProperty`：指定的属性是否有指定的值
+7. `@ConditionalOnResource`：类路径是否有指定的值
+8. `@ConditionalOnExpression`：基于 SpEL 表达式作为判断条件
+9. `@ConditionalOnJava`：基于 Java 版本作为判断条件
+10. `@ConditionalOnJndi`：在 JNDI 存在的条件下差在指定的位置
+11. `@ConditionalOnNotWebApplication`：当前项目不是 Web 项目的条件下
+12. `@ConditionalOnWebApplication`：当前项目是 Web 项 目的条件下
+13. @ConditionalOnCloudPlatform：组合 @Conditional 注解，当指定的云平台激活时才开启配置
+14. @ConditionalOnSingleCandidate：组合 @Conditional 注解，当指定的 class 在容器中只有一个 Bean，或者同时有多个但为首选时才开启配置
 
 
 
@@ -6956,10 +7056,205 @@ public class AppConfiguration {
 
 
 
+### @Async为什么不建议使用？
+
+这个注解使用时存在如下问题：在没有自定义线程池的场景下，默认会采用SimpleAsyncTaskExecutor创建线程，线程池的大小为Integer的MAX_VALUE，相当于调用一次创建一个线程，缺乏线程重用机制。在并发大的场景下可能引发严重性能问题。下面是他的源代码：
+
+```java
+/**
+ * {@link TaskExecutor} implementation that fires up a new Thread for each task,
+ * executing it asynchronously.
+ *
+ * <p>Supports limiting concurrent threads through the "concurrencyLimit"
+ * bean property. By default, the number of concurrent threads is unlimited.
+ *
+ * <p><b>NOTE: This implementation does not reuse threads!</b> Consider a
+ * thread-pooling TaskExecutor implementation instead, in particular for
+ * executing a large number of short-lived tasks.
+ */
+public class SimpleAsyncTaskExecutor extends CustomizableThreadCreator
+		implements AsyncListenableTaskExecutor, Serializable {
+    //省略不重要的方法
+    
+	@Override
+	public void execute(Runnable task, long startTimeout) {
+		Assert.notNull(task, "Runnable must not be null");
+		Runnable taskToUse = (this.taskDecorator != null ? this.taskDecorator.decorate(task) : task);
+		if (isThrottleActive() && startTimeout > TIMEOUT_IMMEDIATE) {
+			this.concurrencyThrottle.beforeAccess();
+			doExecute(new ConcurrencyThrottlingRunnable(taskToUse));
+		}
+		else {
+			doExecute(taskToUse);
+		}
+	}
+    
+    /**
+	 * 模板方法，用于实际执行任务.
+	 * <p>默认实现创建一个新线程并启动它
+	 */
+	protected void doExecute(Runnable task) {
+        //如果threadFactory为空则直接创建线程执行。
+		Thread thread = (this.threadFactory != null ? this.threadFactory.newThread(task) : createThread(task));
+		thread.start();
+	}
+    
+}
+```
+
+#### 自定义线程池
+
+有如下几种方式可以配置线程池，一种配置默认线程池，让所有@Async自动共享或者配置单独的线程池，使用@Async时指定线程池。
+
+1. 使用配置文件中配置默认线程池
+
+   1. application.properties参考配置，yml文件同理。
+
+   2. ```properties
+      spring.task.execution.pool.core-size=1
+      spring.task.execution.pool.max-size=1
+      spring.task.execution.pool.queue-capacity=10
+      spring.task.execution.pool.keep-alive=60s
+      spring.task.execution.pool.allow-core-thread-timeout=true
+      spring.task.execution.shutdown.await-termination=false
+      spring.task.execution.shutdown.await-termination-period=
+      spring.task.execution.thread-name-prefix=asynctask-
+      ```
+
+   3. 配置解释
+
+   4. > - `spring.task.execution.pool.core-size`：线程池创建时的初始化线程数，默认为8
+      > - `spring.task.execution.pool.max-size`：线程池的最大线程数，默认为int最大值
+      > - `spring.task.execution.pool.queue-capacity`：用来缓冲执行任务的队列，默认为int最大值
+      > - `spring.task.execution.pool.keep-alive`：线程终止前允许保持空闲的时间
+      > - `spring.task.execution.pool.allow-core-thread-timeout`：是否允许核心线程超时
+      > - `spring.task.execution.shutdown.await-termination`：是否等待剩余任务完成后才关闭应用
+      > - `spring.task.execution.shutdown.await-termination-period`：等待剩余任务完成的最大时间
+      > - `spring.task.execution.thread-name-prefix`：线程名的前缀，设置好了之后可以方便我们在日志中查看处理任务所在的线程池
+
+2. 通过实现接口配置默认线程池
+
+   1. 实现AsyncConfigurer覆盖getAsyncExecutor()方法。**注意：这个方法的优先级比配置文件高**。
+
+   2. ```java
+      @Configuration
+      @EnableAsync
+      public class AsyncConfig implements AsyncConfigurer {
+          public Executor getAsyncExecutor() {
+              ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+              executor.setCorePoolSize(3); //核心线程数
+              executor.setMaxPoolSize(3);  //最大线程数
+              executor.setQueueCapacity(1000); //队列大小
+              executor.setKeepAliveSeconds(600); //线程最大空闲时间
+              executor.setThreadNamePrefix("async-Executor-"); //指定用于新创建的线程名称的前缀。
+              executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 拒绝策略（一共四种，此处省略）
+              // 这一步千万不能忘了，否则报错： java.lang.IllegalStateException: ThreadPoolTaskExecutor not initialized
+              executor.initialize();
+              return executor;
+          }
+      }
+      ```
+
+   3. 
+
+3. 单独配置线程池，使用@Async指定线程池
+
+   1. 这种方式可以给每个async的方法指定单独的线程池，但缺点是开发得知道怎么去设置。
+
+   2. ```java
+      /**
+      * 独立线程池配置
+      */
+      @Configuration
+      public class TaskExecutorConfig {
+          @Bean
+          public TaskExecutor taskExecutor() {
+              ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+              // 设置核心线程数
+              executor.setCorePoolSize(1);
+              // 设置最大线程数
+              executor.setMaxPoolSize(1);
+              // 设置队列容量
+              executor.setQueueCapacity(20);
+              // 设置线程活跃时间（秒）
+              executor.setKeepAliveSeconds(60);
+              // 设置默认线程名称
+              executor.setThreadNamePrefix("task-");
+              // 设置拒绝策略
+              executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+              // 等待所有任务结束后再关闭线程池
+              executor.setWaitForTasksToCompleteOnShutdown(true);
+              return executor;
+          }
+      }
+      
+      public class AsyncService {
+          @Async("taskExecutor")
+          public void task1() throws InterruptedException {
+              TimeUnit.SECONDS.sleep(1L);
+              log.info("task1 complete");
+          }
+      
+      
+          @Async("taskExecutor")
+          public void task2() throws InterruptedException {
+              TimeUnit.SECONDS.sleep(2L);
+              log.info("task2 complete");
+          }
+      
+          @Async("taskExecutor")
+          public void task3() throws InterruptedException {
+              TimeUnit.SECONDS.sleep(3L);
+              log.info("task3 complete");
+          }
+      }
+      ```
+
+   3. 
+
+下面是测试代码，大家可以用这个代码分别测试上述3种方式。
+
+```java
+@RestController
+@RequestMapping("/async")
+public class AsyncController {
+    @Autowired
+    AsyncService asyncService;
+
+    @RequestMapping("/test")
+    public String test() throws InterruptedException {
+        asyncService.task1();
+        asyncService.task2();
+        asyncService.task3();
+        return "success";
+    }
+}
+
+@Service
+@Slf4j
+public class AsyncService {
+    @Async
+    public void task1() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(1L);
+        log.info("task1 complete");
+    }
 
 
-直接依赖某Bean
-如下代码所示:
+    @Async
+    public void task2() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(2L);
+        log.info("task2 complete");
+    }
+
+    @Async
+    public void task3() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(3L);
+        log.info("task3 complete");
+    }
+}
+```
+
+
 
 
 
@@ -8693,6 +8988,16 @@ UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速�
 ### 有没有排查解决过网络方面的问题。
 
 没有
+
+
+
+# 反问
+
+公司领导对这个岗位的期待以及岗位的具体工作。
+
+如果能入职，需要为这个工作做什么准备。
+
+
 
 
 
