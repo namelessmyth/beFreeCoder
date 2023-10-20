@@ -364,6 +364,264 @@ mappers元素是配置文件中相对比较重要的元素。参考[官网说明
 
 
 
+## 核心类和接口
+
+### Reflector
+
+反射器，主要用于封装一个类的反射信息，支持缓存。例如：get，set方法即使类中实际没有get、set方法。
+
+使用：调用构造方法，传入要反射的类型，也可以使用ReflectorFactory。可参考ReflectorTest来理解这个类的具体用处
+
+
+
+### Invoker
+
+配合Reflector，负责方法的调用，具体可以参考下文的案例。
+
+
+
+### MetaObject
+
+封装对象，使其支持表达式方式调用get set。
+
+```java
+  @Test
+  void testGetSetterType() {
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    Reflector reflector = reflectorFactory.findForClass(Section.class);
+    Assertions.assertEquals(Long.class, reflector.getSetterType("id"));
+  }
+
+  @Test
+  public void test01(){
+    Reflector reflector = new Reflector(Person.class);
+    System.out.println(reflector);
+  }
+
+  @Test
+  public void test02(){
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    Reflector reflector = reflectorFactory.findForClass(Student.class);
+    System.out.println(Arrays.asList(reflector.getGetablePropertyNames()));
+    System.out.println(Arrays.asList(reflector.getSetablePropertyNames()));
+    System.out.println(reflector.hasDefaultConstructor());
+    System.out.println(reflector.getGetterType("id"));
+  }
+
+  @Test
+  public void test03() throws Exception {
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    Reflector reflector = reflectorFactory.findForClass(Student.class);
+    Object o = reflector.getDefaultConstructor().newInstance();
+    //设置
+    Invoker invoker = reflector.getSetInvoker("id");
+    invoker.invoke(o,new Object[]{1111});
+    // 获取
+    Invoker id = reflector.getGetInvoker("id");
+    id.invoke(o,null);
+  }
+
+  @Test
+  public void test04(){
+    ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    MetaClass metaClass = MetaClass.forClass(User.class, reflectorFactory);
+    System.out.println(metaClass.hasGetter("userField"));
+    System.out.println(metaClass.hasGetter("userProperty"));
+    System.out.println(metaClass.hasGetter("userMap"));
+    System.out.println(metaClass.hasGetter("user"));
+    System.out.println(metaClass.hasGetter("userlist"));
+    System.out.println(metaClass.hasGetter("userlist[0]"));
+    System.out.println("-----------");
+    System.out.println(metaClass.hasGetter("user.userField"));
+    System.out.println(metaClass.hasGetter("user.userProperty"));
+    System.out.println(metaClass.hasGetter("user.userMap"));
+    System.out.println(metaClass.hasGetter("user.userlist"));
+    System.out.println(metaClass.hasGetter("user.user"));
+    System.out.println("------------");
+    System.out.println(Arrays.asList(metaClass.getGetterNames()));
+    System.out.println(Arrays.asList(metaClass.getSetterNames()));
+  }
+
+  @Test
+  public void test05(){
+    User user = new User();
+    MetaObject metaObject = SystemMetaObject.forObject(user);
+    metaObject.setValue("userField","lian");
+    System.out.println(metaObject.getValue("userField"));
+
+    metaObject.setValue("user.userField","lian");
+    System.out.println(metaObject.getValue("user.userField"));
+
+    metaObject.setValue("userMap[key]","lian");
+    System.out.println(metaObject.getValue("userMap[key]"));
+  }
+```
+
+
+
+### Typehandler
+
+
+
+### MapperMethod
+
+封装方法，方法签名，方法类型等，用于执行mapper类中的方法。
+
+1. 获取到SqlSession
+2. getMapper获取到映射，MapperRegistry
+3. 根据接口来获取工厂类型，MapperProxyFactory
+4. 获取工厂实例newInstance()，MapperProxy
+5. 通过工厂创建出具体的代理对象
+6. 进行SQL处理工作。
+
+
+
+### logging
+
+用于支持各种日志打印格式。通过LogFactory来自动检查不同的日志框架。也可以在配置文件中指定。
+
+```java
+public final class LogFactory {
+
+  /**
+   * Marker to be used by logging implementations that support markers.
+   */
+  public static final String MARKER = "MYBATIS";
+
+  private static Constructor<? extends Log> logConstructor;
+
+  static {
+    tryImplementation(LogFactory::useSlf4jLogging);
+    tryImplementation(LogFactory::useCommonsLogging);
+    tryImplementation(LogFactory::useLog4J2Logging);
+    tryImplementation(LogFactory::useLog4JLogging);
+    tryImplementation(LogFactory::useJdkLogging);
+    tryImplementation(LogFactory::useNoLogging);
+  }
+
+  private LogFactory() {
+    // disable construction
+  }
+
+  public static Log getLog(Class<?> clazz) {
+    return getLog(clazz.getName());
+  }
+
+  public static Log getLog(String logger) {
+    try {
+      return logConstructor.newInstance(logger);
+    } catch (Throwable t) {
+      throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
+    }
+  }
+}
+```
+
+配置文件支持的配置。（一般不用）
+
+| 设置名    | 描述                                                  | 有效值                                                       | 默认值 |
+| --------- | ----------------------------------------------------- | ------------------------------------------------------------ | ------ |
+| logPrefix | 指定 MyBatis 增加到日志名称的前缀。                   | 任何字符串                                                   | 未设置 |
+| logImpl   | 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。 | SLF4J \| LOG4J（3.5.9 起废弃） \| LOG4J2 \| JDK_LOGGING \| COMMONS_LOGGING \| STDOUT_LOGGING \| NO_LOGGING | 未设置 |
+
+这里面的这些日志名称，在Configuration类的构造方法中注册过别名和实现类。
+
+```java
+    typeAliasRegistry.registerAlias("SLF4J", Slf4jImpl.class);
+    typeAliasRegistry.registerAlias("COMMONS_LOGGING", JakartaCommonsLoggingImpl.class);
+    typeAliasRegistry.registerAlias("LOG4J", Log4jImpl.class);
+    typeAliasRegistry.registerAlias("LOG4J2", Log4j2Impl.class);
+    typeAliasRegistry.registerAlias("JDK_LOGGING", Jdk14LoggingImpl.class);
+    typeAliasRegistry.registerAlias("STDOUT_LOGGING", StdOutImpl.class);
+    typeAliasRegistry.registerAlias("NO_LOGGING", NoLoggingImpl.class);
+```
+
+这里面的这些实现类都是Mybatis自己定义的。在这些类的内部还会去依赖真正的日志实现。同时这些依赖的optional=true。
+
+```java
+import org.apache.ibatis.logging.Log;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.AbstractLogger;
+
+/**
+ * 调用Log4j2框架实现日志功能。
+ */
+public class Log4j2Impl implements Log {
+
+  private final Log log;
+
+  public Log4j2Impl(String clazz) {
+    Logger logger = LogManager.getLogger(clazz);
+
+    if (logger instanceof AbstractLogger) {
+      log = new Log4j2AbstractLoggerImpl((AbstractLogger) logger);
+    } else {
+      log = new Log4j2LoggerImpl(logger);
+    }
+  }
+
+  @Override
+  public boolean isDebugEnabled() {
+    return log.isDebugEnabled();
+  }
+
+  @Override
+  public boolean isTraceEnabled() {
+    return log.isTraceEnabled();
+  }
+
+  @Override
+  public void error(String s, Throwable e) {
+    log.error(s, e);
+  }
+
+  @Override
+  public void error(String s) {
+    log.error(s);
+  }
+
+  @Override
+  public void debug(String s) {
+    log.debug(s);
+  }
+
+  @Override
+  public void trace(String s) {
+    log.trace(s);
+  }
+
+  @Override
+  public void warn(String s) {
+    log.warn(s);
+  }
+
+}
+```
+
+maven依赖
+
+```xml
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.14.1</version>
+      <optional>true</optional>
+    </dependency>
+```
+
+
+
+## 缓存
+
+### 一级缓存
+
+
+
+
+
+### 二级缓存
+
 
 
 
