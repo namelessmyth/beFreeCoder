@@ -66,6 +66,8 @@ Spring Data JPA 可以理解为 JPA 规范的再次封装抽象，底层还是�
 
 
 
+
+
 ## 配置
 
 Mybatis所有支持的配置参考[官网说明](https://mybatis.org/mybatis-3/zh/configuration.html)。
