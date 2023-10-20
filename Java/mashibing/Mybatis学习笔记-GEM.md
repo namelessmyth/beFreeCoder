@@ -614,13 +614,404 @@ maven依赖
 
 ## 缓存
 
+所有缓存都实现的接口Cache，不同的缓存实现之间使用了装饰器模式。
+
+```java
+package org.apache.ibatis.cache;
+
+import java.util.concurrent.locks.ReadWriteLock;
+
+/**
+ * Mybatis缓存接口
+ */
+public interface Cache {
+
+  /**
+   * 该缓存对象的id
+   * @return The identifier of this cache
+   */
+  String getId();
+
+  /**
+   * 向缓存中添加数据，key是CacheKey，value是查询结果
+   */
+  void putObject(Object key, Object value);
+
+  /**
+   * 根据指定的key，在缓存中查找对应的结果对象
+   */
+  Object getObject(Object key);
+
+  /**
+   * 删除key对应的缓存项
+   */
+  Object removeObject(Object key);
+
+  /**
+   * 清空缓存
+   */
+  void clear();
+
+  /**
+   * 缓存项的个数
+   */
+  int getSize();
+
+  /**
+   * 获取读写锁
+   */
+  default ReadWriteLock getReadWriteLock() {
+    return null;
+  }
+
+}
+
+```
+
+### 缓存类型
+
+#### PerpetualCache
+
+永久缓存，一旦存入就一直保持。一级缓存就是这个类型
+
+#### BlockingCache
+
+阻塞式缓存，内部使用了ConcurrentHashMap实现了锁，它会保证只有一个线程到缓存中查找指定 key 对应的数据。
+
+假设 线程A 从数据库中查找到 keyA 对应的结果对象后，将结果对象放入到 BlockingCache 中，此时 线程 A 会释放 keyA 对应的锁，唤醒阻塞在该锁上的线程。其它线程即可从 BlockingCache 中获取 keyA 对应的数据，而不是再次访问数据库。
+
+#### FifoCache 和 LruCache
+
+在很多场景中，为了控制缓存的大小，系统需要按照一定的规则清理缓存。FifoCache 是先入先出版本的装饰器，当向缓存添加数据时，如果缓存项的个数已经达到上限，则会将缓存中最老（即最早进入缓存）的缓存项删除。
+
+LruCache 是按照"近期最少使用算法"（Least Recently Used, LRU）进行缓存清理的装饰器，在需要清理缓存时，它会清除最近最少使用的缓存项。
+
+#### SoftCache 和 WeakCache
+
+使用java的软引用和弱引用实现的缓存。
+
+
+
 ### 一级缓存
+
+BaseExecutor中有一个属性`protected PerpetualCache localCache;`就是一级缓存。默认开启。作用域为session。
+
+执行流程如下图：
+
+```mermaid
+flowchart TB
+开始-->创建CacheKey对象-->根据CacheKey查找缓存-->是否命中-->|未命中|查询数据库-->将结果缓存在一级缓存中-->将结果返回
+是否命中-->|命中|将结果返回
+```
+
+
 
 
 
 
 
 ### 二级缓存
+
+默认不开启，作用域为SessionFactory，多个session之间可以共享。
+
+具体使用二级缓存的源码，CachingExecutor.query()：
+
+```java
+public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
+      throws SQLException {
+    // 获取查询语句所在命名空间对应的二级缓存
+    Cache cache = ms.getCache();
+    // 是否开启了二级缓存
+    if (cache != null) {
+      // 根据select节点的配置，决定是否需要清空二级缓存
+      flushCacheIfRequired(ms);
+      // 检测SQL节点的useCache配置以及是否使用了resultHandler配置
+      if (ms.isUseCache() && resultHandler == null) {
+        // 二级缓存不能保存输出类型的参数，如果查询操作调用了包含输出参数的存储过程，则报错
+        ensureNoOutParams(ms, boundSql);
+        @SuppressWarnings("unchecked")
+        // 查询二级缓存
+        List<E> list = (List<E>) tcm.getObject(cache, key);
+        if (list == null) {
+          // 二级缓存没有相应的结果对，调用封装的Executor对象的query方法
+          list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+          // 将查询结果保存到TransactionalCache.entriesToAddOnCommit集合中
+          tcm.putObject(cache, key, list); // issue #578 and #116
+        }
+        return list;
+      }
+    }
+    // 没有启动二级缓存，直接调用底层Executor执行数据库查询操作
+    return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+  }
+```
+
+
+
+### 三级缓存
+
+除了上述缓存之外，还可以实现自己的缓存。或者使用第三方缓存来覆盖缓存行为。
+
+
+
+## 整合Spring
+
+### 整合步骤
+
+### 依赖
+
+在项目的maven依赖中添加Spring的依赖，Mybatis整合Spring的依赖。
+
+#### 配置文件
+
+使用spring配置文件替换mybatis-config.xml，在配置文件中配置如下几个关键类。
+
+
+
+### 整合原理
+
+核心在于SqlSessionFactoryBean，这个类实现了FactoryBean接口，可以通过getObject方法创建SqlSessionFactory对象。实现InitializingBean初始化时会调用afterPropertiesSet()方法。实现ApplicationListener接口，监听容器refresh事件。
+
+```java
+public class SqlSessionFactoryBean
+    implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
+
+  private Resource configLocation;
+
+  private Configuration configuration;
+
+  private Resource[] mapperLocations;
+
+  private DataSource dataSource;
+
+  private TransactionFactory transactionFactory;
+
+  private Properties configurationProperties;
+
+  private SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+
+  private SqlSessionFactory sqlSessionFactory;
+
+  // EnvironmentAware requires spring 3.1
+  private String environment = SqlSessionFactoryBean.class.getSimpleName();
+
+  private Interceptor[] plugins;
+
+  private TypeHandler<?>[] typeHandlers;
+
+  private String typeHandlersPackage;
+
+  @SuppressWarnings("rawtypes")
+  private Class<? extends TypeHandler> defaultEnumTypeHandler;
+
+  private Class<?>[] typeAliases;
+
+  private String typeAliasesPackage;
+
+  private Class<?> typeAliasesSuperType;
+
+  private LanguageDriver[] scriptingLanguageDrivers;
+
+  // issue #19. No default provider.
+  private DatabaseIdProvider databaseIdProvider;
+
+  private Cache cache;
+
+  private ObjectFactory objectFactory;
+
+  private ObjectWrapperFactory objectWrapperFactory;
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    notNull(dataSource, "Property 'dataSource' is required");
+    notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
+    state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
+        "Property 'configuration' and 'configLocation' can not specified with together");
+
+    this.sqlSessionFactory = buildSqlSessionFactory();
+  }
+
+  /**
+   * Build a {@code SqlSessionFactory} instance.
+   *
+   * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
+   * {@code SqlSessionFactory} instance based on a Reader. Since 1.3.0, it can be specified a {@link Configuration}
+   * instance directly(without config file).
+   *
+   * @return SqlSessionFactory
+   * @throws Exception
+   *           if configuration is failed
+   */
+  protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
+
+    final Configuration targetConfiguration;
+
+    XMLConfigBuilder xmlConfigBuilder = null;
+    if (this.configuration != null) {
+      targetConfiguration = this.configuration;
+      if (targetConfiguration.getVariables() == null) {
+        targetConfiguration.setVariables(this.configurationProperties);
+      } else if (this.configurationProperties != null) {
+        targetConfiguration.getVariables().putAll(this.configurationProperties);
+      }
+    } else if (this.configLocation != null) {
+      xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
+      targetConfiguration = xmlConfigBuilder.getConfiguration();
+    } else {
+      LOGGER.debug(
+          () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+      targetConfiguration = new Configuration();
+      Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
+    }
+
+    Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
+    Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
+    Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
+
+    if (hasLength(this.typeAliasesPackage)) {
+      scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType).stream()
+          .filter(clazz -> !clazz.isAnonymousClass()).filter(clazz -> !clazz.isInterface())
+          .filter(clazz -> !clazz.isMemberClass()).forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
+    }
+
+    if (!isEmpty(this.typeAliases)) {
+      Stream.of(this.typeAliases).forEach(typeAlias -> {
+        targetConfiguration.getTypeAliasRegistry().registerAlias(typeAlias);
+        LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
+      });
+    }
+
+    if (!isEmpty(this.plugins)) {
+      Stream.of(this.plugins).forEach(plugin -> {
+        targetConfiguration.addInterceptor(plugin);
+        LOGGER.debug(() -> "Registered plugin: '" + plugin + "'");
+      });
+    }
+
+    if (hasLength(this.typeHandlersPackage)) {
+      scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
+          .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+          .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
+    }
+
+    if (!isEmpty(this.typeHandlers)) {
+      Stream.of(this.typeHandlers).forEach(typeHandler -> {
+        targetConfiguration.getTypeHandlerRegistry().register(typeHandler);
+        LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
+      });
+    }
+
+    targetConfiguration.setDefaultEnumTypeHandler(defaultEnumTypeHandler);
+
+    if (!isEmpty(this.scriptingLanguageDrivers)) {
+      Stream.of(this.scriptingLanguageDrivers).forEach(languageDriver -> {
+        targetConfiguration.getLanguageRegistry().register(languageDriver);
+        LOGGER.debug(() -> "Registered scripting language driver: '" + languageDriver + "'");
+      });
+    }
+    Optional.ofNullable(this.defaultScriptingLanguageDriver)
+        .ifPresent(targetConfiguration::setDefaultScriptingLanguage);
+
+    if (this.databaseIdProvider != null) {// fix #64 set databaseId before parse mapper xmls
+      try {
+        targetConfiguration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
+      } catch (SQLException e) {
+        throw new NestedIOException("Failed getting a databaseId", e);
+      }
+    }
+
+    Optional.ofNullable(this.cache).ifPresent(targetConfiguration::addCache);
+
+    if (xmlConfigBuilder != null) {
+      try {
+        xmlConfigBuilder.parse();
+        LOGGER.debug(() -> "Parsed configuration file: '" + this.configLocation + "'");
+      } catch (Exception ex) {
+        throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
+      } finally {
+        ErrorContext.instance().reset();
+      }
+    }
+
+    targetConfiguration.setEnvironment(new Environment(this.environment,
+        this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
+        this.dataSource));
+
+    if (this.mapperLocations != null) {
+      if (this.mapperLocations.length == 0) {
+        LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");
+      } else {
+        for (Resource mapperLocation : this.mapperLocations) {
+          if (mapperLocation == null) {
+            continue;
+          }
+          try {
+            XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+                targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
+            xmlMapperBuilder.parse();
+          } catch (Exception e) {
+            throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+          } finally {
+            ErrorContext.instance().reset();
+          }
+          LOGGER.debug(() -> "Parsed mapper file: '" + mapperLocation + "'");
+        }
+      }
+    } else {
+      LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
+    }
+
+    return this.sqlSessionFactoryBuilder.build(targetConfiguration);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public SqlSessionFactory getObject() throws Exception {
+    if (this.sqlSessionFactory == null) {
+      afterPropertiesSet();
+    }
+
+    return this.sqlSessionFactory;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Class<? extends SqlSessionFactory> getObjectType() {
+    return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isSingleton() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void onApplicationEvent(ApplicationEvent event) {
+    if (failFast && event instanceof ContextRefreshedEvent) {
+      // fail-fast -> check all statements are completed
+      this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
+    }
+  }
+
+}
+```
+
+另一个重要类是MapperScannerConfigurer，它实现了BeanDefinitionRegistryPostProcessor, InitializingBean接口，当Spring容器refresh的时候会在BeanFactory初始化完成之后调用，根据配置的包路径，扫描mapper类或者Dao类，将其纳入到Spring容器管理。
+
+
 
 
 
