@@ -1024,8 +1024,6 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 
 
 
-
-
 # Spring
 
 ## Framework
@@ -2896,7 +2894,7 @@ Spring的事务分2种使用方式，声明式和编程式。目前普遍采用�
       ```
 
 
-   
+
 
 在SpringBoot中声明式事务最常见。在大部分场景下，该方法已经够用了。但在有些场景下，我们需要获取事务的状态，是执行成功了还是失败回滚了，那么使用声明式事务就不够用了，需要编程式事务。
 
@@ -7274,43 +7272,500 @@ https://www.mashibing.com/course/1834
 
 
 
-# 常用框架
+# ORM框架
 
 ## MyBatis
 
-### MyBatis的查询流程
+### Mybatis和Hibernate的异同
 
-Configuration对象会在项目启动就加载好，根据全局配置文件和映射配置文件解析得到。
+相同
 
-当有查询操作时，根据Mapper的类名和方法名去一个Map中找到映射类代理工厂（MapperProxyFactory），这个map会在解析配置文件的时候就初始化好了。
+分类上Hibernate和Mybatis都是ORM框架，都可以和Spring整合。
 
-映射类代理工厂会调用MapperProxy的invoke方法然后调用MapperMethod的execute方法。
+底层他们都支持JDBC和JTA
 
-这里面会判断操作类型（insert/delete/update/select）执行不同的方法。如果是查询最终会调用sqlSession的selectList方法
+执行机制上都有SessionFactory，然后创建session和事务来执行SQL。
 
-这里会根据命名空间加方法ID获取到对应的封装sql语句的对象。还会有相应的参数配置，resultMap，resultType，缓存等等。
+不同
 
-然后执行执行器（Executor）的查询方法，如果开启了二级缓存会先从二级缓存中查询。如果有一级缓存会从一级缓存中查询。
+Hibernate是全自动，Mybatis是半自动。
 
-如果都没有才会调用数据库的查询方法进行查询。查询之前先放个站位符，查询成功之后会清空之前的缓存。
+Hibernate可以完全的通过对象关系模型实现对数据库的操作，拥有完整的JavaBean对象与数据库的映射结构来自动生成sql，可以做到简单功能基本可以完全不用写SQL。而mybatis仅有基本的对象字段映射，对象数据以及对象实际关系仍然需要通过手写sql来实现和管理。
 
-执行查询的时候会创建一个StatementHandler，然后通过他调用JDBC的statement执行查询操作。
+Hibernate数据库移植性远大于mybatis
 
-查询出来的结果集会通过ResultSetHandler对象进行处理和封装。
+基于第一点，加上它强大的映射结构和hql语言，大大降低了对象与数据库（Oracle、MySQL等）的耦合性，而mybatis由于需要手写sql，因此与数据库的耦合性直接取决于程序员写sql的方法，如果sql不具通用性而用了很多某数据库特性的sql语句的话，移植性也会随之降低很多，成本很高。
+
+Hibernate更复杂开发难度更高
+
+Hibernate的开发难度大于MyBatis，主要由于Hibernate有着自己独立的机制，例如：HQL，相对复杂，学习周期比较长。
+
+MyBatis则相对简单，并且MyBatis主要依赖于xml的书写，让开发者可以直接编写SQL更熟悉。
+
+在sql优化上，mybatis更方便
+
+由于mybatis的sql都是写在xml里，因此优化sql比hibernate方便很多。而hibernate的sql很多都是自动生成的，无法直接维护sql；虽有hql，但功能还是不及sql强大，见到报表等变态需求时，hql也歇菜，也就是说hql是有局限的；hibernate虽然也支持原生sql，但开发模式上却与orm不同，需要转换思维，因此使用上不是非常方便。总之写sql的灵活度上hibernate不及mybatis。
+
+Hibernate缓存机制要比mybatis更好一些
+
+Hibernate的二级缓存配置在SessionFactory生成配置文件中进行详细配置，然后再在具体的表对象映射中配置那种缓存。
+
+MyBatis的二级缓存配置都是在每个具体的表对象映射中进行详细配置，这样针对不同的表可以自定义不同的缓冲机制，并且MyBatis可以在命名空间中共享相同的缓存配置和实例，通过Cache-ref来实现。
+
+两者比较，因为Hibernate对查询对象有着良好的管理机制，用户无需关心SQL，所以在使用二级缓存时如果出现脏数据，系统会报出错误提示。  而MyBatis在这一方面使用二级缓存时需要特别小心，如果不能完全确定数据更新操作的波及范围，避免cache的盲目使用，否则，脏数据的出现会给系统的正常运行带来很大的隐患。
 
 
 
-### 简述MyBatis的工作流程
+### Mybatis的优缺点
 
-1. 解析配置文件
+优点：
 
-   当Mybatis启动的时候，会加载2种配置文件，一种是全局配置文件，另一种是映射配置文件。全局配置文件决定Mybatis的整体行为模式。映射配置文件是应用程序向数据库发送的命令。解析完成之后会将配置文件信息封装成Configuration对象。
+基于SQL语句编程，相当灵活，不会对应用程序或者数据库的现有设计造成任何影响，SQL写在XML里，解除sql与程序代码的耦合，便于统一管理；提供XML标签，支持编写动态SQL语句，并可重用。
 
-2. 提供数据访问接口
+与JDBC相比，减少了大量JDBC冗余代码，不需要手动开关连接；
 
-   会有一个SqlSessionFactoryBuilder对象使用之前的配置文件信息构建出SqlSessionFactory对象，然后由它负责创建SqlSession对象。SqlSession对象是数据库访问的总接口。在SqlSessionFactory对象创建的时候还会创建一个缓存（Map<Class, MapperProxyFactory>）
+很好的与各种数据库与数据源兼容（底层基于JDBC，所以只要JDBC支持的数据库MyBatis都支持）。
 
-3. 执行SQL
+能够与Spring，SpringBoot很好的集成；
+
+提供映射标签，支持对象与数据库的ORM字段关系映射；提供对象关系映射标签，支持对象关系组件维护。
+
+当SQL存在性能问题时，优化SQL较为方便。
+
+缺点
+
+SQL语句的编写工作量较大，尤其当字段多、关联表多时，对开发人员编写SQL语句的功底有一定要求。
+
+SQL语句容易依赖于数据库，导致数据库移植性相对较差，不能随意更换数据库。
+
+
+
+### 与SpringBoot集成使用步骤
+
+集成前提：
+
+- 已安装好MySQL，存在表和数据
+- 已搭建好SpringBoot项目，需要加入Mybatis
+
+集成步骤
+
+1. 加入Maven依赖：mybatis的starter，分页插件，数据库驱动，数据源
+
+   1. 参考
+
+   2. ```xml
+          <!-- SpringBoot的依赖配置-->
+          <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-dependencies</artifactId>
+              <version>${spring.boot.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
+          </dependency>    
+      
+      	<!--mybatis依赖-->
+          <dependency>
+              <groupId>org.mybatis.spring.boot</groupId>
+              <artifactId>mybatis-spring-boot-starter</artifactId>
+              <version>${mybatis.version}</version>
+          </dependency>
+      
+          <!-- pagehelper 分页插件 -->
+          <dependency>
+              <groupId>com.github.pagehelper</groupId>
+              <artifactId>pagehelper-spring-boot-starter</artifactId>
+              <version>${pagehelper.boot.version}</version>
+          </dependency>
+      
+      	<!-- 阿里数据源 -->
+      	<dependency>
+              <groupId>com.alibaba</groupId>
+              <artifactId>druid-spring-boot-starter</artifactId>
+              <version>${druid.version}</version>
+          </dependency>
+      
+          <!--oracle驱动-->
+          <dependency>
+              <groupId>cn.easyproject</groupId>
+              <artifactId>ojdbc6</artifactId>
+              <version>12.1.0.2.0</version>
+          </dependency>
+      
+          <!--sqlserver驱动-->
+          <dependency>
+              <groupId>com.microsoft.sqlserver</groupId>
+              <artifactId>sqljdbc4</artifactId>
+              <version>4.0</version>
+          </dependency>
+      ```
+
+2. yml配置文件加入相关配置，mybatis配置，数据源配置，分页配置
+
+   1. ```yml
+      # Spring配置
+      spring:
+        # 数据源配置
+        datasource:
+          type: com.alibaba.druid.pool.DruidDataSource
+          driverClassName: oracle.jdbc.OracleDriver
+          druid:
+            # 主库数据源
+            master:
+              url: jdbc:oracle:thin:@localhost:1521/test1
+              username: admin
+              password: admin123
+            # 从库数据源
+            slave:
+              # 从数据源开关/默认关闭
+              enabled: true
+              url: jdbc:oracle:thin:@localhost:1521/test2
+              username: admin
+              password: admin123
+            # 初始连接数,正式环境可以改大点
+            initialSize: 1
+            # 最小连接池数量
+            minIdle: 1
+            # 最大连接池数量
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            # 配置一个连接在池中最大生存的时间，单位是毫秒
+            maxEvictableIdleTimeMillis: 900000
+            # 配置检测连接是否有效
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            webStatFilter:
+              enabled: true
+            statViewServlet:
+              enabled: true
+              # 设置白名单，不填则允许所有访问
+              allow:
+              url-pattern: /druid/*
+              login-username: superadmin
+              login-password: tartan
+            filter:
+              stat:
+                enabled: true
+                # 慢SQL记录
+                log-slow-sql: true
+                slow-sql-millis: 3000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+      # MyBatis
+      mybatis:
+        # 搜索指定包别名
+        typeAliasesPackage: com.ruoyi.**.domain, com.test.**.domain
+        # 配置mapper的扫描，找到所有的mapper.xml映射文件
+        mapperLocations: classpath*:mapper/**/*Mapper.xml
+        # 加载全局的配置文件
+        configLocation: classpath:mybatis/mybatis-config.xml
+      
+      # PageHelper分页插件
+      pagehelper:
+        helperDialect: oracle
+        supportMethodsArguments: true
+        params: count=countSql
+      ```
+
+3. 创建实体类，在指定的包路径底下。
+
+   1. 例如：用户
+
+   2. ```java
+      @Data
+      public class User {
+        private long id;
+      
+        private String username;
+      
+        private String password;
+      }
+      ```
+
+4. 创建mapper接口。Mybatis支持通过XML来定义SQL语句，或者通过注解的方式。
+
+   1. 例如UserMapper.java
+
+   2. ```java
+      @Repository
+      public interface UserMapper {
+        int insertUser(User user);
+          
+        void deleteUser(User user);
+      
+        User getUser(User user);
+      }
+      ```
+
+5. 创建xml，在指定的位置下。
+
+   1. UserMapper.xml
+
+   2. ```xml
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+      <mapper namespace="com.test.demo.mapper.UserMapper">
+      
+          <insert id="insertUser" parameterType="User">
+              insert into user (id, username, password) 
+              values (#{id}, #{username}, #{password})
+          </insert>
+      
+          <select id="getUser" parameterType="User" resultType="User">
+              select * from user
+              where id = #{id}
+          </select>
+          
+          <delete id="deleteUser" parameterType="User" resultType="User">
+              delete from user
+              where id = #{id}
+          </delete>
+      </mapper>
+      ```
+
+6. 创建service和Controller调用mapper。此处代码略。
+
+7. 
+
+
+
+### #{}和${}的区别
+
+#{}会在SQL拼接占位符，有预编译的功能，类似idbc中的PreparedStatement，对于传入的参数，在预处理阶段会使用?代替，可以有效的避免SQL注入。
+
+${}是会直接将值写入到SQL中，有SQL注入的问题。
+
+所以我们在Mybatis中，能使用#{}的地方应尽量使用#{}，但是有一些情况是必须要用${}的，比如我们要把他用在order by、group by 等语句后面的时候。
+
+```sql
+order by ${orderBy} ${orderType}
+group by ${groupBy}
+
+select ${fieldNames} from ${tableName}
+```
+
+
+
+### Mybatis的动态SQL标签
+
+建议参考[官网动态标签说明](https://mybatis.org/mybatis-3/zh/dynamic-sql.html)。主要有if、choose、when、otherwise、trim、where、set
+
+
+
+### MyBatis的执行流程
+
+#### 前言
+
+本文主要说明Mybatis的执行流程。基于Mybatis独立运行模式，未集成Spring。
+
+Mybatis源码版本为3.5.9。
+
+主要内容包含：
+
+- Mapper接口和映射文件是如何进行绑定的
+- MyBatis中SQL语句的执行流程
+- 自定义MyBatis中的参数设置处理器typeHandler
+- 自定义MyBatis中结果集处理器typeHandler
+
+#### 执行流程图
+
+先看一下Mybatis的执行流程图：
+
+```mermaid
+flowchart TB
+parseconfig["解析配置文件<br>mybatis-config.xml<br>xxxMapper.xml"]
+-->Configuration
+-->SqlSessionFactoryBulider 
+-->SqlSessionFactory
+--> SqlSession 
+--> Executor 
+--> state[StatementHandler]
+-->|执行SQL|DB
+-->|映射结果输出|ResultHandler
+ParameterHandle --> |处理入参| state
+
+```
+
+#### 案例代码
+
+下文的执行流程基于如下测试代码：
+
+```java
+public class MybatisTest {
+
+    SqlSessionFactory sqlSessionFactory = null;
+
+    @Before
+    public void init() throws Exception{
+      String resource = "mybatis-config.xml";
+      InputStream inputStream = Resources.getResourceAsStream(resource);
+      // 根据全局配置文件创建出SqlSessionFactory（负责创建SqlSession对象的工厂）
+      sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    }
+
+    @Test
+    public void test01() {
+        // 获取数据库的会话,创建出数据库连接的会话对象（事务工厂，事务对象，执行器，如果有插件的话会进行插件的解析）
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        Emp empByEmpno = null;
+        try {
+            // 获取要调用的接口类,创建出对应的mapper的动态代理对象（mapperRegistry.knownMapper）
+            EmpDao mapper = sqlSession.getMapper(EmpDao.class);
+            // 调用方法开始执行
+            empByEmpno = mapper.findEmpByEmpno(7369);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        System.out.println(empByEmpno);
+    }
+}
+```
+
+#### 解析配置文件
+
+当Mybatis启动的时候，会加载2种配置文件，一种是全局配置文件（mybatis-config.xml），另一种是映射配置文件。全局配置文件决定Mybatis的整体行为模式。映射配置文件一般用于存储SQL。这些配置文件解析完成之后会将配置文件信息封装成Configuration对象。
+
+```java
+  // 解析配置文件，封装成Configuration对象
+  public Configuration parse() {
+    // 根据parsed变量的值判断是否已经完成了对mybatis-config.xml配置文件的解析
+    if (parsed) {
+      throw new BuilderException("Each XMLConfigBuilder can only be used once.");
+    }
+    parsed = true;
+    // 在mybatis-config.xml配置文件中查找<configuration>节点，并开始解析
+    parseConfiguration(parser.evalNode("/configuration"));
+    return configuration;
+  }
+
+  // 解析配置文件根节点
+  private void parseConfiguration(XNode root) {
+    try {
+      // issue #117 read properties first
+      // 解析properties
+      propertiesElement(root.evalNode("properties"));
+      // 解析settings
+      Properties settings = settingsAsProperties(root.evalNode("settings"));
+      // 设置vfsImpl字段
+      loadCustomVfs(settings);
+      loadCustomLogImpl(settings);
+      // 解析类型别名（可以在这里给类定义别名，以便在配置文件中直接使用，也可以通过注解@Alias("xxx")）
+      typeAliasesElement(root.evalNode("typeAliases"));
+      // 解析插件(例如：分页插件
+      pluginElement(root.evalNode("plugins"));
+      // 对象工厂
+      objectFactoryElement(root.evalNode("objectFactory"));
+      // 对象包装工厂
+      objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      // 反射工厂
+      reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      //设置具体的属性到configuration对象
+      settingsElement(settings);
+      // read it after objectFactory and objectWrapperFactory issue #631
+      // 环境
+      environmentsElement(root.evalNode("environments"));
+      // databaseIdProvider
+      databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      // 类型处理器
+      typeHandlerElement(root.evalNode("typeHandlers"));
+      // 映射器
+      mapperElement(root.evalNode("mappers"));
+    } catch (Exception e) {
+      throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
+    }
+  }
+```
+
+
+
+#### 构建SqlSessionFactory
+
+SqlSessionFactoryBuilder对象使用之前的Configuration配置文件对象，构建出SqlSessionFactory对象，然后由它负责创建SqlSession对象。
+
+
+
+#### 创建SqlSession与执行器
+
+SqlSessionFactory根据执行器类型，环境信息创建SqlSession对象。
+
+```java
+  public SqlSession openSession() {
+    // 获取默认的执行器类型
+    return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
+  }
+
+  private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
+    Transaction tx = null;
+    try {
+      // 获取mybatis-config.xml配置文件中配置的Environment对象，
+      final Environment environment = configuration.getEnvironment();
+      // 获取TransactionFactory对象
+      final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+      // 创建Transaction对象
+      tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      // 根据配置创建Executor对象
+      final Executor executor = configuration.newExecutor(tx, execType);
+      //然后产生一个DefaultSqlSession
+      return new DefaultSqlSession(configuration, executor, autoCommit);
+    } catch (Exception e) {
+      //如果打开事务出错，则关闭它
+      closeTransaction(tx); // may have fetched a connection so lets call close()
+      throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
+    } finally {
+      //最后清空错误上下文
+      ErrorContext.instance().reset();
+    }
+  }
+```
+
+创建执行器时，会根据执行类型创建对应的执行器。
+
+执行类型BATCH，对应BatchExecutor
+
+执行类型REUSE，对应ReuseExecutor
+
+其他情况就是，SimpleExecutor
+
+还会读取缓存配置。如果开启了二级缓存，会用CachingExecutor装饰器类装饰上面的执行器。
+
+```java
+  public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    executorType = executorType == null ? defaultExecutorType : executorType; // ?
+    executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
+    Executor executor;
+    // 根据参数，选择合适的Executor实现
+    if (ExecutorType.BATCH == executorType) {
+      executor = new BatchExecutor(this, transaction);
+    } else if (ExecutorType.REUSE == executorType) {
+      executor = new ReuseExecutor(this, transaction);
+    } else {
+      executor = new SimpleExecutor(this, transaction);
+    }
+    // 根据配置决定是否开启二级缓存的功能
+    if (cacheEnabled) {
+      executor = new CachingExecutor(executor);
+    }
+    // 此处调用插件,通过插件可以改变Executor行为
+    executor = (Executor) interceptorChain.pluginAll(executor);
+    return executor;
+  }
+```
+
+
+
+1. 执行SQL
 
    SqlSession内部有一个执行器executor对象负责对数据库的操作。然后还有一系列对象负责参数处理，sql执行，返回值解析。调用Mapper方法前，会根据Mapper的class从上面的缓存中找到对应的MapperProxyFactory，然后使用JDK动态代理创建代理类，然后根据根据statement ID找到要执行的SQL。
 
@@ -7338,55 +7793,430 @@ Configuration对象会在项目启动就加载好，根据全局配置文件和�
 
 
 
-### #{}和${}的区别
+### Mybatis插件原理
 
-#{}会在SQL拼接占位符，有预编译的功能，有效避免SQL注入问题
 
-${}是会直接将值写入到SQL中，有SQL注入的问题。
+
+
 
 ### MyBatis缓存
 
 Mybatis缓存分一级和二级缓存。一级缓存是默认就开启的。
 
-缓存的基类是PerpetualCache，Mybatis通过装饰器给他增加了很多其他的功能。例如：LruCache，FifoCache
+缓存的公共接口为Cache，基础类是PerpetualCache，Mybatis通过装饰器给他增加了很多其他的功能。例如：LruCache，FifoCache
+
+#### 缓存类型
+
+##### PerpetualCache
+
+永久缓存，一旦存入就一直保持。一级缓存就是这个类型
+
+##### BlockingCache
+
+阻塞式缓存，内部使用了ConcurrentHashMap实现了锁，它会保证只有一个线程到缓存中查找指定 key 对应的数据。
+
+假设 线程A 从数据库中查找到 keyA 对应的结果对象后，将结果对象放入到 BlockingCache 中，此时 线程 A 会释放 keyA 对应的锁，唤醒阻塞在该锁上的线程。其它线程即可从 BlockingCache 中获取 keyA 对应的数据，而不是再次访问数据库。
+
+##### FifoCache 和 LruCache
+
+在很多场景中，为了控制缓存的大小，系统需要按照一定的规则清理缓存。FifoCache 是先入先出版本的装饰器，当向缓存添加数据时，如果缓存项的个数已经达到上限，则会将缓存中最老（即最早进入缓存）的缓存项删除。
+
+LruCache 是按照"近期最少使用算法"（Least Recently Used, LRU）进行缓存清理的装饰器，在需要清理缓存时，它会清除最近最少使用的缓存项。
+
+##### SoftCache 和 WeakCache
+
+使用java的软引用和弱引用实现的缓存。
 
 #### 一级缓存
 
-使用条件，在一个session中然后sql语句要一样。如果session执行了更新语句或者提交就会失效。
+一级缓存默认开启，缓存**命中条件**：
 
-存储位置
+- 在同一个session中
+- sql语句一样，参数一样
+- mappedStatment的id一样。
+- 指定查询结果集的范围不等于statement。
 
-在的SqlSession的executor中，是在SimpleExecutor/ReuseExecutor/BatchExecutor的父类BaseExecutor中
+一级缓存**失效条件**，
+
+- MyBatis全局属性为Statement时，完成查询会清除缓存。`<setting name="localCacheScope" value="STATEMENT"/>`
+
+- 当执行增删改方法时会清除清除缓存。
+- 某个语句如果配置了flushCache=true属性，执行完会自动清除一级缓存。
+- 未开启事务的场景下，每次查询都会创建一个SqlSession。
+- session提交的时候。
+
+由上可以推断，一级缓存的实际命中概率很低。因为一般的业务场景，查询完了基本都会做更新操作。或者就是单独一次查询。
+
+**存储位置**
+
+在SimpleExecutor/ReuseExecutor/BatchExecutor的公共父类BaseExecutor中，有一个属性`protected PerpetualCache localCache;`就是一级缓存。它实际是HashMap的简单实现。
+
+**原理**
+
+每次查询都会先创建CacheKey缓存key对象，然后用CacheKey从缓存中查询，查询不到再去数据库查询。
+
+```mermaid
+flowchart TB
+开始-->创建CacheKey对象-->根据CacheKey查找缓存-->是否命中-->|未命中|查询数据库-->将结果缓存在一级缓存中-->将结果返回
+是否命中-->|命中|将结果返回
+```
+
+org.apache.ibatis.executor.BaseExecutor#query
+
+```java
+public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
+    ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
+    // 检测当前Executor是否已经关闭
+    if (closed) {
+      throw new ExecutorException("Executor was closed.");
+    }
+    if (queryStack == 0 && ms.isFlushCacheRequired()) {
+      // 非嵌套查询，并且select节点配置的flushCache属性为true时，才会清空一级缓存，flushCache配置项是影响一级缓存中结果对象存活时长的第一个方面
+      clearLocalCache();
+    }
+    List<E> list;
+    try {
+      // 增加查询层数
+      queryStack++;
+      // 查询一级缓存
+      list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
+      if (list != null) {
+        // 针对存储过程调用的处理，在一级缓存命中时，获取缓存中保存的输出类型参数，并设置到用户传入的实参对象中
+        handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
+      } else {
+        // 调用doQuery方法完成数据库查询，并得到映射后的结果对象
+        list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+      }
+    } finally {
+      // 当前查询完成，查询层数减少
+      queryStack--;
+    }
+    if (queryStack == 0) {
+      // 在最外层的查询结束时，所有嵌套查询也已经完成，相关缓存项也已经完全记载，所以在此处触发DeferredLoad加载一级缓存中记录的嵌套查询的结果对象
+      for (DeferredLoad deferredLoad : deferredLoads) {
+        deferredLoad.load();
+      }
+      // issue #601
+      // 加载完成后，清空deferredLoads集合
+      deferredLoads.clear();
+      if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+        // issue #482
+        // 根据LocalCacheScope配置决定是否清空一级缓存
+        clearLocalCache();
+      }
+    }
+    return list;
+  }
+```
+
+**存在问题**
+
+在多个SqlSession或分布式的环境下，多个session操作同一笔数据时可能会引起脏数据问题，建议关闭一级缓存。
+
+在和Spring整合时，如果没有开启事务，每次查询，spring都会关闭旧的sqlSession而创建新的sqlSession，所以没问题。
+
+但如果开启了事务，spring使用threadLocal获取当前线程绑定的同一个sqlSession，因此此时一级缓存是有效的。
+
+
 
 #### 二级缓存
 
-开启方式
+二级缓存默认关闭，一般不建议开启，开启方式如下：
 
-全局配置，默认是true。每一个mapper文件中也要开启。然后每一个sql里面也有声明是否使用二级缓存（查询默认true）
+- 全局开关，一般不用改，默认是true。`<setting name="cacheEnabled" value="true"/>`
+- 单个xml文件中配置cache或者cache-ref。例如：`<cache/>`
+  - `type`：cache使用的类型，默认是`PerpetualCache`。
+  - `eviction`： 定义回收的策略，常见的有FIFO，LRU。
+  - `flushInterval`： 配置一定时间自动刷新缓存，单位是毫秒。
+  - `size`： 最多缓存对象的个数。
+  - `readOnly`： 是否只读，若配置可读写，则需要对应的实体类能够序列化。
+  - `blocking`： 若缓存中找不到对应的key，是否会一直blocking，直到有对应的数据进入缓存。
+  - `cache-ref`代表引用别的命名空间的Cache配置，两个命名空间的操作使用的是同一个Cache。
+  - 例如：`<cache-ref namespace="mapper.StudentMapper"/>`
+- 单个sql里面的开关。查询默认true。修改方式：`<select id="xxx" resultType="map" useCache="false">`
 
-使用条件
+**命中条件**
 
-配置项配置正确。
+- 二级缓存开启且配置正确
+- 同一个命名空间中
+- 需要等事务提交后才会放入缓存。
 
-必须在一个命名空间里面
+**失效场景**
 
-session必须正确。
+配置不正确，或者更新语句配置了刷新缓存。
 
-失效场景
+**存储位置**
 
-配置不正确，或者更新语句配置了刷新缓存。查询语句配置了不使用二级缓存
+Configuration对象的成员变量
 
-原理
+```java
+// Configuration
+protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+```
 
-当启用了二级缓存的时候，会对默认的Executeor对象进行装饰成CacheExecutor对象。这个对象在进行查询的时候，会首先判断Configuration类中的Map去查询是否有缓存，有的话就直接返回。
+**原理**
+
+当启用了二级缓存的时候，会将默认的Executor对象装饰成CacheExecutor对象。在进入一级缓存的查询流程前，先在CachingExecutor进行二级缓存的查询，如果命中就直接返回。同时同一个namespace下的所有操作语句，都影响着同一个Cache，即二级缓存被多个SqlSession共享，是一个全局的变量。
+
+![28399eba](https://awps-assets.meituan.net/mit-x/blog-images-bundle-2018a/28399eba.png)
+
+Configuration类的newExecutor方法源码
+
+```java
+  public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    executorType = executorType == null ? defaultExecutorType : executorType; // ?
+    executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
+    Executor executor;
+    // 根据参数，选择合适的Executor实现
+    if (ExecutorType.BATCH == executorType) {
+      executor = new BatchExecutor(this, transaction);
+    } else if (ExecutorType.REUSE == executorType) {
+      executor = new ReuseExecutor(this, transaction);
+    } else {
+      executor = new SimpleExecutor(this, transaction);
+    }
+    // 根据配置决定是否开启二级缓存的功能
+    if (cacheEnabled) {
+      executor = new CachingExecutor(executor);
+    }
+    // 此处调用插件,通过插件可以改变Executor行为
+    executor = (Executor) interceptorChain.pluginAll(executor);
+    return executor;
+  }
+```
+
+**存在问题**
+
+在分布式环境下或者多个namespace操作同一张表时或者多表查询时可能产生脏数据。
+
+#### 三级缓存
+
+三级缓存也称为自定义缓存。是Mybatis为我们预留了自定义缓存的能力。
+
+我们可以集成很多第三方组件来做缓存。例如：redis，Ehcache。
+
+##### Redis
+
+maven依赖
+
+```xml
+    <dependency>
+       <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- 网上部分文章都建议使用这个实现类，但其实这个实现类内部用的Jedis，且很多代码都写死的，建议自己写 -->
+	<dependency>
+        <groupId>org.mybatis.caches</groupId>
+        <artifactId>mybatis-redis</artifactId>
+        <version>1.0.0-beta2</version>
+    </dependency>
+```
+
+Spring配置文件：application.yml
+
+```properties
+spring:
+  redis:
+    # redis数据库索引（默认为0）
+    database: 0
+    # redis服务器地址（默认localhost）
+    host: localhost
+    # redis端口
+    port: 6379
+    # redis访问密码（默认为空）
+    password:
+    # redis连接超时时间（单位为毫秒）
+    timeout: 0
+
+```
+
+如果用了mybatis-redis这个实现类，则必须创建一个redis.properties加入如下配置
+
+```properties
+redis.host=localhost
+redis.port=6379
+redis.connectionTimeout=5000
+redis.password= redis.database=0
+```
+
+建议自己实现Mybatis的Cache接口。
+
+```java
+public class RedisCache implements Cache {
+    private static final Logger logger = LoggerFactory.getLogger(RedisCache.class);
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final String id; // cache instance id
+    @Autowired
+    private RedisTemplate redisTemplate;
+    private static final long EXPIRE_TIME_IN_MINUTES = 30; // redis过期时间
+    public RedisCache(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Cache instances require an ID");
+        }
+        this.id = id;
+    }
+    @Override
+    public String getId() {
+        return id;
+    }
+    /**
+     * Put query result to redis
+     *
+     * @param key
+     * @param value
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void putObject(Object key, Object value) {
+        RedisTemplate redisTemplate = getRedisTemplate();
+        ValueOperations opsForValue = redisTemplate.opsForValue();
+        opsForValue.set(key, value, EXPIRE_TIME_IN_MINUTES, TimeUnit.MINUTES);
+        logger.debug("Put query result to redis");
+    }
+    /**
+     * Get cached query result from redis
+     *
+     * @param key
+     * @return
+     */
+    @Override
+    public Object getObject(Object key) {
+        RedisTemplate redisTemplate = getRedisTemplate();
+        ValueOperations opsForValue = redisTemplate.opsForValue();
+        logger.debug("Get cached query result from redis");
+        return opsForValue.get(key);
+    }
+    /**
+     * Remove cached query result from redis
+     *
+     * @param key
+     * @return
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object removeObject(Object key) {
+        RedisTemplate redisTemplate = getRedisTemplate();
+        redisTemplate.delete(key);
+        logger.debug("Remove cached query result from redis");
+        return null;
+    }
+    /**
+     * Clears this cache instance
+     */
+    @Override
+    public void clear() {
+        RedisTemplate redisTemplate = getRedisTemplate();
+        redisTemplate.execute((RedisCallback) connection -> {
+            connection.flushDb();
+            return null;
+        });
+        logger.debug("Clear all the cached query result from redis");
+    }
+    @Override
+    public int getSize() {
+        return 0;
+    }
+    @Override
+    public ReadWriteLock getReadWriteLock() {
+        return readWriteLock;
+    }
+    private RedisTemplate getRedisTemplate() {
+        if (redisTemplate == null) {
+            redisTemplate = ApplicationContextHolder.getBean("redisTemplate");
+        }
+        return redisTemplate;
+    }
+}
+```
+
+在mapper的xml中，配置自定义缓存实现类
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gem.study.mapper.UserMapper">
+    <!-- 推荐 -->
+    <cache type="com.gem.study.util.RedisCache"></cache>
+
+    <!-- 不推荐 -->
+    <cache type="org.mybatis.caches.redis.RedisCache"></cache>
+    
+    <select id="getUser" resultType="User">
+        SELECT * FROM User WHERE id = #{id}
+    </select>
+</mapper>
+```
 
 
 
-### Mybatis二级缓存的问题，如何解决？
 
 
 
-### Mybatis插件原理
+
+### 介绍下对MyBatis源码的理解
+
+这是一个比较宽泛的开放性题目，只要涉及源码的都可以说，说的越多越精确越好。包含但不仅限于如下部分，
+
+SQL解析机制。映射文件、注解--》映射器解析 XMLMapperBuilder MapperAnnotationBuilder
+
+SQL执行机制。SqlSession 接口--》Executor --》 SimpleExecutor ReuseExecutor 【Statement--JDBC】
+
+结果映射机制。
+
+插件原理。
+
+缓存原理。一二级缓存，自定义缓存。
+
+
+
+### 对Mybatis日志模块的理解
+
+定位你对MyBatis框架的理解：
+
+日志模块使用到了适配器模式，对于MyBatis中的数据库的相关操作通过代理模式实现了日志的监控
+
+### 五、谈谈你对SqlSessionFactory的理解
+
+SqlSessionFactory：工厂模式：负责SqlSession对象的管理
+
+全局的。我们应该对SqlSessionFactory做单例处理；
+
+完成全局配置文件和映射文件的加载解析--》Configuration对象
+
+### 六、谈谈你对SqlSession的理解
+
+SqlSession具体处理每个CRUD操作
+
+1。生命周期：需要做数据库操作的时候会创建。不需要操作数据库就关闭
+
+2。作用：完成数据库的操作
+
+3。线程安全：SqlSession是线程不安全的 --》 单纯的MyBatis的应用。我们就不能把SqlSession作用成员变量来使用 在Spring环境中怎么处理的  SqlSessionTemplate
+
+### 七、谈谈你对MyBatis中的Executor的源码理解
+
+Executor：执行器。具体执行SQL操作
+
+Executor：Simple Reuse Batch
+
+CachingExecutor：缓存的装饰
+
+### MyBatis中是如何对占位符进行赋值的？
+
+SQL解析 ##### $ ==> ParameterHandler
+
+### 如何解决MySQL的SqlSession的线程安全问题
+
+在SqlSession中介绍了
+
+### 对MyBatis的Configuration源码的理解
+
+Configuration：全局配置。映射文件解析的内容都保存在Configuration中
+
+
 
 
 
@@ -7413,6 +8243,16 @@ session必须正确。
 持久态：save/saveOrUpdate/get/load/list
 
 游离态：session关闭后，持久态的对象就变成了游离态
+
+
+
+## Bean Searcher
+
+https://bs.zhxu.cn/guide/latest/introduction.html
+
+专注高级查询。号称仅需 **一行代码** 便可实现下面的需求！比Mybatis快100倍。
+
+![BeanSearcher](https://bs.zhxu.cn/requirement.png)
 
 
 

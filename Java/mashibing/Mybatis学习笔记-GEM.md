@@ -706,10 +706,6 @@ flowchart TB
 
 
 
-
-
-
-
 ### 二级缓存
 
 默认不开启，作用域为SessionFactory，多个session之间可以共享。
@@ -754,7 +750,7 @@ public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds r
 
 
 
-## 整合Spring
+## 集成Spring
 
 ### 整合步骤
 
@@ -1013,8 +1009,222 @@ public class SqlSessionFactoryBean
 
 
 
+### 与SpringBoot集成步骤
 
+集成前提：
+
+- 已安装好MySQL，存在表和数据
+- 已搭建好SpringBoot项目，需要加入Mybatis
+
+集成步骤
+
+1. 加入Maven依赖：mybatis的starter，分页插件，数据库驱动，数据源
+
+   1. 参考
+
+   2. ```xml
+          <!-- SpringBoot的依赖配置-->
+          <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-dependencies</artifactId>
+              <version>${spring.boot.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
+          </dependency>    
+      
+      	<!--mybatis依赖-->
+          <dependency>
+              <groupId>org.mybatis.spring.boot</groupId>
+              <artifactId>mybatis-spring-boot-starter</artifactId>
+              <version>${mybatis.version}</version>
+          </dependency>
+      
+          <!-- pagehelper 分页插件 -->
+          <dependency>
+              <groupId>com.github.pagehelper</groupId>
+              <artifactId>pagehelper-spring-boot-starter</artifactId>
+              <version>${pagehelper.boot.version}</version>
+          </dependency>
+      
+      	<!-- 阿里数据源 -->
+      	<dependency>
+              <groupId>com.alibaba</groupId>
+              <artifactId>druid-spring-boot-starter</artifactId>
+              <version>${druid.version}</version>
+          </dependency>
+      
+          <!--oracle驱动-->
+          <dependency>
+              <groupId>cn.easyproject</groupId>
+              <artifactId>ojdbc6</artifactId>
+              <version>12.1.0.2.0</version>
+          </dependency>
+      
+          <!--sqlserver驱动-->
+          <dependency>
+              <groupId>com.microsoft.sqlserver</groupId>
+              <artifactId>sqljdbc4</artifactId>
+              <version>4.0</version>
+          </dependency>
+      ```
+
+2. yml配置文件加入相关配置，mybatis配置，数据源配置，分页配置
+
+   1. ```yml
+      # Spring配置
+      spring:
+        # 数据源配置
+        datasource:
+          type: com.alibaba.druid.pool.DruidDataSource
+          driverClassName: oracle.jdbc.OracleDriver
+          druid:
+            # 主库数据源
+            master:
+              url: jdbc:oracle:thin:@localhost:1521/test1
+              username: admin
+              password: admin123
+            # 从库数据源
+            slave:
+              # 从数据源开关/默认关闭
+              enabled: true
+              url: jdbc:oracle:thin:@localhost:1521/test2
+              username: admin
+              password: admin123
+            # 初始连接数,正式环境可以改大点
+            initialSize: 1
+            # 最小连接池数量
+            minIdle: 1
+            # 最大连接池数量
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            # 配置一个连接在池中最大生存的时间，单位是毫秒
+            maxEvictableIdleTimeMillis: 900000
+            # 配置检测连接是否有效
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            webStatFilter:
+              enabled: true
+            statViewServlet:
+              enabled: true
+              # 设置白名单，不填则允许所有访问
+              allow:
+              url-pattern: /druid/*
+              login-username: superadmin
+              login-password: tartan
+            filter:
+              stat:
+                enabled: true
+                # 慢SQL记录
+                log-slow-sql: true
+                slow-sql-millis: 3000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+      # MyBatis
+      mybatis:
+        # 搜索指定包别名
+        typeAliasesPackage: com.ruoyi.**.domain, com.test.**.domain
+        # 配置mapper的扫描，找到所有的mapper.xml映射文件
+        mapperLocations: classpath*:mapper/**/*Mapper.xml
+        # 加载全局的配置文件
+        configLocation: classpath:mybatis/mybatis-config.xml
+      
+      # PageHelper分页插件
+      pagehelper:
+        helperDialect: oracle
+        supportMethodsArguments: true
+        params: count=countSql
+      ```
+
+3. 创建实体类，在指定的包路径底下。
+
+   1. 例如：用户
+
+   2. ```java
+      @Data
+      public class User {
+        private long id;
+      
+        private String username;
+      
+        private String password;
+      }
+      ```
+
+4. 创建mapper接口。Mybatis支持通过XML来定义SQL语句，或者通过注解的方式。
+
+   1. 例如UserMapper.java
+
+   2. ```java
+      @Repository
+      public interface UserMapper {
+        int insertUser(User user);
+          
+        void deleteUser(User user);
+      
+        User getUser(User user);
+      }
+      ```
+
+5. 创建xml，在指定的位置下。
+
+   1. UserMapper.xml
+
+   2. ```xml
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+      <mapper namespace="com.test.demo.mapper.UserMapper">
+      
+          <insert id="insertUser" parameterType="User">
+              insert into user (id, username, password) 
+              values (#{id}, #{username}, #{password})
+          </insert>
+      
+          <select id="getUser" parameterType="User" resultType="User">
+              select * from user
+              where id = #{id}
+          </select>
+          
+          <delete id="deleteUser" parameterType="User" resultType="User">
+              delete from user
+              where id = #{id}
+          </delete>
+      </mapper>
+      ```
+
+6. 创建service和Controller调用mapper。此处代码略。
 
 
 
 # Mybatis-plus
+
+#### 介绍
+
+MyBatis-Plus是原生MyBatis的一个增强工具，可以在使用原生MyBatis 的所有功能的基础上，使用plus特有的功能。
+
+MyBatis-Plus特性介绍
+
+- **无侵入**：只做增强不做改变，引入它不会对现有工程产生影响，如丝般顺滑
+- **损耗小**：启动即会自动注入基本 CURD，性能基本无损耗，直接面向对象操作
+- **强大的 CRUD 操作**：内置通用 Mapper、通用 Service，仅仅通过少量配置即可实现单表大部分 CRUD 操作，更有强大的条件构造器，满足各类使用需求
+- **支持 Lambda 形式调用**：通过 Lambda 表达式，方便的编写各类查询条件，无需再担心字段写错
+- **支持主键自动生成**：支持多达 4 种主键策略（内含分布式唯一 ID 生成器 - Sequence），可自由配置，完美解决主键问题
+- **支持 ActiveRecord 模式**：支持 ActiveRecord 形式调用，实体类只需继承 Model 类即可进行强大的 CRUD 操作
+- **支持自定义全局通用操作**：支持全局通用方法注入（ Write once, use anywhere ）
+- **内置代码生成器**：采用代码或者 Maven 插件可快速生成 Mapper 、 Model 、 Service 、 Controller 层代码，支持模板引擎，更有超多自定义配置等您来使用
+- **内置分页插件**：基于 MyBatis 物理分页，开发者无需关心具体操作，配置好插件之后，写分页等同于普通 List 查询
+- **分页插件支持多种数据库**：支持 MySQL、MariaDB、Oracle、DB2、H2、HSQL、SQLite、Postgre、SQLServer 等多种数据库
+- **内置性能分析插件**：可输出 Sql 语句以及其执行时间，建议开发测试时启用该功能，能快速揪出慢查询
+- **内置全局拦截插件**：提供全表 delete 、 update 操作智能分析阻断，也可自定义拦截规则，预防误操作
+
+[详情请参考官网](https://mybatis.plus/guide)
