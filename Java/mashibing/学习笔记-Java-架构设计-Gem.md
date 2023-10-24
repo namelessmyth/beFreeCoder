@@ -443,11 +443,11 @@ https://blog.csdn.net/uuuyy_/article/details/122433110
 
 "设计模式" 最初并不是出现在软件设计中，而是被用于建筑领域的设计中。
 
-![image-20230315235101472](沈俊杰-马士兵-架构设计.assets/image-20230315235101472.png)
+![image-20230315235101472](学习笔记-Java-架构设计-Gem.assets/image-20230315235101472.png)
 
 1977年美国著名建筑大师、加利福尼亚大学伯克利分校环境结构中心主任克里斯托夫·亚历山大（Christopher Alexander）在他的著作《建筑模式语言：城镇、建筑、构造》中描述了一些常见的建筑设计问题，并提出了 253 种关于对城镇、邻里、住宅、花园和房间等进行设计的基本模式。
 
-四人帮（GOF）![image-20230315235037630](沈俊杰-马士兵-架构设计.assets/image-20230315235037630.png)
+四人帮（GOF）![image-20230315235037630](学习笔记-Java-架构设计-Gem.assets/image-20230315235037630.png)
 
 1990年软件工程界开始研讨设计模式的话题，后来召开了多次关于设计模式的研讨会。
 
@@ -535,19 +535,19 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 - “#” 表示 `protected`；
 - 不带符号表示 `default`。
 
-<img src="沈俊杰-马士兵-架构设计.assets/06-1680102385311-2.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/06-1680102385311-2.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 #### 2.3.2 在UML类图中表示抽象类
 
 抽象类在UML类图中同样用矩形框表示，但是抽象类的类名以及抽象方法的名字都用斜体字表示，如图所示。
 
-<img src="沈俊杰-马士兵-架构设计.assets/05-1680102385312-3.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/05-1680102385312-3.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 2.3.3 在UML类图中表示接口
 
 接口在类图中也是用矩形框表示，但是与类的表示法不同的是，接口在类图中的第一层顶端用构造型 <<interface>>表示，下面是接口的名字，第二层是方法。
 
-<img src="沈俊杰-马士兵-架构设计.assets/07-1680102385313-4.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/07-1680102385313-4.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 > 此外，接口还有另一种表示法，俗称棒棒糖表示法，就是类上面的一根棒棒糖（圆圈+实线）。圆圈旁为接口名称，接口方法在实现类中出现。
 
@@ -557,7 +557,7 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 
 关系共有六种类型 ,如下图: 
 
-<img src="沈俊杰-马士兵-架构设计.assets/17-1680102385313-5.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/17-1680102385313-5.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 
 
@@ -569,7 +569,7 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 
 例如，汽车和船实现了交通工具，其类图:
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/09-1680102385314-6.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/09-1680102385314-6.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
 
 
 
@@ -581,7 +581,7 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 
 例如，Student 类和 Teacher 类都是 Person 类的子类，其类图如下图所示：
 
-​									<img src="沈俊杰-马士兵-架构设计.assets/10-1680102385314-7.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
+​									<img src="学习笔记-Java-架构设计-Gem.assets/10-1680102385314-7.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
 
 #### 2.3.4.3 关联关系
 
@@ -591,13 +591,13 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 
 **1) 单向关联**
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/11-1680102385314-8.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/11-1680102385314-8.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 在UML类图中单向关联用一个带箭头的实线表示。上图表示每个顾客都有一个地址，这通过让Customer类持有一个类型为Address的成员变量类实现。
 
 **2) 双向关联**
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/12-1680102385315-9.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/12-1680102385315-9.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 从上图中我们很容易看出，所谓的双向关联就是双方各自持有对方类型的成员变量。
 
@@ -605,7 +605,7 @@ UML类图中具体类、抽象类、接口和包有不同的表示方法。
 
 **3) 自关联**
 
-​														<img src="沈俊杰-马士兵-架构设计.assets/13-1680102385315-10.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​														<img src="学习笔记-Java-架构设计-Gem.assets/13-1680102385315-10.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 自关联在UML类图中用一个带有箭头且指向自身的线表示。上图的意思就是Node类包含类型为Node的成员变量，也就是“自己包含自己”。
 
@@ -630,7 +630,7 @@ public class A{
 
 下图所示是大学和教师的关系图：							
 
-<img src="沈俊杰-马士兵-架构设计.assets/14-1680102385315-11.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/14-1680102385315-11.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 
 ##### 2.3.4.5 组合关系
 
@@ -654,7 +654,7 @@ public class A{
 
 下图所示是头和嘴的关系图：
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/15-1680102385315-12.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/15-1680102385315-12.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 ##### 2.3.4.6 依赖关系
 
@@ -666,7 +666,7 @@ public class A{
 
 下图所示是司机和汽车的关系图，司机驾驶汽车：
 
-​                            <img src="沈俊杰-马士兵-架构设计.assets/16-1680102385316-13.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​                            <img src="学习笔记-Java-架构设计-Gem.assets/16-1680102385316-13.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 ### 2.4 UML类图总结
 
@@ -787,7 +787,7 @@ classDiagram
 - 该社交产品的有用户信息只是用来展示的,那么这个类这样设计就没有问题
 - 假设后面这个社交产品又添加了电商模块, 那就需要将地址信息提取出来,单独设计一个类
 
-<img src="沈俊杰-马士兵-架构设计.assets/20.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/20.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 
 
@@ -841,7 +841,7 @@ classDiagram
 
 设计时应该考虑的数据传输协议的可变性，抽象出具有报文解译、编制、校验等所有版本协议使用的通用方法，调用方针对接口进行编程即可，如上述示例设计类图如下
 
-<img src="沈俊杰-马士兵-架构设计.assets/21.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/21.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 调用方依赖于报文接口，报文接口是稳定的，而不针对具体的427协议或427修正协议。利用接口多态技术，实现了开闭原则。
 
@@ -900,7 +900,7 @@ classDiagram
 
 比如在一个商城项目中, 定义结算接口Istrategy，该接口有三个具体实现类，分别为 PromotionalStrategy （满减活动，两百以上百八折）、RebateStrategy （打折活动）、 ReduceStrategy（返现活动）
 
-<img src="沈俊杰-马士兵-架构设计.assets/22.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/22.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 ```java
 public interface Istrategy {
@@ -938,7 +938,7 @@ public class ReduceStrategy implements Istrategy {
 
 调用方为Context，在此类中使用接口定义了一个对象。
 
- <img src="沈俊杰-马士兵-架构设计.assets/23.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+ <img src="学习笔记-Java-架构设计-Gem.assets/23.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 ```java
 public class Context {
@@ -991,7 +991,7 @@ Context 中代码使用接口定义对象变量，这个对象变量可以是实
 
 微服务用户系统提供了一组跟用户相关的 API 给其他系统 使用，比如：注册、登录、获取用户信息等。
 
-<img src="沈俊杰-马士兵-架构设计.assets/24.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/24.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 ```java
 public interface UserService {
@@ -1017,7 +1017,7 @@ public class UserServiceImpl implements UserService {
 
 ​	  将删除接口单独放到另外 一个接口 RestrictedUserService 中, 然后将 RestrictedUserService 只打包提供给后台管理系统来	  使用。
 
-​	 <img src="沈俊杰-马士兵-架构设计.assets/25.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 	
+​	 <img src="学习笔记-Java-架构设计-Gem.assets/25.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 	
 
 ```java
 public interface UserService {
@@ -1071,7 +1071,7 @@ Abstractions should not depend upon details. Details should depend upon abstract
   >
   > 不使用依赖反转的系统构架，控制流和依赖关系流的依赖箭头是一个方向的，由高层指向底层，也就是高层依赖底层
 
-<img src="沈俊杰-马士兵-架构设计.assets/29.jpg" alt="image-20220530160637842" style="zoom: 50%;" />	
+<img src="学习笔记-Java-架构设计-Gem.assets/29.jpg" alt="image-20220530160637842" style="zoom: 50%;" />	
 
 - 依赖倒置原则
 
@@ -1081,13 +1081,13 @@ Abstractions should not depend upon details. Details should depend upon abstract
   > - 降低并行开发引起的风险 (两个类之间有依赖关系，只要制定出两者之间的接口（或抽象类）就可以独立开发了)
   > - 提高代码的可读性和可维护性
 
-​		<img src="沈俊杰-马士兵-架构设计.assets/30.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+​		<img src="学习笔记-Java-架构设计-Gem.assets/30.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 3.6.3 场景示例
 
 假设我们现在要组装一台电脑,需要的配件有 cpu，硬盘，内存条。只有这些配置都有了，计算机才能正常的运行。选择cpu有很多选择，如Intel，AMD等，硬盘可以选择希捷，西数等，内存条可以选择金士顿，海盗船等。
 
-<img src="沈俊杰-马士兵-架构设计.assets/26.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/26.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 代码如下：
 
@@ -1197,7 +1197,7 @@ public class TestComputer {
 
 **类图如下：**
 
-<img src="沈俊杰-马士兵-架构设计.assets/32.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/32.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 **电脑（Computer）：**
 
@@ -1267,7 +1267,7 @@ public class Computer {
 
 明星由于全身心投入艺术，所以许多日常事务由经纪人负责处理，如和粉丝的见面会，和媒体公司的业务洽淡等。这里的经纪人是明星的朋友，而粉丝和媒体公司是陌生人，所以适合使用迪米特法则。
 
-<img src="沈俊杰-马士兵-架构设计.assets/31.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/31.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 
 
@@ -1738,7 +1738,7 @@ public class Singleton_04 {
 
 详细流程如下图所示：
 
-<img src="沈俊杰-马士兵-架构设计.assets/35.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/35.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 线程 1 首先执行新建实例的第一步，也就是分配单例对象的内存空间，由于线程 1 被重排序，所以执行了新建实例的第三步，也就是把 singleton 指向之前分配出来的内存地址，在这第三步执行之后，singleton 对象便不再是 null。
 
@@ -2255,7 +2255,7 @@ public class ProductFactory {
 
 我们直接来看看工厂方法模式的 UML 图：
 
-<img src="沈俊杰-马士兵-架构设计.assets/44.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/44.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 #####  4.2.4.3 工厂方法模式重构代码
 
@@ -2347,7 +2347,7 @@ public class Client {
 
 - **产品族** ：在抽象工厂模式中，产品族是指由同一个工厂生产的，位于不同产品等级结构中的一组产品，如海尔电器工厂生产的海尔电视机、海尔电冰箱，海尔电视机位于电视机产品等级结构中，海尔电冰箱位于电冰箱产品等级结构中。
 
-<img src="沈俊杰-马士兵-架构设计.assets/46.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/46.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 > 在上图中,每一个具体工厂可以生产属于一个产品族的所有产品,例如海尔工厂生产海尔电视机、海尔空调和海尔冰箱,所生产的产品又位于不同的产品等级结构中. 如果使用工厂方法模式,上图所示的结构需要提供9个具体工厂,而使用抽象工厂模式只需要提供3个具体工厂,极大减少了系统中类的个数.
 
@@ -2357,13 +2357,13 @@ public class Client {
 
 抽象工厂模式为创建一组对象提供了解决方案.与工厂方法模式相比,**抽象工厂模式中的具体工厂不只是创建一种产品,而是负责创建一个产品族**.如下图:
 
-<img src="沈俊杰-马士兵-架构设计.assets/47.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/47.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 4.3.2 抽象工厂模式原理
 
 在抽象工厂模式中,每一个具体工厂都提供了多个工厂方法,用于产生多种不同类型的产品.这些产品构成了一个产品族.
 
-<img src="沈俊杰-马士兵-架构设计.assets/49.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/49.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
 
 抽象工厂模式的主要角色如下：
 
@@ -2544,7 +2544,7 @@ https://www.bilibili.com/read/cv18266097/
 
 * 指挥者类（Director）：调用具体建造者来创建复杂对象的各个部分，在指导者中不涉及具体产品的信息，只负责保证对象各部分完整创建或按某种顺序创建(客户端一般只需要与指挥者进行交互)。 
 
-<img src="沈俊杰-马士兵-架构设计.assets/52.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/52.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 #### 4.4.3 建造者模式实现方式1
 
@@ -2554,7 +2554,7 @@ https://www.bilibili.com/read/cv18266097/
 
 这里Bike是产品，包含车架，车座等组件；Builder是抽象建造者，MobikeBuilder和HelloBuilder是具体的建造者；Director是指挥者。类图如下：
 
-<img src="沈俊杰-马士兵-架构设计.assets/53.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/53.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 具体产品
 
@@ -3114,7 +3114,7 @@ StringBuilder；
 
 > 西游记中的孙悟空 拔毛变小猴,孙悟空这种根据自己的形状复制出多个身外化身的技巧,在面向对象软件设计领域被称为原型模式.孙悟空就是原型对象.
 
-<img src="沈俊杰-马士兵-架构设计.assets/54.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/54.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 
 
@@ -3132,7 +3132,7 @@ StringBuilder；
 * 具体原型类(ConcretePrototype)：实现在抽象原型类中声明的克隆方法,在克隆方法中返回自己的一个克隆对象.
 * 客户类(Client)：在客户类中,让一个原型对象克隆自身从而创建一个新的对象.由于客户类针对抽象原型类Prototype编程.因此用户可以根据需要选择具体原型类,系统具有较好的扩展性,增加或者替换具体原型类都比较方便.
 
-<img src="沈俊杰-马士兵-架构设计.assets/55.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/55.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 4.5.3 深克隆与浅克隆
 
@@ -3142,13 +3142,13 @@ StringBuilder；
 
 被复制对象的所有变量都含有与原来的对象相同的值，而所有的对其他对象的引用仍然指向原来的对象(克隆对象与原型对象共享引用数据类型变量)。
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/56.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/56.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 **2) 什么是深克隆**
 
 除去那些引用其他对象的变量，被复制对象的所有变量都含有与原来的对象相同的值。那些引用其他对象的变量将指向被复制过的新对象，而不再是原有的那些被引用的对象。换言之，深复制把要复制的对象所引用的对象都复制了一遍。
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/57.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/57.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 
 
@@ -3264,7 +3264,7 @@ public class Person {
 
 打印结果
 
-<img src="沈俊杰-马士兵-架构设计.assets/61.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/61.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 **说明: p1与p2是同一对象,这是浅克隆的效果,也就是对具体原型类中的引用数据类型的属性进行引用的复制.**
 
@@ -3303,7 +3303,7 @@ public class Person {
 
 打印结果:
 
-<img src="沈俊杰-马士兵-架构设计.assets/63.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/63.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 > 注意：ConcretePrototype类和Person类必须实现Serializable接口，否则会抛NotSerializableException异常。
 
@@ -3329,7 +3329,7 @@ SerializationUtils.clone()就是使用我们的前面讲的序列化实现深克
 
 **发送广告信邮件UML类图** 
 
-<img src="沈俊杰-马士兵-架构设计.assets/59.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/59.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 
 
@@ -3476,7 +3476,7 @@ public class Client {
 
 - **运行结果** 
 
-<img src="沈俊杰-马士兵-架构设计.assets/60.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/60.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 上面的代码存在的问题: 
 
@@ -3667,7 +3667,7 @@ public class Client {
 
 - 现实生活中的代理: **海外代购**
 
-​		<img src="沈俊杰-马士兵-架构设计.assets/65.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+​		<img src="学习笔记-Java-架构设计-Gem.assets/65.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 - 软件开发中的代理
 
@@ -3703,7 +3703,7 @@ public class Client {
 * 代理（Proxy）类 ： 提供了与真实主题相同的接口，其内部含有对真实主题的引用，它可以在任何时候访问、控制或扩展真实主题的功能。
 * 真实主题（Real Subject）类： 实现了抽象主题中的具体业务，是代理对象所代表的真实对象，是最终要引用的对象。
 
-<img src="沈俊杰-马士兵-架构设计.assets/66.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/66.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
 
 ####  静态代理实现
 
@@ -3935,7 +3935,7 @@ Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备�
 
 由于虚拟机规范对这3点要求并不具体，所以实际的实现是非常灵活的，关于第1点，**获取类的二进制字节流**（class字节码）就有很多途径：
 
-<img src="沈俊杰-马士兵-架构设计.assets/69.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/69.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 - 从本地获取
 
@@ -3943,7 +3943,7 @@ Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备�
 
 - **运行时计算生成**，这种场景使用最多的是动态代理技术，在 java.lang.reflect.Proxy 类中，就是用了 ProxyGenerator.generateProxyClass 来为特定接口生成形式为 `*$Proxy` 的代理类的二进制字节流
 
-  <img src="沈俊杰-马士兵-架构设计.assets/70.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+  <img src="学习笔记-Java-架构设计-Gem.assets/70.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
   
 
@@ -3953,9 +3953,9 @@ Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备�
 
 我们通过借用阿里巴巴的一款线上监控诊断产品 Arthas(阿尔萨斯) ,对动态生成的代理类代码进行查看
 
-<img src="沈俊杰-马士兵-架构设计.assets/67.jpg" alt="image-20220530160637842" style="zoom: 80%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/67.jpg" alt="image-20220530160637842" style="zoom: 80%;" />
 
-<img src="沈俊杰-马士兵-架构设计.assets/68.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/68.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
 
 
 
@@ -4109,7 +4109,7 @@ public final class $Proxy0 extends Proxy implements IUserDao {
 
 cglib (Code Generation Library ) 是一个第三方代码生成类库，运行时在内存中动态生成一个子类对象从而实现对目标对象功能的扩展。cglib 为没有实现接口的类提供代理，为JDK的动态代理提供了很好的补充。
 
-<img src="沈俊杰-马士兵-架构设计.assets/72.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/72.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 - 最底层是字节码
 - ASM是操作字节码的工具
@@ -4222,7 +4222,7 @@ public class Client {
 
 ##### cglib代理流程
 
-<img src="沈俊杰-马士兵-架构设计.assets/74.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/74.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 模式总结
 
@@ -4264,7 +4264,7 @@ public class Client {
 
 #### 5.2.2 桥接模式原理
 
-<img src="沈俊杰-马士兵-架构设计.assets/75.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/75.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 桥接（Bridge）模式包含以下主要角色：
 
@@ -4281,7 +4281,7 @@ public class Client {
 
 模拟不同的支付工具对应不同的支付模式,比如微信和支付宝都可以完成支付操作,而支付操作又可以有扫码支付、密码支付、人脸支付等,那么关于支付操作其实就有两个维度, 包括:**支付渠道和支付方式** 
 
-<img src="沈俊杰-马士兵-架构设计.assets/78.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/78.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 **1) 不使用设计模式**
 
@@ -4354,7 +4354,7 @@ public class Test_Pay {
 - 支付渠道*支付模式 = 相对应的组合.
 - 重构类图
 
-<img src="沈俊杰-马士兵-架构设计.assets/80.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/80.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 **1) 支付模式接口 (实现化角色)**
 
@@ -4635,11 +4635,11 @@ public class OracleDataSource implements DataSource {
 
 #### 5.3.1 装饰器模式介绍
 
-装饰模式(decorator pattern) 的原始定义是：动态的给一个对象添加一些额外的职责. 就扩展功能而言,装饰器模式提供了一种比使用子类更加灵活的替代方案.
+装饰模式（decorator pattern），也叫包装模式（Wrapper）。它的原始定义是：动态的给一个对象添加一些额外的职责. 就扩展功能而言,装饰器模式提供了一种比使用子类更加灵活的替代方案。
 
 > 假设现在有一块蛋糕,如果只有涂上奶油那这个蛋糕就是普通的**奶油蛋糕**, 这时如果我们添加上一些蓝莓,那这个蛋糕就是**蓝莓蛋糕**.如果我们再拿一块黑巧克力 然后写上姓名、插上代表年龄的蜡烛, 这就是变成了一块生日蛋糕 
 
-<img src="沈俊杰-马士兵-架构设计.assets/81.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/81.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 
 
@@ -4654,7 +4654,7 @@ public class OracleDataSource implements DataSource {
 * 抽象装饰（Decorator）角色 ：它也是抽象构件类的子类,用于给具体构件增加职责,但是具体职责在其子类中实现.它维护了一个指向抽象构件对象的引用,通过该引用可以调用装饰之前构件对象的方法,并通过其子类扩展该方法,以达到装饰的目的.
 * 具体装饰（ConcreteDecorator）角色 : 它是抽象装饰类的子类,负责向构件添加新的职责.每一个具体装饰类都定义了一些新的行为,它可以调用在抽象装饰类中定义的方法,并可以增加新的方法用于扩充对象的行为.
 
-<img src="沈俊杰-马士兵-架构设计.assets/82.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/82.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 代码如下
 
@@ -4737,7 +4737,7 @@ public class ConcreteDecorator extends Decorator {
 
 我们以一个文件读写器程序为例, 演示一下装饰者模式的使用,下面是该程序的UML类图
 
-<img src="沈俊杰-马士兵-架构设计.assets/84.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/84.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 - **DataLoader** 
   - 抽象的文件读取接口DataLoader 
@@ -4944,7 +4944,7 @@ public class TestDecorator {
 
 > 如果去欧洲国家去旅游的话，他们的插座如下图最左边，是欧洲标准。而我们使用的插头如下图最右边的。因此我们的笔记本电脑，手机在当地不能直接充电。所以就需要一个插座转换器，转换器第1面插入当地的插座，第2面供我们充电，这样使得我们的插头在当地能使用。生活中这样的例子很多，手机充电器（将220v转换为5v的电压），读卡器等，其实就是使用到了适配器模式。
 
-<img src="沈俊杰-马士兵-架构设计.assets/85.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/85.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 
 适配器模式是用来做适配，它将不兼容的接口转换为可兼容的接口，让原本由于接口不兼容而不能一起工作的类可以一起工作。适配器模式有两种实现方式：类适配器和对象适配器。其中，类适配器使用继承关系来实现，对象适配器使用组合关系来实现。
 
@@ -4981,7 +4981,7 @@ Adapter : +request()
 
 类图如下：
 
-<img src="沈俊杰-马士兵-架构设计.assets/89.jpg" style="zoom: 70%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/89.jpg" style="zoom: 70%;" /> 
 
 代码如下:
 
@@ -5101,7 +5101,7 @@ Adapter ..|> Target
 
 
 
-<img src="沈俊杰-马士兵-架构设计.assets/90.jpg" alt="image-20220530160637842" style="zoom: 70%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/90.jpg" alt="image-20220530160637842" style="zoom: 70%;" /> 
 
 
 
@@ -5213,7 +5213,7 @@ public class Client {
 
 门面模式并不符合开闭原则。当子系统有新的方法需要暴露时，可能需要修改门面类。
 
-<img src="沈俊杰-马士兵-架构设计.assets/91.jpg" alt="image-20220530160637842" style="zoom: 70%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/91.jpg" alt="image-20220530160637842" style="zoom: 70%;" /> 
 
 门面类充当了系统中的"服务员",它为多个业务类的调用提供了一个统一的入口,简化了类与类之间的交互,如果没有门面类,每个客户类需要和多个子系统之间进行复杂的交互,系统的耦合度将会很大.
 
@@ -5320,7 +5320,7 @@ public class Client {
 
 类图如下
 
-<img src="沈俊杰-马士兵-架构设计.assets/93.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/93.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 代码如下
 
@@ -5729,11 +5729,11 @@ public class Test {
 
 下面我们通过一段程序来演示一下组合模式的使用. 程序的功能是列出某一目录下所有的文件和文件夹.类图如下: 
 
-<img src="沈俊杰-马士兵-架构设计.assets/98.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/98.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 我们按照下图的表示,进行文件和文件夹的构建.
 
-<img src="沈俊杰-马士兵-架构设计.assets/97.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/97.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 Entry类: 抽象类,用来定义File类和Directory类的共性内容
 
@@ -5967,7 +5967,7 @@ public class Checkbox extends Component implements ItemSelectable, Accessible {
 
 比如: 一个文本字符串中存在很多重复的字符,如果每一个字符都用一个单独的对象来表示,将会占用较多的内存空间,我们可以使用享元模式解决这一类问题.
 
-​												<img src="沈俊杰-马士兵-架构设计.assets/101.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+​												<img src="学习笔记-Java-架构设计-Gem.assets/101.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 享元模式通过共享技术实现相同或者相似对象的重用,在逻辑上每一个出现的字符都有一个对象与之对应,然而在物理上他们却是共享同一个享元对象.
 
@@ -5975,7 +5975,7 @@ public class Checkbox extends Component implements ItemSelectable, Accessible {
 
 享元模式的结构较为复杂,通常会结合工厂模式一起使用,在它的结构图中包含了一个享元工厂类.
 
-<img src="沈俊杰-马士兵-架构设计.assets/102.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/102.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 享元模式的主要有以下角色：
 
@@ -6108,11 +6108,11 @@ public class FlyweightFactory {
 
 五子棋中有大量的黑子和白子,它们的形状大小都是一样的,只是出现的位置不同,所以一个棋子作为一个独立的对象存储在内存中,会导致大量的内存的浪费,我们使用享元模式来进行优化.
 
-<img src="沈俊杰-马士兵-架构设计.assets/103.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/103.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
 
 类图如下
 
-<img src="沈俊杰-马士兵-架构设计.assets/104.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/104.jpg" alt="image-20220530160637842" style="zoom: 90%;" /> 
 
 代码如下
 
@@ -6554,7 +6554,7 @@ public void test1(){
 
 上面的摇号业务中,摇号、发短信、发MQ消息是一个顺序调用的过程,但是除了摇号这个核心功能以外, 发短信与记录信息到MQ的操作都不是主链路的功能,需要单独抽取出来,这样才能保证在后面的开发过程中保证代码的可扩展性和可维护性.
 
-<img src="沈俊杰-马士兵-架构设计.assets/107.jpg" alt="image-202205301606378123422" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/107.jpg" alt="image-202205301606378123422" style="zoom: 50%;" /> 
 
 - 事件监听
 
@@ -6773,7 +6773,7 @@ JDK中提供了Observable类以及Observer接口,它们构成了JDK对观察者�
 
 > 例如: 我们去医院看病一般要经过以下4个流程：挂号、取号、排队、医生问诊等，其中挂号、 取号 、排队对每个病人是一样的，可以在父类中实现，但是具体医生如何根据病情开药每个人都是不一样的，所以开药这个操作可以延迟到子类中实现。
 
-​														<img src="沈俊杰-马士兵-架构设计.assets/108.jpg" alt="image-20220530160637842" style="zoom: 70%;" />	
+​														<img src="学习笔记-Java-架构设计-Gem.assets/108.jpg" alt="image-20220530160637842" style="zoom: 70%;" />	
 
 模板方法模式是一种基于继承的代码复用技术,它是一种类行为模式. 模板方法模式其结构中只存在父类与子类之间的继承关系.
 
@@ -6786,7 +6786,7 @@ JDK中提供了Observable类以及Observer接口,它们构成了JDK对观察者�
 
 模板方法模式的定位很清楚，就是为了解决算法框架这类特定的问题，同时明确表示需要使用继承的结构。
 
-<img src="沈俊杰-马士兵-架构设计.assets/109.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/109.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 模板方法（Template Method）模式包含以下主要角色：
 
@@ -7033,13 +7033,13 @@ public class Client {
 
 其实我们在现实生活中常常遇到实现某种目标存在多种策略可供选择的情况，例如，出行旅游可以乘坐飞机、乘坐火车、骑自行车或自己开私家车等。
 
-<img src="沈俊杰-马士兵-架构设计.assets/111.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/111.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 在软件开发中,经常会遇到这种情况,开发一个功能可以通过多个算法去实现,我们可以将所有的算法集中在一个类中,在这个类中提供多个方法,每个方法对应一个算法, 或者我们也可以将这些算法都封装在一个统一的方法中,使用if...else...等条件判断语句进行选择.但是这两种方式都存在硬编码的问题,后期需要增加算法就需要修改源代码,这会导致代码的维护变得困难.
 
 **比如网购，你可以选择工商银行、农业银行、建设银行等等，但是它们提供的算法都是一致的，就是帮你付款。**
 
-<img src="沈俊杰-马士兵-架构设计.assets/110.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/110.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 在软件开发中也会遇到相似的情况，当实现某一个功能存在多种算法或者策略，我们可以根据环境或者条件的不同选择不同的算法或者策略来完成该功能。
 
@@ -7047,7 +7047,7 @@ public class Client {
 
 在策略模式中可以定义一些独立的类来封装不同的算法,每一个类封装一种具体的算法,在这里每一个封装算法的类都可以被称为一种策略,为了保证这些策略在使用时具有一致性,一般会提供一个抽象的策略类来做算法的声明.而每种算法对应一个具体的策略类.
 
-![image-20230809150027453](沈俊杰-马士兵-架构设计.assets/image-20230809150027453.png) 
+![image-20230809150027453](学习笔记-Java-架构设计-Gem.assets/image-20230809150027453.png) 
 
 
 
@@ -7388,7 +7388,7 @@ public class Client {
 
 在职责链模式中，多个处理器（也就是刚刚定义中说的“接收对象”）依次处理同一个请 求。一个请求先经过 A 处理器处理，然后再把请求传递给 B 处理器，B 处理器处理完后再 传递给 C 处理器，以此类推，形成一个链条。链条上的每个处理器各自承担各自的处理职 责，所以叫作职责链模式。
 
-<img src="沈俊杰-马士兵-架构设计.assets/113.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/113.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 6.4.2 职责链模式原理
 
@@ -7533,7 +7533,7 @@ public class Client {
 
 接下来我们模拟有一个双11期间,业务系统审批的流程,临近双十一公司会有陆续有一些新的需求上线,为了保证线上系统的稳定,我们对上线的审批流畅做了严格的控制.审批的过程会有不同级别的负责人加入进行审批(平常系统上线只需三级负责人审批即可,双十一前后需要二级或一级审核人参与审批),接下来我们就使用职责链模式来设计一下此功能.
 
-<img src="沈俊杰-马士兵-架构设计.assets/116.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/116.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 **1) 不使用设计模式**
 
@@ -7709,7 +7709,7 @@ public class Client {
 
 下图是为当前业务设计的责任链结构,统一抽象类AuthLink 下 有三个子类,将三个子类的执行通过编排,模拟出一条链路,这个链路就是业务中的责任链.
 
-<img src="沈俊杰-马士兵-架构设计.assets/115.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/115.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 ```java
 /**
@@ -7918,7 +7918,7 @@ public class Client {
 
 自然界很多事物都有多种状态,而且不同状态下会具有不同的行为,这些状态在特定条件下还会发生相互转换,比如水
 
-​								<img src="沈俊杰-马士兵-架构设计.assets/117.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​								<img src="学习笔记-Java-架构设计-Gem.assets/117.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 在软件系统中,有些对象也像水一样具有多种状态,这些状态在某些情况下能够相互转换,而且对象在不同状态下也将具有不同的行为.
 
@@ -7930,7 +7930,7 @@ public class Client {
 
 状态模式结构图:
 
-<img src="沈俊杰-马士兵-架构设计.assets/118.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/118.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 从这个 UML 图中，我们能看出状态模式包含的关键角色有三个。
 
@@ -8028,7 +8028,7 @@ public class Client {
 
 模拟交通信号灯的状态转换. 交通信号灯一般包括了红、黄、绿3种颜色状态,不同状态之间的切换逻辑为: 红灯只能切换为黄灯,黄灯可以切换为绿灯或红灯,绿灯只能切换为黄灯.
 
- <img src="沈俊杰-马士兵-架构设计.assets/119.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+ <img src="学习笔记-Java-架构设计-Gem.assets/119.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 **1) 不使用设计模式** 
 
@@ -8228,7 +8228,7 @@ public class Client {
 
 **迭代器模式(Iterator pattern)又叫游标（Cursor）模式，它的原始定义是：迭代器提供一种对容器对象中的各个元素进行访问的方法，而又不需要暴露该对象的内部细节。**
 
-<img src="沈俊杰-马士兵-架构设计.assets/120.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/120.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 在软件系统中,容器对象拥有两个职责: 一是存储数据,而是遍历数据.从依赖性上看,前者是聚合对象的基本职责.而后者是可变化的,又是可分离的.因此可以将遍历数据的行为从容器中抽取出来,封装到迭代器对象中,由迭代器来提供遍历数据的行为,这将简化聚合对象的设计,更加符合单一职责原则
 
@@ -8236,7 +8236,7 @@ public class Client {
 
 **迭代器模式结构图**
 
-<img src="沈俊杰-马士兵-架构设计.assets/121.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/121.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 迭代器模式主要包含以下角色：
 
@@ -8512,7 +8512,7 @@ public class Client {
 
 #### 6.7.2 访问者模式原理
 
-<img src="沈俊杰-马士兵-架构设计.assets/122.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/122.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 访问者模式包含以下主要角色:
 
@@ -9112,13 +9112,13 @@ ClassWriter 是 ClassVisitor 的是实现类，它负责将修改后的字节码
 
 备忘录模式为何要保存数据呢?目的就是为了在有需要的时候，恢复原发器对象的内部状态。所以恢复是备忘录模式的目的。
 
-<img src="沈俊杰-马士兵-架构设计.assets/123.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/123.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 > 很多软件都提供了撤销（Undo）操作，如 Word、记事本、Photoshop、IDEA等软件在编辑时按 Ctrl+Z 组合键时能撤销当前操作，使文档恢复到之前的状态；还有在 浏览器 中的后退键、数据库事务管理中的回滚操作、玩游戏时的中间结果存档功能、数据库与操作系统的备份操作、棋类游戏中的悔棋功能等都属于这类。
 
 #### 6.8.2 备忘录模式原理
 
-<img src="沈俊杰-马士兵-架构设计.assets/125.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/125.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 备忘录模式的主要角色如下：
 
@@ -9486,7 +9486,7 @@ public class MainApp {
 
 #### 6.9.2 命令模式原理
 
-<img src="沈俊杰-马士兵-架构设计.assets/126.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/126.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 命令模式包含以下主要角色：
 
@@ -9503,7 +9503,7 @@ public class MainApp {
 
 录音机是典型的命令模式。录音机按键把客户端与录音机的操作细节分割开来。
 
-![image-20230410162223882](沈俊杰-马士兵-架构设计.assets/image-20230410162223882.png)
+![image-20230410162223882](学习笔记-Java-架构设计-Gem.assets/image-20230410162223882.png)
 
 参考代码
 
@@ -10025,17 +10025,17 @@ public class Client {
 
 中介者模式（Mediator Pattern）是一种行为型设计模式。中介者模式通过中介者对象来封装一系列的对象交互，将对象间复杂的关系网状结构变成结构简单的以中介者为核心的星形结构，对象间一对多的关联转变为一对一的关联，简化对象间的关系，便于理解；各个对象之间的关系被解耦，每个对象不再和它关联的对象直接发生相互作用，而是通过中介者对象来与关联的对象进行通讯，使得对象可以相对独立地使用，提高了对象的可复用和系统的可扩展性。在中介者模式中，中介者类处于核心地位，它封装了系统中所有对象类之间的关系，除了简化对象间的关系，还可以对对象间的交互进行进一步的控制。
 
-![20181105012947252](沈俊杰-马士兵-架构设计.assets/20181105012947252.jpg)
+![20181105012947252](学习笔记-Java-架构设计-Gem.assets/20181105012947252.jpg)
 
 比较经典的例子就是航空管制。 为了让飞机在飞行的时候互不干扰，每架飞机都需要知道其他飞机每时每刻的位置，这就需要时刻跟其他飞机通信。飞机通信形成的通信网络就会无比复杂。这个时候，我们通过引 入“塔台”这样一个中介，让每架飞机只跟塔台来通信，发送自己的位置给塔台，由塔台来 负责每架飞机的航线调度。这样就大大简化了通信网络。
 
-​													<img src="沈俊杰-马士兵-架构设计.assets/129.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+​													<img src="学习笔记-Java-架构设计-Gem.assets/129.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 中介者对象就是用于处理对象与对象之间的直接交互，封装了多个对象之间的交互细节。中介模式的设计跟中间层很像，通过引入中介这个中间层，将一组对象之间的交互关系从多对多的网状关系转换为一对多的星状关系。原来一个对象要跟N个对象交互，现在只需要跟一个中介对象交互。从而最小化对象之间的交互关系，降低代码的复杂度，提高代码的可读性和可维护性。
 
 #### 6.11.2 中介者模式原理
 
-<img src="沈俊杰-马士兵-架构设计.assets/132.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/132.jpg" alt="image-20220530160637842" style="zoom: 50%;" />  
 
 中介者模式包含以下主要角色：
 
@@ -10313,7 +10313,7 @@ Bean组件定义在Spring的**org.springframework.beans**包下，解决了以�
 
 Spring Bean的创建是典型的工厂模式，它的顶级接口是BeanFactory。
 
-<img src="沈俊杰-马士兵-架构设计.assets/137.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/137.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
 
 
 
@@ -10632,7 +10632,7 @@ FactoryBean表现的是一个工厂的职责,如果一个BeanA 是实现FactoryB
 - 在设计模式结构上，发布订阅模式**继承**自观察者模式，是观察者模式的一种实现的变体。
 - 在设计模式意图上，两者**关注点**不同，一个关心数据源，一个关心的是事件消息。
 
-<img src="沈俊杰-马士兵-架构设计.assets/134.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/134.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 > 观察者模式里，只有两个角色 —— 观察者 + 被观察者; 而发布订阅模式里，却不仅仅只有发布者和订阅者两个角色，还有一个管理并执行消息队列的 “经纪人Broker”
 >
@@ -10684,7 +10684,7 @@ spring事件模型提供如下几个角色
 
   - RequestHandledEvent，只能用于DispatcherServlet的web应用，Spring处理用户请求结束后，系统会触发该事件。
 
-​		 <img src="沈俊杰-马士兵-架构设计.assets/133.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+​		 <img src="学习笔记-Java-架构设计-Gem.assets/133.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 **2) 事件监听：ApplicationListener** 
 
@@ -10859,7 +10859,7 @@ public class SpringEventTest {
 
 上面代码的执行流程
 
-<img src="沈俊杰-马士兵-架构设计.assets/146.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/146.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 1. 监听器什么时候注册到IOC容器
 
@@ -10920,7 +10920,7 @@ public class SpringEventTest {
 
    那么最后将监听者放到哪里了呢？就是ApplicationEventMulticaster接口的子类
 
-   <img src="沈俊杰-马士兵-架构设计.assets/135.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+   <img src="学习笔记-Java-架构设计-Gem.assets/135.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
    该接口主要两个职责，维护ApplicationListener相关类和发布事件。
 
@@ -11045,7 +11045,7 @@ public class SpringEventTest {
 
 BeanFactory作为最顶层的一个接口，定义了IoC容器的基本功能规范
 
-<img src="沈俊杰-马士兵-架构设计.assets/137.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/137.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 从类图中我们可以发现最终的默认实现类是DefaultListableBeanFactory，它实现了所有的接口。那么为何要定义这么多层次的接口呢？
 每个接口都有它的使用场合，主要是为了区分在Spring内部操作过程中对象的传递和转化，对对象的数据访问所做的限制。
@@ -11119,7 +11119,7 @@ Bean的解析过程非常复杂，功能被分得很细，因为这里需要被�
 
 这个解析过程主要通过BeanDefinitionReader来完成，看看Spring中BeanDefinitionReader的类结构图，如下图所示。
 
-​                       <img src="沈俊杰-马士兵-架构设计.assets/140.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+​                       <img src="学习笔记-Java-架构设计-Gem.assets/140.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 BeanDefinitionReader接口定义的功能
 
@@ -11148,7 +11148,7 @@ public interface BeanDefinitionReader {
 
 实现该接口，可以在spring的bean创建之前，修改bean的定义属性
 
-<img src="沈俊杰-马士兵-架构设计.assets/141.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/141.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
  
 
@@ -11171,7 +11171,7 @@ BeanPostProcessor是Spring IOC容器给我们提供的一个扩展接口
 
 实现该接口，可以在spring容器实例化bean之后，在执行bean的初始化方法前后，添加一些处理逻辑
 
-<img src="沈俊杰-马士兵-架构设计.assets/143.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/143.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
  
 
@@ -11186,7 +11186,7 @@ public interface BeanPostProcessor {
 
 #### 7.1.3.2 IOC流程图
 
-<img src="沈俊杰-马士兵-架构设计.assets/145.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/145.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 
 1. 容器环境的初始化(系统、JVM 、解析器、类加载器等等)
 2. Bean工厂的初始化(IOC容器首先会销毁旧工厂,旧Bean、创建新的工厂)
@@ -11439,7 +11439,7 @@ public interface BeanDefinitionRegistry extends AliasRegistry {
 
 BeanDefinitionRegistry继承结构图如下：
 
-<img src="沈俊杰-马士兵-架构设计.assets/147.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/147.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 BeanDefinitionRegistry接口的子实现类主要有以下两个：
 
@@ -11954,10 +11954,10 @@ MyBatis 是一个 ORM（Object Relational Mapping，对象 - 关系映射）框�
 
 > ORM 负责将程序中的对象 存储到数据库中、将数据库中的数据转化为程序中的对象
 
-<img src="沈俊杰-马士兵-架构设计.assets/149.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/149.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 **Mybatis架构** 
 
-<img src="沈俊杰-马士兵-架构设计.assets/150.jpg" alt="image-20220530160637842" style="zoom: 50%;" />   
+<img src="学习笔记-Java-架构设计-Gem.assets/150.jpg" alt="image-20220530160637842" style="zoom: 50%;" />   
 
 ```txt
 1、mybatis配置
@@ -12132,25 +12132,25 @@ Builder模式的定义是“将一个复杂对象的构建与它的表示分离�
 
 《effective-java》中第2条也提到：**遇到多个构造器参数时，考虑用构建者(Builder)模式**。
 
-<img src="沈俊杰-马士兵-架构设计.assets/52.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/52.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 在Mybatis环境的初始化过程中，`SqlSessionFactoryBuilder`会调用`XMLConfigBuilder`读取所有的`MybatisMapConfig.xml`和所有的`*Mapper.xml`文件，构建Mybatis运行的核心对象`Configuration`对象，然后将该`Configuration`对象作为参数构建一个`SqlSessionFactory`对象。
 
-<img src="沈俊杰-马士兵-架构设计.assets/154.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/154.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
 
 其中`XMLConfigBuilder`在构建`Configuration`对象时，也会调用`XMLMapperBuilder`用于读取`*.Mapper`文件，而`XMLMapperBuilder`会使用`XMLStatementBuilder`来读取和build所有的SQL语句。
 
-<img src="沈俊杰-马士兵-架构设计.assets/155.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/155.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
-<img src="沈俊杰-马士兵-架构设计.assets/156.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/156.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 
-<img src="沈俊杰-马士兵-架构设计.assets/157.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/157.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 在这个过程中，有一个相似的特点，就是这些Builder会读取文件或者配置，然后做大量的XpathParser解析、配置或语法的解析、反射生成对象、存入结果缓存等步骤，这么多的工作都不是一个构造函数所能包括的，因此大量采用了Builder模式来解决。
 
 对于builder的具体类，方法都大都用`build*`开头，比如`SqlSessionFactoryBuilder`为例，它包含以下方法：
 
-<img src="沈俊杰-马士兵-架构设计.assets/151.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/151.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 从建造者模式的设计初衷上来看，SqlSessionFactoryBuilder 虽然带有 Builder 后缀，但 不要被它的名字所迷惑，它并不是标准的建造者模式。一方面，原始类 SqlSessionFactory 的构建只需要一个参数，并不复杂。
 
@@ -12162,21 +12162,21 @@ Builder模式的定义是“将一个复杂对象的构建与它的表示分离�
 
 简单工厂模式(Simple Factory Pattern)：又称为静态工厂方法(Static Factory Method)模式，它属于类创建型模式。在简单工厂模式中，可以根据参数的不同返回不同类的实例。简单工厂模式专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类。
 
-<img src="沈俊杰-马士兵-架构设计.assets/158.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/158.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 `SqlSession`可以认为是一个Mybatis工作的核心的接口，通过这个接口可以执行执行SQL语句、获取Mappers、管理事务。类似于连接MySQL的`Connection`对象。
 
-<img src="沈俊杰-马士兵-架构设计.assets/159.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/159.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 可以看到，该Factory的`openSession（）`方法重载了很多个，分别支持`autoCommit`、`Executor`、`Transaction` 等参数的输入，来构建核心的`SqlSession`对象。
 
 在`DefaultSqlSessionFactory`的默认工厂实现里，有一个方法可以看出工厂怎么产出一个产品：
 
-<img src="沈俊杰-马士兵-架构设计.assets/160.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/160.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 openSessionFromDataSource方法,
 
-<img src="沈俊杰-马士兵-架构设计.assets/161.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/161.jpg" alt="image-20220530160637842" style="zoom: 50%;" />
 
 这是一个openSession调用的底层方法，该方法先从configuration读取对应的环境配置，然后初始化`TransactionFactory`获得一个`Transaction`对象，然后通过`Transaction`获取一个`Executor`对象，最后通过configuration、Executor、是否autoCommit三个参数构建了`SqlSession`。
 
@@ -12218,15 +12218,15 @@ public class ErrorContext {
 
 代理模式(Proxy Pattern) ：给某一个对象提供一个代 理，并由代理对象控制对原对象的引用。代理模式的英 文叫做Proxy，它是一种对象结构型模式。
 
-<img src="沈俊杰-马士兵-架构设计.assets/66.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/66.jpg" alt="image-20220530160637842" style="zoom: 80%;" /> 
 
 这里有两个步骤，第一个是提前创建一个Proxy，第二个是使用的时候会自动请求Proxy，然后由Proxy来执行具体事务；
 
 当我们使用`Configuration`的`getMapper`方法时，会调用`mapperRegistry.getMapper`方法，而该方法又会调用`mapperProxyFactory.newInstance(sqlSession)`来生成一个具体的代理：
 
-<img src="沈俊杰-马士兵-架构设计.assets/162.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/162.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
-<img src="沈俊杰-马士兵-架构设计.assets/163.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/163.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 ```java
 /**
@@ -12337,7 +12337,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
 组合模式其实就是将一组对象(文件夹和文件)组织成树形结构,以表示一种'部分-整体' 的层次结构,(目录与子目录的嵌套结构). 组合模式让客户端可以统一单个对象(文件)和组合对象(文件夹)的处理逻辑(递归遍历).
 
-<img src="沈俊杰-马士兵-架构设计.assets/96.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/96.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 Mybatis支持动态SQL的强大功能，比如下面的这个SQL：
 
@@ -12382,15 +12382,15 @@ public interface SqlNode {
 
 对于实现该`SqlSource`接口的所有节点，就是整个组合模式树的各个节点：
 
-<img src="沈俊杰-马士兵-架构设计.assets/164.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/164.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 组合模式的简单之处在于，所有的子节点都是同一类节点，可以递归的向下执行，比如对于TextSqlNode，因为它是最底层的叶子节点，所以直接将对应的内容append到SQL语句中：
 
-<img src="沈俊杰-马士兵-架构设计.assets/165.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/165.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 但是对于IfSqlNode，就需要先做判断，如果判断通过，仍然会调用子元素的SqlNode，即`contents.apply`方法，实现递归的解析。
 
-<img src="沈俊杰-马士兵-架构设计.assets/166.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/166.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 #### 7.2.2.6 模板方法模式
 
@@ -12400,15 +12400,15 @@ public interface SqlNode {
 
 模板类定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。
 
-<img src="沈俊杰-马士兵-架构设计.assets/109.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/109.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 在Mybatis中，sqlSession的SQL执行，都是委托给Executor实现的，Executor包含以下结构：
 
-<img src="沈俊杰-马士兵-架构设计.assets/167.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/167.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
 
 其中的BaseExecutor就采用了模板方法模式，它实现了大部分的SQL执行逻辑，然后把以下几个方法交给子类定制化完成：
 
-<img src="沈俊杰-马士兵-架构设计.assets/177.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
+<img src="学习笔记-Java-架构设计-Gem.assets/177.jpg" alt="image-20220530160637842" style="zoom: 100%;" />  
 
 ```java
 protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQLException;
@@ -12422,7 +12422,7 @@ protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQL
 
 比如在SimpleExecutor中这样实现doUpdate方法：
 
-<img src="沈俊杰-马士兵-架构设计.assets/168.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/168.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 模板模式基于继承来实现代码复用。如果抽象类中包含模板方法，模板方法调用有待子类实 现的抽象方法，那这一般就是模板模式的代码实现。而且，在命名上，模板方法与抽象方法 一般是一一对应的，抽象方法在模板方法前面多一个“do”，比如，在 BaseExecutor 类 中，其中一个模板方法叫 update()，那对应的抽象方法就叫 doUpdate()。
 
@@ -12430,15 +12430,15 @@ protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQL
 
 适配器模式(Adapter Pattern) ：将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作，其别名为包装器(Wrapper)。适配器模式既可以作为类结构型模式，也可以作为对象结构型模式。
 
-<img src="沈俊杰-马士兵-架构设计.assets/88.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/88.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 在Mybatsi的logging包中，有一个Log接口：
 
-<img src="沈俊杰-马士兵-架构设计.assets/169.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/169.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 该接口定义了Mybatis直接使用的日志方法，而Log接口具体由谁来实现呢？Mybatis提供了多种日志框架的实现，这些实现都匹配这个Log接口所定义的接口方法，最终实现了所有外部日志框架到Mybatis日志包的适配：
 
-<img src="沈俊杰-马士兵-架构设计.assets/170.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/170.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 比如对于`Log4jImpl`的实现来说，该实现持有了`org.apache.log4j.Logger`的实例，然后所有的日志方法，均委托该实例来实现。
 
@@ -12520,15 +12520,15 @@ public class Log4jImpl implements Log {
 
 装饰模式(Decorator Pattern) ：动态地给一个对象增加一些额外的职责(Responsibility)，就增加对象功能来说，装饰模式比生成子类实现更为灵活。其别名也可以称为包装器(Wrapper)，与适配器模式的别名相同，但它们适用于不同的场合。根据翻译的不同，装饰模式也有人称之为“油漆工模式”，它是一种对象结构型模式。
 
-<img src="沈俊杰-马士兵-架构设计.assets/82.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/82.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 在mybatis中，缓存的功能由根接口`Cache（org.apache.ibatis.cache.Cache）`定义。整个体系采用装饰器设计模式，数据存储和缓存的基本功能由`PerpetualCache（org.apache.ibatis.cache.impl.PerpetualCache）`永久缓存实现，然后通过一系列的装饰器来对`PerpetualCache`永久缓存进行缓存策略等方面的控制。如下图：
 
-<img src="沈俊杰-马士兵-架构设计.assets/171.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/171.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 用于装饰PerpetualCache的标准装饰器共有8个（全部在org.apache.ibatis.cache.decorators包中）：
 
-<img src="沈俊杰-马士兵-架构设计.assets/172.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/172.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 1. `FifoCache`：先进先出算法，缓存回收策略
 2. `LoggingCache`：输出缓存命中的日志信息
@@ -12547,7 +12547,7 @@ public class Log4jImpl implements Log {
 
 缓存就是内存中的数据，常常来自对数据库查询结果的保存。使用缓存，我们可以避免频繁的与数据库进行交互，进而提高响应速度MyBatis也提供了对缓存的支持，分为一级缓存和二级缓存，可以通过下图来理解：
 
-<img src="沈俊杰-马士兵-架构设计.assets/179.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/179.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 ①、一级缓存是SqlSession级别的缓存。在操作数据库时需要构造sqlSession对象，在对象中有一个数据结构（HashMap）用于存储缓存数据。不同的sqlSession之间的缓存数据区域（HashMap）是互相不影响的。
 
@@ -12641,7 +12641,7 @@ false
 
 之前说`不同SqlSession的一级缓存互不影响`,所以我从SqlSession这个类入手
 
-<img src="沈俊杰-马士兵-架构设计.assets/180.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/180.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 可以看到，`org.apache.ibatis.session.SqlSession`中有一个和缓存有关的方法——`clearCache()`刷新缓存的方法，点进去，找到它的实现类`DefaultSqlSession`
 
@@ -12697,13 +12697,13 @@ public class PerpetualCache implements Cache {
 
 我们看到了`PerpetualCache`类中有一个属性`private Map<Object, Object> cache = new HashMap<Object, Object>()`，很明显它是一个HashMap，我们所调用的`.clear()`方法，**实际上就是调用的Map的clear方法**
 
-<img src="沈俊杰-马士兵-架构设计.assets/181.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/181.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 **得出结论：**
 
 一级缓存的数据结构确实是HashMap
 
-<img src="沈俊杰-马士兵-架构设计.assets/182.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/182.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 ##### 一级缓存的执行流程 
 
@@ -12711,7 +12711,7 @@ public class PerpetualCache implements Cache {
 看到一个方法`CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql)` ，见名思意是一个创建CacheKey的方法
 找到它的实现类和方法`org.apache.ibatis.executor.BaseExecuto.createCacheKey`
 
-<img src="沈俊杰-马士兵-架构设计.assets/183.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/183.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 我们分析一下创建CacheKey的这块代码：
 
@@ -12808,11 +12808,11 @@ public class CacheKey implements Cloneable, Serializable {
 
 我们知道了那些数据是在CacheKey对象中如何存储的了。下面我们返回`createCacheKey()`方法。
 
-<img src="沈俊杰-马士兵-架构设计.assets/1.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/1.jpg" alt="image-20220530160637842" style="zoom: 100%;" /> 
 
 我们可以看到，创建CacheKey后调用了query()方法，我们再次点进去：
 
-<img src="沈俊杰-马士兵-架构设计.assets/2.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
+<img src="学习笔记-Java-架构设计-Gem.assets/2.jpg" alt="image-20220530160637842" style="zoom: 100%;" />
 
 在执行SQL前如何在一级缓存中找不到Key，那么将会执行sql，我们来看一下执行sql前后会做些什么，进入`list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);`
 
@@ -12846,13 +12846,13 @@ public class CacheKey implements Cloneable, Serializable {
 
 迭代器（Iterator）模式，又叫做游标（Cursor）模式。GOF给出的定义为：提供一种方法访问一个容器（container）对象中各个元素，而又不需暴露该对象的内部细节。
 
-<img src="沈俊杰-马士兵-架构设计.assets/121.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/121.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 在软件系统中,容器对象拥有两个职责: 一是存储数据,而是遍历数据.从依赖性上看,前者是聚合对象的基本职责.而后者是可变化的,又是可分离的.因此可以将遍历数据的行为从容器中抽取出来,封装到迭代器对象中,由迭代器来提供遍历数据的行为,这将简化聚合对象的设计,更加符合单一职责原则.
 
 Java的`Iterator`就是迭代器模式的接口，只要实现了该接口，就相当于应用了迭代器模式：
 
-<img src="沈俊杰-马士兵-架构设计.assets/174.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
+<img src="学习笔记-Java-架构设计-Gem.assets/174.jpg" alt="image-20220530160637842" style="zoom: 50%;" /> 
 
 比如Mybatis的`PropertyTokenizer`是property包中的重量级类，该类会被reflection包中其他的类频繁的引用到。这个类实现了`Iterator`接口，在使用时经常被用到的是`Iterator`接口中的`hasNext`这个函数。
 
@@ -13119,7 +13119,7 @@ src/main/resources/log4j2.xml
 
 1. 在要创建单元测试的功能类上，依次点Code > generate > Test
 2. 然后在弹出的窗口中，选择Junit版本为5，测试类名，测试方法等。然后点确定。
-3. ![image-20230801224701278](沈俊杰-马士兵-架构设计.assets/image-20230801224701278.png)
+3. ![image-20230801224701278](学习笔记-Java-架构设计-Gem.assets/image-20230801224701278.png)
 4. IDEA会自动根据功能类的路径在test目录中创建相同路径但以Test结尾的测试类。并且会自动生成勾选方法的默认测试代码。
 5. 根据程序的输入和输出，编写单元测试代码。
 6. 点击方法左边的绿色三角形就可以执行单元测试用例了。
@@ -14068,7 +14068,7 @@ Java目前总共有3种网络编程IO模型：BIO、NIO、AIO，他们之间的�
 
 Blocking IO，还有一种叫法：OIO（Old IO），即同步阻塞式IO，JDK1.4 以前的唯一选择。服务器会有一个线程以阻塞的方式等待客户端的连接（accept方法），当有一个客户端连接进入后会创建线程来处理（也可以是线程池）。线程建立后如果客户端如果没有数据可读，线程会一直响应。处理结束返回响应给客户端。处理流程如下图：
 
-![image-20230815165649418](沈俊杰-马士兵-架构设计.assets/image-20230815165649418.png)
+![image-20230815165649418](学习笔记-Java-架构设计-Gem.assets/image-20230815165649418.png)
 
 
 
@@ -14185,7 +14185,7 @@ NIO，Non-Blocking IO，还有一种叫法是New IO，同步非阻塞式IO。JDK
 3. Java NIO 的非阻塞模式，使一个线程从某通道发送请求或者读取数据，但是它仅能得到目前可用的数据，如果目前没有数据可用时，就什么都不会获取，而不是保持线程阻塞，所以直至数据变的可以读取之前，该线程可以继续做其他的事情。非阻塞写也是如此，一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。
 4. 通俗理解：NIO 是可以做到用一个线程来处理多个操作的。假设有 10000 个请求过来,根据实际情况，可以分配 50 或者 100 个线程来处理。不像之前的阻塞 IO 那样，非得分配 10000 个。
 
-![image-20230815174536041](沈俊杰-马士兵-架构设计.assets/image-20230815174536041.png)
+![image-20230815174536041](学习笔记-Java-架构设计-Gem.assets/image-20230815174536041.png)
 
 **举例说明**
 
@@ -14704,7 +14704,7 @@ class MyClientHandler extends ChannelInboundHandlerAdapter {
 
       5. 实现效果如下图（图1是服务端，图2，3是2个客户端）
 
-      6. ![image-20230816215306122](沈俊杰-马士兵-架构设计.assets/image-20230816215306122.png)
+      6. ![image-20230816215306122](学习笔记-Java-架构设计-Gem.assets/image-20230816215306122.png)
 
       7. 参考代码如下。（只需要修改服务端代码，客户端不变）
 
