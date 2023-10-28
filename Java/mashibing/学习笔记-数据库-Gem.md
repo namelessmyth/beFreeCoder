@@ -50,9 +50,122 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 # MySQL
 
+## 参考说明
+
+本文内容来源于个人实践以及工作经验总结，还有部分参考了以下内容。
+
+- 马士兵教育视频教程及配套笔记（[MySQL实战调优-连鹏举](https://www.mashibing.com/study?courseNo=392&sectionNo=2801&courseVersionId=1297)）
+- 菜鸟教程，https://www.runoob.com/mongodb/mongodb-create-database.html。
 
 
 
+## 安装
+
+### 宝塔安装
+
+宝塔版本：8.0.3
+
+在左侧的菜单栏中选择数据库，添加数据库服务器，然后选择你想安装的数据库版本（例如：8.0.24），然后选极速安装，大概等待10分钟就全自动安装好了。（实际等待时间可能因为网速不同而不同）
+
+安装成功之后，建议点“root密码”按钮修改root密码。
+
+然后参考下文修改root用户的外网访问权限。
+
+
+
+### 用户外网访问权限
+
+安装好MySQL以后，默认root用户是不能通过外网访问的。
+
+如果连接会报错：`message from server: "Host 'dell-xxxx' is not allowed to connect to this MySQL server`
+
+这时候可以按照如下步骤开通root的外网访问权限：
+
+1. 在MySQL服务器本地输入命令：`mysql -u root -p`
+2. 然后输入root用户的密码。登录后切换到mysql数据库：`use mysql`
+3. 让所有ip都可以访问：`update user set host = '%' where user = 'root';`
+4. 刷新权限用户权限：`flush privileges;`
+5. 此时再用客户端就应该可以了。例如：navicat、dbeaver
+
+
+
+## 基础层级
+
+- client
+- server
+  - 连接器，控制用户连接。
+  - 分析器，词法分析，语法分析。将SQL解析成AST树（抽象语法树）
+  - 优化器，优化SQL，确定执行流程。RBO&CBO，现在更多的场景是CBO，基于成本优化。
+  - 执行器。实际执行SQL的组件。
+  - 缓存。实际命中率很低，8.0开始就废弃了。
+- 存储引擎
+
+
+
+## 性能监控
+
+### 自带工具
+
+#### 精确显示sql执行时间
+
+我们执行SQL语句时，默认会显示SQL执行时间。但是精确到小数点后2位。使用下面的命令可以显示的更精确。
+
+```sql
+mysql> select * from employee;
+#默认显示时间精确到小数点后2位
+Empty set (0.00 sec)
+
+#开启时间精确显示
+mysql> set profiling=1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> select * from employee;
+Empty set (0.00 sec)
+
+mysql> show profiles;
++----------+------------+------------------------+
+| Query_ID | Duration   | Query                  |
++----------+------------+------------------------+
+|        1 | 0.00021375 | select * from employee |
++----------+------------+------------------------+
+1 row in set, 1 warning (0.00 sec)
+
+#使用下面的命令会显示更多的SQL执行细节。
+mysql> show profile;
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000063 |
+| Executing hook on transaction  | 0.000005 |
+| starting                       | 0.000006 |
+| checking permissions           | 0.000004 |
+| Opening tables                 | 0.000024 |
+| init                           | 0.000004 |
+| System lock                    | 0.000006 |
+| optimizing                     | 0.000003 |
+| statistics                     | 0.000022 |
+| preparing                      | 0.000011 |
+| executing                      | 0.000020 |
+| end                            | 0.000002 |
+| query end                      | 0.000002 |
+| waiting for handler commit     | 0.000006 |
+| closing tables                 | 0.000006 |
+| freeing items                  | 0.000023 |
+| cleaning up                    | 0.000007 |
++--------------------------------+----------+
+17 rows in set, 1 warning (0.00 sec)
+```
+
+可以看到show profile;命令会显示出一个sql执行过程中每一个步骤的时间。以下是每个步骤的介绍
+
+> starting：始执行
+> Executing hook on transaction：开启对应事务
+> checking permissions：检查权限
+> Opening tables：打开表
+> init：进行初始化的操作
+> optimizing：优化的操作
+> statistics：统计的操作
+> executing：执行的操作
 
 
 
@@ -152,6 +265,8 @@ MongoDB：是一个数据库 ,高性能、无模式、文档性，目前nosql中
 
 除了第一点必须符合之外，其他项的Yes越多，越推荐使用MongoDB。
 
+新版本MongoDB支持事务，目前有一些电商全程已经在尝试全部使用MongoDB，据说某个航空公司（东方航空）使用MongoDB存储航班信息和用户信息。
+
 ### 使用场景案例
 
 MongoDB 的应用已经渗透到各个领域，比如游戏、物流、电商、内容管理、社交、物联网、视频直播等，以下是几个实际的应用案例：
@@ -172,7 +287,7 @@ MongoDB 的应用已经渗透到各个领域，比如游戏、物流、电商、
 
 - 传统的商业智能应用：特定问题的数据分析，多数据实体关联，涉及到复杂的、高度优化的查询方式；
 
-- 使用sql方便的时候；数据结构相对固定，使用sql进行查询统计更加便利的时候；
+- 使用sql更方便的场景；数据结构相对固定，使用sql进行查询统计更加便利的时候；
 
 ### 谁在使用MongoDB
 
@@ -414,5 +529,122 @@ pretty() 方法以格式化的方式来显示所有文档。
 
 
 
-#### 修改文档
+## Java客户端
+
+### Springboot集成
+
+下面的案例，是使用Springboot的MongoTemplate来对MongoDb进行操作。
+
+MongoDb版本：5.0.5，docker版。
+
+**maven依赖**
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.mongodb</groupId>
+    <artifactId>mongo-java-driver</artifactId>
+    <version>3.12.14</version>
+</dependency>
+
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.28</version>
+</dependency>
+```
+
+**配置文件**
+
+```properties
+# 注意：这种配置URI的方式和下面分开指定每个参数的方式只能选一种。
+#spring.data.mongodb.uri=mongodb://admin:123456@dokcer-study:27017/?authSource=admin
+
+# MongoDB服务器连接IP地址（这里的docker-study是在hosts中做了映射）
+spring.data.mongodb.host=docker-study
+# MongoDB服务器连接端口
+spring.data.mongodb.port=27017
+# MongoDB的验证数据库
+spring.data.mongodb.authentication-database=admin
+# MongoDB数据库用户
+spring.data.mongodb.username=admin
+# MongoDB数据库密码
+spring.data.mongodb.password=123456
+# 带连接的数据库
+spring.data.mongodb.database=test
+```
+
+
+
+#### 在集合中插入文档
+
+**Java代码**
+
+值对象使用@Document注解和集合进行映射。
+
+```java
+@SpringBootApplication
+public class MongoDbApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MongoDbApplication.class, args);
+    }
+}
+
+//映射集合名字
+@Document("collection1")
+@Data
+@ToString
+public class MongoPO {
+    private String id;
+    private Integer a;
+    private Integer b;
+    private String s;
+}
+
+@RestController
+@RequestMapping("/mongo")
+@Slf4j
+public class MongoController {
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    @GetMapping("/insertOne")
+    public String insertOne() {
+        MongoPO p = new MongoPO();
+        p.setA(3);
+        p.setB(3);
+        mongoTemplate.insert(p);
+        return p.toString();
+    }
+}
+```
+
+**执行结果**
+
+```shell
+test> db.collection1.find();
+[
+  { _id: ObjectId("6538e34c4a80d9e751786811"), a: 1, b: 2 },
+  { _id: ObjectId("6538f62f4a80d9e751786812"), a: 1, b: 2 },
+  { _id: ObjectId("6538f7164a80d9e751786813"), a: 2, b: 3 },
+  { _id: ObjectId("6538f7164a80d9e751786814"), a: 3, b: 4 },
+  { _id: ObjectId("6538f7164a80d9e751786815"), a: 4, b: 5 },
+  {
+    _id: ObjectId("653a10f36de296312fa8988b"),
+    a: 3,
+    b: 3,
+    _class: 'com.gem.db.mongodb.controller.MongoPO'
+  }
+]
+test> 
+```
 

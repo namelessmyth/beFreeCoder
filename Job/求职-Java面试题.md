@@ -8943,6 +8943,10 @@ PS：有的时候查询慢，不一定是SQL语句的问题，也有可能是服
 
 
 
+## MongoDB
+
+https://juejin.cn/post/6844904186300071943
+
 
 
 ## Redis
