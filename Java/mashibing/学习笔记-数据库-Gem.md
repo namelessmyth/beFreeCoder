@@ -48,6 +48,12 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 
 
+## 设计范式
+
+1.每个字段不可再分
+
+
+
 # MySQL
 
 ## 参考说明
@@ -770,11 +776,579 @@ mysql> show processlist;
 
 
 
+### 执行计划
+
+在企业的应用场景中，为了知道优化SQL语句的执行，需要查看SQL语句的具体执行过程，以加快SQL语句的执行效率。
+
+可以使用`explain SQL语句`来模拟优化器执行SQL查询语句，从而知道mysql是如何处理sql语句的。
+
+官网地址： https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+
+#### 执行计划中的字段
+
+|    Column     |                    Meaning                     |
+| :-----------: | :--------------------------------------------: |
+|      id       |            The `SELECT` identifier             |
+|  select_type  |               The `SELECT` type                |
+|     table     |          The table for the output row          |
+|  partitions   |            The matching partitions             |
+|     type      |                 The join type                  |
+| possible_keys |         The possible indexes to choose         |
+|      key      |           The index actually chosen            |
+|    key_len    |          The length of the chosen key          |
+|      ref      |       The columns compared to the index        |
+|     rows      |        Estimate of rows to be examined         |
+|   filtered    | Percentage of rows filtered by table condition |
+|     extra     |             Additional information             |
+
+**id**
+
+select查询的序列号，包含一组数字，表示查询中执行select子句或者操作表的顺序
+
+id号分为三种情况：
+
+1、如果id相同，那么执行顺序从上到下
+
+```sql
+explain select * from emp e join dept d on e.deptno = d.deptno join salgrade sg on e.sal between sg.losal and sg.hisal;
+```
+
+2、如果id不同，如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
+
+```sql
+explain select * from emp e where e.deptno in (select d.deptno from dept d where d.dname = 'SALES');
+```
+
+3、id相同和不同的，同时存在：相同的可以认为是一组，从上往下顺序执行，在所有组中，id值越大，优先级越高，越先执行
+
+```sql
+explain select * from emp e join dept d on e.deptno = d.deptno join salgrade sg on e.sal between sg.losal and sg.hisal where e.deptno in (select d.deptno from dept d where d.dname = 'SALES');
+```
+
+**select_type**
+
+主要用来分辨查询的类型，是普通查询还是联合查询还是子查询
+
+| `select_type` Value  |                           Meaning                            |
+| :------------------: | :----------------------------------------------------------: |
+|        SIMPLE        |        Simple SELECT (not using UNION or subqueries)         |
+|       PRIMARY        |                       Outermost SELECT                       |
+|        UNION         |         Second or later SELECT statement in a UNION          |
+|   DEPENDENT UNION    | Second or later SELECT statement in a UNION, dependent on outer query |
+|     UNION RESULT     |                      Result of a UNION.                      |
+|       SUBQUERY       |                   First SELECT in subquery                   |
+|  DEPENDENT SUBQUERY  |      First SELECT in subquery, dependent on outer query      |
+|       DERIVED        |                        Derived table                         |
+| UNCACHEABLE SUBQUERY | A subquery for which the result cannot be cached and must be re-evaluated for each row of the outer query |
+|  UNCACHEABLE UNION   | The second or later select in a UNION that belongs to an uncacheable subquery (see UNCACHEABLE SUBQUERY) |
+
+```sql
+--sample:简单的查询，不包含子查询和union
+explain select * from emp;
+
+--primary:查询中若包含任何复杂的子查询，最外层查询则被标记为Primary
+explain select staname,ename supname from (select ename staname,mgr from emp) t join emp on t.mgr=emp.empno ;
+
+--union:若第二个select出现在union之后，则被标记为union
+explain select * from emp where deptno = 10 union select * from emp where sal >2000;
+
+--dependent union:跟union类似，此处的depentent表示union或union all联合而成的结果会受外部表影响
+explain select * from emp e where e.empno  in ( select empno from emp where deptno = 10 union select empno from emp where sal >2000)
+
+--union result:从union表获取结果的select
+explain select * from emp where deptno = 10 union select * from emp where sal >2000;
+
+--subquery:在select或者where列表中包含子查询
+explain select * from emp where sal > (select avg(sal) from emp) ;
+
+--dependent subquery:subquery的子查询要受到外部表查询的影响
+explain select * from emp e where e.deptno in (select distinct deptno from dept);
+
+--DERIVED: from子句中出现的子查询，也叫做派生类，
+explain select staname,ename supname from (select ename staname,mgr from emp) t join emp on t.mgr=emp.empno ;
+
+--UNCACHEABLE SUBQUERY：表示使用子查询的结果不能被缓存
+ explain select * from emp where empno = (select empno from emp where deptno=@@sort_buffer_size);
+ 
+--uncacheable union:表示union的查询结果不能被缓存：sql语句未验证
+```
+
+**table**
+
+对应行正在访问哪一个表，表名或者别名，可能是临时表或者union合并结果集
+1、如果是具体的表名，则表明从实际的物理表中获取数据，当然也可以是表的别名
+
+2、表名是derivedN的形式，表示使用了id为N的查询产生的衍生表
+
+3、当有union result的时候，表名是union n1,n2等的形式，n1,n2表示参与union的id
+
+**type**
+
+type显示的是访问类型，访问类型表示我是以何种方式去访问我们的数据，最容易想的是全表扫描，直接暴力的遍历一张表去寻找需要的数据，效率非常低下，访问的类型有很多，效率从最好到最坏依次是：
+
+system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL 
+
+一般情况下，得保证查询至少达到range级别，最好能达到ref
+
+```sql
+--all:全表扫描，一般情况下出现这样的sql语句而且数据量比较大的话那么就需要进行优化。
+explain select * from emp;
+
+--index：全索引扫描这个比all的效率要好，主要有两种情况，一种是当前的查询时覆盖索引，即我们需要的数据在索引中就可以索取，或者是使用了索引进行排序，这样就避免数据的重排序
+explain  select empno from emp;
+
+--range：表示利用索引查询的时候限制了范围，在指定范围内进行查询，这样避免了index的全索引扫描，适用的操作符： =, <>, >, >=, <, <=, IS NULL, BETWEEN, LIKE, or IN() 
+explain select * from emp where empno between 7000 and 7500;
+
+--index_subquery：利用索引来关联子查询，不再扫描全表
+explain select * from emp where emp.job in (select job from t_job);
+
+--unique_subquery:该连接类型类似与index_subquery,使用的是唯一索引
+ explain select * from emp e where e.deptno in (select distinct deptno from dept);
+ 
+--index_merge：在查询过程中需要多个索引组合使用，没有模拟出来
+
+--ref_or_null：对于某个字段即需要关联条件，也需要null值的情况下，查询优化器会选择这种访问方式
+explain select * from emp e where  e.mgr is null or e.mgr=7369;
+
+--ref：使用了非唯一性索引进行数据的查找
+ create index idx_3 on emp(deptno);
+ explain select * from emp e,dept d where e.deptno =d.deptno;
+
+--eq_ref ：使用唯一性索引进行数据查找
+explain select * from emp,emp2 where emp.empno = emp2.empno;
+
+--const：这个表至多有一个匹配行，
+explain select * from emp where empno = 7369;
+ 
+--system：表只有一行记录（等于系统表），这是const类型的特例，平时不会出现
+```
+
+ **possible_keys** 
+
+​        显示可能应用在这张表中的索引，一个或多个，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用
+
+```sql
+explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
+```
+
+**key**
+
+​		实际使用的索引，如果为null，则没有使用索引，查询中若使用了覆盖索引，则该索引和查询的select字段重叠。
+
+```sql
+explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
+```
+
+**key_len**
+
+表示索引中使用的字节数，可以通过key_len计算查询中使用的索引长度，在不损失精度的情况下长度越短越好。
+
+```sql
+explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
+```
+
+**ref**
+
+显示索引的哪一列被使用了，如果可能的话，是一个常数
+
+```sql
+explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
+```
+
+**rows**
+
+根据表的统计信息及索引使用情况，大致估算出找出所需记录需要读取的行数，此参数很重要，直接反应的sql找了多少数据，在完成目的的情况下越少越好
+
+```sql
+explain select * from emp;
+```
+
+**extra**
+
+包含额外的信息。
+
+```sql
+--using filesort:说明mysql无法利用索引进行排序，只能利用排序算法进行排序，会消耗额外的位置
+explain select * from emp order by sal;
+
+--using temporary:建立临时表来保存中间结果，查询完成之后把临时表删除
+explain select ename,count(*) from emp where deptno = 10 group by ename;
+
+--using index:这个表示当前的查询时覆盖索引的，直接从索引中读取数据，而不用访问数据表。如果同时出现using where 表名索引被用来执行索引键值的查找，如果没有，表面索引被用来读取数据，而不是真的查找
+explain select deptno,count(*) from emp group by deptno limit 10;
+
+--using where:使用where进行条件过滤
+explain select * from t_user where id = 1;
+
+--using join buffer:使用连接缓存，情况没有模拟出来
+
+--impossible where：where语句的结果总是false
+explain select * from emp where empno = 7469;
+```
+
+
+
+
+
+## 设计优化
+
 ### Schema数据类型优化
 
+#### 更小的更好
+
+应该尽量使用可以正确存储数据的最小数据类型，更小的数据类型通常更快，因为它们占用更少的磁盘、内存和CPU缓存，并且处理时需要的CPU周期更少，但是要确保没有低估需要存储的值的范围，如果无法确认哪个数据类型，就选择你认为不会超过范围的最小类型
+
+案例
+
+设计两张表，设计不同的数据类型，然后写程序往表里插入相同数据量的数据。查看表的容量
+
+查看表对应的数据文件可知，虽然实际大小一直，但是更大的数据类型占用空间更大。
 
 
 
+#### 简单就好
+
+简单数据类型的操作通常需要更少的CPU周期，例如：
+
+1、整型比字符操作代价更低，因为字符集和校对规则是字符比较比整型比较更复杂，
+
+2、使用mysql自建类型而不是字符串来存储日期和时间
+
+3、用整型存储IP地址
+
+案例：
+
+创建两张相同的表，改变日期的数据类型，查看SQL语句执行的速度
+
+
+
+#### 避免null
+
+只要业务支持，尽量避免设计可为null的值。
+
+如果查询中包含可为NULL的列，对mysql来说很难优化，因为可为null的列使得索引、索引统计和值比较都更加复杂。
+
+坦白来说，通常情况下null的列改为not null带来的性能提升比较小，所有没有必要将所有的表的schema进行修改，但是应该尽量避免设计成可为null的列。
+
+业务上可以为空的字段，经过业务评估，可以给字段设计默认值。但不要和可能出现的业务数据重复。
+
+例如：字符型可以设计默认值：空字符。但不要设计成a或者b。
+
+整形可以设计成：-1或者0。但如果业务上可能会填入-1或者0，那也不要强行设计默认值。
+
+
+
+#### 整形类型
+
+可以使用的几种整数类型：TINYINT，SMALLINT，MEDIUMINT，INT，BIGINT分别使用8，16，24，32，64位存储空间。
+尽量使用满足需求的最小数据类型。
+
+注意，上面的几种类型还可以指定长度。当实际是可以存储超出长度的数据的。实际还是按类型对应的字节数存储的。
+
+
+
+#### 字符类型
+
+mysql中常见的字符类型：char、varchar、text
+
+1、char长度固定，即每条数据占用等长字节空间；最大长度是255个字符，适合用在身份证号、手机号等定长字符串
+2、varchar可变程度，可以设置最大长度；最大空间是65535个字节，适合用在长度可变的属性
+3、text不设置长度，当不知道属性的最大长度时，适合用text
+按照查询速度：char>varchar>text
+
+varchar根据实际内容长度保存数据
+ 1、使用最小的符合需求的长度。
+ 2、varchar(n) n小于等于255使用额外一个字节保存长度，n>255使用额外两个字节保存长度。
+ 3、varchar(5)与varchar(255)保存同样的内容，硬盘存储空间相同，但内存空间占用不同，是指定的大小 。
+ 4、varchar在mysql5.6之前变更长度，或者从255一下变更到255以上时时，都会导致锁表。
+ 应用场景
+  1、存储长度波动较大的数据，如：文章，有的会很短有的会很长
+  2、字符串很少更新的场景，每次更新后都会重算并使用额外存储空间保存长度
+  3、适合保存多字节字符，如：汉字，特殊字符等
+
+char固定长度的字符串
+ 1、最大长度：255
+ 2、会自动删除末尾的空格
+ 3、检索效率、写效率 会比varchar高，以空间换时间
+ 应用场景
+  1、存储长度波动不大的数据，如：md5摘要
+  2、存储短字符串、经常更新的字符串
+
+
+
+#### Blob和text
+
+MySQL 把每个 BLOB 和 TEXT 值当作一个独立的对象处理。
+
+两者都是为了存储很大数据而设计的字符串类型，分别采用二进制和字符方式存储。
+
+text一般可能的场景是存储xml文件内容，SQL语句，Json格式数据等等。
+
+这2种格式使用场景较小，一般出现很多字符的场景还是推荐将存储文件存储路径存储到数据库中。而不是直接存文件内容。
+
+
+
+#### 时间类型
+
+datetime
+
+ 占用8个字节
+
+ 与时区无关，数据库底层时区配置，对datetime无效
+
+ 可保存到毫秒
+
+ 可保存时间范围大
+
+ 不要使用字符串存储日期类型，占用空间大，损失日期类型函数的便捷性
+
+timestamp
+
+ 占用4个字节
+
+ 时间范围：1970-01-01到2038-01-19
+
+ 精确到秒
+
+ 采用整形存储
+
+ 依赖数据库设置的时区
+
+ 自动更新timestamp列的值
+
+date
+
+ 占用的字节数比使用字符串、datetime、int存储要少，使用date类型只需要3个字节
+
+ 使用date类型还可以利用日期时间函数进行日期之间的计算
+
+ date类型用于保存1000-01-01到9999-12-31之间的日期，不包含时分秒。
+
+
+
+#### 枚举类型
+
+有时可以使用枚举类代替常用的字符串类型，mysql存储枚举类型会非常紧凑，会根据列表值的数据压缩到一个或两个字节中，mysql在内部会将每个值在列表中的位置保存为整数，并且在表的.frm文件中保存“数字-字符串”映射关系的查找表
+create table enumtest(e enum('fish','apple','dog') not null); insert into enumtest(e) values('fish'),('dog'),('apple');
+select e+0 from enum_test;
+
+
+
+#### 特殊类型
+
+一般会使用varchar(15)来存储ip地址，然而ip的本质是32位无符号整数不是字符串，可以使用INETATON()和INETNTOA函数在这两种表示方法之间转换
+
+案例：
+
+select inetaton('1.1.1.1');
+
+select inetntoa(16843009);
+
+
+
+### 数据库范式
+
+#### 范式
+
+ 优点
+
+  范式化的更新通常比反范式要快
+  当数据较好的范式化后，很少或者没有重复的数据
+  范式化的数据比较小，可以放在内存中，操作比较快
+
+ 缺点
+
+  通常需要进行关联
+
+#### 反范式
+
+反范式
+
+优点
+
+所有的数据都在同一张表中，可以避免关联
+
+可以设计有效的索引；
+
+缺点
+
+表格内的冗余较多，删除数据或者更新数据时会造成表有些有用的信息丢失或者不同步。
+
+在企业中很好能做到严格意义上的范式或者反范式，一般需要混合使用
+
+#### 适当冗余
+
+满足以下条件，可以考虑适当的采取冗余。Oracle中有物化视图也体现了这一思想。
+
+ 1.被频繁引用且只能通过 Join 2张(或者更多)大表的方式才能得到的独立小字段。
+ 2.这样的场景由于每次Join仅仅只是为了取得某个小字段的值，Join到的记录又大，会造成大量不必要的 IO，完全可以通过空间换取时间的方式来优化。不过，冗余的同时需要确保数据的一致性不会遭到破坏，确保更新的同时冗余字段也被更新。
+
+#### 案例
+
+在一个网站实例中，这个网站，允许用户发送消息，并且一些用户是付费用户。现在想查看付费用户最近的10条信息。  在user表和message表中都存储用户类型(account_type)而不用完全的反范式化。这避免了完全反范式化的插入和删除问题，因为即使没有消息的时候也绝不会丢失用户的信息。这样也不会把user_message表搞得太大，有利于高效地获取数据。
+
+另一个从父表冗余一些数据到子表的理由是排序的需要。
+
+缓存衍生值也是有用的。如果需要显示每个用户发了多少消息（类似论坛的），可以每次执行一个昂贵的自查询来计算并显示它；也可以在user表中建一个num_messages列，每当用户发新消息时更新这个值。
+
+#### 适当拆分
+
+当我们的表中存在类似于 TEXT 或者是很大的 VARCHAR类型的大字段的时候，如果我们大部分访问这张表的时候都不需要这个字段，我们就该义无反顾的将其拆分到另外的独立表中，以减少常用数据所占用的存储空间。这样做的一个明显好处就是每个数据块中可以存储的数据条数可以大大增加，既减少物理 IO 次数，也能大大提高内存中的缓存命中率。
+
+一张表中有很多字段，其中经常访问的只是一部分字段，这个时候就可以考虑将不长访问的字段放到另一个张表中用一个键关联原表。
+
+
+
+### 主键选择
+
+代理主键
+
+ 与业务无关的，无意义的数字序列
+
+自然主键
+
+ 事物属性中的自然唯一标识
+
+推荐使用代理主键
+
+ 它们不与业务耦合，因此更容易维护
+ 一个大多数表，最好是全部表，通用的键策略能够减少需要编写的源码数量，减少系统的总体拥有成本
+
+
+
+### 字符集选择
+
+字符集直接决定了数据在MySQL中的存储编码方式，由于同样的内容使用不同字符集表示所占用的空间大小会有较大的差异，所以通过使用合适的字符集，可以帮助我们尽可能减少数据量，进而减少IO操作次数。
+
+1.纯拉丁字符能表示的内容，没必要选择 latin1 之外的其他字符编码，因为这会节省大量的存储空间。
+
+2.如果我们可以确定不需要存放多种语言，就没必要非得使用UTF8或者其他UNICODE字符类型，这回造成大量的存储空间浪费。
+
+3.MySQL的数据类型可以精确到字段，所以当我们需要大型数据库中存放多字节数据的时候，可以通过对不同表不同字段使用不同的数据
+
+类型来较大程度减小数据存储量，进而降低 IO 操作次数并提高缓存命中率。
+
+如果必须使用utf8来存储字符，那推荐使用utf8mb4。MySQL中utf8默认只能存2个字节。
+
+
+
+### 存储引擎选择
+
+[官方存储引擎介绍](https://dev.mysql.com/doc/refman/5.7/en/storage-engines.html)
+
+存储引擎是数据真正存放的地方，再往下就是内存和磁盘了。提供读写接口给服务器调用。
+
+默认存储引擎的配置：在my.ini文件中有个default-storage-engine。
+
+InnoDB
+
+5.5开始的默认存储引擎。支持事务、外键、表锁、行锁、聚集索引、5.6之后支持全文索引。
+
+MyISAM
+
+不支持事务和聚集索引。只支持表锁。查询和新增比较快。表里记录了总行数。不像InnoDB要扫表才知道总行数
+
+Memory
+
+所有的数据都是在内存中读写，优点是速度快，缺点是无法持久化，一旦宕机数据会全部丢失。
+
+使用场景，建议是用来做缓存或者是存临时数据。
+
+CSV
+
+一种文本格式。可以用Excel打开。使用场景：不同的数据库中同步数据。
+
+archive。
+
+用于存储归档数据。无索引。
+
+##### InnoDB和MyISAM 的区别
+
+1. InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一；
+
+2. InnoDB 支持外键，而 MyISAM 不支持。对一个包含外键的 InnoDB 表转为 MYISAM 会失败；  
+
+3. InnoDB 是聚集索引，MyISAM 是非聚集索引。聚簇索引的文件存放在主键索引的叶子节点上，因此 InnoDB 必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而 MyISAM 是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。 
+
+4. InnoDB 不保存表的具体行数，执行 select count(*) from table 时需要全表扫描。而MyISAM 用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；    
+
+5. InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。一个更新语句会锁住整张表，导致其他查询和更新都会被阻塞，因此并发访问受限。这也是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一；
+
+**如何选择：**
+
+1. 是否要支持事务，如果要请选择 InnoDB，如果不需要可以考虑 MyISAM；
+
+2. 如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读，写也挺频繁，请使用InnoDB。
+
+3. 系统奔溃后，MyISAM恢复起来更困难，能否接受，不能接受就选 InnoDB；
+
+4. MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。如果你不知道用什么存储引擎，那就用InnoDB，至少不会差。
+
+
+
+## 索引优化
+
+### 索引基础
+
+索引的优点
+
+ 1、大大减少了服务器需要扫描的数据量
+ 2、帮助服务器避免排序和临时表
+ 3、将随机io变成顺序io
+
+索引的用处
+
+ 1、快速查找匹配WHERE子句的行
+ 2、从consideration中消除行,如果可以在多个索引之间进行选择，mysql通常会使用找到最少行的索引
+ 3、如果表具有多列索引，则优化器可以使用索引的任何最左前缀来查找行
+ 4、当有表连接的时候，从其他表检索行数据
+ 5、查找特定索引列的min或max值
+ 6、如果排序或分组时在可用索引的最左前缀上完成的，则对表进行排序和分组
+ 7、在某些情况下，可以优化查询以检索值而无需查询数据行
+
+索引的分类
+
+ 主键索引
+ 唯一索引
+ 普通索引
+ 全文索引
+ 组合索引
+
+面试技术名词
+
+ 回表
+ 覆盖索引
+ 最左匹配
+ 索引下推
+
+索引采用的数据结构
+
+ 哈希表
+ B+树
+
+索引匹配方式
+
+ 全值匹配
+  全值匹配指的是和索引中的所有列进行匹配
+   explain select * from staffs where name = 'July' and age = '23' and pos = 'dev';
+ 匹配最左前缀
+  只匹配前面的几列
+   explain select * from staffs where name = 'July' and age = '23';
+   explain select * from staffs where name = 'July';
+ 匹配列前缀
+  可以匹配某一列的值的开头部分
+   explain select * from staffs where name like 'J%';
+   explain select * from staffs where name like '%y';
+ 匹配范围值
+  可以查找某一个范围的数据
+   explain select * from staffs where name > 'Mary';
+ 精确匹配某一列并范围匹配另外一列
+  可以查询第一列的全部和第二列的部分
+   explain select * from staffs where name = 'July' and age > 25;
+ 只访问索引的查询
+  查询的时候只需要访问索引，不需要访问数据行，本质上就是覆盖索引
+   explain select name,age,pos from staffs where name = 'July' and age = 25 and pos = 'dev';
 
 
 
