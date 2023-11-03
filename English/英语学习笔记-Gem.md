@@ -4,28 +4,28 @@
 
 本文档属于个人学习英语的经验总结，心得分享。如果对文档内容有任何问题，欢迎讨论交流。
 
-| 编制日期     | 2023-09-07         |
-| ------------ | ------------------ |
-| 编制人       | namelessmyth (Gem) |
-| 编制单位     | 无                 |
-| 文档分类     | 学习笔记-英语      |
-| 版本号       | 1.4                |
-| 最后更新日期 | 2023-11-01         |
-| 最后更新人   | namelessmyth (Gem) |
+| 编制日期     | 2023-09-07    |
+| ------------ | ------------- |
+| 编制人       | Gem Shen      |
+| 编制单位     | 暂无          |
+| 文档分类     | 学习笔记-英语 |
+| 版本号       | 1.5           |
+| 最后更新日期 | 2023-11-03    |
+| 最后更新人   | Gem Shen      |
 
 
 
 ## 文档更新记录
 
-| 版本 | 编制/修改人  | 修改日期   | 备注（原因、进一步的说明等）                                 |
-| ---- | ------------ | ---------- | ------------------------------------------------------------ |
-| 1.0  | namelessmyth | 2023-09-07 | 初版                                                         |
-| 1.1  | namelessmyth | 2023-09-16 | 完成[音标](#音标)部分，内容大部分来源于小E英语               |
-| 1.2  | namelessmyth | 2023-09-20 | 新增[说话腔调](#说话腔调)章节以及[音变规则](#音变规则)，例如：辅元连读，浊化，弱读，击穿等。 |
-| 1.3  | namelessmyth | 2023-09-27 | 完成小e英语彩蛋课内容，加入大量[口语习语](#口语习语)的案例。 |
-| 1.4  | namelessmyth | 2023-11-01 | 加入[英语16种时态总结](#英语时态)。                          |
-|      |              |            |                                                              |
-|      |              |            |                                                              |
+| 版本 | 编制/修改人 | 修改日期   | 备注（原因、进一步的说明等）                                 |
+| ---- | ----------- | ---------- | ------------------------------------------------------------ |
+| 1.0  | Gem         | 2023-09-07 | 初版                                                         |
+| 1.1  | Gem         | 2023-09-16 | 完成[音标](#音标)部分，内容大部分来源于小E英语               |
+| 1.2  | Gem         | 2023-09-20 | 新增[说话腔调](#说话腔调)章节以及[音变规则](#音变规则)，例如：辅元连读，浊化，弱读，击穿等。 |
+| 1.3  | Gem         | 2023-09-27 | 完成小e英语彩蛋课内容，加入大量[口语习语](#口语习语)的案例。 |
+| 1.4  | Gem         | 2023-11-01 | 加入[英语16种时态总结](#英语时态)。                          |
+| 1.5  | Gem         | 2023-11-03 | 加入[句子成分总结](#句子成分)，[英语句型总结](#英语句型)     |
+|      |             |            |                                                              |
 
  
 
@@ -35,7 +35,7 @@
 
 - 小E老师听力口语课。根据视频内容整理而成。
 - 扇贝听力口语App。根据教程内容整理而成。
-- 通过百度搜索相关文章。
+- 百度搜索相关文章。在每个章节中会对引用的文章作说明。
 
 
 
@@ -43,33 +43,45 @@
 
 ## 手机App
 
-### 有道翻译官
-
-优势：屏幕取词，查词翻译相对准确。
-
-劣势：语音翻译不准确。
-
-### 微软翻译
-
- 优势：语音翻译比较准确。练习听力听不懂单词不知道怎么拼写时，可以使用。
-
- 劣势：语音翻译结果，无法再次查询。显示的词义没有其他字典多。
-
-### 词根词缀词典
-
-没有第三方广告。词根词缀查询比较全面。
-
 ### 扇贝
 
 比较全面的app，包含听说读写各种分类功能。背单词不收费，其他高级功能要收费。
 
-扇贝单词
+**扇贝单词**
 
-扇贝听力口语
+主要用于背单词，里面的词汇书比较多。托福核心词汇，雅思词汇等等。
 
-扇贝课堂
+**扇贝听力口语**
 
-扇贝阅读
+这里面有很多听力素材：托福雅思，四六级，考验英语，VOA，电影英语等。
+
+有很多种精听模式，例如：听音模式（盲听句子，自主默写），选词模式（听句子选词填入），拼写模式（听句子，拼写空缺单词30%，60%，90%），如果实在听不懂，可以选择0.5x,0.8x速，慢放。
+
+**扇贝口语**
+
+**扇贝阅读**
+
+
+
+### 有道翻译官
+
+优点：屏幕取词，查词翻译比较实用，可以对手机上的任意英语进行翻译，且相对准确。
+
+缺点：语音翻译不准确。经常听错。屏幕取词功能的二次查询做的不好。
+
+
+
+### 词根词缀词典
+
+没有第三方广告。词根词缀查询比较全面。背单词时比较有用。
+
+
+
+### 微软翻译
+
+ 优点：语音翻译比较准确。练习听力听不懂单词不知道怎么拼写时，可以使用。
+
+ 缺点：语音翻译结果，无法再次查询。显示的词义没有其他字典多。
 
 
 
@@ -77,15 +89,17 @@
 
 ### 网易有道翻译
 
-有网页版，还有电脑版。电脑版划词功能也比较实用，只要选中英文就会实时出现翻译和发音。在做英语笔记时有些音标用键盘打出来比较费时间。有了这个功能就能复制了。还有屏幕取词和截图翻译功能。
+电脑版的划词功能比较实用，在操作系统的任意软件中（包含浏览器）只要选中英文就可以实时出现翻译和发音。
+
+当软件出现不懂的英语时，只要选中就可以翻译，就不需要复制黏贴到翻译网站中翻译了。挺方便的。还有屏幕取词和截图翻译功能。
 
 
 
 ## 网站
 
-### 英语词根词典
+[有道翻译网页版](https://dict.youdao.com/)，[百度翻译网页版](https://fanyi.baidu.com/?aldtype=16047#auto/zh)。
 
-网址：https://www.quword.com/root/，但有些词查不出来。没有词根词缀词典强。
+
 
 
 
@@ -3625,6 +3639,727 @@ Tha<u>t i</u>s actually↗️ the dream↘️. 闪音t
 
 # 语法
 
+## 句子成分
+
+一个句子要完整，就必须包含所具备的基础成分，基础成分主要分为：主语，谓语，宾语，定语，状语，补语，表语，同位语。
+
+分辨句子成分的顺口溜：
+
+主谓宾、定状补，主干枝叶分清楚。
+
+定语必居主宾前，谓前为状谓后补。
+
+状语有时位主前，逗号分开心有数。
+
+基本成分主谓宾，连带成分定状补。
+
+
+
+### 主语
+
+主语即“动作的发出者”（主谓宾结构中）或者“表述的对象”（主系表结构中），一般放在句首，有时也放在中间或者句尾。充当主语的可以是名词、代词；也可以是短语、不定式；甚至可以是整个句子。所以，在找主语的时候，脑子里一定要有这些认知。
+
+**能当主语的有哪些？**
+
+如下这些能做主语：名词/代词/数词，不定式/名词化短语，从句，it形式主语。
+
+#### 名词做主语
+
+CeIebrities'marriage is but a tool for marketing hype.
+
+名人的婚姻不过是营销炒作的工具。
+
+
+
+#### 代词做主语
+
+We are not lovers any more, but we still care about each other.
+
+我们不再是恋人，但我们仍然关心彼此。
+
+
+
+#### 数词做主语
+
+A billion is not a big deal for Jack Ma.
+
+十亿对马云来说是不算什么。
+
+
+
+#### 不定式做主语
+
+To break up is their final decision.
+
+分手是他们最终的决定。
+
+To post her attitude online is all she can do.
+
+她能做的只是在网上表明自己的态度。
+
+
+
+#### 动名词做主语
+
+Keeping composed is the basis to overcome difficulties.
+
+保持镇定是克服困难的基础。
+
+
+
+#### 从句做主语
+
+从句做主语的句子，就是我们学过的“主语从句”。主语从句可以由连词that/whether引导；也可以由关系代词what/who/which引导；还可以由连接副词how/when/why/where引导。
+
+Whether she will keep it a secret is unknown us all.
+
+她是否会保守秘密我们都不知道。
+
+What she has is nothing but money.
+
+她穷得只剩下钱了。
+
+How they got separated is a serious problem they need to rethink.
+
+他们分手的原因是他们双方都要反思的重要问题。
+
+
+
+#### it形式主语
+
+有时为了避免头重脚轻，经常会借助“it”充当形式主语，而真正的主语则放在句尾
+
+（1）用"that"引导的主语从句
+
+原句：That he will pass the exam is certain.
+
+改句：It is certain that he will pass the exam.（通常用这种句式）
+
+主语：he will pass the exam
+
+（2）“疑问句“须用it做形式主语
+
+Is it funny that the tall man and the short girl are a coule?
+
+高个子男孩和矮个子女孩居然是夫妻。是不是很有趣呢？
+
+
+
+#### There be的主语在中间
+
+“there be…”比较特殊。在这种句型中，主语的位置在中间。比如：
+
+There are six beautiful French ladies walking on the street.
+
+大街上有六位漂亮的法国女郎在散步。
+
+主语： six beautiful French ladies
+
+
+
+### 谓语
+
+谓语是句子的灵魂，主要用来“陈述主语的状态”或者“表明主语发出的动作”。
+
+谓语分类：简单谓语，复合谓语
+
+（1）简单谓语：由一个动词或者一个动词短语构成谓语；
+
+#### 动词做谓语
+
+I love my girlfriend.
+
+我爱我的女朋友。
+
+#### 动词短语做谓语
+
+My boss stayed up late last night.
+
+我的老板昨晚熬夜了。
+
+（2）复合谓语：
+
+#### 助动词+动词做渭语
+
+I don't like your pants.
+
+我不喜欢你的裤子。
+
+#### 情态动词+动词做渭语
+
+You should drink some water.
+
+你应该喝一些水。
+
+I have never seen such a barefaced guy like you！
+
+我从未见过如此厚颜无耻之徒。
+
+#### 系动词+表语做谓语
+
+系表结构做渭语
+
+I feel anxious in front of you.
+
+我在你面前紧张。
+
+He turned out to be fine.
+
+结果他没事儿。
+
+They appear to be angry.
+
+他们似乎很生气。
+
+#### 情态动词+系动词做谓语
+
+You should be serious.
+
+你应该严肃点。
+
+We will be successful in the future.
+
+我们将来会成功的。
+
+
+
+### 宾语
+
+含义：宾语与主语相对，表示动作的承受者。
+
+宾语分直接宾语和间接宾语。
+
+例如：My boy friend told me a ghost story last night.
+
+昨晚，我男朋友给我讲了个鬼故事。
+
+间接宾语：me
+
+直接宾语：a ghost story
+
+哪些词可以做宾语？
+
+名词、代词、数词以及句子都可以做宾语（宾语从句）
+
+#### 代词做宾语
+
+I fancy you.
+
+我喜欢你。
+
+#### 名词做宾语
+
+I like playing basketball.
+
+我喜欢打篮球。
+
+#### 数词做宾语
+
+How many do you want? — I want two. 你要几个？－ 我要两个。
+
+How much milk do you want? — A bottle. 你要多少牛奶？— 一瓶。
+
+I want to fight with ten of them.
+
+我要打他们十个！
+
+#### 名词化形容词作宾语
+
+They sent the injured to the hospital.
+
+他们把伤员送到医院。
+
+#### 不定式作宾语
+
+They asked to see my passport. 
+
+他们要求看我的护照。
+
+#### 动名词做宾语
+
+I enjoy working with you. 我和你们一道工作很愉快。
+
+#### 从句做宾语
+
+No body knows who can pass the exam.
+
+没有人知道谁能考过。
+
+Did you write down what he said? 
+
+你把他的话写下了没有？
+
+
+
+### 定语
+
+“定语”是为了限定句中某个的成分。定语在所修饰的词前，就被称为前置定语；反之，则为后置定语。
+
+形容词、数词、代词、从句（定语从句）等成分基本都可以做定语（动词除外）。
+
+#### 副词做定语
+
+The iPad there is mine.
+
+那个iPad是我的。there是定语。
+
+#### 不定式做定语
+
+The boy to take the ball is my son.
+
+去拿球的男孩是我的儿子。
+
+#### 分词做定语
+
+The boy left is my friend.
+
+留下来的男孩是我的朋友。
+
+#### 形容词做定语
+
+She is a lovely girl.
+
+她是一个可爱的女孩儿。
+
+#### 数词做定语
+
+I have two girl friends.
+
+我有两个女朋友。
+
+#### 介词短语做定语
+
+The girl in pink is my daughter.
+
+穿粉色衣服的是我女儿。
+
+#### 名词做定语
+
+I have a pencil box.
+
+我有一个铅笔盒。
+
+#### 从句做定语
+
+He is the teacher who teaches us math.
+
+他就是那个教我们数学的老师。
+
+
+
+### 状语
+
+状语传递的信息包括：时间、地点、原因、目的、结果、方式、程度等，其使用的目的就是使表达更为丰满、具体。
+
+英语中的副词、不定式、介词、名词、从句等都可以做状语。
+
+如何判定哪些成分是“状语”？关键就看这个词/词组/从句是否在修饰动词or形容词or副词or整个句子。
+
+#### 副词做状语
+
+He is very fat.
+
+他非常胖。
+
+#### 不定式做状语
+
+I come all the way to see you.
+
+我大老远来看你
+
+#### 介词短语做状语
+
+Which couple of superstars will get divorced in the future ?
+
+哪一对明星夫妻将来会离婚?这里的状语是in the future
+
+
+
+### 表语
+
+表语存在于英语中的“主系表结构”中，主要用来解释说明主语的性质、状态、特性等。
+
+同样，做表语的可以是名词、形容词、副词介词短语、不定式等或者由整个从句充当表语（即表语从句）。
+
+#### 名词做表语
+
+The tall man is a basketball player
+
+这个高个子男人是个篮球运动员。
+
+#### 形容词做表语
+
+He is handsome.
+
+他很帅。
+
+#### 数词做表语
+
+She is number one.
+
+她是第一名。
+
+#### 副词做表语
+
+I am behind you.
+
+我在你身后(支持你)。
+
+#### 动词ing做表语
+
+His work is sleeping
+
+他的工作就是睡觉
+
+#### 介词短语做表语
+
+Everything is under control.切尽在掌握
+
+#### 不定式做表语
+
+My plan is to find a job this month.我的计划就是这个月找个工作
+
+#### 从句做表语
+
+This is what I told you.
+
+这就是我之前告诉过你的
+
+
+
+### 补语
+
+补语，意在补充说明主语or宾语，分别称为“主语补足语”及“宾语补足语”，而后者使用更为频繁。
+
+#### 主语补足语
+
+He died **young**.
+
+他英年早逝
+
+We are born **equal**.
+
+我们生来平等
+
+Beef can be eaten **raw**.
+
+牛肉能生吃。
+
+#### 宾语补足语
+
+##### 不定式做宾补
+
+Your wife won' t allow us to play cards.
+
+你媳妇儿不会允许我们打牌的。
+
+##### 名词做宾补
+
+They elected me **the president**.
+
+他们选我当总统
+
+##### 形容词做宾补
+
+I find learning to drive **easy**.
+
+我发现学车简单。
+
+##### 副词做宾补
+
+My wife locked me **out**.
+
+我妻子把我锁在外面了。
+
+##### 现在分词做宾补
+
+I smell something **burning** in the kitchen.
+
+我闻到厨房里有东西烧焦了。
+
+##### 过去分词做宾补
+
+I find my son **seated** in the corner.
+
+我发现我儿子坐在角落里
+
+
+
+### 同位语
+
+#### 什么是同位语？
+
+一个名词（或其它形式）对另一个名词或代词进行解释或补充说明，这个名词（或其它形式）就是同位语。
+
+我们来举一个《权利的游戏》中的例子。在这部剧里面，当龙妈出场时都是酱紫的：
+
+丹尼莉丝坦·坦格利安家族的风暴降生·格利安一世·不焚者·弥林女王·安达尔人和先民的女王·七国统治者暨全境守护者·草原上的卡丽熙·打碎镣铐者·龙之母
+
+![img](https://pic2.zhimg.com/80/v2-f41660718d41dab85bc80d0f2c45d849_1440w.webp)
+
+这后面一大串念死人的头衔，就是**同位语。**这里面的每个名词或是短语，都是通过对龙妈的来历、经历以及是否婚育来解释和说明**丹尼莉丝坦**究竟是个什么样的女子，让其对手带来一种不耐烦不寒而栗的感觉。
+
+而，龙妈的侄子·男朋友·动手杀了自己的人·囧雪君，往往给我们这样的感觉：
+
+The fact **that Snow knows nothing** sometimes makes us laugh.
+
+囧雪什么都不懂的这个事实有时候让我们忍俊不禁。
+
+![img](https://pic3.zhimg.com/80/v2-433407fcedc593c66b8a88afbff45d66_1440w.webp)
+
+#### 同位语的作用
+
+通过仔细品味上述的例子，我们来思考两个问题：
+
+第一：同位语的作用是什么？
+
+第二：同位语解释和说明的名词有什么特点？
+
+同位语的作用，正如我们刚刚在例子中所分析的，是对名词起到**解释说明**的作用。就像龙妈一连串的身份，是对丹尼莉丝坦这个名字的补充；囧雪啥也不懂，是对the fact（事实）这个名词的解释。当然在这里，有些同学开始有点和**定语(表修饰)**，**补语(补充说明宾语/主语)**混淆。这里我给大家介绍一个简单粗暴而又实际好用的小技巧：同位语和其说明的名词是可以**等同**，他们中间是可以画等于号。
+
+
+
+#### 同位语用法
+
+ (以最常见的名词，代词或其他名词形式的短语或句子为例，其他类型，如副词，动词等的同位语在最后）**：**
+
+(下**加粗**为同位语，*斜体*为被同位语解释说明的对象）
+
+
+
+**>>**同位语可分为**限制性同位语**和**非限制性同位语**。
+
+**限制性同位语**可以**缩小**被说明事物的范围，**无逗号**隔开。
+
+*Tom's uncle* **Jim** is a teacher. Tom的叔叔Jim是老师**。**
+
+此处Jim没有用逗号隔开，为uncle的限定性同位语，说明Tom的uncle不只一个，Jim这个同位语起到缩小uncle范围的作用，把uncle范围缩小到了Jim。
+
+
+
+**非限制性同位语**则**无法缩小**被说明事物范围，通常用**逗号**隔开的即为非限定性同位语。
+
+*Tom's uncle* **，Jim** ，is a teacher. Tom的叔叔，Jim,是老师。
+
+此处Jim用逗号隔开，为uncle的非限定性同位语，说明Tom的uncle只有一个，Jim这个同位语并没有起到缩小uncle的范围，这里只是补充说明了uncle的名字。
+
+
+
+**>>**同位语除了可以说明对象的全部内容以外，还能说明其**部分内容**
+
+*We* **chinese people** are hardworking. 我们中国人很勤奋。
+
+Tom likes various kinds of *fruits*, especially **tropical fruit.** Tom喜欢很多种类的水果，特别是热带水果。
+
+
+
+**>>**同位语不会影响被说明对象的数量
+
+*The policemen* **each** have a gun. 每个警察都有一把枪。
+
+*The policemen* **each** has a gun. (错误）
+
+*France*, **one of my favourite countries**, is very amazing. 法国，我最喜欢的国家之一，非常棒。
+
+*France*, **one of my favourite countries**,are very amazing. (错误）
+
+
+
+**>>** 出现namely, for instance, for example, that is ,especially, particularly, chiefly, mostly, mainly 等词时，后面基本都是跟同位语
+
+Only *one student* passed the exam, namely **John**. 只有一个学生通过了考试，也就是John.
+
+*Some vegetables*-for instance, **tomatoes**- can help cure certain diseases. 一些蔬菜，如西红柿，可以帮助治疗某些疾病。
+
+
+
+**>>**同位语为逗号隔开的多个部分组成时，开头结尾使用破折号
+
+*The seasons* of the years – **spring, summer, autumn, and winter** – make a cycle. 一年四季 – 春、夏、秋、冬 ―― 形成一个循环。
+
+
+
+**>>** 句子作同位语，先行词通常为news，idea，fact，promise，question，doubt，thought，hope，message，suggestion，words（消息), possibility, decision等
+
+The *idea* **that I can be a millionaire** is impossible. 我会成为百万富翁这个想法是不可能的。
+
+
+
+\>>少数情况下，同位语会放在句首，这时候需要用逗号隔开
+
+**The biggest city in China**, *Hulun Buir* is a city of low population density. 中国最大的城市，呼伦贝尔，是一个低密度人口城市。
+
+
+
+\>>有时候同位语放在句末可以起强调作用
+
+The bus arrived and *two men-* **one with red hair, the other with yellow hair-** got off.
+
+公交车到了，两个男人,一个红头发，另一个绿头发,下了车。
+
+The bus arrived and *two men* got off- **one with red hair, the other with green hair**.公交车到了，两个男人下了车，一个红头发，另一个绿头发。
+
+
+
+**其他类型同位语**
+
+**>>** 动词作同位语
+
+They always *murmur* in meetings—that is, **speak in a very low voice.** 他们总在会议上嘀咕，也就是经常会小声说话。
+
+
+
+**>>**副词作同位语
+
+Our teacher often asks us to speak *so*-**slowly, loudly and clearly**.我们老师经常让我们慢慢地，大声地，清晰地发言。
+
+
+
+\>>介词短语作同位语
+
+Put it *here*, **on the table**.把它放这，这个桌子上。
+
+
+
+\>>动词不定式或分词作同位语
+
+They received *the order* **to reduce expenses**. 他们接到了减少开支的命令。
+
+He finally got *a job* last Tuesday **driving a taxi**. 他上周二终于找到了一份开出租的工作。
+
+
+
+### 参考说明
+
+本文内容来源于如下文章并在此基础上做了合并和修改。
+
+https://zhuanlan.zhihu.com/p/352580780
+
+https://zhuanlan.zhihu.com/p/106370646
+
+https://zhuanlan.zhihu.com/p/52542110
+
+
+
+## 英语句型
+
+基本句型一： Ｓ +Ｖ（主+谓）
+
+基本句型二： Ｓ +link-Ｖ +Ｐ（主+系+表）
+
+基本句型三： Ｓ +Ｖ +Ｏ（主+谓+宾）
+
+基本句型四： Ｓ +Ｖ +IO +Ｏ（主+谓+间宾+直宾）
+
+基本句型五： Ｓ +Ｖ +Ｏ +Ｃ（主+谓+宾+宾补）
+
+### 主+谓(S+V)
+
+此句型的句子有一个共同特点，即句子的谓语动词都能表达完整的意思。这类动词叫做不及物动词，后面可以跟副词、介词短语、状语从句等。例如：
+
+1. Time flies.
+
+2. The moon rose. 
+3. The man cooked
+4. We all eat, and drink.  
+
+5. Everybody laughed.  
+6. I woke very soon.  
+7. They talked for half an hour.   
+8. He walked yesterday .
+9. He is playing
+10. They have gone
+
+### 主+系+表(S+link-V+P)
+
+ 此句型句子谓语动词不能独立表达完整的意思，必须加上一个表明主语身份或状态的表语构成复合谓语，才能表达完整的意思。这类动词叫做连系动词。系动词分两类：
+
+(1)表示状态的连系动词。这些词有：be, look, seem, appear, smell, taste, sound, keep, remain, 等等。
+
+(2)表示转变或结果的系动词。这些词有：become, get, grow, turn, go, come, prove等。 
+
+1. This is an English dictionary. 
+2. The dinner smells good. 
+3. He felt happy.
+4. Everything looks different.
+5. He is tall and strong. 
+6. The book is interesting. 
+7. The weather became warmer. 
+8. His face turned red.
+
+
+
+### 主+谓+宾(S+V+O)
+
+ 此句型句子的共同特点是：谓语动词都具有实义，都是主语产生的动作，但不能表达完整的意思，必须跟有一个宾语，即动作的承受者，才能使意思完整。这类动词叫做及物动词。
+
+1. Who knows the answer?   
+2. She laugh at her.   
+3. He understands English.  
+4. He made cakes.        
+5. They ate some apples. 
+6. Danny likes donuts. 
+7. I want to have a cup of tea.   
+8. He said Good morning. 
+
+### 主+谓+间宾+直宾(S+V+IO+O)
+
+ 此句型的句子有一个共同特点：谓语动词必须跟有两个宾语才能表达完整的意思。这两个宾语一个是动作的直接承受者，另一个是动作的间接承受者。通常这一间接承受者用一个介词来连接，当动作的间接承受者在动作的直接承受者之前时，这一介词往往被省略。
+
+1. She passed him a new dress.        
+2. She cooked her husband a delicious meal.   
+3. He brought you a dictionary.    
+4. He bought her nothing.       
+5. I showed him my pictures.     
+6. I gave him a hand.     
+7. I told me how to run the machine.   
+8. He showed me that the bus was late. 
+
+### 主+谓+宾+宾补(S+V+O+C）
+
+ 此句型的句子的共同特点是：动词虽然是及物动词，但是只跟一个宾语还不能表达完整的意思，必须加上个补充成分来补足宾语，才能使意思完整。
+
+1. We keep the table clean.      
+2. They painted the door green.     
+3. They call supper dinner.      
+4. They found the house dirty.        
+5. What makes him sad?           
+6. We saw him out.        
+7. He asked me to come back soon.    
+8. I saw them getting on the bus. 
+
+### 主语+谓语+宾语+状语
+
+He put the coffee on the table. I Iooked at him in panic.
+
+### 主语+谓语+状语
+
+在很多情形中，作谓语的不及物动词后面跟上状语意思才完整
+
+1. The pen writes smoothly. 
+2. The sun rises in the east. 
+3. The accident happened yesterday.
+
+### there be 句型
+
+There are many customers in the shop.
+
+be 为谓语动词，there be 后面的名词为句子的主语，此结构中的be还可以用其他词代替，如live ,exist,stand,lie,remain,go,come等
+
+There is **a little man**, and he had a little gun. (*A Little Man*)
+
+There were **two birds** sat on a stone. （*Two Birds*）
+
+
+
+## 英语从句
+
+https://zhuanlan.zhihu.com/p/23502612
+
+https://zhuanlan.zhihu.com/p/359059703
+
+
+
 ## 英语时态
 
 ### 前言
@@ -4157,334 +4892,6 @@ He told us he would been teaching here for 30 years by next summer.
 
 
 
-## 句子
-
-### 句子成分
-
-https://zhuanlan.zhihu.com/p/352580780
-
-https://zhuanlan.zhihu.com/p/166221321?utm_oi=1305845971734618112
-
-https://zhuanlan.zhihu.com/p/23502612
-
-https://zhuanlan.zhihu.com/p/359059703
-
-一个句子要完整，就必须包含所具备的基础成分，基础成分主要分为：主语，谓语，宾语，宾补，表语，系动词。
-
-#### 主语
-
-主语即“动作的发出者”（主谓宾结构中）或者“表述的对象”（主系表结构中），一般放在句首，有时也放在中间或者句尾。充当主语的可以是名词、代词；也可以是短语、不定式；甚至可以是整个句子。所以，在找主语的时候，脑子里一定要有这些认知。
-
-**能当主语的有哪些？**
-
-如下这些能做主语：名词/代词/数词，不定式/名词化短语，从句，it形式主语。
-
-##### 名词做主语
-
-CeIebrities'marriage is but a tool for marketing hype.
-
-名人的婚姻不过是营销炒作的工具。
-
-
-
-##### 代词做主语
-
-We are not lovers any more, but we still care about each other.
-
-我们不再是恋人，但我们仍然关心彼此。
-
-
-
-##### 数词做主语
-
-A billion is not a big deal for Jack Ma.
-
-十亿对马云来说是不算什么。
-
-
-
-##### 不定式做主语
-
-To break up is their final decision.
-
-分手是他们最终的决定。
-
-To post her attitude online is all she can do.
-
-她能做的只是在网上表明自己的态度。
-
-
-
-##### 动名词做主语
-
-Keeping composed is the basis to overcome difficulties.
-
-保持镇定是克服困难的基础。
-
-
-
-##### 从句做主语
-
-从句做主语的句子，就是我们学过的“主语从句”。主语从句可以由连词that/whether引导；也可以由关系代词what/who/which引导；还可以由连接副词how/when/why/where引导。
-
-Whether she will keep it a secret is unknown us all.
-
-她是否会保守秘密我们都不知道。
-
-What she has is nothing but money.
-
-她穷得只剩下钱了。
-
-How they got separated is a serious problem they need to rethink.
-
-他们分手的原因是他们双方都要反思的重要问题。
-
-
-
-##### it形式主语
-
-有时为了避免头重脚轻，经常会借助“it”充当形式主语，而真正的主语则放在句尾
-
-（1）用"that"引导的主语从句
-
-原句：That he will pass the exam is certain.
-
-改句：It is certain that he will pass the exam.（通常用这种句式）
-
-主语：he will pass the exam
-
-（2）“疑问句“须用it做形式主语
-
-Is it funny that the tall man and the short girl are a coule?
-
-高个子男孩和矮个子女孩居然是夫妻。是不是很有趣呢？
-
-
-
-##### There be的主语在中间
-
-“there be…”比较特殊。在这种句型中，主语的位置在中间。比如：
-
-There are six beautiful French ladies walking on the street.
-
-大街上有六位漂亮的法国女郎在散步。
-
-主语： six beautiful French ladies
-
-
-
-#### 谓语
-
-谓语是句子的灵魂，主要用来“陈述主语的状态”或者“表明主语发出的动作”。
-
-谓语分类：简单谓语，复合谓语
-
-（1）简单谓语：由一个动词或者一个动词短语构成谓语；
-
-##### 动词做谓语
-
-I love my girlfriend.
-
-我爱我的女朋友。
-
-##### 动词短语做谓语
-
-My boss stayed up late last night.
-
-我的老板昨晚熬夜了。
-
-（2）复合谓语：
-
-##### 助动词+动词做渭语
-
-I don't like your pants.
-
-我不喜欢你的裤子。
-
-##### 情态动词+动词做渭语
-
-You should drink some water.
-
-你应该喝一些水。
-
-I have never seen such a barefaced guy like you！
-
-我从未见过如此厚颜无耻之徒。
-
-##### 系动词+表语做谓语
-
-系表结构做渭语
-
-I feel anxious in front of you.
-
-我在你面前紧张。
-
-He turned out to be fine.
-
-结果他没事儿。
-
-They appear to be angry.
-
-他们似乎很生气。
-
-##### 情态动词+系动词做谓语
-
-You should be serious.
-
-你应该严肃点。
-
-We will be successful in the future.
-
-我们将来会成功的。
-
-
-
-#### 宾语
-
-含义：宾语与主语相对，表示动作的承受者。
-
-宾语分直接宾语和间接宾语。
-
-例如：My boy friend told me a ghost story last night.
-
-昨晚，我男朋友给我讲了个鬼故事。
-
-间接宾语：me
-
-直接宾语：a ghost story
-
-哪些词可以做宾语？
-
-名词、代词、数词以及句子都可以做宾语（宾语从句）
-
-##### 代词做宾语
-
-I fancy you.
-
-我喜欢你。
-
-##### 名词做宾语
-
-I like playing basketball.
-
-我喜欢打篮球。
-
-##### 数词做宾语
-
-How many do you want? — I want two. 你要几个？－ 我要两个。
-
-How much milk do you want? — A bottle. 你要多少牛奶？— 一瓶。
-
-I want to fight with ten of them.
-
-我要打他们十个！
-
-##### 名词化形容词作宾语
-
-They sent the injured to the hospital.
-
-他们把伤员送到医院。
-
-##### 不定式作宾语
-
-They asked to see my passport. 
-
-他们要求看我的护照。
-
-##### 动名词做宾语
-
-I enjoy working with you. 我和你们一道工作很愉快。
-
-##### 从句做宾语
-
-No body knows who can pass the exam.
-
-没有人知道谁能考过。
-
-Did you write down what he said? 
-
-你把他的话写下了没有？
-
-
-
-#### 定语
-
-“定语”是为了限定句中某个的成分。定语在所修饰的词前，就被称为前置定语；反之，则为后置定语。
-
-形容词、数词、代词、从句（定语从句）等成分基本都可以做定语（动词除外）。
-
-##### 副词做定语
-
-The iPad there is mine.
-
-那个iPad是我的。there是定语。
-
-##### 不定式做定语
-
-The boy to take the ball is my son.
-
-去拿球的男孩是我的儿子。
-
-##### 分词做定语
-
-The boy left is my friend.
-
-留下来的男孩是我的朋友。
-
-##### 形容词做定语
-
-She is a lovely girl.
-
-她是一个可爱的女孩儿。
-
-##### 数词做定语
-
-I have two girl friends.
-
-我有两个女朋友。
-
-##### 介词短语做定语
-
-The girl in pink is my daughter.
-
-穿粉色衣服的是我女儿。
-
-##### 名词做定语
-
-I have a pencil box.
-
-我有一个铅笔盒。
-
-##### 从句做定语
-
-He is the teacher who teaches us math.
-
-他就是那个教我们数学的老师。
-
-
-
-#### 状语
-
-状语传递的信息包括：时间、地点、原因、目的、结果、方式、程度等，其使用的目的就是使表达更为丰满、具体。
-
-英语中的副词、不定式、介词、名词、从句等都可以做状语。
-
-如何判定哪些成分是“状语”？关键就看这个词/词组/从句是否在修饰动词or形容词or副词or整个句子。
-
-
-
-具体使用方式，见下图：
-
-
-
-### 句子结构
-
-
-
-### 英语从句
-
-
-
 ## 冠词
 
 ### the
@@ -4885,4 +5292,4 @@ She couldn't find her purse. She didn't know where she had put it. 她找不到�
 
 He put all the books beside each other. 他把所有的书并列摆放起来
 
-The girls often borrow each other's/one another's books. 女孩们经常借彼此的书
+The girls often borrow each other's/one another's books. 女孩们经常借彼此的书	
