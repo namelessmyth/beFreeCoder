@@ -1609,56 +1609,486 @@ alter table citydemo add key(city(7));
 
 ### 优化细节
 
- 当使用索引列进行查询的时候尽量不要使用表达式，把计算放到业务层而不是数据库层
+当使用索引列进行查询的时候尽量不要使用表达式，把计算放到业务层而不是数据库层
 
-  select actor_id from actor where actor_id=4;
+select actor_id from actor where actor_id=4;
 
-  select actor_id from actor where actor_id+1=5;
+select actor_id from actor where actor_id+1=5;
 
- 尽量使用主键查询，而不是其他索引，因此主键查询不会触发回表查询
+尽量使用主键查询，而不是其他索引，因此主键查询不会触发回表查询
 
- 使用前缀索引
+使用前缀索引
 
- 使用索引扫描来排序
+使用索引扫描来排序
 
-  使用索引扫描来做排序.md
+使用索引扫描来做排序.md
 
- union all,in,or都能够使用索引，但是推荐使用in
-  explain select * from actor where actor_id = 1 union all select * from actor where actor_id = 2;
-  explain select * from actor where actor_id in (1,2);
-   explain select * from actor where actor_id = 1 or actor_id =2;
+union all, in, or都能够使用索引，但是推荐使用in
 
- 范围列可以用到索引
+explain select * from actor where actor_id = 1 union all select * from actor where actor_id = 2;
 
-  范围条件是：<、>
+explain select * from actor where actor_id in (1,2);
 
-  范围列可以用到索引，但是范围列后面的列无法用到索引，索引最多用于一个范围列
+explain select * from actor where actor_id = 1 or actor_id =2;
 
- 强制类型转换会全表扫描
+范围列可以用到索引
 
-  explain select * from user where phone=13800001234;
+范围条件是：<、>
 
-   不会触发索引
+范围列可以用到索引，但是范围列后面的列无法用到索引，索引最多用于一个范围列
 
-  explain select * from user where phone='13800001234';
+强制类型转换会全表扫描
 
-   触发索引
+explain select * from user where phone=13800001234;
 
- 更新十分频繁，数据区分度不高的字段上不宜建立索引
+不会触发索引
 
-  更新会变更B+树，更新频繁的字段建议索引会大大降低数据库性能
+explain select * from user where phone='13800001234';
 
-  类似于性别这类区分不大的属性，建立索引是没有意义的，不能有效的过滤数据，
+触发索引
 
-  一般区分度在80%以上的时候就可以建立索引，区分度可以使用 count(distinct(列名))/count(*) 来计算
- 创建索引的列，不允许为null，可能会得到不符合预期的结果
- 当需要进行表连接的时候，最好不要超过三张表，因为需要join的字段，数据类型必须一致
- 能使用limit的时候尽量使用limit
- 单表索引建议控制在5个以内
- 单索引字段数不允许超过5个（组合索引）
- 创建索引的时候应该避免以下错误概念
-  索引越多越好
-  过早优化，在不了解系统的情况下进行优化
+更新十分频繁，数据区分度不高的字段上不宜建立索引
+
+更新会变更B+树，更新频繁的字段建议索引会大大降低数据库性能
+
+类似于性别这类区分不大的属性，建立索引是没有意义的，不能有效的过滤数据，
+
+一般区分度在80%以上的时候就可以建立索引，区分度可以使用 count(distinct(列名))/count(*) 来计算
+
+创建索引的列，不允许为null，否则可能会得到不符合预期的结果
+
+当需要进行表连接的时候，最好不要超过三张表，因为需要join的字段，数据类型必须一致
+
+- mysql5.7及之前版本，join用的是nested loop，[官网说明](https://dev.mysql.com/doc/refman/5.7/en/nested-loop-joins.html)
+
+- 简单来说就是表a和表b做join，MySQL会用表a的所有行去匹配表B的所有行。
+
+- 下面是官网给的案例，从这里可以看出这种算法的时间复杂度很高属于O(n^2^)，三张表就是O(n^3^)
+
+- ```sql
+  for each row in t1 matching range {
+    for each row in t2 matching reference key {
+      for each row in t3 {
+        if row satisfies join conditions, send to client
+      }
+    }
+  }
+  ```
+
+- 如果基于业务必须要进行多表join，建议使用主键字段或者在非驱动表上连接字段上加上索引，这样可以提升性能。
+
+  - 如果有了索引在查询时，驱动表会根据关联字段的索引进行查找，当在索引上找到符合的值，再回表进行查询，也就是只有当匹配到索引以后才会进行回表查询。
+  - 如果非驱动表的关联键是主键的话，性能会非常高，主键自带唯一索引。
+  - 如果不是主键，要进行多次回表查询，先关联索引，然后根据二级索引的主键ID进行回表操作，性能上比索引或是主键要慢
+
+- 如果join列没有索引，就会采用Block Nested-Loop Join。MySQL内部有个join buffer缓冲区（默认join_buffer_size=256k）。会将驱动表的所有ioin相关的列都先缓存到ioin bufer中，然后批量与匹配表进行匹配，将第一种多次比较合并为一次，降低了非驱动表的访问频率。在查找的时候MySQL会将所有需要的列缓存到join buffer当中，包括select的列，而不是仅仅只缓存关联列。在一个有N个JOIN关联的SQL当中会在执行时候分配N-1个join bufer。
+
+  - 注意：由于join buffer缓冲区是有大小限制的，所以只要当要缓存的数据在这个限制内，MySQL才会使用这种方式。
+
+  - 所以大家可以适当调大这个值的大小。
+
+  - ```sh
+    mysql> show variables like '%join_buffer_size%';
+    +------------------+--------+
+    | Variable_name    | Value  |
+    +------------------+--------+
+    | join_buffer_size | 262144 |
+    +------------------+--------+
+    1 row in set (0.02 sec)
+    ```
+
+  - 
+
+- 如果sql写的是表a join 表b，MySQL不一定会将表a作为驱动表，而是会基于自己的优化器规则动态计算。如果你认为自己的方案比MySQL的优化器更好可以强制指定驱动表。语法：`表a STRAIGHT_JOIN 表b on 条件`
+
+能使用limit的时候尽量使用limit
+
+- 例如：使用了limit 1 之后，MySQL只会计算一行的数据。但如果不写，下面如果有数据还会继续计算。
+- 如果的limit的数据比较大也要慎用。例如：limit 10000，5。这时候mysql要按照顺序遍历到第10000行，再取5行。性能较低。
+
+单表索引建议控制在5个以内
+
+- 索引越多，索引树越大，索引文件越多，IO越多，增删改的时候维护成本越大。
+
+组合索引字段数不要超过5个
+
+创建索引的时候应该避免以下错误概念
+
+- 索引越多越好
+
+- 过早优化，在不了解系统的情况下进行优化
+
+
+
+### 索引监控
+
+命令：show status like 'Handler_read%';
+
+```shell
+mysql> show status like 'Handler_read%';
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| Handler_read_first    | 10    |
+| Handler_read_key      | 863   |
+| Handler_read_last     | 0     |
+| Handler_read_next     | 2339  |
+| Handler_read_prev     | 0     |
+| Handler_read_rnd      | 283   |
+| Handler_read_rnd_next | 3378  |
++-----------------------+-------+
+7 rows in set (0.03 sec)
+```
+
+参数解释
+
+Handler_read_first：
+
+读取索引根节点的次数。如果该值很高，则表明服务器正在执行大量的全索引扫描(例如，SELECT col1 FROM foo，假设col1已被索引)。
+
+Handler_read_key：通过index获取数据的次数（例如：总共100行数据，读了多少次索引）
+
+Handler_read_last：读取索引最后一个条目的次数
+
+Handler_read_next：通过索引读取下一条数据的次数
+
+Handler_read_prev：通过索引读取上一条数据的次数
+
+Handler_read_rnd：从固定位置读取数据的次数
+
+Handler_read_rnd_next：从数据节点读取下一条数据的次数
+
+**注意：以上参数为整个数据库的整体数据，一般越大越好，如果很小或者基本为零，那说明系统中大部分查询都没用到索引。在优化单个SQL时并不常用。**
+
+[以上参数官网说明](https://dev.mysql.com/doc/refman/5.7/en/server-status-variables.html#statvar_Handler_read_first)
+
+
+
+### 优化案例
+
+预先准备好数据
+
+```sql
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS `itdragon_order_list`;
+CREATE TABLE `itdragon_order_list` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '主键id，默认自增长',
+  `transaction_id` varchar(150) DEFAULT NULL COMMENT '交易号',
+  `gross` double DEFAULT NULL COMMENT '毛收入(RMB)',
+  `net` double DEFAULT NULL COMMENT '净收入(RMB)',
+  `stock_id` int(11) DEFAULT NULL COMMENT '发货仓库',
+  `order_status` int(11) DEFAULT NULL COMMENT '订单状态',
+  `descript` varchar(255) DEFAULT NULL COMMENT '客服备注',
+  `finance_descript` varchar(255) DEFAULT NULL COMMENT '财务备注',
+  `create_type` varchar(100) DEFAULT NULL COMMENT '创建类型',
+  `order_level` int(11) DEFAULT NULL COMMENT '订单级别',
+  `input_user` varchar(20) DEFAULT NULL COMMENT '录入人',
+  `input_date` varchar(20) DEFAULT NULL COMMENT '录入时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10003 DEFAULT CHARSET=utf8;
+
+INSERT INTO itdragon_order_list VALUES ('10000', '81X97310V32236260E', '6.6', '6.13', '1', '10', 'ok', 'ok', 'auto', '1', 'itdragon', '2017-08-28 17:01:49');
+INSERT INTO itdragon_order_list VALUES ('10001', '61525478BB371361Q', '18.88', '18.79', '1', '10', 'ok', 'ok', 'auto', '1', 'itdragon', '2017-08-18 17:01:50');
+INSERT INTO itdragon_order_list VALUES ('10002', '5RT64180WE555861V', '20.18', '20.17', '1', '10', 'ok', 'ok', 'auto', '1', 'itdragon', '2017-09-08 17:01:49');
+
+```
+
+逐步开始进行优化：
+
+第一个案例：
+
+```sql
+select * from itdragon_order_list where transaction_id = "81X97310V32236260E";
+--通过查看执行计划发现type=all,需要进行全表扫描
+explain select * from itdragon_order_list where transaction_id = "81X97310V32236260E";
+
+--优化一、为transaction_id创建唯一索引
+ create unique index idx_order_transaID on itdragon_order_list (transaction_id);
+--当创建索引之后，唯一索引对应的type是const，通过索引一次就可以找到结果，普通索引对应的type是ref，表示非唯一性索引赛秒，找到值还要进行扫描，直到将索引文件扫描完为止，显而易见，const的性能要高于ref
+ explain select * from itdragon_order_list where transaction_id = "81X97310V32236260E";
+ 
+ --优化二、使用覆盖索引，查询的结果变成 transaction_id,当extra出现using index,表示使用了覆盖索引
+ explain select transaction_id from itdragon_order_list where transaction_id = "81X97310V32236260E";
+```
+
+第二个案例
+
+```sql
+--创建复合索引
+create index idx_order_levelDate on itdragon_order_list (order_level,input_date);
+
+--创建索引之后发现跟没有创建索引一样，都是全表扫描，都是文件排序
+explain select * from itdragon_order_list order by order_level,input_date;
+
+--可以使用force index强制指定索引
+explain select * from itdragon_order_list force index(idx_order_levelDate) order by order_level,input_date;
+--其实给订单排序意义不大，给订单级别添加索引意义也不大，因此可以先确定order_level的值，然后再给input_date排序
+explain select * from itdragon_order_list where order_level=3 order by input_date;
+```
+
+
+
+### 查询优化
+
+#### 查询慢的原因
+
+- 网络
+- CPU
+- IO
+- 上下文切换
+- 系统调用
+- 生成统计信息
+- 锁等待时间
+
+#### 优化数据访问
+
+查询性能低下的主要原因是访问的数据太多，某些查询不可避免的需要筛选大量的数据，我们可以通过减少访问数据量的方式进行优化
+
+确认应用程序是否在检索大量超过需要的数据
+
+确认mysql服务器层是否在分析大量超过需要的数据行
+
+是否向数据库请求了不需要的数据
+
+- 查询不需要的记录
+
+  - 我们常常会误以为mysql会只返回需要的数据，实际上mysql却是先返回全部结果再进行计算，在日常的开发习惯中，经常是先用select语句查询大量的结果，然后获取前面的N行后关闭结果集。
+
+    优化方式是在查询后面添加limit
+
+- 多表关联时返回全部列
+
+  - ```sql
+    select * from actor inner join filmactor using(actorid) inner join film using(film_id) where film.title='Academy Dinosaur';
+    
+    select actor.* from actor...;
+    ```
+
+- 总是取出全部列
+
+  - 在公司的企业需求中，禁止使用select *,虽然这种方式能够简化开发，但是会影响查询的性能，所以尽量不要使用
+
+- 重复查询相同的数据
+
+  - 如果需要不断的重复执行相同的查询，且每次返回完全相同的数据，因此，基于这样的应用场景，我们可以将这部分数据缓存起来，这样的话能够提高查询效率
+
+#### 执行过程的优化
+
+##### 查询缓存
+
+在解析一个查询语句之前，如果查询缓存是打开的，那么mysql会优先检查这个查询是否命中查询缓存中的数据，如果查询恰好命中了查询缓存，那么会在返回结果之前会检查用户权限，如果权限没有问题，那么mysql会跳过所有的阶段，就直接从缓存中拿到结果并返回给客户端
+
+注意：查询缓存建议用于数据不怎么变动的表。
+
+##### 查询优化处理
+
+> mysql查询完缓存之后会经过以下几个步骤：解析SQL、预处理、优化SQL执行计划，这几个步骤出现任何的错误，都可能会终止查询
+
+语法解析器和预处理
+
+> mysql通过关键字将SQL语句进行解析，并生成一颗解析树，mysql解析器将使用mysql语法规则验证和解析查询，例如验证使用使用了错误的关键字或者顺序是否正确等等，预处理器会进一步检查解析树是否合法，例如表名和列名是否存在，是否有歧义，还会验证权限等等
+
+查询优化器
+
+> 当语法树没有问题之后，相应的要由优化器将其转成执行计划，一条查询语句可以使用非常多的执行方式，最后都可以得到对应的结果，但是不同的执行方式带来的效率是不同的，优化器的最主要目的就是要选择最有效的执行计划
+>
+> mysql使用的是基于成本的优化器，在优化的时候会尝试预测一个查询使用某种查询计划时候的成本，并选择其中成本最小的一个
+
+```shell
+mysql> select count(*) from film_actor;
++----------+
+| count(*) |
++----------+
+|     5462 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> show status like 'last_query_cost';
++-----------------+------------+
+| Variable_name   | Value      |
++-----------------+------------+
+| Last_query_cost | 549.199000 |
++-----------------+------------+
+1 row in set (0.02 sec)
+```
+
+可以看到上面的查询语句大概需要做549个数据页才能找到对应的数据，这是经过一系列的统计信息计算来的。如下：
+
+- 每个表或者索引的页面个数
+- 索引的基数
+- 索引和数据行的长度
+- 索引的分布情况
+
+在很多情况下mysql会选择错误的执行计划，原因如下：
+
+- 统计信息不准确
+  - InnoDB因为其mvcc的架构，并不能维护一个数据表的行数的精确统计信息
+- 执行计划的成本估算不等同于实际执行的成本
+  - 有时候某个执行计划虽然需要读取更多的页面，但是他的成本却更小，因为如果这些页面都是顺序读或者这些页面都已经在内存中的话，那么它的访问成本将很小，mysql层面并不知道哪些页面在内存中，哪些在磁盘，所以查询之际执行过程中到底需要多少次IO是无法得知的
+- mysql的最优可能跟你想的不一样
+  - mysql的优化是基于成本模型的优化，但是有可能不是最快的优化
+- mysql不考虑其他并发执行的查询
+- mysql不会考虑不受其控制的操作成本
+  - 执行存储过程或者用户自定义函数的成本	
+
+优化器的优化策略
+
+- 静态优化
+  - 直接对解析树进行分析，并完成优化
+- 动态优化
+  - 动态优化与查询的上下文有关，也可能跟取值、索引对应的行数有关
+- mysql对查询的静态优化只需要一次，但对动态优化在每次执行时都需要重新评估
+
+优化器的优化类型
+
+- 重新定义关联表的顺序
+
+  - 数据表的关联并不总是按照在查询中指定的顺序进行，决定关联顺序时优化器很重要的功能
+
+- 将外连接转化成内连接，内连接的效率要高于外连接
+
+- 使用等价变换规则，mysql可以使用一些等价变化来简化并规划表达式
+
+  - 例如：a != 4，mysql可能会转换为 a < 4 or a >4
+
+- 优化count(),min(),max()
+
+  - 索引和列是否可以为空通常可以帮助mysql优化这类表达式：例如，要找到某一列的最小值，只需要查询索引的最左端的记录即可，不需要全文扫描比较
+
+- 预估并转化为常数表达式，当mysql检测到一个表达式可以转化为常数的时候，就会一直把该表达式作为常数进行处理
+
+  - explain select film.filmid,filmactor.actorid from film inner join filmactor using(filmid) where film.filmid = 1
+
+  - ```sh
+    mysql> explain select * from actor where actor_id = 10;
+    +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+    | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
+    +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+    |  1 | SIMPLE      | actor | NULL       | const | PRIMARY       | PRIMARY | 2       | const |    1 |   100.00 | NULL  |
+    +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+    1 row in set (0.03 sec)
+    
+    mysql> explain select * from actor where actor_id > 9 and actor_id < 11;
+    +----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+    | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |
+    +----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+    |  1 | SIMPLE      | actor | NULL       | range | PRIMARY       | PRIMARY | 2       | NULL |    1 |   100.00 | Using where |
+    +----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+    1 row in set (0.05 sec)
+    ```
+
+  - 
+
+- 索引覆盖扫描，当索引中的列包含所有查询中需要使用的列的时候，可以使用覆盖索引
+
+- 子查询优化
+
+  - mysql在某些情况下可以将子查询转换一种效率更高的形式，从而减少多个查询多次对数据进行访问，例如将经常查询的数据放入到缓存中
+
+- 等值传播
+
+  - 如果两个列的值通过等式关联，那么mysql能够把其中一个列的where条件传递到另一个上：
+  - explain select film.film_id from film inner join film_actor using(film_id) where film.film_id > 500;
+  - 这里使用filmid字段进行等值关联，filmid这个列不仅适用于film表而且适用于filmactor表 
+  - explain select film.film_id from film inner join film_actor using(film_id) where film.film_id > 500 and film_actor.film_id > 500;
+
+
+关联查询
+
+> mysql的关联查询很重要，但其实关联查询执行的策略比较简单：mysql对任何关联都执行嵌套循环关联操作，即mysql先在一张表中循环取出单条数据，然后再嵌套到下一个表中寻找匹配的行，依次下去，直到找到所有表中匹配的行为止。然后根据各个表匹配的行，返回查询中需要的各个列。mysql会尝试再最后一个关联表中找到所有匹配的行，如果最后一个关联表无法找到更多的行之后，mysql返回到上一层次关联表，看是否能够找到更多的匹配记录，以此类推迭代执行。整体的思路如此，但是要注意实际的执行过程中有多个变种形式：
+
+join的实现方式原理
+
+Simple Nested-Loop Join
+
+Index Nested-Loop Join
+
+Block Nested-Loop Join
+
+（1）Join Buffer会缓存所有参与查询的列而不是只有Join的列。
+
+（2）可以通过调整join_buffer_size缓存大小
+
+（3）join_buffer_size的默认值是256K，join_buffer_size的最大值在MySQL 5.1.22版本前是4G-1，而之后的版本才能在64位操作系统下申请大于4G的Join Buffer空间。
+
+（4）使用Block Nested-Loop Join算法需要开启优化器管理配置的optimizer_switch的设置block_nested_loop为on，默认为开启。
+show variables like '%optimizer_switch%'
+
+案例演示
+
+查看不同的顺序执行方式对查询性能的影响：
+explain select film.filmid,film.title,film.releaseyear,actor.actorid,actor.firstname,actor.lastname from film inner join f ilmactor using(filmid) inner join actor using(actorid);
+查看执行的成本：
+show status like 'lastquerycost';
+按照自己预想的规定顺序执行：
+explain select straightjoin film.filmid,film.title,film.releaseyear,actor.actorid,actor.firstname,actor.lastname from fil
+m inner join filmactor using(filmid) inner join actor using(actorid); 查看执行的成本： show status like 'lastquery_cost';
+
+排序优化
+
+排序的算法
+
+两次传输排序
+
+单次传输排序
+
+当需要排序的列的总大小超过max_length_for_sort_data定义的字节，mysql会选择双次排序，反之使用单次排序，当然，用户可以设置
+
+此参数的值来选择排序的方式
+
+优化特定类型的查询
+
+优化count()查询
+
+总有人认为myisam的count函数比较快，这是有前提条件的，只有没有任何where条件的count(*)才是比较快的
+使用近似值
+更复杂的优化
+优化关联查询
+确保on或者using子句中的列上有索引，在创建索引的时候就要考虑到关联的顺序
+确保任何的groupby和order by中的表达式只涉及到一个表中的列，这样mysql才有可能使用索引来优化这个过程
+优化子查询
+优化limit分页
+优化此类查询的最简单的办法就是尽可能地使用覆盖索引，而不是查询所有的列
+select film_id,description from film order by title limit 50,5
+explain select film.film_id,film.description from film inner join (select film_id from film order by title limit 50,5) as lim using(film_id);
+优化union查询
+除非确实需要服务器消除重复的行，否则一定要使用union all，因此没有all关键字，mysql会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高
+推荐使用用户自定义变量
+自定义变量的使用
+set @one :=1
+set @min_actor :=(select min(actor_id) from actor)
+set @last_week :=current_date-interval 1 week;
+自定义变量的限制
+1、无法使用查询缓存
+2、不能在使用常量或者标识符的地方使用自定义变量，例如表名、列名或者limit子句
+3、用户自定义变量的生命周期是在一个连接中有效，所以不能用它们来做连接间的通信
+4、不能显式地声明自定义变量地类型
+5、mysql优化器在某些场景下可能会将这些变量优化掉，这可能导致代码不按预想地方式运行
+6、赋值符号：=的优先级非常低，所以在使用赋值表达式的时候应该明确的使用括号
+7、使用未定义变量不会产生任何语法错误
+自定义变量的使用案例
+优化排名语句
+1、在给一个变量赋值的同时使用这个变量
+select actor_id,@rownum:=@rownum+1 as rownum from actor limit 10;
+2、查询获取演过最多电影的前10名演员，然后根据出演电影次数做一个排名
+select actor_id,count(*) as cnt from film_actor group by actor_id order by cnt desc limit 10;
+避免重新查询刚刚更新的数据
+当需要高效的更新一条记录的时间戳，同时希望查询当前记录中存放的时间戳是什么
+update t1 set  lastUpdated=now() where id =1;
+select lastUpdated from t1 where id =1;
+update t1 set lastupdated = now() where id = 1 and @now:=now();
+select @now;
+确定取值的顺序
+在赋值和读取变量的时候可能是在查询的不同阶段
+set @rownum:=0;
+select actor_id,@rownum:=@rownum+1 as cnt from actor where @rownum<=1;
+因为where和select在查询的不同阶段执行，所以看到查询到两条记录，这不符合预期
+set @rownum:=0;
+select actor_id,@rownum:=@rownum+1 as cnt from actor where @rownum<=1 order by first_name
+当引入了orde;r by之后，发现打印出了全部结果，这是因为order by引入了文件排序，而where条件是在文件排序操作之前取值的
+解决这个问题的关键在于让变量的赋值和取值发生在执行查询的同一阶段：
+set @rownum:=0;
+select actor_id,@rownum as cnt from actor where (@rownum:=@rownum+1)<=1;
 
 
 
