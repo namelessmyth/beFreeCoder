@@ -209,6 +209,50 @@
 
 
 
+### 标点符号
+
+逗号，`,`，comma
+
+句号，`.`，period/full stop
+
+问号，`?`，question mark
+
+感叹号，`!`，exclamation mark
+
+冒号，`:`，colon
+
+分号，`;`，semicolon
+
+小括号，`()`，parenthesis
+
+中括号，`[]`，brackets
+
+大括号，`{}`，brace
+
+连词符，`-`，hyphen
+
+下划线，`_`，underscore/underline
+
+删除线，~~删除线~~，strikethrough，line through。
+
+单引号，`'`，apostrophe
+
+省略号，`...`，ellipsis
+
+正斜杠，`\`，forward slash/slash
+
+反斜杠，`/`，backword slash/backslash
+
+美元符号，`$`，dollar mark
+
+星号，`*`，asterisk
+
+井号，`#`，Number sign一般用来表示序数，美式英语里也称之为pound sign或者pound key
+
+
+
+
+
 ### 调料
 
 调料品：seasonings
