@@ -1605,6 +1605,64 @@ alter table citydemo add key(city(7));
 
 
 
+### 关联查询Join
+
+- [MySQL-Join官网说明](https://dev.mysql.com/doc/refman/5.7/en/nested-loop-joins.html)
+
+- 如果join列有索引用的是Nested-Loop Join，如果没索引则用的是Block Nested-Loop Join Algorithm，
+
+- 对于Nested-Loop Join，简单来说就是表a和表b做join，MySQL会用表a的所有行去匹配表B的所有行。
+
+- 下面是官网给的案例，从这里可以看出这种算法的时间复杂度很高属于O(n^2^)，三张表就是O(n^3^)
+
+- ```sql
+  for each row in t1 matching range {
+    for each row in t2 matching reference key {
+      for each row in t3 {
+        if row satisfies join conditions, send to client
+      }
+    }
+  }
+  ```
+
+- 如果基于业务必须要进行多表join，建议使用主键字段或者在非驱动表上连接字段上加上索引，这样可以提升性能。
+
+  - 如果有了索引在查询时，驱动表会根据关联字段的索引进行查找，当在索引上找到符合的值，再回表进行查询，也就是只有当匹配到索引以后才会进行回表查询。
+  - 如果非驱动表的关联键是主键的话，性能会非常高，主键自带唯一索引。
+  - 如果不是主键，要进行多次回表查询，先关联索引，然后根据二级索引的主键ID进行回表操作，性能上比索引或是主键要慢
+
+- 如果join列没有索引，就会采用Block Nested-Loop Join。MySQL内部有个join buffer缓冲区（默认join_buffer_size=256k）。会将驱动表的所有join相关的列都先缓存到join bufer中，然后批量与匹配表进行匹配，将第一种多次比较合并为一次，降低了非驱动表的访问频率。在查找的时候MySQL会将所有需要的列缓存到join buffer当中，包括select的列，而不是仅仅只缓存关联列。在一个有N个JOIN关联的SQL当中会在执行时候分配N-1个join bufer。
+
+  - 使用Block Nested-Loop Join算法需要开启优化器管理配置的optimizer_switch的设置block_nested_loop为on，默认为开启。
+    show variables like '%optimizer_switch%'
+
+  - 注意：由于join buffer缓冲区是有大小限制的，所以只要当要缓存的数据在这个限制内，MySQL才会使用这种方式。
+
+  - 所以大家可以适当调大这个值的大小。
+
+  - ```sh
+    mysql> show variables like '%join_buffer_size%';
+    +------------------+--------+
+    | Variable_name    | Value  |
+    +------------------+--------+
+    | join_buffer_size | 262144 |
+    +------------------+--------+
+    1 row in set (0.02 sec)
+    ```
+
+- 关于驱动表：如果sql语句中写的是表a join 表b，MySQL不一定会将表a作为驱动表，而是会基于自己的优化器规则动态计算。如果你认为自己的方案比MySQL的优化器更好可以强制指定驱动表。语法：`表a STRAIGHT_JOIN 表b on 条件`
+
+- 案例演示
+
+  - 查看不同的顺序执行方式对查询性能的影响：
+  - explain select film.film_id,film.title,film.release_year,actor.actor_id,actor.first_name,actor.lastname from film inner join film_actor using(film_id) inner join actor using(actor_id);
+  - 查看执行的成本：
+  - show status like 'last_query_cost';
+  - 按照自己预想的规定顺序执行(straight_join)：
+  - explain select straight_join film.filmid,film.title,film.releaseyear,actor.actorid,actor.firstname,actor.lastname from fil
+    m inner join film_actor using(film_id) inner join actor using(actor_id); 
+  - 查看执行的成本： show status like 'last_query_cost';
+
 
 
 ### 优化细节
@@ -1658,48 +1716,6 @@ explain select * from user where phone='13800001234';
 创建索引的列，不允许为null，否则可能会得到不符合预期的结果
 
 当需要进行表连接的时候，最好不要超过三张表，因为需要join的字段，数据类型必须一致
-
-- mysql5.7及之前版本，join用的是nested loop，[官网说明](https://dev.mysql.com/doc/refman/5.7/en/nested-loop-joins.html)
-
-- 简单来说就是表a和表b做join，MySQL会用表a的所有行去匹配表B的所有行。
-
-- 下面是官网给的案例，从这里可以看出这种算法的时间复杂度很高属于O(n^2^)，三张表就是O(n^3^)
-
-- ```sql
-  for each row in t1 matching range {
-    for each row in t2 matching reference key {
-      for each row in t3 {
-        if row satisfies join conditions, send to client
-      }
-    }
-  }
-  ```
-
-- 如果基于业务必须要进行多表join，建议使用主键字段或者在非驱动表上连接字段上加上索引，这样可以提升性能。
-
-  - 如果有了索引在查询时，驱动表会根据关联字段的索引进行查找，当在索引上找到符合的值，再回表进行查询，也就是只有当匹配到索引以后才会进行回表查询。
-  - 如果非驱动表的关联键是主键的话，性能会非常高，主键自带唯一索引。
-  - 如果不是主键，要进行多次回表查询，先关联索引，然后根据二级索引的主键ID进行回表操作，性能上比索引或是主键要慢
-
-- 如果join列没有索引，就会采用Block Nested-Loop Join。MySQL内部有个join buffer缓冲区（默认join_buffer_size=256k）。会将驱动表的所有ioin相关的列都先缓存到ioin bufer中，然后批量与匹配表进行匹配，将第一种多次比较合并为一次，降低了非驱动表的访问频率。在查找的时候MySQL会将所有需要的列缓存到join buffer当中，包括select的列，而不是仅仅只缓存关联列。在一个有N个JOIN关联的SQL当中会在执行时候分配N-1个join bufer。
-
-  - 注意：由于join buffer缓冲区是有大小限制的，所以只要当要缓存的数据在这个限制内，MySQL才会使用这种方式。
-
-  - 所以大家可以适当调大这个值的大小。
-
-  - ```sh
-    mysql> show variables like '%join_buffer_size%';
-    +------------------+--------+
-    | Variable_name    | Value  |
-    +------------------+--------+
-    | join_buffer_size | 262144 |
-    +------------------+--------+
-    1 row in set (0.02 sec)
-    ```
-
-  - 
-
-- 如果sql写的是表a join 表b，MySQL不一定会将表a作为驱动表，而是会基于自己的优化器规则动态计算。如果你认为自己的方案比MySQL的优化器更好可以强制指定驱动表。语法：`表a STRAIGHT_JOIN 表b on 条件`
 
 能使用limit的时候尽量使用limit
 
@@ -1828,6 +1844,8 @@ explain select * from itdragon_order_list where order_level=3 order by input_dat
 
 
 
+## SQL优化
+
 ### 查询优化
 
 #### 查询慢的原因
@@ -1874,13 +1892,13 @@ explain select * from itdragon_order_list where order_level=3 order by input_dat
 
 #### 执行过程的优化
 
-##### 查询缓存
+#### 查询缓存
 
 在解析一个查询语句之前，如果查询缓存是打开的，那么mysql会优先检查这个查询是否命中查询缓存中的数据，如果查询恰好命中了查询缓存，那么会在返回结果之前会检查用户权限，如果权限没有问题，那么mysql会跳过所有的阶段，就直接从缓存中拿到结果并返回给客户端
 
 注意：查询缓存建议用于数据不怎么变动的表。
 
-##### 查询优化处理
+#### 查询优化处理
 
 > mysql查询完缓存之后会经过以下几个步骤：解析SQL、预处理、优化SQL执行计划，这几个步骤出现任何的错误，都可能会终止查询
 
@@ -1993,104 +2011,717 @@ mysql> show status like 'last_query_cost';
   - explain select film.film_id from film inner join film_actor using(film_id) where film.film_id > 500 and film_actor.film_id > 500;
 
 
-关联查询
 
-> mysql的关联查询很重要，但其实关联查询执行的策略比较简单：mysql对任何关联都执行嵌套循环关联操作，即mysql先在一张表中循环取出单条数据，然后再嵌套到下一个表中寻找匹配的行，依次下去，直到找到所有表中匹配的行为止。然后根据各个表匹配的行，返回查询中需要的各个列。mysql会尝试再最后一个关联表中找到所有匹配的行，如果最后一个关联表无法找到更多的行之后，mysql返回到上一层次关联表，看是否能够找到更多的匹配记录，以此类推迭代执行。整体的思路如此，但是要注意实际的执行过程中有多个变种形式：
+#### 排序优化
 
-join的实现方式原理
+无论如何排序都是一个成本很高的操作，所以从性能的角度出发，应该尽可能避免排序或者尽可能避免对大量数据进行排序。
+推荐使用利用索引进行排序，但是当不能使用索引的时候，mysql就需要自己进行排序，如果数据量小则再内存中进行，如果数据量大就需要使用磁盘，mysql中称之为filesort。
 
-Simple Nested-Loop Join
+如果需要排序的数据量小于排序缓冲区(show variables like '%sort_buffer_size%';)，mysql使用内存进行快速排序操作，如果内存不够排序，那么mysql就会先将树分块，对每个独立的块使用快速排序进行排序，并将各个块的排序结果存放再磁盘上，然后将各个排好序的块进行合并，最后返回排序结果
 
-Index Nested-Loop Join
-
-Block Nested-Loop Join
-
-（1）Join Buffer会缓存所有参与查询的列而不是只有Join的列。
-
-（2）可以通过调整join_buffer_size缓存大小
-
-（3）join_buffer_size的默认值是256K，join_buffer_size的最大值在MySQL 5.1.22版本前是4G-1，而之后的版本才能在64位操作系统下申请大于4G的Join Buffer空间。
-
-（4）使用Block Nested-Loop Join算法需要开启优化器管理配置的optimizer_switch的设置block_nested_loop为on，默认为开启。
-show variables like '%optimizer_switch%'
-
-案例演示
-
-查看不同的顺序执行方式对查询性能的影响：
-explain select film.filmid,film.title,film.releaseyear,actor.actorid,actor.firstname,actor.lastname from film inner join f ilmactor using(filmid) inner join actor using(actorid);
-查看执行的成本：
-show status like 'lastquerycost';
-按照自己预想的规定顺序执行：
-explain select straightjoin film.filmid,film.title,film.releaseyear,actor.actorid,actor.firstname,actor.lastname from fil
-m inner join filmactor using(filmid) inner join actor using(actorid); 查看执行的成本： show status like 'lastquery_cost';
-
-排序优化
-
-排序的算法
+##### 排序的算法
 
 两次传输排序
 
+第一次数据读取是将需要排序的字段读取出来，然后进行排序，第二次是将排好序的结果按照需要去读取数据行。
+
+这种方式效率比较低，原因是第二次读取数据的时候因为已经排好序，需要去读取所有记录而此时更多的是随机IO，读取数据成本会比较高
+两次传输的优势，在排序的时候存储尽可能少的数据，让排序缓冲区可以尽可能多的容纳行数来进行排序操作
+
 单次传输排序
+
+先读取查询所需要的所有列，然后再根据给定列进行排序，最后直接返回排序结果，此方式只需要一次顺序IO读取所有的数据，而无须任何的随机IO，问题在于查询的列特别多的时候，会占用大量的存储空间，无法存储大量的数据
 
 当需要排序的列的总大小超过max_length_for_sort_data定义的字节，mysql会选择双次排序，反之使用单次排序，当然，用户可以设置
 
 此参数的值来选择排序的方式
 
-优化特定类型的查询
 
-优化count()查询
 
-总有人认为myisam的count函数比较快，这是有前提条件的，只有没有任何where条件的count(*)才是比较快的
-使用近似值
-更复杂的优化
-优化关联查询
-确保on或者using子句中的列上有索引，在创建索引的时候就要考虑到关联的顺序
-确保任何的groupby和order by中的表达式只涉及到一个表中的列，这样mysql才有可能使用索引来优化这个过程
-优化子查询
-优化limit分页
-优化此类查询的最简单的办法就是尽可能地使用覆盖索引，而不是查询所有的列
-select film_id,description from film order by title limit 50,5
-explain select film.film_id,film.description from film inner join (select film_id from film order by title limit 50,5) as lim using(film_id);
-优化union查询
-除非确实需要服务器消除重复的行，否则一定要使用union all，因此没有all关键字，mysql会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高
-推荐使用用户自定义变量
-自定义变量的使用
-set @one :=1
-set @min_actor :=(select min(actor_id) from actor)
-set @last_week :=current_date-interval 1 week;
-自定义变量的限制
-1、无法使用查询缓存
-2、不能在使用常量或者标识符的地方使用自定义变量，例如表名、列名或者limit子句
-3、用户自定义变量的生命周期是在一个连接中有效，所以不能用它们来做连接间的通信
-4、不能显式地声明自定义变量地类型
-5、mysql优化器在某些场景下可能会将这些变量优化掉，这可能导致代码不按预想地方式运行
-6、赋值符号：=的优先级非常低，所以在使用赋值表达式的时候应该明确的使用括号
-7、使用未定义变量不会产生任何语法错误
-自定义变量的使用案例
-优化排名语句
+#### 关联查询优化
+
+参考[Join关联查询原理](#关联查询Join)
+
+确保on或者using子句中的列上有索引，在创建索引的时候就要考虑到关联的顺序。
+
+> 当表A和表B使用列C关联的时候，如果优化器的关联顺序是B、A，那么就不需要再B表的对应列上建上索引，没有用到的索引只会带来额外的负担，一般情况下来说，只需要在关联顺序中的第二个表的相应列上创建索引
+
+确保任何的group by和order by中的表达式只涉及到一个表中的列，这样mysql才有可能使用索引来优化这个过程
+
+#### 子查询优化
+
+子查询的优化最重要的优化建议是尽可能使用关联查询代替。
+
+因为MySQL在处理子查询的时候，会在处理过程中使用临时表会有额外的IO，而关联查询使用临时表是用来存储查询结果的。所以子查询的效率要比关联查询低。
+
+优化的时候需要注意，并不是所有SQL都能改成子查询。只是当一个SQL能够同时使用子查询和关联查询实现相同效果的时候，优先推荐使用关联查询。
+
+
+
+#### 用户自定义变量
+
+##### 自定义变量的使用
+
+首先来看一些简单的使用案例：
+
+```sh
+# 定义@i变量
+mysql> set @i:=1;
+Query OK, 0 rows affected (0.00 sec)
+# 查询变量值
+mysql> select @i;
++----+
+| @i |
++----+
+|  1 |
++----+
+1 row in set (0.05 sec)
+# 修改变量值
+mysql> select @i+1;
++------+
+| @i+1 |
++------+
+|    2 |
++------+
+1 row in set (0.05 sec)
+
+mysql> select @i+1;
++------+
+| @i+1 |
++------+
+|    2 |
++------+
+1 row in set (0.05 sec)
+# @@为系统变量，以下查询的是自动提交的值。
+mysql> select @@autoCommit;
++--------------+
+| @@autoCommit |
++--------------+
+|            1 |
++--------------+
+1 row in set (0.06 sec)
+
+#自定义变量也可以等于一个子查询的值：
+mysql> set @last_week:=current_date-interval 1 week;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select @last_week;
++------------+
+| @last_week |
++------------+
+| 2023-10-30 |
++------------+
+1 row in set (0.05 sec)
+
+mysql> set @min_actor :=(select min(actor_id) from actor);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select @min_actor;
++------------+
+| @min_actor |
++------------+
+|          1 |
++------------+
+1 row in set (0.05 sec)
+
+mysql> 
+```
+
+
+
+##### 自定义变量的限制
+
+1. 不能在使用常量或者标识符的地方使用自定义变量，例如表名、列名或者limit子句
+2. 自定义变量只在当前会话中有效。不能用它们来做连接间的通信。
+3. 不能显式地声明自定义变量地类型。无法使用查询缓存。
+4. mysql优化器在某些场景下可能会将这些变量优化掉，这可能导致代码不按预想地方式运行
+5. 赋值符号：=的优先级非常低，所以在使用赋值表达式的时候应该明确的使用括号
+6. 使用未定义变量不会产生任何语法错误
+
+##### 使用案例
+
+MySQL从8开始才支持开窗函数。使用自定义变量可以实现类似Oracle的row_number() over()的功能。
+
+**优化排名语句**
+
 1、在给一个变量赋值的同时使用这个变量
+
+set @rownum:=0;
+
 select actor_id,@rownum:=@rownum+1 as rownum from actor limit 10;
+
+```sh
+mysql> set @rownum:=0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select actor_id,@rownum:=@rownum+1 as rownum from actor limit 10;
++----------+--------+
+| actor_id | rownum |
++----------+--------+
+|       58 |      1 |
+|       92 |      2 |
+|      182 |      3 |
+|      118 |      4 |
+|      145 |      5 |
+|      194 |      6 |
+|       76 |      7 |
+|      112 |      8 |
+|       67 |      9 |
+|      190 |     10 |
++----------+--------+
+10 rows in set (0.04 sec)
+```
+
 2、查询获取演过最多电影的前10名演员，然后根据出演电影次数做一个排名
+
 select actor_id,count(*) as cnt from film_actor group by actor_id order by cnt desc limit 10;
-避免重新查询刚刚更新的数据
-当需要高效的更新一条记录的时间戳，同时希望查询当前记录中存放的时间戳是什么
+
+加上自定义变量作为排名：
+
+set @actor_number:=0;
+
+select actor_id, cnt, @actor_number :=@actor_number+1 as rownumber 
+
+from (select actor_id,count(*) as cnt from film_actor group by actor_id order by cnt desc limit 10) t;
+
+**避免重新查询刚刚更新的数据**
+
+当更新完一条记录的时间戳后，同时希望查询这个时间戳，用于下一次更新或者返回。
+
+案例：t1是一张表。不用自定义变量时需要update之后然后select。
+
 update t1 set  lastUpdated=now() where id =1;
+
 select lastUpdated from t1 where id =1;
+
+使用自定义变量就可以不用select查询了。
+
 update t1 set lastupdated = now() where id = 1 and @now:=now();
+
 select @now;
-确定取值的顺序
+
+**确定取值的顺序**
+
 在赋值和读取变量的时候可能是在查询的不同阶段
+
 set @rownum:=0;
 select actor_id,@rownum:=@rownum+1 as cnt from actor where @rownum<=1;
+
 因为where和select在查询的不同阶段执行，所以看到查询到两条记录，这不符合预期
+
 set @rownum:=0;
 select actor_id,@rownum:=@rownum+1 as cnt from actor where @rownum<=1 order by first_name
+
 当引入了orde;r by之后，发现打印出了全部结果，这是因为order by引入了文件排序，而where条件是在文件排序操作之前取值的
+
 解决这个问题的关键在于让变量的赋值和取值发生在执行查询的同一阶段：
+
 set @rownum:=0;
 select actor_id,@rownum as cnt from actor where (@rownum:=@rownum+1)<=1;
 
 
+
+#### 特殊函数优化
+
+##### count()优化
+
+> count()是特殊的函数，有两种不同的作用，一种是某个列值的数量，也可以统计行数
+
+count(1)，count(*)，count(id列)实际效率是差不多的。看下面的案例。
+
+```sh
+mysql> use sakila;
+Database changed
+
+mysql> set profiling=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select count(1) from rental;
++----------+
+| count(1) |
++----------+
+|    16044 |
++----------+
+1 row in set (0.03 sec)
+
+mysql> show status like 'last_query_cost';
++-----------------+-------------+
+| Variable_name   | Value       |
++-----------------+-------------+
+| Last_query_cost | 1625.049000 |
++-----------------+-------------+
+1 row in set (0.02 sec)
+
+mysql> select count(rental_id) from rental;
++------------------+
+| count(rental_id) |
++------------------+
+|            16044 |
++------------------+
+1 row in set (0.02 sec)
+
+mysql> show status like 'last_query_cost';
++-----------------+-------------+
+| Variable_name   | Value       |
++-----------------+-------------+
+| Last_query_cost | 1625.049000 |
++-----------------+-------------+
+1 row in set (0.05 sec)
+
+mysql> select count(*) from rental;
++----------+
+| count(*) |
++----------+
+|    16044 |
++----------+
+1 row in set (0.06 sec)
+
+mysql> show status like 'last_query_cost';
++-----------------+-------------+
+| Variable_name   | Value       |
++-----------------+-------------+
+| Last_query_cost | 1625.049000 |
++-----------------+-------------+
+1 row in set (0.05 sec)
+
+mysql> show profiles;
++----------+------------+-------------------------------------+
+| Query_ID | Duration   | Query                               |
++----------+------------+-------------------------------------+
+|        1 | 0.00118600 | select count(*) from rental         |
+|        2 | 0.00168750 | select count(1) from rental         |
+|        3 | 0.00144050 | select count(rental_id) from rental |
++----------+------------+-------------------------------------+
+3 rows in set (0.05 sec)
+```
+
+需要注意的是，count统计的是非空的值，如果count的字段可能为空，则查询结果会不一样。
+
+总有人认为myisam的count函数比较快，这是有前提条件的，只有没有任何where条件的count(*)才是比较快的
+
+使用近似值
+
+在某些应用场景中，不需要完全精确的值，可以参考使用近似值来代替，比如可以使用explain来获取近似的值
+其实在很多OLAP的应用中，需要计算某一个列值的基数，有一个计算近似值的算法叫hyperloglog。
+
+更复杂的优化
+
+一般情况下，count()需要扫描大量的行才能获取精确的数据，其实很难优化，在实际操作的时候可以考虑使用索引覆盖扫描，或者增加其他汇总表，或者增加外部缓存系统，在缓存中维护count值。
+
+
+
+##### group by和distinct
+
+如果对关联查询做分组，并且是按照查找表中的某个列进行分组，那么可以采用查找表的标识列分组的效率比其他列更高。
+
+这里的标识列指的是表中的唯一列自增列。
+
+案例：
+
+select actor.first_name, actor.last_name,count(1) from film_actor inner join actor using(actor_id) group by actor.first_name, actor.last_name;
+
+改成按标识列actor_id排序后，性能提升。
+
+select actor.first_name, actor.last_name,count(1) from film_actor inner join actor using(actor_id) group by actor.actor_id;
+
+注意：MySQL在没有开启严格模式的情况下，是可以select没有group by的字段，这点和oracle不同。
+
+这样优化之后，查询结果可能会不同，因为first_name可能会重复，但标识列一定不会重复。所以需要结合业务场景优化。
+
+大部分的业务场景下是不会用标识列来group by的，所以这里仅提供一种优化可能性，实际使用场景不大。
+
+
+
+##### limit分页优化
+
+在很多应用场景中我们需要将数据进行分页，一般会使用limit加上偏移量的方法实现，同时加上合适的order by子句
+
+如果这种方式有索引的帮助，效率通常不错，否则需要进行大量的文件排序操作，还有一种情况，当偏移量非常大的时候，前面的大部分数据都会被抛弃，这样的代价太高。
+
+要优化这种查询的话，要么是在页面中限制分页的数量，要么优化大偏移量的性能。
+
+优化此类查询的最简单的办法就是尽可能地使用覆盖索引，而不是查询所有的列。
+
+案例1：
+
+select film_id,description from film order by title limit 50,5;
+
+优化后：
+
+explain select film.film_id,film.description from film inner join (select film_id from film order by title limit 50,5) as lim using(film_id);
+
+案例2，rental_id为主键。
+
+select * from rental limit 1000000,5;
+
+优化后：
+
+select * from rental a join (select rental_id from rental limit 1000000,5) b on a.rental_id = b.rental_id;
+
+
+
+##### union优化
+
+除非确实需要服务器消除重复的行，否则一定要使用union all，因此没有all关键字，mysql会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高
+
+
+
+## 分区表
+
+https://dev.mysql.com/doc/refman/5.7/en/partitioning.html
+
+对于用户而言，分区表是一个独立的逻辑表，但是底层是由多个物理子表组成。分区表对于用户而言是一个完全封装底层实现的黑盒子，对用户而言是透明的，从文件系统中可以看到多个使用#分隔命名的表文件。
+
+mysql在创建表时使用partition by子句定义每个分区存放的数据，在执行查询的时候，优化器会根据分区定义过滤那些没有我们需要数据的分区，这样查询就无须扫描所有分区。
+
+分区的主要目的是将数据安好一个较粗的力度分在不同的表中，这样可以将相关的数据存放在一起。
+
+### 分区表应用场景
+
+表非常大以至于无法全部都放在内存中，或者只在表的最后部分有热点数据，其他均是历史数据
+
+分区表的数据更容易维护
+   批量删除大量数据可以使用清除整个分区的方式
+
+   对一个独立分区进行优化、检查、修复等操作
+
+分区表的数据可以分布在不同的物理设备上，从而高效地利用多个硬件设备
+
+可以使用分区表来避免某些特殊的瓶颈
+
+   innodb的单个索引的互斥访问
+
+   ext3文件系统的inode锁竞争
+
+  可以备份和恢复独立的分区
+
+###  分区表限制
+
+  一个表最多只能有1024个分区，在5.7版本的时候可以支持8196个分区
+
+  在早期的mysql中，分区表达式必须是整数或者是返回整数的表达式，在mysql5.5中，某些场景可以直接使用列来进行分区
+
+  如果分区字段中有主键或者唯一索引的列，那么所有主键列和唯一索引列都必须包含进来
+
+  分区表无法使用外键约束
+
+###  分区表原理
+
+分区表由多个相关的底层表实现，这个底层表也是由句柄对象标识，我们可以直接访问各个分区。存储引擎管理分区的各个底层表和管理普通表一样（所有的底层表都必须使用相同的存储引擎），分区表的索引知识在各个底层表上各自加上一个完全相同的索引。从存储引擎的角度来看，底层表和普通表没有任何不同，存储引擎也无须知道这是一个普通表还是一个分区表的一部分。
+
+分区表的操作按照以下的操作逻辑进行：
+
+**select查询**
+
+当查询一个分区表的时候，分区层先打开并锁住所有的底层表，优化器先判断是否可以过滤部分分区，然后再调用对应的存储引擎接口访问各个分区的数据
+
+**insert操作**
+
+当写入一条记录的时候，分区层先打开并锁住所有的底层表，然后确定哪个分区接受这条记录，再将记录写入对应底层表
+
+**delete操作**
+
+当删除一条记录时，分区层先打开并锁住所有的底层表，然后确定数据对应的分区，最后对相应底层表进行删除操作
+
+**update操作**
+
+当更新一条记录时，分区层先打开并锁住所有的底层表，mysql先确定需要更新的记录再哪个分区，然后取出数据并更新，再判断更新后的数据应该再哪个分区，最后对底层表进行写入操作，并对源数据所在的底层表进行删除操作
+
+有些操作时支持过滤的，例如，当删除一条记录时，MySQL需要先找到这条记录，如果where条件恰好和分区表达式匹配，就可以将所有不包含这条记录的分区都过滤掉，这对update同样有效。如果是insert操作，则本身就是只命中一个分区，其他分区都会被过滤掉。mysql先确定这条记录属于哪个分区，再将记录写入对应得曾分区表，无须对任何其他分区进行操作
+
+虽然每个操作都会“先打开并锁住所有的底层表”，但这并不是说分区表在处理过程中是锁住全表的，如果存储引擎能够自己实现行级锁，例如innodb，则会在分区层释放对应表锁。
+
+### 分区表类型
+
+#### 范围分区
+
+ 根据列值在给定范围内将行分配给分区
+
+ 范围分区表的分区方式是：每个分区都包含行数据且分区的表达式在给定的范围内，分区的范围应该是连续的且不能重叠，可以使用values less than运算符来定义。
+
+1、创建普通的表
+
+```sql
+CREATE TABLE employees (
+id INT NOT NULL,
+fname VARCHAR(30),
+lname VARCHAR(30),
+hired DATE NOT NULL DEFAULT '1970-01-01',
+separated DATE NOT NULL DEFAULT '9999-12-31',
+job_code INT NOT NULL,
+store_id INT NOT NULL
+);
+```
+
+2、创建带分区的表，下面建表的语句是按照store_id来进行分区的，指定了4个分区
+
+```sql
+CREATE TABLE employees (
+id INT NOT NULL,
+fname VARCHAR(30),
+lname VARCHAR(30),
+hired DATE NOT NULL DEFAULT '1970-01-01',
+separated DATE NOT NULL DEFAULT '9999-12-31',
+job_code INT NOT NULL,
+store_id INT NOT NULL
+)
+PARTITION BY RANGE (store_id) (
+PARTITION p0 VALUES LESS THAN (6),
+PARTITION p1 VALUES LESS THAN (11),
+PARTITION p2 VALUES LESS THAN (16),
+PARTITION p3 VALUES LESS THAN (21)
+);
+--在当前的建表语句中可以看到，store_id的值在1-5的在p0分区，6-10的在p1分区，11-15的在p3分区，16-20的在p4分区，但是如果插入超过20的值就会报错，因为mysql不知道将数据放在哪个分区
+```
+
+3、可以使用less than maxvalue来避免此种情况
+
+```sql
+CREATE TABLE employees (
+id INT NOT NULL,
+fname VARCHAR(30),
+lname VARCHAR(30),
+hired DATE NOT NULL DEFAULT '1970-01-01',
+separated DATE NOT NULL DEFAULT '9999-12-31',
+job_code INT NOT NULL,
+store_id INT NOT NULL
+)
+PARTITION BY RANGE (store_id) (
+PARTITION p0 VALUES LESS THAN (6),
+PARTITION p1 VALUES LESS THAN (11),
+PARTITION p2 VALUES LESS THAN (16),
+PARTITION p3 VALUES LESS THAN MAXVALUE
+);
+--maxvalue表示始终大于等于最大可能整数值的整数值
+```
+
+4、可以使用相同的方式根据员工的职务代码对表进行分区
+
+```sql
+CREATE TABLE employees (
+id INT NOT NULL,
+fname VARCHAR(30),
+lname VARCHAR(30),
+hired DATE NOT NULL DEFAULT '1970-01-01',
+separated DATE NOT NULL DEFAULT '9999-12-31',
+job_code INT NOT NULL,
+store_id INT NOT NULL
+)
+PARTITION BY RANGE (job_code) (
+PARTITION p0 VALUES LESS THAN (100),
+PARTITION p1 VALUES LESS THAN (1000),
+PARTITION p2 VALUES LESS THAN (10000)
+);
+```
+
+       5、可以使用date类型进行分区：如虚妄根据每个员工离开公司的年份进行划分，如year(separated)
+
+```sql
+CREATE TABLE employees (
+id INT NOT NULL,
+fname VARCHAR(30),
+lname VARCHAR(30),
+hired DATE NOT NULL DEFAULT '1970-01-01',
+separated DATE NOT NULL DEFAULT '9999-12-31',
+job_code INT,
+store_id INT
+)
+PARTITION BY RANGE ( YEAR(separated) ) (
+PARTITION p0 VALUES LESS THAN (1991),
+PARTITION p1 VALUES LESS THAN (1996),
+PARTITION p2 VALUES LESS THAN (2001),
+PARTITION p3 VALUES LESS THAN MAXVALUE
+);
+```
+
+       6、可以使用函数根据range的值来对表进行分区，如timestampunix_timestamp()
+
+```sql
+CREATE TABLE quarterly_report_status (
+report_id INT NOT NULL,
+report_status VARCHAR(20) NOT NULL,
+report_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
+PARTITION BY RANGE ( UNIX_TIMESTAMP(report_updated) ) (
+PARTITION p0 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-01-01 00:00:00') ),
+PARTITION p1 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-04-01 00:00:00') ),
+PARTITION p2 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-07-01 00:00:00') ),
+PARTITION p3 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-10-01 00:00:00') ),
+PARTITION p4 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-01-01 00:00:00') ),
+PARTITION p5 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-04-01 00:00:00') ),
+PARTITION p6 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-07-01 00:00:00') ),
+PARTITION p7 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-10-01 00:00:00') ),
+PARTITION p8 VALUES LESS THAN ( UNIX_TIMESTAMP('2010-01-01 00:00:00') ),
+PARTITION p9 VALUES LESS THAN (MAXVALUE)
+);
+--timestamp不允许使用任何其他涉及值的表达式
+```
+
+基于时间间隔的分区方案，在mysql5.7中，可以基于范围或事件间隔实现分区方案，有两种选择
+
+1、基于范围的分区，对于分区表达式，可以使用操作函数基于date、time、或者datatime列来返回一个整数值
+
+```sql
+CREATE TABLE members (
+firstname VARCHAR(25) NOT NULL,
+lastname VARCHAR(25) NOT NULL,
+username VARCHAR(16) NOT NULL,
+email VARCHAR(35),
+joined DATE NOT NULL
+)
+PARTITION BY RANGE( YEAR(joined) ) (
+PARTITION p0 VALUES LESS THAN (1960),
+PARTITION p1 VALUES LESS THAN (1970),
+PARTITION p2 VALUES LESS THAN (1980),
+PARTITION p3 VALUES LESS THAN (1990),
+PARTITION p4 VALUES LESS THAN MAXVALUE
+);
+
+CREATE TABLE quarterly_report_status (
+report_id INT NOT NULL,
+report_status VARCHAR(20) NOT NULL,
+report_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
+PARTITION BY RANGE ( UNIX_TIMESTAMP(report_updated) ) (
+PARTITION p0 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-01-01 00:00:00') ),
+PARTITION p1 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-04-01 00:00:00') ),
+PARTITION p2 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-07-01 00:00:00') ),
+PARTITION p3 VALUES LESS THAN ( UNIX_TIMESTAMP('2008-10-01 00:00:00') ),
+PARTITION p4 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-01-01 00:00:00') ),
+PARTITION p5 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-04-01 00:00:00') ),
+PARTITION p6 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-07-01 00:00:00') ),
+PARTITION p7 VALUES LESS THAN ( UNIX_TIMESTAMP('2009-10-01 00:00:00') ),
+PARTITION p8 VALUES LESS THAN ( UNIX_TIMESTAMP('2010-01-01 00:00:00') ),
+PARTITION p9 VALUES LESS THAN (MAXVALUE)
+);
+```
+
+2、基于范围列的分区，使用date或者datatime列作为分区列
+
+```sql
+CREATE TABLE members (
+firstname VARCHAR(25) NOT NULL,
+lastname VARCHAR(25) NOT NULL,
+username VARCHAR(16) NOT NULL,
+email VARCHAR(35),
+joined DATE NOT NULL
+)
+PARTITION BY RANGE COLUMNS(joined) (
+PARTITION p0 VALUES LESS THAN ('1960-01-01'),
+PARTITION p1 VALUES LESS THAN ('1970-01-01'),
+PARTITION p2 VALUES LESS THAN ('1980-01-01'),
+PARTITION p3 VALUES LESS THAN ('1990-01-01'),
+PARTITION p4 VALUES LESS THAN MAXVALUE
+);
+```
+
+####         真实案例：
+
+```sql
+#不分区的表
+CREATE TABLE no_part_tab
+(id INT DEFAULT NULL,
+remark VARCHAR(50) DEFAULT NULL,
+d_date DATE DEFAULT NULL
+)ENGINE=MYISAM;
+#分区的表
+CREATE TABLE part_tab
+(id INT DEFAULT NULL,
+remark VARCHAR(50) DEFAULT NULL,
+d_date DATE DEFAULT NULL
+)ENGINE=MYISAM
+PARTITION BY RANGE(YEAR(d_date))(
+PARTITION p0 VALUES LESS THAN(1995),
+PARTITION p1 VALUES LESS THAN(1996),
+PARTITION p2 VALUES LESS THAN(1997),
+PARTITION p3 VALUES LESS THAN(1998),
+PARTITION p4 VALUES LESS THAN(1999),
+PARTITION p5 VALUES LESS THAN(2000),
+PARTITION p6 VALUES LESS THAN(2001),
+PARTITION p7 VALUES LESS THAN(2002),
+PARTITION p8 VALUES LESS THAN(2003),
+PARTITION p9 VALUES LESS THAN(2004),
+PARTITION p10 VALUES LESS THAN maxvalue);
+#插入未分区表记录
+DROP PROCEDURE IF EXISTS no_load_part;
+
+
+DELIMITER//
+CREATE PROCEDURE no_load_part()
+BEGIN
+DECLARE i INT;
+SET i =1;
+WHILE i<80001
+DO
+INSERT INTO no_part_tab VALUES(i,'no',ADDDATE('1995-01-01',(RAND(i)*36520) MOD 3652));
+SET i=i+1;
+END WHILE;
+END//
+DELIMITER ;
+
+CALL no_load_part;
+#插入分区表记录
+DROP PROCEDURE IF EXISTS load_part;
+
+DELIMITER&&
+CREATE PROCEDURE load_part()
+BEGIN
+DECLARE i INT;
+SET i=1;
+WHILE i<80001
+DO
+INSERT INTO part_tab VALUES(i,'partition',ADDDATE('1995-01-01',(RAND(i)*36520) MOD 3652));
+SET i=i+1;
+END WHILE;
+END&&
+DELIMITER ;
+
+CALL load_part;
+```
+
+#### 列表分区
+
+类似于按range分区，区别在于list分区是基于列值匹配一个离散值集合中的某个值来进行选择
+
+#### 列分区
+
+mysql从5.5开始支持column分区，可以认为i是range和list的升级版，在5.5之后，可以使用column分区替代range和list，但是column分区只接受普通列不接受表达式
+
+#### hash分区
+
+基于用户定义的表达式的返回值来进行选择的分区，该表达式使用将要插入到表中的这些行的列值进行计算。这个函数可以包含myql中有效的、产生非负整数值的任何表达式
+
+#### key分区
+
+类似于hash分区，区别在于key分区只支持一列或多列，且mysql服务器提供其自身的哈希函数，必须有一列或多列包含整数值
+
+#### 子分区
+
+在分区的基础之上，再进行分区后存储
+
+### 何时使用分区表
+
+如果需要从非常大的表中查询出某一段时间的记录，而这张表中包含很多年的历史数据，数据是按照时间排序的，此时应该如何查询数据呢？因为数据量巨大，肯定不能在每次查询的时候都扫描全表。考虑到索引在空间和维护上的消耗，也不希望使用索引，即使使用索引，会发现会产生大量的碎片，还会产生大量的随机IO，但是当数据量超大的时候，索引也就无法起作用了，此时可以考虑使用分区来进行解决
+
+全量扫描数据，不要任何索引
+
+使用简单的分区方式存放表，不要任何索引，根据分区规则大致定位需要的数据为止，通过使用where条件将需要的数据限制在少数分区中，这种策略适用于以正常的方式访问大量数据
+
+索引数据，并分离热点
+
+如果数据有明显的热点，而且除了这部分数据，其他数据很少被访问到，那么可以将这部分热点数据单独放在一个分区中，让这个分区的数据能够有机会都缓存在内存中，这样查询就可以只访问一个很小的分区表，能够使用索引，也能够有效的使用缓存
+
+### 分区表使用注意事项
+
+null值会使分区过滤无效
+
+分区列和索引列不匹配，会导致查询无法进行分区过滤
+
+选择分区的成本可能很高
+
+打开并锁住所有底层表的成本可能很高
+
+维护分区的成本可能很高
 
 
 
