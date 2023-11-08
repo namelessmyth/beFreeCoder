@@ -57,6 +57,8 @@
 
 有很多种精听模式，例如：听音模式（盲听句子，自主默写），选词模式（听句子选词填入），拼写模式（听句子，拼写空缺单词30%，60%，90%），如果实在听不懂，可以选择0.5x,0.8x速，慢放。
 
+缺点：很多功能都只在手机端可用，电脑上的只具备一些基本功能。对于喜欢在电脑上学的童鞋不太友好。
+
 **扇贝口语**
 
 **扇贝阅读**
@@ -1764,7 +1766,7 @@ the spring brings many charming things. 春天带来了很多迷人的东西。
 
 **发音方法**
 
-出现在词首，或其后紧跟元音
+**出现在词首**，或其后紧跟元音：
 
 双唇微张，上下齿自然分离舌尖上抬，抵住上齿龈内侧
 
@@ -1772,7 +1774,7 @@ the spring brings many charming things. 春天带来了很多迷人的东西。
 
 /l/是浊辅音，声带震动，声音清晰
 
-出现在音节结尾时:
+**出现在音节结尾时**:
 
 双唇微张，上下齿自然分离。舌尖上抬，抵住上齿龈内侧。
 
@@ -1986,8 +1988,6 @@ the有2个发音，/ðə; ði/
 注意：这里的辅音和元音指的是音标发音，而不是字母。例如：U虽然是元音字母，但是他的发音是/juː/第一个是/j/，是辅音。
 
 
-
-# 口语
 
 ## 音变规则
 
@@ -2454,9 +2454,9 @@ at home：/æ<u>d</u> əʊm/ t闪音
   - talking with him
   - dance with him
 - take him away，/teikiməwei/，[视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_64f73d19e4b04c1014b5b8ba?product_id=term_63e60228b5d8d_d1vpxz)
-    - take him away from this. 把他从这里拿走
-    - take him away to the closet. 把他带走去衣柜里。
-    - could take him away forever. 能把永远他带走么。
+  - take him away from this. 把他从这里拿走
+  - take him away to the closet. 把他带走去衣柜里。
+  - could take him away forever. 能把永远他带走么。
 
 
 
@@ -2794,21 +2794,7 @@ I dunno. 我不知道。
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 口语
 
 ## 说话腔调
 
@@ -5344,4 +5330,52 @@ She couldn't find her purse. She didn't know where she had put it. 她找不到�
 
 He put all the books beside each other. 他把所有的书并列摆放起来
 
-The girls often borrow each other's/one another's books. 女孩们经常借彼此的书	
+The girls often borrow each other's/one another's books. 女孩们经常借彼此的书
+
+
+
+# 考试
+
+此章节主要说明关于英语考试的内容，例如：托福雅思，四六级等。
+
+## 托福
+
+[20个托福自学备考网站，亲测好用](https://zhuanlan.zhihu.com/p/558949745)
+
+### 网站
+
+#### 国外网站
+
+[BestMyTest](https://www.bestmytest.com/toefl)
+
+Best MyTest 是一个专门提供网课学习的网站，曾在2018年美国TOEFL网课网站排名中位居榜首。网站上有超过2000份与托福相关的复习材料，比如托福练习题，模拟测试，教学课程等等。
+
+除了资料外，网站还建立了一套独家的 TOEFL Tutor 系统，通过精准的学习记录跟踪，确保你的托福学习一直保持在正确的方向上。针对口语和写作部分的练习，网站还会提供非常详细的分析反馈。
+
+[learn4good](https://www.learn4good.com/languages/spec_english_toefl.htm)
+
+Learn4Good 是准备托福考试的热门网站之一。本网站建立的初衷就是为了给大家解决托福考试相关问题。通过 Learn4Good，你可以看到托福考试结构、得分、问题和经验分享等等。
+
+这个完全免费的托福学习网站还提供模考测试，并且收录了托福写作部分的话题，托福词汇的完整列表等等资料。除了提供所有托福材料外，Learn4Good 还提供世界各地的托福学习课程链接。
+
+[托福 iBT 在线练习考试-PDF 下载 (toeflibtcourse.com)](https://toeflibtcourse.com/)
+
+本网站基本上是为所有托福考试专门设计的。网站按照听说读写的板块分类，想学什么就点什么。例如点击闭读部分，网站就会为你呈现与阅读相关的所有内容，包括阅读理解的免费样本书PDF下载。此外，该网站还包含词汇练习、拼写、写作要点等内容，还有一些其他关于留学签证的信息参考。
+
+#### 国内网站
+
+[托福考满分](https://toefl.kmf.com/)
+
+[小站托福](https://top.zhan.com/toefl/)
+
+
+
+### 考试说明
+
+托福2023年7月26日后考试改革说明
+
+![img](https://www.toefl100.cn/static/image/ggsm.png)
+
+托福备考的热门网站之一。通过Learn4Good这个网站，可以看到托福**考试结构、评分标准、考试经验分享等**。
+
+虽然网站看上去有点古老，但它**不仅完全免费，还提供模拟考试，**并且收录了托福写作部分话题、托福词汇的完整列表等资料，是同学们日常练习的

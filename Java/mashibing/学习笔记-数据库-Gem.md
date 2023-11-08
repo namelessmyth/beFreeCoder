@@ -54,6 +54,20 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 
 
+## 查询
+
+### 分类
+
+#### 即席查询
+
+ad_hoc，也叫即时查询，执行完查询语句后要求在尽可能短的时间内返回查询结果。
+
+
+
+
+
+
+
 # MySQL
 
 ## 参考说明
@@ -62,6 +76,11 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 - 马士兵教育视频教程及配套笔记（[MySQL实战调优-连鹏举](https://www.mashibing.com/study?courseNo=392&sectionNo=2801&courseVersionId=1297)）
 - 菜鸟教程，https://www.runoob.com/mysql/mysql-tutorial.html。
+- [超详细MySQL高性能优化实战总结](https://zhuanlan.zhihu.com/p/46647057)
+
+
+
+## 简介
 
 
 
@@ -95,7 +114,9 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 
 
-## 基础层级
+## 概念特性
+
+### 基础层级
 
 - client
 - server
@@ -108,15 +129,123 @@ postgresql和mysql相比，postgresql更加适合严格的企业应用场景（�
 
 
 
-## 优化准备
+### 存储引擎
 
-### 数据库准备
-
-请先安装好MySQL5.7以上版本。
+#### MyISAM
 
 
 
-### 数据准备
+#### Innodb
+
+
+
+### 执行流程
+
+#### 查询流程
+
+##### 流程图
+
+```mermaid
+graph LR
+1[client]-->|sql|2
+2["查询缓存<br/>（cache）"]-->3
+3["解析器<br/>（parser）"]-->4
+4["预处理器<br/>（preprocessor）"]-->5
+5["优化器<br/>（optimizer）"]-->|执行计划|6
+6["执行引擎"]-->7
+7[存储引擎]-->6
+6-->|返回数据|1
+```
+
+##### 连接
+
+客户端的sql通过3306端口传给MySQL建立连接，每一个连接MySQL都会建立一个线程来处理。5.7版本默认最大连接数是151，可以最大修改为100000。超过一定时间不活动，MySQL也会自动断开，默认是8小时。
+
+
+
+##### 查询缓存
+
+这个功能在MySQL5.7中默认关闭了。比较鸡肋。很多场景都会导致缓存失效。MySQL已经放弃了，在8.0版本中已移除
+
+
+
+##### 解析器parser
+
+主要负责SQL语句的词法和语法解析。
+
+词法解析负责将SQL语句拆分成一个个单词，检查每一个词是否正确。
+
+语法解析负责将SQL是否符合MySQL定义的语法规则。最终会生成一个解析树。如下图。
+
+![image-20210321163618821](../gupao/咕泡Java笔记.assets/image-20210321163618821.png)
+
+##### 预处理器
+
+负责语义解析。例如：如果语法解析都没有问题，但是解析出来的表或字段不存在在这里报错。
+
+##### 优化器（Optimizer）
+
+一个SQL语句可以有很多种执行路径。优化器会根据一系列规则选择一条成本最小的执行路径。
+
+子查询优化
+
+等价谓词重写
+
+条件化简
+
+外连接消除
+
+嵌套连接消除
+
+连接的消除
+
+语义优化
+
+非SPJ优化
+
+##### 执行引擎
+
+根据执行计划，调用存储引擎的接口获取数据。
+
+##### 存储引擎
+
+MySQL有很多存储引擎，不同的存储引擎，读写方式是不同的。存储引擎负责给服务器提供内存或者硬盘的数据的访问接口
+
+MySQL5.5.5之前默认的存储引擎是MyISAM，之后默认的是InnoDB。
+
+
+
+#### 更新流程
+
+这里的更新指update、insert、delete。
+
+基本流程同查询，区别在于执行引擎拿到要更新的数据之后。
+
+1. 事务开始。
+
+2. 将从磁盘中取到要更新的数据页放入BufferPool。
+
+3. 执行器执行数据修改。（在执行器内部）
+
+4. 记录修改前的数据到undo log
+
+5. 记录修改后的数据到redo log，标记状态为prepared
+
+6. 调用存储引擎接口，将数据更新记录到Buffer Pool中
+
+7. 如果bin log开关开启，记录bin log
+
+8. 提交事务
+
+9. 将redolog中的记录状态改成已提交。
+
+
+
+## 性能优化
+
+### 优化准备
+
+**数据准备**
 
 [官网案例数据的导入脚本](https://dev.mysql.com/doc/index-other.html)。点开网页后找到“Example Databases”，然后根据需要下载数据库的zip脚本。
 
@@ -132,15 +261,11 @@ employee data
 
 
 
+### 性能监控
 
+#### 自带工具
 
-
-
-## 性能监控
-
-### 自带工具
-
-#### show profile
+##### show profile
 
 https://dev.mysql.com/doc/refman/8.0/en/show-profile.html
 
@@ -265,7 +390,7 @@ mysql> show profile cpu,ipc;
 
 
 
-#### Performance Schema
+##### Performance Schema
 
 [MySQL官网说明](https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html)
 
@@ -409,7 +534,7 @@ mysql> show tables;
 mysql> 
 ```
 
-##### 特点介绍
+###### 特点介绍
 
 1、提供了一种在数据库运行时实时检查server的内部执行情况的方法。performance_schema 数据库中的表使用performance_schema存储引擎。该数据库主要关注数据库运行过程中的性能相关的数据，与information_schema不同，information_schema主要关注server运行过程中的元数据信息
 2、performance_schema通过监视server的事件来实现监视server内部运行情况， “事件”就是server内部活动中所做的任何事情以及对应的时间消耗，利用这些信息来判断server中的相关资源消耗在了哪里？一般来说，事件可以是函数调用、操作系统的等待、SQL语句执行的阶段（如sql语句执行过程中的parsing 或 sorting阶段）或者整个SQL语句与SQL语句集合。事件的采集可以方便的提供server中的相关存储引擎对磁盘文件、表I/O、表锁等资源的同步调用信息。
@@ -423,7 +548,7 @@ mysql>
 
 
 
-##### performance schema关闭
+###### performance schema关闭
 
 如果想要显式的关闭的话需要修改配置文件，不能直接进行修改，会报错Variable 'performance_schema' is a read only variable。
 
@@ -462,7 +587,7 @@ mysql> show create table setup_consumers;
 
 
 
-##### performance schema两个基本概念
+###### performance schema两个基本概念
 
 instruments：生产者，用于采集mysql中各种各样的操作产生的事件信息，对应配置表中的配置项我们可以称为监控采集配置项。
 
@@ -470,7 +595,7 @@ consumers：消费者，对应的消费者表用于存储来自instruments采集
 
 
 
-##### performance_schema表的分类
+###### performance_schema表的分类
 
 performance_schema库下的表可以按照监视不同的纬度就行分组。
 
@@ -499,7 +624,7 @@ show tables like '%setup%';
 
 
 
-##### performance_schema简单配置与使用
+###### performance_schema简单配置与使用
 
 数据库刚刚初始化并启动时，并非所有instruments(事件采集项，在采集项的配置表中每一项都有一个开关字段，或为YES，或为NO)和consumers(与采集项类似，也有一个对应的事件类型保存表配置项，为YES就表示对应的表保存性能数据，为NO就表示对应的表不保存性能数据)都启用了，所以默认不会收集所有的事件，可能你需要检测的事件并没有打开，需要进行设置，可以使用如下两个语句打开对应的instruments和consumers（行计数可能会因MySQL版本而异)。
 
@@ -561,7 +686,7 @@ select * from file_instances limit 20;
 
 
 
-##### 常用配置项的参数说明
+###### 常用配置项的参数说明
 
 1、启动选项
 
@@ -595,15 +720,15 @@ performance_schema_instrument[=name]
 
 [=name]可以指定为具体的Instruments名称（但是这样如果有多个需要指定的时候，就需要使用该选项多次），也可以使用通配符，可以指定instruments相同的前缀+通配符，也可以使用%代表所有的instruments
 
-###### 指定开启单个instruments
+####### 指定开启单个instruments
 
 --performance-schema-instrument= 'instrument_name=value'
 
-###### 使用通配符指定开启多个instruments
+####### 使用通配符指定开启多个instruments
 
 --performance-schema-instrument= 'wait/synch/cond/%=COUNTED'
 
-###### 开关所有的instruments
+####### 开关所有的instruments
 
 --performance-schema-instrument= '%=ON'
 
@@ -654,7 +779,7 @@ performance_schema_max_sql_text_length=1024
 
 
 
-##### 重要配置表的相关说明
+###### 重要配置表的相关说明
 
 		配置表之间存在相互关联关系，按照配置影响的先后顺序，可添加为
 
@@ -743,7 +868,7 @@ select * from threads
 
 注意：在performance_schema库中还包含了很多其他的库和表，能对数据库的性能做完整的监控，大家需要参考官网详细了解。
 
-##### performance_schema实践操作
+###### performance_schema实践操作
 
 		基本了解了表的相关信息之后，可以通过这些表进行实际的查询操作来进行实际的分析。
 
@@ -780,7 +905,7 @@ SELECT event_id,event_name,source,timer_wait,object_name,index_name,operation,ne
 
 
 
-#### show processlist
+##### show processlist
 
 显示所有连接到MySQL服务器的客户端连接以及此链接的ip地址，执行的命令，执行时间，执行状态，连接的数据库等。
 
@@ -804,7 +929,7 @@ mysql> show processlist;
 
 
 
-### 执行计划
+#### 执行计划
 
 在企业的应用场景中，为了知道优化SQL语句的执行，需要查看SQL语句的具体执行过程，以加快SQL语句的执行效率。
 
@@ -812,7 +937,7 @@ mysql> show processlist;
 
 官网地址： https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
 
-#### 执行计划中的字段
+##### 执行计划中的字段
 
 |    Column     |                    Meaning                     |
 | :-----------: | :--------------------------------------------: |
@@ -954,7 +1079,7 @@ explain select * from emp where empno = 7369;
 
  **possible_keys** 
 
-​        显示可能应用在这张表中的索引，一个或多个，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用
+        显示可能应用在这张表中的索引，一个或多个，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用
 
 ```sql
 explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
@@ -962,7 +1087,7 @@ explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 1
 
 **key**
 
-​		实际使用的索引，如果为null，则没有使用索引，查询中若使用了覆盖索引，则该索引和查询的select字段重叠。
+		实际使用的索引，如果为null，则没有使用索引，查询中若使用了覆盖索引，则该索引和查询的select字段重叠。
 
 ```sql
 explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
@@ -1019,11 +1144,11 @@ explain select * from emp where empno = 7469;
 
 
 
-## 设计优化
+### 设计优化
 
-### Schema数据类型优化
+#### Schema数据类型优化
 
-#### 更小的更好
+##### 更小的更好
 
 应该尽量使用可以正确存储数据的最小数据类型，更小的数据类型通常更快，因为它们占用更少的磁盘、内存和CPU缓存，并且处理时需要的CPU周期更少，但是要确保没有低估需要存储的值的范围，如果无法确认哪个数据类型，就选择你认为不会超过范围的最小类型
 
@@ -1035,7 +1160,7 @@ explain select * from emp where empno = 7469;
 
 
 
-#### 简单就好
+##### 简单就好
 
 简单数据类型的操作通常需要更少的CPU周期，例如：
 
@@ -1051,7 +1176,7 @@ explain select * from emp where empno = 7469;
 
 
 
-#### 避免null
+##### 避免null
 
 只要业务支持，尽量避免设计可为null的值。
 
@@ -1067,7 +1192,7 @@ explain select * from emp where empno = 7469;
 
 
 
-#### 整形类型
+##### 整形类型
 
 可以使用的几种整数类型：TINYINT，SMALLINT，MEDIUMINT，INT，BIGINT分别使用8，16，24，32，64位存储空间。
 尽量使用满足需求的最小数据类型。
@@ -1076,7 +1201,7 @@ explain select * from emp where empno = 7469;
 
 
 
-#### 字符类型
+##### 字符类型
 
 mysql中常见的字符类型：char、varchar、text
 
@@ -1105,7 +1230,7 @@ char固定长度的字符串
 
 
 
-#### Blob和text
+##### Blob和text
 
 MySQL 把每个 BLOB 和 TEXT 值当作一个独立的对象处理。
 
@@ -1117,7 +1242,7 @@ text一般可能的场景是存储xml文件内容，SQL语句，Json格式数据
 
 
 
-#### 时间类型
+##### 时间类型
 
 datetime
 
@@ -1155,7 +1280,7 @@ date
 
 
 
-#### 枚举类型
+##### 枚举类型
 
 有时可以使用枚举类代替常用的字符串类型，mysql存储枚举类型会非常紧凑，会根据列表值的数据压缩到一个或两个字节中，mysql在内部会将每个值在列表中的位置保存为整数，并且在表的.frm文件中保存“数字-字符串”映射关系的查找表
 create table enumtest(e enum('fish','apple','dog') not null); insert into enumtest(e) values('fish'),('dog'),('apple');
@@ -1163,7 +1288,7 @@ select e+0 from enum_test;
 
 
 
-#### 特殊类型
+##### 特殊类型
 
 一般会使用varchar(15)来存储ip地址，然而ip的本质是32位无符号整数不是字符串，可以使用INETATON()和INETNTOA函数在这两种表示方法之间转换
 
@@ -1175,9 +1300,9 @@ select inetntoa(16843009);
 
 
 
-### 数据库范式
+#### 数据库范式
 
-#### 范式
+##### 范式
 
  优点
 
@@ -1189,7 +1314,7 @@ select inetntoa(16843009);
 
   通常需要进行关联
 
-#### 反范式
+##### 反范式
 
 反范式
 
@@ -1205,14 +1330,14 @@ select inetntoa(16843009);
 
 在企业中很好能做到严格意义上的范式或者反范式，一般需要混合使用
 
-#### 适当冗余
+##### 适当冗余
 
 满足以下条件，可以考虑适当的采取冗余。Oracle中有物化视图也体现了这一思想。
 
  1.被频繁引用且只能通过 Join 2张(或者更多)大表的方式才能得到的独立小字段。
  2.这样的场景由于每次Join仅仅只是为了取得某个小字段的值，Join到的记录又大，会造成大量不必要的 IO，完全可以通过空间换取时间的方式来优化。不过，冗余的同时需要确保数据的一致性不会遭到破坏，确保更新的同时冗余字段也被更新。
 
-#### 案例
+##### 案例
 
 在一个网站实例中，这个网站，允许用户发送消息，并且一些用户是付费用户。现在想查看付费用户最近的10条信息。  在user表和message表中都存储用户类型(account_type)而不用完全的反范式化。这避免了完全反范式化的插入和删除问题，因为即使没有消息的时候也绝不会丢失用户的信息。这样也不会把user_message表搞得太大，有利于高效地获取数据。
 
@@ -1220,7 +1345,7 @@ select inetntoa(16843009);
 
 缓存衍生值也是有用的。如果需要显示每个用户发了多少消息（类似论坛的），可以每次执行一个昂贵的自查询来计算并显示它；也可以在user表中建一个num_messages列，每当用户发新消息时更新这个值。
 
-#### 适当拆分
+##### 适当拆分
 
 当我们的表中存在类似于 TEXT 或者是很大的 VARCHAR类型的大字段的时候，如果我们大部分访问这张表的时候都不需要这个字段，我们就该义无反顾的将其拆分到另外的独立表中，以减少常用数据所占用的存储空间。这样做的一个明显好处就是每个数据块中可以存储的数据条数可以大大增加，既减少物理 IO 次数，也能大大提高内存中的缓存命中率。
 
@@ -1228,7 +1353,7 @@ select inetntoa(16843009);
 
 
 
-### 主键选择
+#### 主键选择
 
 代理主键
 
@@ -1245,7 +1370,7 @@ select inetntoa(16843009);
 
 
 
-### 字符集选择
+#### 字符集选择
 
 字符集直接决定了数据在MySQL中的存储编码方式，由于同样的内容使用不同字符集表示所占用的空间大小会有较大的差异，所以通过使用合适的字符集，可以帮助我们尽可能减少数据量，进而减少IO操作次数。
 
@@ -1261,7 +1386,7 @@ select inetntoa(16843009);
 
 
 
-### 存储引擎选择
+#### 存储引擎选择
 
 [官方存储引擎介绍](https://dev.mysql.com/doc/refman/5.7/en/storage-engines.html)
 
@@ -1291,7 +1416,7 @@ archive。
 
 用于存储归档数据。无索引。
 
-##### InnoDB和MyISAM 的区别
+###### InnoDB和MyISAM 的区别
 
 1. InnoDB 支持事务，MyISAM 不支持事务。这是 MySQL 将默认存储引擎从 MyISAM 变成 InnoDB 的重要原因之一；
 
@@ -1315,9 +1440,9 @@ archive。
 
 
 
-## 索引优化
+### 索引优化
 
-### 索引基础
+#### 索引基础
 
 索引的优点
 
@@ -1380,7 +1505,7 @@ archive。
 
 
 
-### 索引匹配方式
+#### 索引匹配方式
 
 ```sql
 create table staffs(
@@ -1425,7 +1550,7 @@ explain select name,age,pos from staffs where name = 'July' and age = 25 and pos
 
 
 
-### 哈希索引
+#### 哈希索引
 
  基于哈希表的实现，只有精确匹配索引所有列的查询才有效
  在mysql中，只有memory的存储引擎显式支持哈希索引
@@ -1448,7 +1573,7 @@ select id fom url where url="" and url_crc=CRC32("")
 
 
 
-### 组合索引
+#### 组合索引
 
 当包含多个列作为索引，需要注意的是正确的顺序依赖于该索引的查询，同时需要考虑如何更好的满足排序和分组的需要
 
@@ -1470,7 +1595,7 @@ where a=3 and b like'％xx％' and c=7，不使用索引。
 
 
 
-### 聚簇索引
+#### 聚簇索引
 
 聚簇索引
 
@@ -1492,7 +1617,7 @@ where a=3 and b like'％xx％' and c=7，不使用索引。
 
 
 
-### 覆盖索引
+#### 覆盖索引
 
 基本介绍
   1、如果一个索引包含所有需要查询的字段的值，我们称之为覆盖索引
@@ -1509,7 +1634,7 @@ where a=3 and b like'％xx％' and c=7，不使用索引。
 
 4、由于INNODB的聚簇索引，覆盖索引对INNODB表特别有用
 
-#### 覆盖索引案例
+##### 覆盖索引案例
 
 如果想运行本章节的案例SQL，请先参考[数据准备章节](#数据准备)导入数据库sakila的脚本
 
@@ -1559,13 +1684,13 @@ possible_keys: idx_actor_last_name
 
 
 
-### 前缀索引
+#### 前缀索引
 
-#### 前缀索引案例
+##### 前缀索引案例
 
-​		有时候需要索引很长的字符串，这会让索引变的大且慢，通常情况下可以使用某个列开始的部分字符串，这样大大的节约索引空间，从而提高索引效率，但这会降低索引的选择性，索引的选择性是指不重复的索引值和数据表记录总数的比值，范围从1/#T到1之间。索引的选择性越高则查询效率越高，因为选择性更高的索引可以让mysql在查找的时候过滤掉更多的行。
-
-​		一般情况下某个列前缀的选择性也是足够高的，足以满足查询的性能，但是对应BLOB,TEXT,VARCHAR类型的列，必须要使用前缀索引，因为mysql不允许索引这些列的完整长度，使用该方法的诀窍在于要选择足够长的前缀以保证较高的选择性，通过又不能太长。
+		有时候需要索引很长的字符串，这会让索引变的大且慢，通常情况下可以使用某个列开始的部分字符串，这样大大的节约索引空间，从而提高索引效率，但这会降低索引的选择性，索引的选择性是指不重复的索引值和数据表记录总数的比值，范围从1/#T到1之间。索引的选择性越高则查询效率越高，因为选择性更高的索引可以让mysql在查找的时候过滤掉更多的行。
+	
+		一般情况下某个列前缀的选择性也是足够高的，足以满足查询的性能，但是对应BLOB,TEXT,VARCHAR类型的列，必须要使用前缀索引，因为mysql不允许索引这些列的完整长度，使用该方法的诀窍在于要选择足够长的前缀以保证较高的选择性，通过又不能太长。
 
 案例演示：
 
@@ -1605,7 +1730,7 @@ alter table citydemo add key(city(7));
 
 
 
-### 关联查询Join
+#### 关联查询Join
 
 - [MySQL-Join官网说明](https://dev.mysql.com/doc/refman/5.7/en/nested-loop-joins.html)
 
@@ -1665,7 +1790,7 @@ alter table citydemo add key(city(7));
 
 
 
-### 优化细节
+#### 优化细节
 
 当使用索引列进行查询的时候尽量不要使用表达式，把计算放到业务层而不是数据库层
 
@@ -1736,7 +1861,7 @@ explain select * from user where phone='13800001234';
 
 
 
-### 索引监控
+#### 索引监控
 
 命令：show status like 'Handler_read%';
 
@@ -1780,7 +1905,7 @@ Handler_read_rnd_next：从数据节点读取下一条数据的次数
 
 
 
-### 优化案例
+#### 优化案例
 
 预先准备好数据
 
@@ -1844,11 +1969,11 @@ explain select * from itdragon_order_list where order_level=3 order by input_dat
 
 
 
-## SQL优化
+### SQL优化
 
-### 查询优化
+#### 查询优化
 
-#### 查询慢的原因
+##### 查询慢的原因
 
 - 网络
 - CPU
@@ -1858,7 +1983,7 @@ explain select * from itdragon_order_list where order_level=3 order by input_dat
 - 生成统计信息
 - 锁等待时间
 
-#### 优化数据访问
+##### 优化数据访问
 
 查询性能低下的主要原因是访问的数据太多，某些查询不可避免的需要筛选大量的数据，我们可以通过减少访问数据量的方式进行优化
 
@@ -1890,15 +2015,15 @@ explain select * from itdragon_order_list where order_level=3 order by input_dat
 
   - 如果需要不断的重复执行相同的查询，且每次返回完全相同的数据，因此，基于这样的应用场景，我们可以将这部分数据缓存起来，这样的话能够提高查询效率
 
-#### 执行过程的优化
+##### 执行过程的优化
 
-#### 查询缓存
+##### 查询缓存
 
 在解析一个查询语句之前，如果查询缓存是打开的，那么mysql会优先检查这个查询是否命中查询缓存中的数据，如果查询恰好命中了查询缓存，那么会在返回结果之前会检查用户权限，如果权限没有问题，那么mysql会跳过所有的阶段，就直接从缓存中拿到结果并返回给客户端
 
 注意：查询缓存建议用于数据不怎么变动的表。
 
-#### 查询优化处理
+##### 查询优化处理
 
 > mysql查询完缓存之后会经过以下几个步骤：解析SQL、预处理、优化SQL执行计划，这几个步骤出现任何的错误，都可能会终止查询
 
@@ -2012,14 +2137,14 @@ mysql> show status like 'last_query_cost';
 
 
 
-#### 排序优化
+##### 排序优化
 
 无论如何排序都是一个成本很高的操作，所以从性能的角度出发，应该尽可能避免排序或者尽可能避免对大量数据进行排序。
 推荐使用利用索引进行排序，但是当不能使用索引的时候，mysql就需要自己进行排序，如果数据量小则再内存中进行，如果数据量大就需要使用磁盘，mysql中称之为filesort。
 
 如果需要排序的数据量小于排序缓冲区(show variables like '%sort_buffer_size%';)，mysql使用内存进行快速排序操作，如果内存不够排序，那么mysql就会先将树分块，对每个独立的块使用快速排序进行排序，并将各个块的排序结果存放再磁盘上，然后将各个排好序的块进行合并，最后返回排序结果
 
-##### 排序的算法
+###### 排序的算法
 
 两次传输排序
 
@@ -2038,7 +2163,7 @@ mysql> show status like 'last_query_cost';
 
 
 
-#### 关联查询优化
+##### 关联查询优化
 
 参考[Join关联查询原理](#关联查询Join)
 
@@ -2048,7 +2173,7 @@ mysql> show status like 'last_query_cost';
 
 确保任何的group by和order by中的表达式只涉及到一个表中的列，这样mysql才有可能使用索引来优化这个过程
 
-#### 子查询优化
+##### 子查询优化
 
 子查询的优化最重要的优化建议是尽可能使用关联查询代替。
 
@@ -2058,9 +2183,9 @@ mysql> show status like 'last_query_cost';
 
 
 
-#### 用户自定义变量
+##### 用户自定义变量
 
-##### 自定义变量的使用
+###### 自定义变量的使用
 
 首先来看一些简单的使用案例：
 
@@ -2129,7 +2254,7 @@ mysql>
 
 
 
-##### 自定义变量的限制
+###### 自定义变量的限制
 
 1. 不能在使用常量或者标识符的地方使用自定义变量，例如表名、列名或者limit子句
 2. 自定义变量只在当前会话中有效。不能用它们来做连接间的通信。
@@ -2138,7 +2263,7 @@ mysql>
 5. 赋值符号：=的优先级非常低，所以在使用赋值表达式的时候应该明确的使用括号
 6. 使用未定义变量不会产生任何语法错误
 
-##### 使用案例
+###### 使用案例
 
 MySQL从8开始才支持开窗函数。使用自定义变量可以实现类似Oracle的row_number() over()的功能。
 
@@ -2221,9 +2346,9 @@ select actor_id,@rownum as cnt from actor where (@rownum:=@rownum+1)<=1;
 
 
 
-#### 特殊函数优化
+##### 特殊函数优化
 
-##### count()优化
+###### count()优化
 
 > count()是特殊的函数，有两种不同的作用，一种是某个列值的数量，也可以统计行数
 
@@ -2310,7 +2435,7 @@ mysql> show profiles;
 
 
 
-##### group by和distinct
+###### group by和distinct
 
 如果对关联查询做分组，并且是按照查找表中的某个列进行分组，那么可以采用查找表的标识列分组的效率比其他列更高。
 
@@ -2332,7 +2457,7 @@ select actor.first_name, actor.last_name,count(1) from film_actor inner join act
 
 
 
-##### limit分页优化
+###### limit分页优化
 
 在很多应用场景中我们需要将数据进行分页，一般会使用limit加上偏移量的方法实现，同时加上合适的order by子句
 
@@ -2360,13 +2485,13 @@ select * from rental a join (select rental_id from rental limit 1000000,5) b on 
 
 
 
-##### union优化
+###### union优化
 
 除非确实需要服务器消除重复的行，否则一定要使用union all，因此没有all关键字，mysql会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高
 
 
 
-## 分区表
+### 分区表
 
 https://dev.mysql.com/doc/refman/5.7/en/partitioning.html
 
@@ -2376,7 +2501,7 @@ mysql在创建表时使用partition by子句定义每个分区存放的数据，
 
 分区的主要目的是将数据安好一个较粗的力度分在不同的表中，这样可以将相关的数据存放在一起。
 
-### 分区表应用场景
+#### 分区表应用场景
 
 表非常大以至于无法全部都放在内存中，或者只在表的最后部分有热点数据，其他均是历史数据
 
@@ -2395,7 +2520,7 @@ mysql在创建表时使用partition by子句定义每个分区存放的数据，
 
   可以备份和恢复独立的分区
 
-###  分区表限制
+####  分区表限制
 
   一个表最多只能有1024个分区，在5.7版本的时候可以支持8196个分区
 
@@ -2405,7 +2530,7 @@ mysql在创建表时使用partition by子句定义每个分区存放的数据，
 
   分区表无法使用外键约束
 
-###  分区表原理
+####  分区表原理
 
 分区表由多个相关的底层表实现，这个底层表也是由句柄对象标识，我们可以直接访问各个分区。存储引擎管理分区的各个底层表和管理普通表一样（所有的底层表都必须使用相同的存储引擎），分区表的索引知识在各个底层表上各自加上一个完全相同的索引。从存储引擎的角度来看，底层表和普通表没有任何不同，存储引擎也无须知道这是一个普通表还是一个分区表的一部分。
 
@@ -2431,9 +2556,9 @@ mysql在创建表时使用partition by子句定义每个分区存放的数据，
 
 虽然每个操作都会“先打开并锁住所有的底层表”，但这并不是说分区表在处理过程中是锁住全表的，如果存储引擎能够自己实现行级锁，例如innodb，则会在分区层释放对应表锁。
 
-### 分区表类型
+#### 分区表类型
 
-#### 范围分区
+##### 范围分区
 
  根据列值在给定范围内将行分配给分区
 
@@ -2615,7 +2740,7 @@ PARTITION p4 VALUES LESS THAN MAXVALUE
 );
 ```
 
-####         真实案例：
+#####         真实案例：
 
 ```sql
 #不分区的表
@@ -2679,27 +2804,27 @@ DELIMITER ;
 CALL load_part;
 ```
 
-#### 列表分区
+##### 列表分区
 
 类似于按range分区，区别在于list分区是基于列值匹配一个离散值集合中的某个值来进行选择
 
-#### 列分区
+##### 列分区
 
 mysql从5.5开始支持column分区，可以认为i是range和list的升级版，在5.5之后，可以使用column分区替代range和list，但是column分区只接受普通列不接受表达式
 
-#### hash分区
+##### hash分区
 
 基于用户定义的表达式的返回值来进行选择的分区，该表达式使用将要插入到表中的这些行的列值进行计算。这个函数可以包含myql中有效的、产生非负整数值的任何表达式
 
-#### key分区
+##### key分区
 
 类似于hash分区，区别在于key分区只支持一列或多列，且mysql服务器提供其自身的哈希函数，必须有一列或多列包含整数值
 
-#### 子分区
+##### 子分区
 
 在分区的基础之上，再进行分区后存储
 
-### 何时使用分区表
+#### 何时使用分区表
 
 如果需要从非常大的表中查询出某一段时间的记录，而这张表中包含很多年的历史数据，数据是按照时间排序的，此时应该如何查询数据呢？因为数据量巨大，肯定不能在每次查询的时候都扫描全表。考虑到索引在空间和维护上的消耗，也不希望使用索引，即使使用索引，会发现会产生大量的碎片，还会产生大量的随机IO，但是当数据量超大的时候，索引也就无法起作用了，此时可以考虑使用分区来进行解决
 
@@ -2711,7 +2836,7 @@ mysql从5.5开始支持column分区，可以认为i是range和list的升级版�
 
 如果数据有明显的热点，而且除了这部分数据，其他数据很少被访问到，那么可以将这部分热点数据单独放在一个分区中，让这个分区的数据能够有机会都缓存在内存中，这样查询就可以只访问一个很小的分区表，能够使用索引，也能够有效的使用缓存
 
-### 分区表使用注意事项
+#### 分区表使用注意事项
 
 null值会使分区过滤无效
 
@@ -2722,6 +2847,381 @@ null值会使分区过滤无效
 打开并锁住所有底层表的成本可能很高
 
 维护分区的成本可能很高
+
+
+
+### 参数优化
+
+#### 配置文件地址
+
+配置文件地址：/etc/my.cnf
+
+如果是通过宝塔安装的，可以在“软件商店 > 已安装 > MySQL x.x.x > 设置 > 配置修改”中修改，然后点保存。
+
+
+
+#### 配置文件内容
+
+```ini
+[client]
+#password	= your_password
+port		= 3306
+socket		= /tmp/mysql.sock
+
+[mysqld]
+port		= 3306
+socket		= /tmp/mysql.sock
+datadir = /www/server/data
+default_storage_engine = InnoDB
+performance_schema_max_table_instances = 400
+table_definition_cache = 400
+skip-external-locking
+key_buffer_size = 128M
+max_allowed_packet = 100G
+table_open_cache = 512
+sort_buffer_size = 2M
+net_buffer_length = 4K
+read_buffer_size = 2M
+read_rnd_buffer_size = 256K
+myisam_sort_buffer_size = 32M
+thread_cache_size = 64
+tmp_table_size = 64M
+default_authentication_plugin = mysql_native_password
+lower_case_table_names = 1
+sql-mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+
+explicit_defaults_for_timestamp = true
+#skip-name-resolve
+max_connections = 500
+max_connect_errors = 100
+open_files_limit = 65535
+
+log-bin=mysql-bin
+binlog_format=mixed
+server-id = 1
+binlog_expire_logs_seconds = 600000
+slow_query_log=1
+slow-query-log-file=/www/server/data/mysql-slow.log
+long_query_time=3
+#log_queries_not_using_indexes=on
+early-plugin-load = ""
+
+innodb_data_home_dir = /www/server/data
+innodb_data_file_path = ibdata1:10M:autoextend
+innodb_log_group_home_dir = /www/server/data
+innodb_buffer_pool_size = 512M
+innodb_log_file_size = 256M
+innodb_log_buffer_size = 64M
+innodb_flush_log_at_trx_commit = 1
+innodb_lock_wait_timeout = 50
+innodb_max_dirty_pages_pct = 90
+innodb_read_io_threads = 4
+innodb_write_io_threads = 4
+
+[mysqldump]
+quick
+max_allowed_packet = 500M
+
+[mysql]
+no-auto-rehash
+
+[myisamchk]
+key_buffer_size = 128M
+sort_buffer_size = 2M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout
+
+```
+
+
+
+#### 参数说明
+
+##### general
+
+总体通用参数
+
+datadir=/var/lib/mysql
+
+数据文件存放的目录
+
+socket=/var/lib/mysql/mysql.sock
+
+mysql.socket表示server和client在同一台服务器，并且使用localhost进行连接，就会使用socket进行连接
+
+pid_file=/var/lib/mysql/mysql.pid
+
+存储mysql的pid
+
+port=3306
+
+mysql服务的端口号
+
+default_storage_engine=InnoDB
+
+mysql默认存储引擎
+
+skip-grant-tables
+
+当忘记mysql的用户名密码的时候，可以在mysql配置文件中配置该参数，跳过权限表验证，不需要密码即可登录mysql
+
+##### character
+
+字符参数，这些参数一般会设置utf8mb4，但如果确定一张表中存储的数据不会包含中文的话，也可以用latin1以节约空间。
+
+character_set_client
+
+客户端数据的字符集
+
+character_set_connection
+
+mysql处理客户端发来的信息时，会把这些数据转换成连接的字符集格式
+
+character_set_results
+
+mysql发送给客户端的结果集所用的字符集
+
+character_set_database
+
+数据库默认的字符集
+
+character_set_server
+
+mysql server的默认字符集
+
+##### connection
+
+连接参数。
+
+max_connections
+
+mysql的最大连接数，如果数据库的并发连接请求比较大，应该调高该值。与服务器硬件资源有关系。
+
+在linux中，一般一个进程最大能创建的文件数默认为1024（[可修改](https://blog.csdn.net/inthat/article/details/106741499)），所以这里的最大连接数推荐不要超过这个值。
+
+可以通过 show processlist; 查看当前数据库中所有的连接。
+
+修改方法：set global max_connections=1024
+
+max_user_connections
+
+限制每个用户的连接个数，默认0，不限制。
+
+back_log
+
+mysql能够暂存的连接数量，当mysql的线程在一个很短时间内得到非常多的连接请求时，就会起作用，如果mysql的连接数量达到max_connections时，新的请求会被存储在堆栈中，以等待某一个连接释放资源，如果等待连接的数量超过back_log,则不再接受连接资源。
+
+这个值设置的越大，意味着当MySQL达到最大连接时客户端的等待队列越大，同时客户端的响应时间也会延长，不建议设置的过大。
+
+wait_timeout
+
+mysql在关闭一个非交互的连接之前需要等待的时长。非交互连接指的是类似jdbc这种短连接。
+
+interactive_timeout
+
+关闭一个交互连接之前需要等待的秒数。交互连接指的是类似控制台，连接池这种长连接。
+
+由于开启和关闭连接需要消耗一定的资源，所以连接池中的连接属于长连接。超出指定时间无交互就关闭。
+
+##### log
+
+日志设置
+
+log_error
+
+指定错误日志文件名称，用于记录当mysqld启动和停止时，以及服务器在运行中发生任何严重错误时的相关信息
+
+log_bin
+
+指定二进制日志文件（binlog）的名称，用于记录对数据造成更改的所有SQL语句
+
+binlog_do_db
+
+指定需要记录binlog的数据库名称，其他所有没有显式指定的数据库更新将忽略，不记录在日志中。多个的写法：
+
+```ini
+binlog-do-db=db1
+binlog-do-db=db2
+```
+
+binlog_ignore_db
+
+指定不需要记录binlog的数据库名称
+
+sync_binlog
+
+指定多少次写日志后同步磁盘。
+
+general_log
+
+是否开启查询日志记录。
+
+general_log_file
+
+指定查询日志文件名，用于记录所有的查询语句
+
+slow_query_log
+
+是否开启慢查询日志记录。默认关闭，但一般都会开启。和慢查询相关的是一组属性，最好一起设置。
+
+slow_query_log_file
+
+指定慢查询日志文件名称，用于记录耗时比较长的查询语句。
+
+long_query_time
+
+设置慢查询的时间，单位：秒，超过这个时间的查询语句才会记录日志
+
+log_slow_admin_statements
+
+是否将管理语句写入慢查询日志
+
+##### cache
+
+缓存相关设置
+
+key_buffer_size
+
+索引缓存区的大小（只对myisam表起作用）
+
+**query cache**
+
+查询缓存在MySQL8中已移除。
+
+query_cache_size
+
+查询缓存的大小，未来版本被删除
+
+show status like '%Qcache%';查看查询缓存当前的相关属性。相当于是对缓存的一个监控。
+
+Qcache_free_blocks：缓存中相邻内存块的个数，如果值比较大，那么查询缓存中碎片比较多
+
+Qcache_free_memory：查询缓存中剩余的内存大小
+
+Qcache_hits：表示有多少此命中缓存
+
+Qcache_inserts：表示多少次未命中而插入
+
+Qcache_lowmen_prunes：多少条query因为内存不足而被移除cache
+
+Qcache_queries_in_cache：当前cache中缓存的query数量
+
+Qcache_total_blocks：当前cache中block的数量
+
+query_cache_limit
+
+超出此大小的查询将不被缓存
+
+query_cache_min_res_unit
+
+缓存块最小大小
+
+query_cache_type
+
+缓存类型，决定缓存什么样的查询
+
+0表示禁用
+
+1表示将缓存所有结果，除非sql语句中使用sql_no_cache禁用查询缓存
+
+2表示只缓存select语句中通过sql_cache指定需要缓存的查询
+
+
+
+sort_buffer_size
+
+排序缓存，每个需要排序的线程分派该大小的缓冲区。
+
+innodb_sort_buffer_size，innodb的排序缓存。优先级比上面的高。
+
+myisam_sort_buffer_size，myisam的排序缓存。优先级比上面的高。
+
+
+
+max_allowed_packet=32M
+
+限制server接受的数据包大小。这个参数一般很少修改。
+
+join_buffer_size=2M
+
+表示关联缓存的大小。关联查询时如果join列没有索引时会用到。
+
+
+
+##### Thread
+
+thread_cache_size，线程缓存。
+
+服务器线程缓存，这个值表示可以重新利用保存再缓存中的线程数量，当断开连接时，那么客户端的线程将被放到缓存中以响应下一个客户而不是销毁，如果线程重新被请求，那么请求将从缓存中读取，如果缓存中是空的或者是新的请求，这个线程将被重新请求，那么这个线程将被重新创建，如果有很多新的线程，增加这个值即可
+
+Threads_cached：代表当前此时此刻线程缓存中有多少空闲线程
+
+Threads_connected：代表当前已建立连接的数量
+
+Threads_created：代表最近一次服务启动，已创建现成的数量，如果该值比较大，那么服务器会一直再创建线程
+
+Threads_running：代表当前激活的线程数
+
+
+
+##### innodb
+
+innodb_buffer_pool_size=
+
+该参数指定大小的内存来缓冲数据和索引，最大可以设置为物理内存的80%
+
+innodb_flush_log_at_trx_commit
+
+主要控制innodb将log buffer中的数据写入磁盘的方式或时间，值分别为0，1，2。
+
+0：此模式性能最高，但安全性较低。mysqld进程崩溃会导致上1秒钟所有事务数据的丢失。
+
+1：默认设置，最安全但是性能最低。在mysqld 服务崩溃或者服务器主机crash的情况下，binary log 只有可能丢失最多一个语句或者一个事务
+
+2：该模式速度较快，也比0安全，只有在操作系统崩溃或者系统断电的情况下，上一秒钟所有事务数据才可能丢失
+
+[详细介绍](https://www.cnblogs.com/f66666/articles/10993873.html)
+
+innodb_thread_concurrency
+
+设置innodb线程的并发数，默认为0表示不受限制，如果要设置建议跟服务器的cpu核心数一致或者是cpu核心数的两倍
+
+innodb_log_buffer_size
+
+此参数确定日志文件所用的内存大小，以M为单位
+
+innodb_log_file_size
+
+此参数确定数据日志文件的大小，以M为单位
+
+innodb_log_files_in_group
+
+以循环方式将日志文件写到多个文件中
+
+read_buffer_size
+
+mysql读入缓冲区大小，对表进行顺序扫描的请求将分配到一个读入缓冲区
+
+read_rnd_buffer_size
+
+mysql随机读的缓冲区大小
+
+innodb_file_per_table
+
+此参数确定为每张表分配一个新的文件。默认等于on，会给每张表建立一个数据文件。如果等于off，那所有表的数据都会放到一个表空间文件内。
+
+
+
+## 集群分布式
+
+### Mycat
+
+
+
+
 
 
 
@@ -2934,7 +3434,7 @@ local     41 kB
 
 
 
-## MongoDB概念 
+## 概念术语 
 
 在mongodb中基本的概念是文档、集合、数据库，下面挨个介绍。
 
@@ -2950,7 +3450,7 @@ local     41 kB
 
 
 
-## 常用操作
+## 基础使用
 
 本文仅列出部分操作，更多操作可以上[菜鸟教程](https://www.runoob.com/mongodb/mongodb-create-collection.html)。
 
