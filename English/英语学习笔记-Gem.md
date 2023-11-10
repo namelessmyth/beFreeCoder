@@ -4,14 +4,14 @@
 
 本文档属于个人学习英语的经验总结，心得分享。如果对文档内容有任何问题，欢迎讨论交流。
 
-| 编制日期     | 2023-09-07    |
+| 文档名称     | 英语学习笔记  |
 | ------------ | ------------- |
-| 编制人       | Gem Shen      |
-| 编制单位     | 暂无          |
 | 文档分类     | 学习笔记-英语 |
-| 版本号       | 1.5           |
-| 最后更新日期 | 2023-11-03    |
+| 版本号       | 1.6           |
+| 最后更新日期 | 2023-11-09    |
 | 最后更新人   | Gem Shen      |
+| 编制日期     | 2023-09-07    |
+| 编制人       | Gem Shen      |
 
 
 
@@ -25,6 +25,7 @@
 | 1.3  | Gem         | 2023-09-27 | 完成小e英语彩蛋课内容，加入大量[口语习语](#口语习语)的案例。 |
 | 1.4  | Gem         | 2023-11-01 | 加入[英语16种时态总结](#英语时态)。                          |
 | 1.5  | Gem         | 2023-11-03 | 加入[句子成分总结](#句子成分)，[英语句型总结](#英语句型)     |
+| 1.6  | Gem         | 2023-11-09 | 补充[缩读规则](#缩读)                                        |
 |      |             |            |                                                              |
 
  
@@ -35,7 +36,7 @@
 
 - 小E老师听力口语课。根据视频内容整理而成。
 - 扇贝听力口语App。根据教程内容整理而成。
-- 百度搜索相关文章。在每个章节中会对引用的文章作说明。
+- 互联网上的相关文章。在引用到的地方会对引用文章作说明并附上原文链接。
 
 
 
@@ -55,13 +56,15 @@
 
 这里面有很多听力素材：托福雅思，四六级，考验英语，VOA，电影英语等。
 
-有很多种精听模式，例如：听音模式（盲听句子，自主默写），选词模式（听句子选词填入），拼写模式（听句子，拼写空缺单词30%，60%，90%），如果实在听不懂，可以选择0.5x,0.8x速，慢放。
+有很多种精听模式，例如：听音模式（盲听句子，自主默写），选词模式（听句子选词填入），拼写模式（听句子，拼写空缺单词30%，60%，90%），如果正常语速听不懂，可以选择0.5x速，0.8x速。
 
 缺点：很多功能都只在手机端可用，电脑上的只具备一些基本功能。对于喜欢在电脑上学的童鞋不太友好。
 
-**扇贝口语**
-
 **扇贝阅读**
+
+有很多不同难度的不同种类的阅读材料可以选择。例如：托福，四六级。在阅读的时候，如果有单词，词组或者句子不明白，只要通过手指按屏幕就可以知道。整篇文章读完之后，还会在巩固一遍句子中出现的单词或者词组。巩固的时候会将词组和原文的句子一起显示让你可以复习单词的含义以及在句子中的使用。
+
+**扇贝口语**
 
 
 
@@ -445,6 +448,126 @@ adj. 总体的，普遍的；一般的，常规的；大致的，大概的；综
 n. 上将，将军；半军事化管理的宗教组织（如耶稣会修士、多明我会修士或救世军）的领袖；<古>大众，公众
 
 
+
+### 各种学校
+
+在美国，“college”和“university”经常互换使用的，不过College和University主要在课程和学位的类型上有所不同。
+
+**University**：主要是提供本科和[研究生学位](https://www.zhihu.com/search?q=研究生学位&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+的公立或私立机构。 这些机构以其多样的环境而闻名，通常以规模庞大的校园和各种各样的课程提供为特色。 
+
+**College**：主要指的是文理学院、[社区学院](https://www.zhihu.com/search?q=社区学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+或者[技术学院](https://www.zhihu.com/search?q=技术学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})。与University相比，College通常拥有更少的学生群体、更亲密的校园和更少的课程。这些学校大部分是私立的，没有国家的资助。因为大多数College不太注重研究工作，甚至会有很强的宗教信仰。当然，有的时候College也是University的一个组成部分，比如UCSD就是由7个不同学院Colleges组成。“学院”对应的英文词很多，除了college之外，有institute，academy，school，conservatory，centre和[faculty](https://www.zhihu.com/search?q=faculty&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+等等。
+
+**Institute**：主要是提供专注于专业和管理发展的课程。 这是一所具有良好学术和其他实践经验的专业院校，有自主性，但未被授权评审和授予[学位](https://www.zhihu.com/search?q=学位&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+。 从字面上看，高质量的College也会被称为Institute。  
+
+**Academy**：这个词在早些时候很流行，但最近它的使用有所减少，通常是培训某种特定的技能发展。虽然我们看到学校和学院的名字中包含了“Academy”这个词，但如今这个词更多地用于某一特定领域的专门培训机构和场所，也用于各种有类似想法的人的协会和机构：如科学家、作家或[艺术家](https://www.zhihu.com/search?q=艺术家&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})的学院。 如果我们看看这个词的用法，首先想到的是[电影艺术与科学学院](https://www.zhihu.com/search?q=电影艺术与科学学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})Academy of Motion Picture Arts and Sciences，这是一个在好莱坞颁发[奥斯卡奖](https://www.zhihu.com/search?q=奥斯卡奖&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})的机构。 印度也有类似的国防学院，比如[美国空军学院](https://www.zhihu.com/search?q=美国空军学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+US Air Force Academy和国防学院National Defense Academy。 
+
+
+
+以前的上海和北京的[外语学院](https://www.zhihu.com/search?q=外语学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})
+
+用institute比较多一些，像[麻省理工学院](https://www.zhihu.com/search?q=麻省理工学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})（MIT）也叫institute。美国的[西点军校](https://www.zhihu.com/search?q=西点军校&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})用的是academy。而独立的[音乐学院](https://www.zhihu.com/search?q=音乐学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})或大学多用conservatory或academy（[欧洲](https://www.zhihu.com/search?q=欧洲&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})多用）。但是一所大学内的音乐学院或者音乐部门一般都叫做School of Music或College of Music。像西方有些[医学院](https://www.zhihu.com/search?q=医学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})称之为medical centre。[英国大学](https://www.zhihu.com/search?q=英国大学&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})的学院用school的会比较多一些，如London School of Economics，较小的学院会被称为faculty，如Faculty of Science、Faculty of Arts，而[神学院](https://www.zhihu.com/search?q=神学院&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A2250759172})则用seminary来形容。
+
+
+
+各种“副”
+
+"副"字在英语中可以用vice、deputy、assistant、associate、under、sub等词表示
+
+表达"副"的含义用的最广泛的是Vice和Deputy。 
+
+Vice 和Deputy 并无本质区别，在实际使用时究竟选用哪个，纯属搭配习惯。
+
+一般来说，
+
+vice与president、 premier、 chairman、 minister、 governor搭配；
+
+deputy与director、 chief、head 、secretary、dean、mayor搭配。
+
+ 
+
+似乎可以认为，Vice比Deputy的搭配级别要高。
+
+如：
+
+国家副主席（或大学副校长）=>Vice President
+
+副主席（或系副主任等）=>Vice Chairman
+
+副总理=>Vice Premier 
+
+副部长=>Vice Minister
+
+副省长=>Vice Governor
+
+副领事=>Vice Consul
+
+副校长（中小学）=>Vice Principal
+
+ 
+
+以下情况常用Deputy：
+
+副局长=>Deputy Director
+
+副秘书长=>Deputy Secretary-General 
+
+副书记=>Deputy Secretary
+
+副市长=>Deputy Mayor 
+
+副县长=>Deputy Chief Executive
+
+副村长=>Deputy Village Head
+
+副院长（学院）=>Deputy Dean
+
+副总编 =>Deputy Editor-in-Chief
+
+ 
+
+associate用作"副"时一般用于职称。
+
+副教授=>Associate Professor 
+
+副研究员=>Associate Research Fellow
+
+副主编=>Associate Editor-in-Chief 
+
+副编审=>Associate Senior Editor 
+
+副研究馆员=>Associate Research Fellow 
+
+副译审=>Associate Senior Translator 
+
+副主任医师=>Associate Senior Doctor
+
+ 
+
+Assistant 也可作"副"解释，
+
+如：副经理=>Assistant Manager
+
+ 
+
+但我们知道，assistant原本含义是"助理"。当我们把"副经理"译成assistant manager时，那么"经理助理"怎么译？另外，assistant manager和另一种副经理deputy manager之间有什么区别？
+
+要弄清以上情况， 先得看看Assistant和Deputy在美国的用法，以美国联邦财政部金融管理局(Financial Management Service ) 为例，该局局长称作Commissioner，紧接着Commissioner的二号人物称 Deputy Commissioner, 相当于我们中国的第一副局长，然后是多名分管各个不同科室的副局长，如分管联邦金融事务的副局长(Assistant Commissioner, Federal Finance )、分管金融运营事务的副局长(Assistant Commissioner, Financial Operations)、分管政府部门会计事务的副局长(Assistant Commissioner, Governmentwide Accounting)，等等。无论是美国政府还是企业机构，几乎都是一样，即Deputy 作为第一副职，往往只设一个，而Assistant却可以有多个。比如，在一家美国公司里，既有Deputy General Manager，又有Assistant General Manager都译成"副总经理"，但其地位是前者--相当于我们的常务副总--高于后者。
+
+至于比"副总经理"地位更低的"总经理助理"，则可译为：Assistant to General Manager。如：总经理私人助理--> Personal Assistant to GM、总经理特别助理--> Special Assistant to GM。
+
+ 
+
+在我国的行政机构内，"助理"往往指的是未经过立法机关认可的副职，如"市长助理"，其职责和级别相当于副市长，但地位 
 
 
 
@@ -2574,17 +2697,17 @@ I want to **go**. 我要**走**
 
 #### 常见弱读单词
 
-| 冠词            | 介词              | 代词            | 连词           | 助动词           |
-| --------------- | ----------------- | --------------- | -------------- | ---------------- |
-| an /æn; ən/     | at /æt; ət/       | us /ʌs; əs/     | and /ænd; ənd/ | am /æm; əm/      |
-| some /sʌm; səm/ | to /kæn; kən/     | you /juː; jʊ/   | but /bʌt; bət/ | are /ɑːr; ər/    |
-|                 | of /ʌv; əv/       | them /ðem; ðəm/ |                | do /duː; də/     |
-|                 | from /frʌm; frəm/ | we /wi; wə/     |                | does /dʌz/       |
-|                 | for /fɔːr; fər/   | that /ðæt ðət/  |                | has /hæz; həz/   |
-|                 | as /æz; əz/       |                 |                | have /hæv; həv/  |
-|                 |                   |                 |                | can /kæn; kən/   |
-|                 |                   |                 |                | could /kʊd; kəd/ |
-|                 |                   |                 |                | should /ʃʊd; ʃəd |
+| 冠词            | 介词              | 代词              | 连词           | Be动词         | 助动词             |
+| --------------- | ----------------- | ----------------- | -------------- | -------------- | ------------------ |
+| an /æn; ən/     | at /æt; ət/       | us /ʌs; əs/       | and /ænd; ənd/ | is /ɪz; z; s;/ | do /duː; də/       |
+| some /sʌm; səm/ | to /kæn; kən/     | you /juː; jʊ; jə/ | but /bʌt; bət/ | am /æm; əm/    | does /dʌz/         |
+| the /ðə; ði/    | of /ʌv; əv/       | them /ðem; ðəm/   | or /ɔːr; ə/    | are /ɑːr; ər/  | has /hæz; həz/     |
+|                 | from /frʌm; frəm/ | we /wi; wə/       |                | was/wʌz; wəz/  | have /hæv; həv/    |
+|                 | for /fɔːr; fər/   | that /ðæt ðət/    |                | were/wɜːr; wə/ | could /kʊd; kəd/   |
+|                 | as /æz; əz/       |                   |                |                | should /ʃʊd; ʃəd   |
+|                 | in /ɪn; ən/       |                   |                |                | can /kæn; kən/     |
+|                 |                   |                   |                |                | would /wʊd wəd əd/ |
+|                 |                   |                   |                |                |                    |
 
 **弱读案例**
 
@@ -2714,21 +2837,11 @@ I know that. 读/ðæt/
 
 
 
-### 缩略语
+### 缩读
 
 [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffdde4b07b0558338070?product_id=term_63e60228b5d8d_d1vpxz)，本章节内容不适用于写作和书面语，仅适用于听力和口语。
 
-#### going to
-
-gonna，/'ɡɒnə/ = going to
-
-I'm gonna do it. 我将要做。d<u>o i</u>t 符合[[w]加音](#[w]加音)
-
-#### have got to
-
-gotta /ˈɡɑː<u>t</u>ə/ [闪音]([t]闪音)= have got to 
-
-You gotta be kidding. 你一定在开玩笑。
+**of == a**
 
 #### kind of
 
@@ -2748,6 +2861,32 @@ kind of cute. 有点可爱
 
 kind of fun. 有点有趣
 
+#### out of
+
+outta /ˈaʊtə/ = out of
+
+Get outta here. 离开这里/走开
+
+#### sort of
+
+sorta=sort of “有几分”、“可以说是”
+
+I feel sorta bad for him.我其实有点为他难过
+
+#### lots of
+
+lotsa = lots of “很多”
+
+I need lotsa money. 我有很多钱。
+
+#### cup of
+
+cuppa = cup of “一杯”
+
+Would you like a cuppa tea？ 你想要一杯茶吗？
+
+**to == a**
+
 #### want to
 
 [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_6476c365e4b0b0bc2bed123e?product_id=term_63e60228b5d8d_d1vpxz)
@@ -2764,11 +2903,77 @@ I wanna talk. 我想谈谈
 
 I wanna go back. 我想要回去
 
-#### out of
+#### going to
 
-outta /ˈaʊtə/ = out of
+gonna，/'ɡɒnə/ = going to
 
-Get outta here. 离开这里/走开
+I'm gonna do it. 我将要做。d<u>o i</u>t 符合[[w]加音](#[w]加音)
+
+What are you gonna do about it？你要怎样呢？
+
+#### I'm going to
+
+I'mma=I'm going to “我要去”
+
+I'mma talk to my father.我要和父亲聊聊。
+
+#### got to
+
+gotta /ˈɡɑː<u>t</u>ə/ [闪音]([t]闪音)= got to 
+
+You gotta be kidding. 你一定在开玩笑。
+
+You gotta let me go.你得让我走了。
+
+#### need to
+
+needa = need to “需要做”
+
+You needa tell me. 你得告诉我。
+
+#### ought to
+
+oughta = ought to “应当”、“应该”
+
+You oughta call your mom.你应该给你妈妈打电话。
+
+#### have to
+
+hafta= have to，必须，不得不，/ˈhæftə/
+
+We hafta go.我们必须要走了。
+
+**have == a**
+
+#### should have
+
+（1）shoulda = should have “本应该…”
+
+We never shoulda talked about this.我们根本就不该提的。
+
+#### would have
+
+（2）woulda = would have ”本可以”
+
+I woulda gone, but I was ill.我本可以走的，但我生病了。
+
+#### could have
+
+（3）coulda=could have 本能够；本可能
+
+You coulda just let it go. 你可以随他去就好了。
+
+#### might have
+
+（4）mighta = might have “可能”
+
+She mighta gone to the bank.她可能去了银行。
+
+#### must have
+
+（5）musta=must have “肯定”
+
+Someone musta stolen my credit card. 肯定有人偷了我的信用卡。
 
 #### let me
 
@@ -2782,11 +2987,29 @@ gimme /ˈɡɪmi/ = give me
 
 gimm<u>e a</u> break. [[j]加音](#[j]加音) 让我休息一下。
 
+#### tell them
+
+tell'em = tell them
+
+I should tell'em the truth. 我应该告诉他们真相。
+
+#### isn't it
+
+innit= isn't it “不是吗”
+
+It's a wonderful book, innit? 这本书很不错，对吧～
+
 #### don't know
 
 dunno /dəˈnoʊ/ = don't know
 
 I dunno. 我不知道。
+
+#### because
+
+cuz=coz=cos=cause=because “因为”
+
+I don't like them cuz they're unfriendly. 我不喜欢他们因为他们不友好。
 
 #### 案例
 
@@ -5379,3 +5602,194 @@ Learn4Good 是准备托福考试的热门网站之一。本网站建立的初衷
 托福备考的热门网站之一。通过Learn4Good这个网站，可以看到托福**考试结构、评分标准、考试经验分享等**。
 
 虽然网站看上去有点古老，但它**不仅完全免费，还提供模拟考试，**并且收录了托福写作部分话题、托福词汇的完整列表等资料，是同学们日常练习的
+
+
+
+### 听力提升
+
+https://www.zhihu.com/question/20407472
+
+https://zhuanlan.zhihu.com/p/34607714
+
+听力确实是个磨人的小妖精，语篇长，话题学术，且无法提前看到题目（我们属鱼的可还能活）
+
+个人觉得听力80%靠能力，20%靠技巧，相较于题型、笔记等，更重要的是如何练习提升听力能力，掌握了“术”之后，选择合适的“器”才能起作用。
+
+![img](https://picx.zhimg.com/80/v2-e8099a316bff7fa61017284cb187243c_1440w.webp?source=1def8aca)
+
+如何判断自己的“术”是否精进呢？
+
+先试着做一套题。
+
+**考试通常包含三种听力材料，对话、学术讲座、包含讨论的学术对话。**
+
+后面两种听力材料会稍难一些，可以先用难的测试一下自己。在自我检测的时候，主要考量以下几点：
+
+> 1.听材料的时候，能否跟上节奏，把握每句的大致意思。
+> 2.听完后，能否总结出材料的大致内容，不会出现大段遗忘的情况。
+> 3.做每道题时，是否知道考点出自材料的哪一部分。
+> 4.辨析选项时，能否有思路地排除错误选项or得出正确选项。
+
+
+
+如果以上几点都能做到，可以直接去学习做题技巧，类似于笔记怎么记呀、题型有哪些呀，或者无脑刷题也不会有太大偏差（只是提升效率很低）。如果还做不到，建议从能力训练开始。
+
+
+
+#### 听力能力
+
+训练方法有非常多，基本遵循着一种，坚持练习和有效反思，就能提升。
+
+**我个人练习的方法：**如果第一遍做新题的时候没有一种掌控感（基本全都听清楚），就回去进行听写。如果有能力的话，强烈建议加快倍速，个人感觉坚持加快倍速真的很有用，如果长期习惯了1.5倍速（可以从1.2倍速起步），再听原速真的是感到相当幸福了，感觉是一字一句念给你听。
+
+app上就有[分句精听](https://www.zhihu.com/search?q=分句精听&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+的功能，有全套的TPO听力材料（可能也许还是缺了一点点），且换句，调速更方便。这个就看自己喜好去下载就行。
+
+当然练习的时候不必把自己限制在一个倍速内，如果某一句话在某一速度下听写有难度，可以逐步放慢速度，直到听清为止。
+
+不过上面这个方法也有一个问题，可能某些句子听多少遍都听不懂。
+
+
+
+这是因为，听力跟不上可能有几种原因。
+
+> ①单词没有学过；
+> ②单词发音对不上，可能句子中有连音，也可能自己学的是错的；
+> ③句子结构太复杂，[从句](https://www.zhihu.com/search?q=从句&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+> 套从句就lost；
+> ④材料篇幅太长，属鱼的记不住（比如我）
+
+上面的听写方法只能应对后两种原因，对于前两种，不知道就是不知道，听不清就是听不清。
+
+
+
+如果遇到这种情况，就需要在听写之前再加几个步骤。
+
+在做了一遍新题后，先不要对答案，读原文script。
+
+通读原文后，对照着题目找出每一道题的出题点，再做一遍题目（建议保留第一遍做的选项。
+
+此时，再对照答案，可以看出哪部分是因为“听不出”而选错的，哪部分是因为“听不懂”而选错的。
+
+对于两类错误答案，在分析反思时应该有不同的处理。
+
+如果是“听不出”，可以反复播放对应的听力段落，锻炼读音、连音、语句结构等导致出错的方面。
+
+如果是“听不懂”，可以返回原文文本，积累不认识的单词。
+
+
+
+说到这里，还有一点想提醒大家。**做听力时，并不需要每一个词语都能听懂。**
+
+对于出题者来说，多数考生没有考试材料的背景信息，题目才算比较公平，所以许多学术背景的听力材料都会选择千奇百怪的知识点作为主题。
+
+考试并不希望考生 understood before listening, 但考生应该 understood after listening. 所以，在练习时，不需字字句句都掌握（性价比也不高），**但是考点出现的相关句子一定要掌握。**
+
+
+
+#### **题目反思**
+
+回到对于做过题目的反思（最重要，划重点）。
+
+不反思，无进步，这一点对于能力提升非常非常非常重要。
+
+个人的习惯是分析完当天模考题目之后再回去分析几篇之前出错的篇目（建议这一遍加快倍速，但量力而行）。认真做笔记。 听力结束后，先不要做题看题，先去看你的笔记。
+
+这里说一说我总结出的一个方法，大家自己可以根据自己的习惯和喜好来尝试。
+
+**一，看着笔记，根据对文段（lecture）的理解，先划结构。是总分，还是并列？等等。**
+
+**二，（重点来了），猜题猜考点。**
+
+拿笔把自己认为的，很有可能会作为题目出现的信息点标记出来，最好再猜一下考法。（有的时候不一定会是作为题目，这个信息点作为题肢或者是[干扰项](https://www.zhihu.com/search?q=干扰项&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+出现也是一种胜利），然后做题。看看自己是否猜的准确（用另一种颜色的笔标记）。
+
+这样站在出题者的立场来做题，慢慢地会摸索出一些规律，不求所有的题目都踩对，但对重要[节点](https://www.zhihu.com/search?q=节点&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+会有更强的敏感性。
+
+其他高人也总结过譬如开头、结尾、举例、对比、重复等节点容易出题，但我在做题时总是忘记，只能靠[实践出真知](https://www.zhihu.com/search?q=实践出真知&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+了。
+
+用这个方法，逐渐会感受到对材料的掌控，练到后期会比较舒服，已经很清楚题目要考的到底是什么，自己就不会再去附会或者是过度推理了。
+
+如果有朋友像我一样是用电脑复习、做笔记的，建议听写和反思建一个文件夹就好，还可以根据每一句话分析错因（嗯很多时候错因是没听见），或者是对应到自己学到的方法，这样复习效率会高一些。
+
+
+
+能力的问题讲完了，我们再来说说**技巧**。个人觉得听力能依靠的技巧不多，多数情况听力都是跟着材料的节奏走，技巧没有内化的话也基本用不上。不过有两点是我在练习时关注过的，内化后也确实有用。
+
+
+
+#### **题型相关**
+
+在教听力时，教给小朋友的就是区分题型的方法。
+
+然后发现没什么用。
+
+考试的时候也没时间区分题型，基本大部分题目就靠暴力拆解。
+
+不过了解题型，对听材料时获取信息很有帮助，知道有哪些题型，就大概能够预判哪些语段内容会覆盖考点。
+
+**托福听力大致有六类题型：主旨题、例子作用题、例子细节题、对比题、结尾题、重听题。**
+
+主旨题基本开门见山，例子作用能在主要话题与展开讨论的转折处找到，细节和对比则在讨论过程中，结尾…就是结尾。
+
+做题时不必遵照区分题型、运用解题方法的步骤来进行（也没这个时间），了解题型也是为了培养对信息的敏感度，听材料时知道哪些内容必须获取，做题时知道应该[回溯](https://www.zhihu.com/search?q=回溯&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})
+
+哪一部分寻找答案。如果对题型的了解完全内化了，那么运用不同题型的解题技巧来答题也是可行的。
+
+
+
+#### **笔记相关**
+
+起初我对记笔记也感到非常无力。全力记下全部内容，后来发现做题的时候根本用不着笔记，也看不清自己写了啥，有时候还影响我集中注意力去听。后来干脆不记了，但分数不稳定，脑子记住多少都靠缘分。
+
+后来换了一种方式，概括来说就是，笔记只记重要的内容（[逻辑](https://www.zhihu.com/search?q=逻辑&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})上的因果转折并列等，例子，术语，观点态度），关注文章的结构（总分，[线性](https://www.zhihu.com/search?q=线性&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})，对比，并列等），如此笔记才能够派上用场。
+
+什么是重点内容，联系刚才所说的题型，开头、举例、对比、转折、结尾等，容易出考点，另外也要靠能力锻炼时磨出来的敏锐度，把握到出题的共性。后期比较神的时候，听到某一段就会自动提起精神，自个儿提醒[考点](https://www.zhihu.com/search?q=考点&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})来了考点来了。
+
+与此同时，结构对于做题也有帮助，因为无论是什么结构，每一小板块一般只有一道题。
+
+关于不同类型材料的结构，在这里简单地总结一下
+
+1. **Conversation**
+
+无论是男学生、女学生、男老师、女老师、图书管理员、食堂员工（这倒是没见过），对话一般都遵循这样的结构：
+
+- 先打招呼，以示礼貌，长短不一，这部分不是很重要
+- 其中一个人表明来意，可能是讨论问题的，也可能是处理事务的，偶尔会直接陈述，但通常以问题的形式抛给对方
+- 两个人开始讨论如何处理这个问题。这里一般会有几个来回，他们可能先一起讨论一下当下形势（这个词有点大），然后提出一个方案。通常第一个解决办法不会直接被接受，因为接受了对话就结束了。所以就会有不接受的原因，以及进一步的讨论和解决方案
+- 最后有一个可行的解决方案，然后两人可能道别（or not
+
+这几个步骤里，①很少出题，②④通常出一题，③出题点会多一些。
+
+
+
+**2.Lecture**
+
+Lecture的出现形式，可能是教授一个人滔滔不绝，也可能有学生加入一起表演，但结构通常如下：
+
+- 引入话题。有些教授会开门见山，也有教授废话多一些，委婉引入。然后教授抛出这堂课教授的主要内容，通常会有一小段定义。
+- 详细讲解。通常教授会分点进行论述，个人经验，可以在这部分找到三个分点，并且会有例子对应。
+- 简单总结。课堂最后的收尾。
+
+那么对于Lecture，常见的出题点会出现在最初的话题引入、三个分论点、总结处出现。有时会再加一道单句重复的题目，
+
+
+
+所以记笔记的时候，要锻炼自己整理结构的能力，小结构之间的转换，尽量用明显的符号分隔出来，这样做题回顾时才能尽快定位到需要的信息。
+
+最重要的是，不要追求一字一句记录。
+
+一旦记笔记影响到自己听下一句的内容，就马上停笔转到下一句，听完整材料内容是最最首要的。
+
+**大家的私信我看啦，网盘一直失效，实在没时间一一发送，需要免费资料的朋友见评论区，是我当时备考的一些托福资料，包括TOP[口语解析](https://www.zhihu.com/search?q=口语解析&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})****，写作替换词，写作思路，口语写作精选[词组](https://www.zhihu.com/search?q=词组&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra={"sourceType"%3A"answer"%2C"sourceId"%3A798743321})**
+
+**等。希望对大家有帮助喔！**
+
+听说读写中，个人觉得听力是最依靠真实能力的，即使有快速提升的方法，也仅是在能力提升的方法上比较讨巧，省却了无用功的时间。就坚持练习和反思吧，that’s the only magic.
