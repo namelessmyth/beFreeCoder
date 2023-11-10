@@ -6,6 +6,34 @@
 
 
 
+## 数据库类型
+
+数据库经过几十年的发展，出现了多种类型。根据数据的组织结构不同，主要分为网状数据库、层次数据库、关系型数据库和非关系型数据库四种。目前最常见的数据库模型主要是：关系型数据库和非关系型数据库。
+
+1. 关系型数据库
+关系型数据库模型是将复杂的数据结构用较为简单的二元关系（二维表）来表示，如图1-4所示。在该类型数据库中，对数据的操作基本上都建立在一个或多个表格上，我们可以采用结构化查询语言（SQL）对数据库进行操作。关系型数据库是目前主流的数据库技术，其中具有代表性的数据库管理系统有：Oracle、DB2、SQL Server、MySQL等。PS：关系=二维表
+
+
+2. 非关系型数据库NOSQL
+NOSQL（Not Only SQL）泛指非关系型数据库。关系型数据库在超大规模和高并发的web2.0纯动态网站已经显得力不从心，暴露了很多难以克服的问题。NOSQL数据库的产生就是为了解决大规模数据集合多重数据种类带来的挑战，尤其是大数据应用难题。常见的非关系型数据库管理系统有Memcached、MongoDB，redis，HBase等。 
+
+### 关系型数据库
+
+虽然非关系型数据库的优点很多，但是由于其并不提供SQL支持、学习和使用成本较高并且无事务处理，所以本书的重点是关系型数据库。下面我们将介绍一下常用的关系型数据库管理系统。
+
+1. Oracle
+    Oracle数据库是由美国的甲骨文（Oracle）公司开发的世界上第一款支持SQL语言的关系型数据库。经过多年的完善与发展，Oracle数据库已经成为世界上最流行的数据库，也是甲骨文公司的核心产品。
+    Oracle数据库具有很好的开放性，能在所有的主流平台上运行，并且性能高、安全性高、风险低；但是其对硬件的要求很高、管理维护和操作比较复杂而且价格昂贵，所以一般用在满足对银行、金融、保险等行业大型数据库的需求上。
+2. MySQL
+    MySQL是一种开放源代码的轻量级关系型数据库，MySQL数据库使用最常用的结构化查询语言（SQL）对数据库进行管理。由于MySQL是开放源代码的，因此任何人都可以在General Public License的许可下下载并根据个人需要对其缺陷进行修改。
+    由于MySQL数据库体积小、速度快、成本低、开放源码等优点，现已被广泛应用于互联网上的中小型网站中，并且大型网站也开始使用MySQL数据库，如网易、新浪等。  
+3. DB2
+    DB2是IBM公司著名的关系型数据库产品。DB2无论稳定性，安全性，恢复性等等都无可挑剔，而且从小规模到大规模的应用都可以使用，但是用起来非常繁琐，比较适合大型的分布式应用系统。
+4. SQL Server
+   SQL Server是由Microsoft开发和推广的关系型数据库，SQL Server的功能比较全面、效率高，可以作为中型企业或单位的数据库平台。SQL Server可以与Windows操作系统紧密继承，无论是应用程序开发速度还是系统事务处理运行速度，都能得到大幅度提升。但是，SQL Server只能在Windows系统下运行，毫无开放性可言。
+
+
+
 ## 对比
 
 ### MySQL和Postgresql
@@ -82,9 +110,25 @@ ad_hoc，也叫即时查询，执行完查询语句后要求在尽可能短的�
 
 ## 简介
 
+MySQL数据库最初是由瑞典MySQL AB公司开发，2008年1月16号被Sun公司收购。2009年，SUN又被Oracle收购。MySQL是目前IT行业最流行的开放源代码的数据库管理系统，同时它也是一个支持多线程高并发多用户的关系型数据库管理系统。MySQL之所以受到业界人士的青睐，主要是因为其具有以下几方面优点：
+1. 开放源代码
+MySQL最强大的优势之一在于它是一个开放源代码的数据库管理系统。开源的特点是给予了用户根据自己需要修改DBMS的自由。MySQL采用了General Public License，这意味着授予用户阅读、修改和优化源代码的权利，这样即使是免费版的MySQL的功能也足够强大，这也是为什么MySQL越来越受欢迎的主要原因。
+2. 跨平台
+MySQL可以在不同的操作系统下运行，简单地说，MySQL可以支持Windows系统、UNIX系统、Linux系统等多种操作系统平台。这意味着在一个操作系统中实现的应用程序可以很方便地移植到其他的操作系统下。
+3. 轻量级
+MySQL的核心程序完全采用多线程编程，这些线程都是轻量级的进程，它在灵活地为用户提供服务的同时，又不会占用过多的系统资源。因此MySQL能够更快速、高效的处理数据。
+4. 成本低
+MySQL分为社区版和企业版，社区版是完全免费的，而企业版是收费的。即使在开发中需要用到一些付费的附加功能，价格相对于昂贵的Oracle、DB2等也是有很大优势的。其实免费的社区版也支持多种数据类型和正规的SQL查询语言，能够对数据进行各种查询、增加、删除、修改等操作，所以一般情况下社区版就可以满足开发需求了，而对数据库可靠性要求比较高的企业可以选择企业版。
+另外，PHP中提供了一整套的MySQL函数，对MySQL进行了全方位的强力支持。 
+总体来说，MySQL是一款开源的、免费的、轻量级的关系型数据库，其具有体积小、速度快、成本低、开放源码等优点，其发展前景是无可限量的。 
+
+PS：社区版与企业版主要的区别是：
+1. 社区版包含所有MySQL的最新功能，而企业版只包含稳定之后的功能。换句话说，社区版可以理解为是企业版的测试版。 
+2.MySQL官方的支持服务只是针对企业版，如果用户在使用社区版时出现了问题，MySQL官方是不负责任的。  
 
 
-## 安装
+
+## 安装卸载
 
 ### 宝塔安装
 
@@ -114,6 +158,154 @@ ad_hoc，也叫即时查询，执行完查询语句后要求在尽可能短的�
 3. 让所有ip都可以访问：`update user set host = '%' where user = 'root';`
 4. 刷新权限用户权限：`flush privileges;`
 5. 此时再用客户端就应该可以了。例如：navicat、dbeaver
+
+
+
+### windows安装
+
+【1】MySQL的版本：
+近期主要历史版本有5.0/5.1/5.5/5.6/5.7，目前最新版本是MySQL8。6.0曾经是个内部试验版本，已取消了。
+
+MySQL8.0的版本历史
+1) 2016-09-12第一个DM(development milestone)版本8.0.0发布
+2) 2018-04-19第一个GA(General Availability)版本开始，8.0.11发布
+3) 2018-07-27 8.0.12GA发布
+4) 2018-10-22 8.0.13GA发布
+5) 2019-01-21 8.0.14GA发布
+6) 2019-02-01 8.0.15GA发布
+7) 最新的版本是8.0.18,2019年10月14日正式发布
+8) ....后续更新
+
+【2】官方下载地址：
+https://dev.mysql.com/downloads/windows/installer/8.0.html
+
+![image-20231110154549382](学习笔记-数据库-Gem.assets/image-20231110154549382.png)
+
+【3】安装过程：
+1.双击MySQL安装文件mysql-installer-community-8.0.18.0.msi，出现安装类型选项。
+² Developer Default：开发者默认
+
+² Server only：只安装服务器端 
+
+² Client only：只安装客户端
+
+² Full：安装全部选项
+
+² Custom：自定义安装
+
+![image-20231110154607546](学习笔记-数据库-Gem.assets/image-20231110154607546.png)
+
+2.选择，然后继续：
+
+![image-20231110154619191](学习笔记-数据库-Gem.assets/image-20231110154619191.png)
+
+3.进入产品配置向导，配置多个安装细节，点击Next按钮即可。
+
+![image-20231110154631949](学习笔记-数据库-Gem.assets/image-20231110154631949.png)
+
+4.高可靠性High Availability，采用默认选项即可。
+² Standalone MySQL Server/Classic MySQL Replication:独立MySQL服务器/经典MySQL复制
+
+² InnoDB Cluster:InnoDB集群
+
+![image-20231110154645563](学习笔记-数据库-Gem.assets/image-20231110154645563.png)
+
+5.类型和网络 Type and Networking，采用默认选项即可。记住MySQL的监听端口默认是3306。
+
+![image-20231110154658400](学习笔记-数据库-Gem.assets/image-20231110154658400.png)
+
+6.身份验证方法Authentication Method，采用默认选项即可。
+
+ ![image-20231110154709204](学习笔记-数据库-Gem.assets/image-20231110154709204.png)
+
+7.账户和角色 Accounts and Roles。MySQL管理员账户名称是root，在此处指定root用户的密码。还可以在此处通过Add User按钮添加其他新账户，此处省略该操作。
+
+![image-20231110154717771](学习笔记-数据库-Gem.assets/image-20231110154717771.png)
+
+8.Windows服务：Windows Service。
+² Configure MySQL Server as a Windows Service:给MySQL服务器配置一个服务项。
+
+² Windows Service Name:服务名称，采用默认名称MySQL80即可。
+
+² Start the MySQL at System Startup：系统启动时开启MySQL服务
+
+![image-20231110154736435](学习笔记-数据库-Gem.assets/image-20231110154736435.png)
+
+
+
+ 9.Apply Configuration：点击Execute按钮执行开始应用这些配置项。
+² Writing configuration file: 写配置文件。
+
+² Updating Windows Firewall rules：更新Windows防火墙规则
+
+² Adjusting Windows services：调整Windows服务
+
+² Initializing database：初始化数据库
+
+² Starting the server： 启动服务器
+
+² Applying security setting：应用安全设置
+
+² Updating the Start menu link：更新开始菜单快捷方式链接
+
+![image-20231110154756078](学习笔记-数据库-Gem.assets/image-20231110154756078.png)
+
+PS：如果配置出错，查看右侧的log，查看对应错误信息。
+执行完成后，如下图所示。单击Finish完成安装，进入产品配置环节。
+
+![image-20231110154808773](学习笔记-数据库-Gem.assets/image-20231110154808773.png)
+
+10.产品配置Product Configuration到此结束：点击Next按钮。
+
+![image-20231110154817783](学习笔记-数据库-Gem.assets/image-20231110154817783.png)
+
+11.安装完成 Installation Complete。点击Finish按钮完成安装。
+
+![image-20231110154830915](学习笔记-数据库-Gem.assets/image-20231110154830915.png)
+
+#### 安装确认
+
+1)安装了Windows Service：MySQL80，并且已经启动。
+
+![image-20231110154449912](学习笔记-数据库-Gem.assets/image-20231110154449912.png)
+
+2)安装了MySQL软件。安装位置为：C:\Program Files\MySQL。
+
+（MySQL文件下放的是软件的内容）
+3)安装了MySQL数据文件夹，用来存放MySQL基础数据和以后新增的数据。安装位置为C:\ProgramData\MySQL\MySQL Server 8.0。
+
+（ProgramData文件夹可能是隐藏的，显示出来即可）
+（MySQL文件下的内容才是真正的MySQL中数据）
+4)在MySQL数据文件夹中有MySQL的配置文件：my.ini。它是MySQL数据库中使用的配置文件，修改这个文件可以达到更新配置的目的。以下几个配置项需要大家特别理解。
+² port=3306：监听端口是3306
+
+² basedir="C:/Program Files/MySQL/MySQL Server 8.0/"：软件安装位置
+
+² datadir=C:/ProgramData/MySQL/MySQL Server 8.0/Data：数据文件夹位置
+
+² default_authentication_plugin=caching_sha2_password：默认验证插件
+
+² default-storage-engine=INNODB：默认存储引擎
+
+（这些内容在Linux下可能会手动更改）
+
+
+
+### windows卸载
+
+【1】卸载数据库
+
+1)停止MySQL服务：在命令行模式下执行net stop mysql或者在Windows服务窗口下停止服务
+
+2)在控制面板中删除MySQL软件
+
+3)删除软件文件夹：直接删除安装文件夹C:\Program Files\MySQL，其实此时该文件夹已经被删除或者剩下一个空文件夹。
+
+4)删除数据文件夹：直接删除文件夹C:\ProgramData\MySQL。此步不要忘记，否则会影响MySQL的再次安装。
+（ProgramData文件夹可能是隐藏的，显示出来即可）
+（MySQL文件下的内容才是真正的MySQL中数据）
+
+5)删除path环境变量中关于MySQL安装路径的配置 
 
 
 
@@ -546,23 +738,31 @@ mysql> show tables;
 mysql> 
 ```
 
-###### 特点介绍
+##### 特点介绍
 
-1、提供了一种在数据库运行时实时检查server的内部执行情况的方法。performance_schema 数据库中的表使用performance_schema存储引擎。该数据库主要关注数据库运行过程中的性能相关的数据，与information_schema不同，information_schema主要关注server运行过程中的元数据信息
-2、performance_schema通过监视server的事件来实现监视server内部运行情况， “事件”就是server内部活动中所做的任何事情以及对应的时间消耗，利用这些信息来判断server中的相关资源消耗在了哪里？一般来说，事件可以是函数调用、操作系统的等待、SQL语句执行的阶段（如sql语句执行过程中的parsing 或 sorting阶段）或者整个SQL语句与SQL语句集合。事件的采集可以方便的提供server中的相关存储引擎对磁盘文件、表I/O、表锁等资源的同步调用信息。
-3、performance_schema中的事件与写入二进制日志中的事件（描述数据修改的events）、事件计划调度程序（这是一种存储程序）的事件不同。performance_schema中的事件记录的是server执行某些活动对某些资源的消耗、耗时、这些活动执行的次数等情况。
-4、performance_schema中的事件只记录在本地server的performance_schema中，其下的这些表中数据发生变化时不会被写入binlog中，也不会通过复制机制被复制到其他server中。
-5、 当前活跃事件、历史事件和事件摘要相关的表中记录的信息。能提供某个事件的执行次数、使用时长。进而可用于分析某个特定线程、特定对象（如mutex或file）相关联的活动。
-6、PERFORMANCE_SCHEMA存储引擎使用server源代码中的“检测点”来实现事件数据的收集。对于performance_schema实现机制本身的代码没有相关的单独线程来检测，这与其他功能（如复制或事件计划程序）不同
-7、收集的事件数据存储在performance_schema数据库的表中。这些表可以使用SELECT语句查询，也可以使用SQL语句更新performance_schema数据库中的表记录（如动态修改performance_schema的setup_*开头的几个配置表，但要注意：配置表的更改会立即生效，这会影响数据收集）
-8、performance_schema的表中的数据不会持久化存储在磁盘中，而是保存在内存中，一旦服务器重启，这些数据会丢失（包括配置表在内的整个performance_schema下的所有数据）
-9、MySQL支持的所有平台中事件监控功能都可用，但不同平台中用于统计事件时间开销的计时器类型可能会有所差异。
+1. 提供了一种在数据库运行时实时检查server的内部执行情况的方法。performance_schema 数据库中的表使用performance_schema存储引擎。该数据库主要关注数据库运行过程中的性能相关的数据，与information_schema不同，information_schema主要关注server运行过程中的元数据信息
+
+2. performance_schema通过监视server的事件来实现监视server内部运行情况， “事件”就是server内部活动中所做的任何事情以及对应的时间消耗，利用这些信息来判断server中的相关资源消耗在了哪里？一般来说，事件可以是函数调用. 操作系统的等待. SQL语句执行的阶段（如sql语句执行过程中的parsing 或 sorting阶段）或者整个SQL语句与SQL语句集合。事件的采集可以方便的提供server中的相关存储引擎对磁盘文件. 表I/O. 表锁等资源的同步调用信息。
+
+3. performance_schema中的事件与写入二进制日志中的事件（描述数据修改的events）. 事件计划调度程序（这是一种存储程序）的事件不同。performance_schema中的事件记录的是server执行某些活动对某些资源的消耗. 耗时. 这些活动执行的次数等情况。
+
+4. performance_schema中的事件只记录在本地server的performance_schema中，其下的这些表中数据发生变化时不会被写入binlog中，也不会通过复制机制被复制到其他server中。
+
+5.  当前活跃事件. 历史事件和事件摘要相关的表中记录的信息。能提供某个事件的执行次数. 使用时长。进而可用于分析某个特定线程. 特定对象（如mutex或file）相关联的活动。
+
+6. PERFORMANCE_SCHEMA存储引擎使用server源代码中的“检测点”来实现事件数据的收集。对于performance_schema实现机制本身的代码没有相关的单独线程来检测，这与其他功能（如复制或事件计划程序）不同
+
+7. 收集的事件数据存储在performance_schema数据库的表中。这些表可以使用SELECT语句查询，也可以使用SQL语句更新performance_schema数据库中的表记录（如动态修改performance_schema的setup_*开头的几个配置表，但要注意：配置表的更改会立即生效，这会影响数据收集）
+
+8. performance_schema的表中的数据不会持久化存储在磁盘中，而是保存在内存中，一旦服务器重启，这些数据会丢失（包括配置表在内的整个performance_schema下的所有数据）
+
+9. MySQL支持的所有平台中事件监控功能都可用，但不同平台中用于统计事件时间开销的计时器类型可能会有所差异。
 
 
 
-###### performance schema关闭
+##### 开启关闭
 
-如果想要显式的关闭的话需要修改配置文件，不能直接进行修改，会报错Variable 'performance_schema' is a read only variable。
+performance schema默认开启，如果想要显式的关闭的话需要修改配置文件，不能直接进行修改，会报错Variable 'performance_schema' is a read only variable。
 
 ```sql
 --查看performance_schema的属性
@@ -599,7 +799,7 @@ mysql> show create table setup_consumers;
 
 
 
-###### performance schema两个基本概念
+##### 基本概念
 
 instruments：生产者，用于采集mysql中各种各样的操作产生的事件信息，对应配置表中的配置项我们可以称为监控采集配置项。
 
@@ -607,15 +807,15 @@ consumers：消费者，对应的消费者表用于存储来自instruments采集
 
 
 
-###### performance_schema表的分类
+##### 表的分类
 
 performance_schema库下的表可以按照监视不同的纬度就行分组。
 
 ```sql
---语句事件记录表，这些表记录了语句事件信息，当前语句事件表events_statements_current、历史语句事件表events_statements_history和长语句历史事件表events_statements_history_long、以及聚合后的摘要表summary，其中，summary表还可以根据帐号(account)，主机(host)，程序(program)，线程(thread)，用户(user)和全局(global)再进行细分)
+-- 语句事件记录表，这些表记录了语句事件信息，当前语句事件表events_statements_current、历史语句事件表events_statements_history和长语句历史事件表events_statements_history_long、以及聚合后的摘要表summary，其中，summary表还可以根据帐号(account)，主机(host)，程序(program)，线程(thread)，用户(user)和全局(global)再进行细分)
 show tables like '%statement%';
 
---等待事件记录表，与语句事件类型的相关记录表类似：
+-- 等待事件记录表，与语句事件类型的相关记录表类似：
 show tables like '%wait%';
 
 --阶段事件记录表，记录语句执行的阶段事件的表
@@ -636,14 +836,16 @@ show tables like '%setup%';
 
 
 
-###### performance_schema简单配置与使用
+##### 简单配置与使用
 
 数据库刚刚初始化并启动时，并非所有instruments(事件采集项，在采集项的配置表中每一项都有一个开关字段，或为YES，或为NO)和consumers(与采集项类似，也有一个对应的事件类型保存表配置项，为YES就表示对应的表保存性能数据，为NO就表示对应的表不保存性能数据)都启用了，所以默认不会收集所有的事件，可能你需要检测的事件并没有打开，需要进行设置，可以使用如下两个语句打开对应的instruments和consumers（行计数可能会因MySQL版本而异)。
 
 ```sql
+select * from setup_instruments;
 --打开等待事件的采集器配置项开关，需要修改setup_instruments配置表中对应的采集器配置项
 UPDATE setup_instruments SET ENABLED = 'YES', TIMED = 'YES'where name like 'wait%';
 
+select * from setup_consumers;
 --打开等待事件的保存表配置开关，修改setup_consumers配置表中对应的配置项
 UPDATE setup_consumers SET ENABLED = 'YES'where name like '%wait%';
 
@@ -698,7 +900,7 @@ select * from file_instances limit 20;
 
 
 
-###### 常用配置项的参数说明
+##### 常用配置项的参数说明
 
 1、启动选项
 
@@ -791,7 +993,7 @@ performance_schema_max_sql_text_length=1024
 
 
 
-###### 重要配置表的相关说明
+##### 重要配置表的相关说明
 
 		配置表之间存在相互关联关系，按照配置影响的先后顺序，可添加为
 
@@ -880,7 +1082,7 @@ select * from threads
 
 注意：在performance_schema库中还包含了很多其他的库和表，能对数据库的性能做完整的监控，大家需要参考官网详细了解。
 
-###### performance_schema实践操作
+##### performance_schema实践操作
 
 		基本了解了表的相关信息之后，可以通过这些表进行实际的查询操作来进行实际的分析。
 
@@ -917,7 +1119,7 @@ SELECT event_id,event_name,source,timer_wait,object_name,index_name,operation,ne
 
 
 
-##### show processlist
+#### show processlist
 
 显示所有连接到MySQL服务器的客户端连接以及此链接的ip地址，执行的命令，执行时间，执行状态，连接的数据库等。
 
@@ -938,6 +1140,24 @@ mysql> show processlist;
 - 功能角度考虑，Druid 功能更全面，除具备连接池基本功能外，还支持sql级监控、扩展、SQL防注入等。最新版甚至有集群监控
 - 单从性能角度考虑，从数据上确实HikariCP要强，但Druid有更多、更久的生产实践，它可靠。
 - 单从监控角度考虑，如果我们有像skywalking、prometheus等组件是可以将监控能力交给这些的 HikariCP 也可以将metrics暴露出去。
+
+**属性说明**
+
+- id表示session id
+- user表示操作的用户
+- host表示操作的主机
+- db表示操作的数据库
+- command表示当前状态
+  - sleep：线程正在等待客户端发送新的请求
+  - query：线程正在执行查询或正在将结果发送给客户端
+  - locked：在mysql的服务层，该线程正在等待表锁
+  - analyzing and statistics：线程正在收集存储引擎的统计信息，并生成查询的执行计划
+  - Copying to tmp table：线程正在执行查询，并且将其结果集都复制到一个临时表中
+  - sorting result：线程正在对结果集进行排序
+  - sending data：线程可能在多个状态之间传送数据，或者在生成结果集或者向客户端返回数据
+- info表示详细的sql语句
+- time表示相应命令执行时间
+- state表示命令执行状态
 
 
 
@@ -1153,6 +1373,169 @@ explain select * from emp where empno = 7469;
 ```
 
 
+
+#### 慢查询分析
+
+慢查询，顾名思义，执行很慢的查询。有多慢？超过 long_query_time 参数设定的时间阈值（默认10s），就被认为是慢的，是需要优化的。慢查询被记录在慢查询日志里。
+
+慢查询日志默认是不开启的，如果你需要优化SQL语句，就可以开启这个功能，它可以让你很容易地知道哪些语句是需要优化的。
+
+##### 慢查询开启
+
+- 输入命令开启慢查询（临时），在MySQL服务重启后会自动关闭；
+
+  - ```sh
+    mysql> show variables like '%slow_query%';
+    +---------------------+-----------------------------------+
+    | Variable_name       | Value                             |
+    +---------------------+-----------------------------------+
+    | slow_query_log      | OFF                               |
+    | slow_query_log_file | /www/server/data/mysql-slow.log |
+    +---------------------+-----------------------------------+
+    2 rows in set (0.01 sec)
+    
+    # 临时开启慢查询
+    mysql> set global slow_query_log='ON'; 
+    Query OK, 0 rows affected (0.00 sec)
+    ```
+
+  - 开启后，当查询执行时间超过配置的阈值时（long_query_time 单位：秒，默认10秒），就会将sql打印到slow_query_log_file配置项指定的文件中。
+
+  - 
+
+- 配置my.cnf（windows是my.ini）系统文件开启，修改配置文件是永久开启慢查询的方式。
+
+  - 在my.cnf文件的[mysqld]下增加如下配置开启慢查询，如下
+
+  - ```ini
+    [mysqld]
+    # 开启慢查询功能
+    slow_query_log=ON
+    # 指定记录慢查询日志SQL执行时间得阈值
+    long_query_time=3
+    # 选填，默认慢查询数据文件路径
+    # slow_query_log_file=/var/lib/mysql/mysql-slow.log
+    # 日志输出方式，一般默认就是FILE。
+    log_output=FILE
+    ```
+
+  - 重启数据库后即永久开启慢查询。
+
+##### 慢查询参数
+
+上文已经提到了3个：slow_query_log，long_query_time，slow_query_log_file
+
+log_queries_not_using_indexes=OFF
+
+这个参数如果设置成ON，则未走索引的sql语句都认为是慢查询sql，容易混消，看情况开启，一般设置成OFF。
+
+log_output=FILE
+
+日志输出方式，默认值是FILE，表示将日志存入文件。log_output='TABLE'表示将日志存入数据库。这样日志信息就会被写入到mysql.slow_log表中。
+
+mysql数据库支持同时两种日志存储方式。配置的时候以逗号隔开即可。例如：log_output='FILE,TABLE'。日志记录到日志表中，要比记录到文件耗费更多的系统资源。因此对于需要启用慢查日志，又需要比够获得更高的系统性能，那么建议优先记录到文件。
+
+查询当前系统有多少条慢查询。
+
+```sql
+show variables like 'log_output'; -- 看看日志输出类型 table或file
+
+set global log_output='table'; -- 设置输出类型为 table
+
+set global log_output='file'; -- 设置输出类型为file
+```
+
+
+
+```sh
+mysql> show global status like '%Slow_queries%';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| Slow_queries  | 2     |
++---------------+-------+
+1 row in set (0.03 sec)
+```
+
+
+
+##### 日志分析
+
+- 第一行：标记日志产生的时间，准确说是SQL执行完成的时间点，该行记录每一秒只打印一条。
+- 第二行：客户端的账户信息，两个用户名（第一个是授权账户，第二个为登录账户），客户端IP地址，还有mysqld的线程ID。
+- 第三行：查询执行的信息，包括查询时长，锁持有时长，返回客户端的行数，扫描行数。通常我需要优化的就是最后一个内容，尽量减少SQL语句扫描的数据行数。
+  - Query_time 是真实记录慢查询的查询时间，查询时间越长对系统的影响越大；
+  - Lock_time 是当前查询获取数据时获取记录锁而等待的时间，等待时间越长，越可能造成慢查询；
+  - Rows_sent 是发送多少行数据给 client ，同一个查询语句发送的数据行数越大，越可能会造成慢查询；
+  - Rows_examined 是 server 层检索的数据，检索的数据越多，需要的IO和cpu资源也就越多，越可能造成慢查询，并影响服务稳定性；
+  - Rows_affected 只针对修改请求，由于绝大部分慢查询都是 select ，并不会修改数据，故此值可以忽略；
+  - Bytes_sent 是发送多少字节数据给 client ，发送的数据量越多，越可能会造成慢查询；
+  - 由于不同的表行大小不同，并且并不是所有列都需要返回，所以一个发送 10 行的数据，可能会比一个发送 100 行数据的查询更慢，Rows_sent 不如 Bytes_sent 更为直观，故我们选取 Bytes_sent ，忽略 Rows_sent 。
+  - 慢查询指标中 Query_time、Lock_time 、 Bytes_sent 、 Rows_examined 作为慢查询评分模型中的指标
+- 第四行：通过代码看，就是sql语句执行时的时间戳，用来保证now()函数之类的正确
+- 第五话：最后就是产生慢查询的SQL语句。
+
+[慢查询官网介绍](https://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html)
+
+```ini
+# Time: 170305 19:59:07
+# User@Host: root[root] @ localhost [] Id: 45
+# Query_time: 2.259747 Lock_time: 0.000191 Rows_sent: 0 Rows_examined: 0
+SET timestamp=1488715147;
+insert into test123(name) values(3336666);
+```
+
+##### 分析工具
+
+###### mysqldumpslow
+
+如果慢查询的SQL比较少，可以使用上面方式人工分析。但是如果慢查询SQL数量很多时就需要接着工具了。
+
+MySQL自带了一个慢查询分析工具mysqldumpslow，通常这个工具是安装MySQL是一起装的。不需要单独安装。
+
+如果执行命令报错command not found，是因为系统默认会查找/usr/bin下的命令，而mysqldumpslow没有在这个目录下所以报错。
+
+先找到你的MySQL的安装目录以及mysqldumpslow的实际路径，按照下面的步骤建立关联。
+
+```sh
+[root@localhost bin]# ln -s /www/server/mysql/bin/mysqldumpslow /usr/bin
+[root@localhost bin]# cd ..
+[root@localhost mysql]# mysqldumpslow --help
+Usage: mysqldumpslow [ OPTS... ] [ LOGS... ]
+
+Parse and summarize the MySQL slow query log. Options are
+
+  --verbose    verbose
+  --debug      debug
+  --help       write this text to standard output
+```
+
+以下是mysqldumpslow常见使用示例：
+
+```sh
+# 以下命令需要在linux shell中执行。
+mysqldumpslow -s c -t 10 /var/run/mysqld/mysql-slow.log # 取出使用最多的10条慢查询
+mysqldumpslow -s t -t 3 /var/run/mysqld/mysql-slow.log # 取出查询时间最慢的3条慢查询
+mysqldumpslow -s t -t 10 -g “left join” /database/mysql/mysql-slow.log #得到按照时间排序的前10条里面含有左连接的查询语句
+```
+
+注意: 使用mysqldumpslow的分析结果不会显示具体完整的sql语句，只会显示sql的组成结构。
+
+例如：select * from test where id=10 group by a limit 0, 1000;
+mysqldumpslow来显示
+
+```sql
+Count: 1  Time=1.95s (1s)  Lock=0.00s (0s)  Rows=1000.0 (1000), vgos_dba[vgos_dba]@[192.168.1.3]
+select * from test where id=N group by a limit N, N;
+```
+
+
+
+###### pt-query-digest
+
+pt-query-digest是用于分析mysql慢查询的一个工具，它可以分析binlog、General  log、slowlog，也可以通过SHOWPROCESSLIST或者通过tcpdump抓取的MySQL协议数据来进行分析。可以把分析结果输出到文件中，分析过程是先对查询语句的条件进行参数化，然后对参数化以后的查询进行分组统计，统计出各查询的执行时间、次数、占比等，可以借助分析结果找出问题进行优化。
+
+[使用 pt-query-digest 分析慢日志](https://zhuanlan.zhihu.com/p/257975998)，[详解 慢查询 之 mysqldumpslow](https://zhuanlan.zhihu.com/p/106405711)
 
 
 
