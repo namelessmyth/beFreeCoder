@@ -19694,7 +19694,7 @@ CREATE TABLE `fulltext_test`(
 FULLTEXT KEY `content` (`content`)
 );
 
-select * from fulltext_test where match(content) against('咕泡学院'IN NATURAL LANGUAGE MODE);
+select * from fulltext_test where match(content) against('咕泡学院' IN NATURAL LANGUAGE MODE);
 ```
 
 
@@ -20821,9 +20821,9 @@ EXPLAIN select t.tid from teacher t join course c on t.tid = c.tid group by t.ti
 
 ```sql
 --大偏移量的limit
-select* from user_innodb limit 900000,10;
+select * from user_innodb limit 900000,10;
 --改成先过滤ID，再 limit
-SELECT*FROM user_innodb WHERE id > 900000 LIMIT 10;
+SELECT * FROM user_innodb WHERE id > 900000 LIMIT 10;
 ```
 
 一个sum语句性能提升3倍的优化案例:
