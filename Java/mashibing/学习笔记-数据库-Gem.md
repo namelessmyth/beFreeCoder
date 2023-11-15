@@ -1436,6 +1436,86 @@ MySQL版本建议是5.7+
 6. 也可以使用Navicat的“运行SQL文件”功能。
 7. 执行脚本时，先执行sakila-schema.sql，然后是sakila-data.sql。
 
+以下是非官方的但课程需要用到的配套脚本。
+
+```sql
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for dept
+-- ----------------------------
+DROP TABLE IF EXISTS `dept`;
+CREATE TABLE `dept` (
+  `DEPTNO` int(4) NOT NULL,
+  `DNAME` varchar(14) DEFAULT NULL,
+  `LOC` varchar(13) DEFAULT NULL,
+  PRIMARY KEY (`DEPTNO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of dept
+-- ----------------------------
+INSERT INTO `dept` VALUES ('10', 'ACCOUNTING', 'NEW YORK');
+INSERT INTO `dept` VALUES ('20', 'RESEARCH', 'DALLAS');
+INSERT INTO `dept` VALUES ('30', 'SALES', 'CHICAGO');
+INSERT INTO `dept` VALUES ('40', 'OPERATIONS', 'BOSTON');
+
+-- ----------------------------
+-- Table structure for emp
+-- ----------------------------
+DROP TABLE IF EXISTS `emp`;
+CREATE TABLE `emp` (
+  `EMPNO` int(4) NOT NULL,
+  `ENAME` varchar(10) DEFAULT NULL,
+  `JOB` varchar(9) DEFAULT NULL,
+  `MGR` int(4) DEFAULT NULL,
+  `HIREDATE` date DEFAULT NULL,
+  `SAL` double(7,2) DEFAULT NULL,
+  `COMM` double(7,2) DEFAULT NULL,
+  `DEPTNO` int(4) DEFAULT NULL,
+  PRIMARY KEY (`EMPNO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of emp
+-- ----------------------------
+INSERT INTO `emp` VALUES ('7369', 'SMITH', 'CLERK', '7902', '1980-12-17', '800.00', null, '20');
+INSERT INTO `emp` VALUES ('7499', 'ALLEN', 'SALESMAN', '7698', '1981-02-20', '1600.00', '300.00', '30');
+INSERT INTO `emp` VALUES ('7521', 'WARD', 'SALESMAN', '7698', '1981-02-22', '1250.00', '500.00', '30');
+INSERT INTO `emp` VALUES ('7566', 'JONES', 'MANAGER', '7839', '1981-02-02', '2975.00', null, '20');
+INSERT INTO `emp` VALUES ('7654', 'MARTIN', 'SALESMAN', '7698', '1981-09-28', '1250.00', '1400.00', '30');
+INSERT INTO `emp` VALUES ('7698', 'BLAKE', 'MANAGER', '7839', '1981-01-05', '2850.00', null, '30');
+INSERT INTO `emp` VALUES ('7782', 'CLARK', 'MANAGER', '7839', '1981-09-06', '2450.00', null, '10');
+INSERT INTO `emp` VALUES ('7839', 'KING', 'PRESIDENT', null, '1981-11-17', '5000.00', null, '10');
+INSERT INTO `emp` VALUES ('7844', 'TURNER', 'SALESMAN', '7698', '1981-09-08', '1500.00', '0.00', '30');
+INSERT INTO `emp` VALUES ('7900', 'JAMES', 'CLERK', '7698', '1981-12-03', '950.00', null, '30');
+INSERT INTO `emp` VALUES ('7902', 'FORD', 'ANALYST', '7566', '1981-12-03', '3000.00', null, '20');
+INSERT INTO `emp` VALUES ('7934', 'MILLER', 'CLERK', '7782', '1982-01-23', '1300.00', null, '10');
+
+-- ----------------------------
+-- Table structure for salgrade
+-- ----------------------------
+DROP TABLE IF EXISTS `salgrade`;
+CREATE TABLE `salgrade` (
+  `GRADE` int(11) NOT NULL,
+  `LOSAL` double DEFAULT NULL,
+  `HISAL` double DEFAULT NULL,
+  PRIMARY KEY (`GRADE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of salgrade
+-- ----------------------------
+INSERT INTO `salgrade` VALUES ('1', '700', '1200');
+INSERT INTO `salgrade` VALUES ('2', '1201', '1400');
+INSERT INTO `salgrade` VALUES ('3', '1401', '2000');
+INSERT INTO `salgrade` VALUES ('4', '2001', '3000');
+INSERT INTO `salgrade` VALUES ('5', '3001', '9999');
+
+```
+
+
+
 
 
 ### 配置优化
@@ -3483,7 +3563,9 @@ SELECT event_id,event_name,source,timer_wait,object_name,index_name,operation,ne
 
 
 
-#### show processlist
+#### show命令
+
+##### show processlist
 
 显示所有连接到MySQL服务器的客户端连接以及此链接的ip地址，执行的命令，执行时间，执行状态，连接的数据库等。
 
@@ -3533,104 +3615,179 @@ kill [id]
 
 
 
+##### show status
+
+show status; 命令用来查看服务器的状态信息。
+
+show status中混杂了全局和会话变量，其中许多变量有双重域：既是全局变量，也是会话变量，有相同的名字。如果只需要看全局变量，需要改为show global status; 查看。
+
+show status; 的返回结果很多，可以使用LIKE来过滤返回值。
+
+--查看当前服务器启动后的运行时间
+
+show status like 'uptime'; 
+
+-- 查看当前服务器缓存相关状态。
+
+show status like '%cache%'; 
+
+--查询本次服务器启动之后执行select语句的次数。类似还有com_insert，com_update，com_delete
+
+show status like 'com_select'; 
+
+--查看试图连接到MySQL(不管是否连接成功)的连接数
+
+show status like 'connections';
+
+--查看线程缓存内的线程的数量。
+
+show status like 'threads_cached';
+
+--查看当前打开的连接的数量。
+
+show status like 'threads_connected';
+
+--查看当前打开的连接的数量。
+
+show status like 'threads_connected';
+
+--查看创建用来处理连接的线程数。如果Threads_created较大，你可能要增加thread_cache_size值。
+
+show status like 'threads_created';
+
+--查看激活的(非睡眠状态)线程数。
+
+show status like 'threads_running';
+
+--查看立即获得的表的锁的次数。
+
+show status like 'table_locks_immediate';
+
+--查看不能立即获得的表的锁的次数。如果该值较高，并且有性能问题，你应首先优化查询，然后拆分表或使用复制。
+
+show status like 'table_locks_waited';
+
+--查看创建时间超过slow_launch_time秒的线程数。
+
+show status like 'slow_launch_threads';
+
+--查看查询时间超过long_query_time秒的查询的个数。
+
+show status like 'slow_queries';
+
+
+
+##### show engine
+
+show engine 存储引擎运行信息
+
+show engine 用来显示存储引擎的当前运行信息，包括事务持有的表锁、行锁信息;
+
+事务的锁等待情况;线程信号量等待;文件IO请求; buffer pool统计信息。
+
+例如∶
+
+show engine innodb status;
+
+开启InnoDB监控:
+
+set GLOBAL innodb_status_output=ON;
+
+开启标准监控和锁监控
+
+set GLOBAL innodb_status_output_locks=ON;
+
+很多开源的MySQL监控工具，其实他们的原理也都是读取的服务器、操作系统、MySQL服务的状态和变量。
+
+
+
 #### 执行计划
 
-在企业的应用场景中，为了知道优化SQL语句的执行，需要查看SQL语句的具体执行过程，以加快SQL语句的执行效率。
+使用explain可以模拟优化器执行SQL语句，从而知道MySQL处理SQL语句的执行计划，分析SQL语句的性能瓶颈。
 
-可以使用`explain SQL语句`来模拟优化器执行SQL查询语句，从而知道mysql是如何处理sql语句的。
+使用方式：explain [你要执行的SQL语句]
 
-官网地址： https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+说明：MySQL 5.6.3以前只能分析SELECT；5.6.3以后可以分析update、delete、insert了。
 
-##### 执行计划中的字段
+官网explain说明： https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
 
-|    Column     |                    Meaning                     |
-| :-----------: | :--------------------------------------------: |
-|      id       |            The `SELECT` identifier             |
-|  select_type  |               The `SELECT` type                |
-|     table     |          The table for the output row          |
-|  partitions   |            The matching partitions             |
-|     type      |                 The join type                  |
-| possible_keys |         The possible indexes to choose         |
-|      key      |           The index actually chosen            |
-|    key_len    |          The length of the chosen key          |
-|      ref      |       The columns compared to the index        |
-|     rows      |        Estimate of rows to be examined         |
-|   filtered    | Percentage of rows filtered by table condition |
-|     extra     |             Additional information             |
+**执行计划输出字段**
 
-**id**
+| Column                                                       | JSON Name       | Meaning                                        |
+| ------------------------------------------------------------ | --------------- | ---------------------------------------------- |
+| [`id`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_id) | `select_id`     | The `SELECT` identifier                        |
+| [`select_type`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_select_type) | None            | The `SELECT` type                              |
+| [`table`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_table) | `table_name`    | The table for the output row                   |
+| [`partitions`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_partitions) | `partitions`    | The matching partitions                        |
+| [`type`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_type) | `access_type`   | The join type                                  |
+| [`possible_keys`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_possible_keys) | `possible_keys` | The possible indexes to choose                 |
+| [`key`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_key) | `key`           | The index actually chosen                      |
+| [`key_len`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_key_len) | `key_length`    | The length of the chosen key                   |
+| [`ref`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_ref) | `ref`           | The columns compared to the index              |
+| [`rows`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_rows) | `rows`          | Estimate of rows to be examined                |
+| [`filtered`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_filtered) | `filtered`      | Percentage of rows filtered by table condition |
+| [`Extra`](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_extra) | None            | Additional information                         |
 
-select查询的序列号，包含一组数字，表示查询中执行select子句或者操作表的顺序
+##### id
 
-id号分为三种情况：
+是一组数字，代表SQL语句每一步执行计划的序列号。
 
-1、如果id相同，那么执行顺序从上到下
+id号分三种情况：
+
+1、如果id相同，那么代表执行顺序从上到下
 
 ```sql
 explain select * from emp e join dept d on e.deptno = d.deptno join salgrade sg on e.sal between sg.losal and sg.hisal;
 ```
 
-2、如果id不同，如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
+2、如果id不同，id值越大优先级越高，越先被执行。如果是子查询，id的序号会较大，
 
 ```sql
 explain select * from emp e where e.deptno in (select d.deptno from dept d where d.dname = 'SALES');
 ```
 
-3、id相同和不同的，同时存在：相同的可以认为是一组，从上往下顺序执行，在所有组中，id值越大，优先级越高，越先执行
+3、id相同和不同同时存在：相同的可以认为是一组，从上往下顺序执行，在所有组中，id值越大，优先级越高，越先执行
 
 ```sql
 explain select * from emp e join dept d on e.deptno = d.deptno join salgrade sg on e.sal between sg.losal and sg.hisal where e.deptno in (select d.deptno from dept d where d.dname = 'SALES');
 ```
 
-**select_type**
+##### select_type
 
 主要用来分辨查询的类型，是普通查询还是联合查询还是子查询
 
-| `select_type` Value  |                           Meaning                            |
-| :------------------: | :----------------------------------------------------------: |
-|        SIMPLE        |        Simple SELECT (not using UNION or subqueries)         |
-|       PRIMARY        |                       Outermost SELECT                       |
-|        UNION         |         Second or later SELECT statement in a UNION          |
-|   DEPENDENT UNION    | Second or later SELECT statement in a UNION, dependent on outer query |
-|     UNION RESULT     |                      Result of a UNION.                      |
-|       SUBQUERY       |                   First SELECT in subquery                   |
-|  DEPENDENT SUBQUERY  |      First SELECT in subquery, dependent on outer query      |
-|       DERIVED        |                        Derived table                         |
-| UNCACHEABLE SUBQUERY | A subquery for which the result cannot be cached and must be re-evaluated for each row of the outer query |
-|  UNCACHEABLE UNION   | The second or later select in a UNION that belongs to an uncacheable subquery (see UNCACHEABLE SUBQUERY) |
-
 ```sql
---sample:简单的查询，不包含子查询和union
+-- sample:简单的查询，不包含子查询和union
 explain select * from emp;
 
---primary:查询中若包含任何复杂的子查询，最外层查询则被标记为Primary
+-- primary:查询中若包含任何复杂的子查询，最外层查询则被标记为Primary
 explain select staname,ename supname from (select ename staname,mgr from emp) t join emp on t.mgr=emp.empno ;
 
---union:若第二个select出现在union之后，则被标记为union
+-- union:若第二个select出现在union之后，则被标记为union
 explain select * from emp where deptno = 10 union select * from emp where sal >2000;
 
---dependent union:跟union类似，此处的depentent表示union或union all联合而成的结果会受外部表影响
+-- dependent union:跟union类似，此处的depentent表示union或union all联合而成的结果会受外部表影响
 explain select * from emp e where e.empno  in ( select empno from emp where deptno = 10 union select empno from emp where sal >2000)
 
---union result:从union表获取结果的select
+-- union result:从union表获取结果的select
 explain select * from emp where deptno = 10 union select * from emp where sal >2000;
 
---subquery:在select或者where列表中包含子查询
+-- subquery:在select或者where列表中包含子查询
 explain select * from emp where sal > (select avg(sal) from emp) ;
 
---dependent subquery:subquery的子查询要受到外部表查询的影响
+-- dependent subquery:subquery的子查询要受到外部表查询的影响
 explain select * from emp e where e.deptno in (select distinct deptno from dept);
 
---DERIVED: from子句中出现的子查询，也叫做派生类，
+-- DERIVED: 在 from 子句中的子查询。MySQL会将结果存放在一个临时表中，也称为派生表
 explain select staname,ename supname from (select ename staname,mgr from emp) t join emp on t.mgr=emp.empno ;
 
---UNCACHEABLE SUBQUERY：表示使用子查询的结果不能被缓存
+-- UNCACHEABLE SUBQUERY：表示使用子查询的结果不能被缓存
  explain select * from emp where empno = (select empno from emp where deptno=@@sort_buffer_size);
  
---uncacheable union:表示union的查询结果不能被缓存：sql语句未验证
+-- uncacheable union:表示union的查询结果不能被缓存：sql语句未验证
 ```
 
-**table**
+##### table
 
 对应行正在访问哪一个表，表名或者别名，可能是临时表或者union合并结果集
 1、如果是具体的表名，则表明从实际的物理表中获取数据，当然也可以是表的别名
@@ -3639,7 +3796,7 @@ explain select staname,ename supname from (select ename staname,mgr from emp) t 
 
 3、当有union result的时候，表名是union n1,n2等的形式，n1,n2表示参与union的id
 
-**type**
+##### type
 
 type显示的是访问类型，访问类型表示我是以何种方式去访问我们的数据，最容易想的是全表扫描，直接暴力的遍历一张表去寻找需要的数据，效率非常低下，访问的类型有很多，效率从最好到最坏依次是：
 
@@ -3648,24 +3805,24 @@ system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_su
 一般情况下，得保证查询至少达到range级别，最好能达到ref
 
 ```sql
---all:全表扫描，一般情况下出现这样的sql语句而且数据量比较大的话那么就需要进行优化。
+-- all:全表扫描，一般情况下出现这样的sql语句而且数据量比较大的话那么就需要进行优化。
 explain select * from emp;
 
---index：全索引扫描这个比all的效率要好，主要有两种情况，一种是当前的查询时覆盖索引，即我们需要的数据在索引中就可以索取，或者是使用了索引进行排序，这样就避免数据的重排序
+-- index：全索引扫描这个比all的效率要好，主要有两种情况，一种是当前的查询时覆盖索引，即我们需要的数据在索引中就可以索取，或者是使用了索引进行排序，这样就避免数据的重排序
 explain  select empno from emp;
 
---range：表示利用索引查询的时候限制了范围，在指定范围内进行查询，这样避免了index的全索引扫描，适用的操作符： =, <>, >, >=, <, <=, IS NULL, BETWEEN, LIKE, or IN() 
+-- range：表示利用索引查询的时候限制了范围，在指定范围内进行查询，这样避免了index的全索引扫描，适用的操作符： =, <>, >, >=, <, <=, IS NULL, BETWEEN, LIKE, or IN() 
 explain select * from emp where empno between 7000 and 7500;
 
---index_subquery：利用索引来关联子查询，不再扫描全表
+-- index_subquery：利用索引来关联子查询，不再扫描全表
 explain select * from emp where emp.job in (select job from t_job);
 
---unique_subquery:该连接类型类似与index_subquery,使用的是唯一索引
+-- unique_subquery:该连接类型类似与index_subquery,使用的是唯一索引
  explain select * from emp e where e.deptno in (select distinct deptno from dept);
  
---index_merge：在查询过程中需要多个索引组合使用，没有模拟出来
+-- index_merge：在查询过程中需要多个索引组合使用，没有模拟出来
 
---ref_or_null：对于某个字段即需要关联条件，也需要null值的情况下，查询优化器会选择这种访问方式
+-- ref_or_null：对于某个字段即需要关联条件，也需要null值的情况下，查询优化器会选择这种访问方式
 explain select * from emp e where  e.mgr is null or e.mgr=7369;
 
 --ref：使用了非唯一性索引进行数据的查找
@@ -3675,29 +3832,29 @@ explain select * from emp e where  e.mgr is null or e.mgr=7369;
 --eq_ref ：使用唯一性索引进行数据查找
 explain select * from emp,emp2 where emp.empno = emp2.empno;
 
---const：这个表至多有一个匹配行，
+-- const：主键索引或者唯一索引，只能查到一条数据的SQL。，
 explain select * from emp where empno = 7369;
  
 --system：表只有一行记录（等于系统表），这是const类型的特例，平时不会出现
 ```
 
- **possible_keys** 
+#####  possible_keys
 
-        显示可能应用在这张表中的索引，一个或多个，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用
-
-```sql
-explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
-```
-
-**key**
-
-		实际使用的索引，如果为null，则没有使用索引，查询中若使用了覆盖索引，则该索引和查询的select字段重叠。
+显示可能应用在这张表中的索引，一个或多个，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用
 
 ```sql
 explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
 ```
 
-**key_len**
+##### key
+
+实际使用的索引，如果为null，则没有使用索引，查询中若使用了覆盖索引，则该索引和查询的select字段重叠。
+
+```sql
+explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
+```
+
+##### key_len
 
 表示索引中使用的字节数，可以通过key_len计算查询中使用的索引长度，在不损失精度的情况下长度越短越好。
 
@@ -3705,7 +3862,7 @@ explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 1
 explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
 ```
 
-**ref**
+##### ref
 
 显示索引的哪一列被使用了，如果可能的话，是一个常数
 
@@ -3713,7 +3870,7 @@ explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 1
 explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 10;
 ```
 
-**rows**
+##### rows
 
 根据表的统计信息及索引使用情况，大致估算出找出所需记录需要读取的行数，此参数很重要，直接反应的sql找了多少数据，在完成目的的情况下越少越好
 
@@ -3721,9 +3878,9 @@ explain select * from emp,dept where emp.deptno = dept.deptno and emp.deptno = 1
 explain select * from emp;
 ```
 
-**extra**
+##### extra
 
-包含额外的信息。
+执行计划给出的额外的信息说明。
 
 ```sql
 --using filesort:说明mysql无法利用索引进行排序，只能利用排序算法进行排序，会消耗额外的位置
@@ -3928,13 +4085,61 @@ pt-query-digest是用于分析mysql慢查询的一个工具，它可以分析bin
 
 
 
+#### Navicat
+
+Navicat版本：Navicat Premium 16.1，在Navicat中已经内置一些性能分析的功能，使用得当可以增加性能分析的效率。
+
+##### SQL性能分析
+
+我们在Navicat的查询窗口执行SQL语句时，会在下方显示SQL语句的执行结果。在结果最下方会显示这个SQL的执行时间（小数点后3位），在“结果”页签的右侧还有2个页签：“剖析”和“状态”。同时上方还有一个按钮叫“解释”。如下图：
+
+![image-20231115205651622](学习笔记-数据库-Gem.assets/image-20231115205651622.png)
+
+接下来分别介绍每个功能的用处。
+
+结果，正常情况显示的是SQL语句的执行结果。如果SQL语句中带了特殊命令，例如：explain，那结果里面显示的就是本该解释中显示的内容了。
+
+剖析，在之前版本叫做概述，对应的MySQL命令是show profile；但这里只显示默认的三个字段。
+
+![image-20231115210140425](学习笔记-数据库-Gem.assets/image-20231115210140425.png)
+
+状态，对应的MySQL命令是
+
+![image-20231115210250646](学习笔记-数据库-Gem.assets/image-20231115210250646.png)
+
+解释，需要先点“解释”，然后会在“解释1”页签中显示解释结果。对应的MySQL命令是explain。
+
+![image-20231115211125389](学习笔记-数据库-Gem.assets/image-20231115211125389.png)
+
+##### 服务器监控
+
+功能在Navicat的“工具 > 服务器监控 > MySQL”中。点开之后会出现下面的界面
+
+![image-20231115223000844](学习笔记-数据库-Gem.assets/image-20231115223000844.png)
+
+应该是集成了MySQL的show processlist; show variables; show status; 3个命令。
+
+在“变量”的功能界面里不仅仅可以查询，还可以修改变量值：
+
+![image-20231115223249455](学习笔记-数据库-Gem.assets/image-20231115223249455.png)
+
 
 
 ### SQL优化
 
-#### 查询优化
+#### 性能问题发现
 
-##### 查询慢的原因
+性能问题可以通过性能测试发现也可能是用户使用时发现。
+
+如果很多功能都慢，那就可能不是优化某个SQL就能解决的。需要从架构设计角度优化或者是服务器全局参数上优化。
+
+还有一些性能问题也不定就是数据库问题。后端程序网络波动也可能导致用户主观感受：慢。
+
+可以通过慢查询分析，来找到执行慢的SQL。
+
+
+
+#### 查询慢的原因
 
 - 网络
 - CPU
@@ -3944,11 +4149,13 @@ pt-query-digest是用于分析mysql慢查询的一个工具，它可以分析bin
 - 生成统计信息
 - 锁等待时间
 
-##### 优化数据访问
+
+
+#### 优化数据访问
 
 查询性能低下的主要原因是访问的数据太多，某些查询不可避免的需要筛选大量的数据，我们可以通过减少访问数据量的方式进行优化
 
-确认应用程序是否在检索大量超过需要的数据
+确认应用程序是否在检索大量超过需要的数据。例如：后端程序将大量数据查出后，经过处理再将少量数据返回给前端。
 
 确认mysql服务器层是否在分析大量超过需要的数据行
 
@@ -3976,7 +4183,9 @@ pt-query-digest是用于分析mysql慢查询的一个工具，它可以分析bin
 
   - 如果需要不断的重复执行相同的查询，且每次返回完全相同的数据，因此，基于这样的应用场景，我们可以将这部分数据缓存起来，这样的话能够提高查询效率
 
-##### 执行过程的优化
+
+
+#### 执行过程的优化
 
 ##### 查询缓存
 
@@ -4811,9 +5020,7 @@ null值会使分区过滤无效
 
 
 
-### 其他优化
-
-#### 缓存优化
+### 缓存优化
 
 在系统里面有一些很慢的查询，要么是数据量大，要么是关联的表多，要么是计算逻辑非常复杂，这样的查询每次会占用连接很长的时间。
 
@@ -4827,7 +5034,7 @@ null值会使分区过滤无效
 
 
 
-#### 集群主从复制
+### 集群主从复制
 
 在分布式开篇的课程里面，我们说到了一种提升可用性的手段，叫做冗余，也就是创建集群。
 
@@ -4860,7 +5067,7 @@ Master节点上有一个log dump线程，是用来发送binlog给slave的。从�
 
 
 
-#### 分库分表
+### 分库分表
 
 分库分表总体上可以分为两类。具体内容可以参考[分库分表](#分库分表)。
 
@@ -4874,6 +5081,83 @@ Master节点上有一个log dump线程，是用来发送binlog给slave的。从�
 
 
 
+### 业务优化
+
+除了对于代码、SQL语句、表定义、架构、配置优化之外，业务层面的优化也不能忽视。举两个例子:
+
+1）在某一年的双十一，为什么会做一个充值到余额宝和余额有奖金的活动?现在会推荐大家用花呗支付，而不是银行卡支付?
+
+因为使用余额或者余额宝付款是记录本地或者内部数据库，而使用银行卡付款，需要调用接口，操作内部数据库肯定更快。
+
+2)在某一年的双十一，为什么在凌晨禁止查询今天之外的账单?为什么小鸡的饲料发放延迟了?
+
+这是一种降级措施，用来保证当前最核心的业务。3）某银行的交易记录，只能按月份查询。
+
+4）最近几年的双十一，为什么11月1日就开始了?变成了各种定金红包模式?
+
+预售分流。
+
+在应用层面同样有很多其他的方案来优化，达到尽量减轻数据库的压力的目的，比如限流，或者引入MQ削峰，等等等等。
+
+为什么同样用MySQL，有的公司可以抗住百万千万级别的并发，而有的公司几百个并发都扛不住，关键在于怎么用。所以，用数据库慢，不代表数据库本身慢，有的时候还要往上层去优化。
+
+当然，如果关系型数据库解决不了的问题，我们可能需要用到搜索引擎或者大数据的方案了，并不是所有的数据都要放到关系型数据库存储。
+
+
+
+### 硬件优化
+
+搭建磁盘阵列，机械硬盘换固态硬盘，这块就需要IT运维以及领导审批了。
+
+
+
+### 优化案例
+
+#### 案例一
+
+服务端状态分析:
+
+如果出现连接变慢，查询被阻塞，无法获取连接的情况。
+
+1、重启!
+
+2、 show processlist查看线程状态，连接数数量、连接时间、状态
+
+3、查看锁状态
+
+4、kill有问题的线程
+
+对于具体的慢SQL:
+一、分析查询基本情况
+涉及到的表的表结构，字段的索引情况、每张表的数据量、查询的业务含义。
+
+这个非常重要，因为有的时候你会发现SQL根本没必要这么写，或者表设计是有问题的。
+
+二、找出慢的原因
+
+1、查看执行计划，分析SQL的执行情况，了解表访问顺序、访问类型、索引、扫描行数等信息。
+
+2、如果总体的时间很长，不确定哪一个因素影响最大，通过条件的增减，顺序的调整，找出引起查询慢的主要原因，不断地尝试验证。
+找到原因:比如是没有走索引引起的，还是关联查询引起的，还是order by 引起的。
+
+找到原因之后:
+
+三、对症下药
+
+1、创建索引或者联合索引
+
+2、改写SQL，这里需要平时积累经验，参考上述章节中提到的。
+
+如果SQL本身解决不了了，就要上升到表结构和架构了。
+
+3、表结构(冗余、拆分、not null等)、架构优化(缓存读写分离分库分表)。
+
+4、业务层的优化，必须条件是否必要。
+
+掌握正确的调优思路，才是解决数据库性能问题的根本。
+
+
+
 ## Mycat2
 
 
@@ -4883,6 +5167,324 @@ Master节点上有一个log dump线程，是用来发送binlog给slave的。从�
 
 
 # Oracle
+
+## 介绍
+
+https://www.oracle.com/cn/database/technologies/
+
+### 版本说明
+
+1998年Oracle8i：i指internet，表示oracle向互联网发展，8i之前数据库只能对应1个实例
+2001年Oracle9i：8i的升级，性能更佳，管理更人性化
+2003年Oracle10g：g指grid，表示采用网格计算的方式进行操作，性能更好
+2007年Oracle11g：10g的稳定版本，目前公司里面最常用
+2013年Oracle12c：c指cloud，表示云计算，支持大数据处理
+2018年Oracle18c：部分工作自主完成，减少手动操作的工作量
+2019年Oracle19c：是12c和18c的稳定版本
+
+
+
+## 安装卸载
+
+### Windows
+
+#### 安装包下载
+
+官网上推荐安装的是较新的版本，如果想要下载11g的，可以从[这个官网地址](https://www.oracle.com/partners/campaign/112010-win64soft-094461.html)下载；
+
+下载之前勾选"Accept License Agreement"。windows用户可以选择这个版本：“**Oracle Database 11g Release 2 (11.2.0.1.0) for Microsoft Windows (x64)**”。注意：如果没有登录则需要先登录后才能下载。
+
+下载之后会有2个zip压缩包，将其合并解压缩成一个database文件夹。
+
+#### 安装步骤
+
+进入解压之后database目录里面，双击setup.exe开始安装。
+
+
+
+
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/6bf3d83c2a6a45adb89e5b89e4dbf3c5.png)
+
+下一步
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/74ad5eb7e6ca45cb8e93aff924c5ca93.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/725a410a46904a0299effdb6f32adcbd.png)
+
+配置口令：统一123456
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/0252b13f3d894e0dbfaac60335c69bae.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/fc9d4c1ea1c04cc088a444299c90a473.png)
+
+安装等待
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/d6a7091d4d1d4014833e3e04e077f46b.png)
+
+继续等待
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/45ecba29cc50464d8ac4b611ded8c071.png)
+
+口令管理
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/e738bc468fd54a4bb6140219813c23d1.png)
+
+安装完成
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/67b6a0dbb15c4ae3a9c1df0a5d730ad8.png)
+
+然后我们可以在系统 服务 中，查看启动运行的Oracle数据库
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/6351ac79d9f349088288a41268d82b9c.png)
+
+#### Oracle服务说明
+
+Oracle 11g服务详细介绍及哪些服务是必须开启的？
+
+安装oracle 11g R2中的方法成功安装Oracle 11g后，共有7个服务，这7个服务的含义分别为
+
+1. Oracle ORCL VSS Writer Service：Oracle卷映射拷贝写入服务，VSS（Volume Shadow Copy Service）能够让存储基础设备（比如磁盘，阵列等）创建高保真的时间点映像，即映射拷贝（shadow copy）。它可以在多卷或者单个卷上创建映射拷贝，同时不会影响到系统的系统能。（非必须启动）
+2. OracleDBConsoleorcl：Oracle数据库控制台服务，orcl是Oracle的实例标识，默认的实例为orcl。在运行Enterprise Manager（企业管理器OEM）的时候，需要启动这个服务。（非必须启动）
+3. OracleJobSchedulerORCL：Oracle作业调度（定时器）服务，ORCL是Oracle实例标识。（非必须动）
+4. OracleMTSRecoveryService：服务端控制。该服务允许数据库充当一个微软事务服务器MTS、COM/COM+对象和分布式环境下的事务的资源管理器。（非必须启动）
+5. OracleOraDb11g_home1ClrAgent：Oracle数据库.NET扩展服务的一部分。 （非必须启动）
+6. OracleOraDb11g_home1TNSListener：监听器服务，服务只有在数据库需要远程访问的时候才需要。（非必须启动，下面会有详细详解）。
+7. OracleServiceORCL：数据库服务(数据库实例)，是Oracle核心服务该服务，是数据库启动的基础， 只有该服务启动，Oracle数据库才能正常启动。(必须启动)那么在开发的时候到底需要启动哪些服务呢？对新手来说，要是只用Oracle自带的sql*plus的话，只要启动OracleServiceORCL即可，要是使用PL/SQL Developer等第三方工具的话，OracleOraDb11g_home1TNSListener服务也要开启。OracleDBConsoleorcl是进入基于web的EM必须开启的，其余服务很少用。
+   注：ORCL是数据库实例名，默认的数据库是ORCL，你可以创建其他的，即OracleService+数据库名
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/fd8a3909921e4d898c132beaab75dc4e.png)
+
+服务管理：
+
+1、所有的服务改成"手动"
+2、启动两个
+
+1. 监听服务：OracleOraDb10g_home1TNSListener监听客户端的连接
+2. 数据库服务：OracleServiceORCL 命名规则：OracleService+实例名
+
+
+
+#### 创建数据库实例
+
+正常安装数据库的时候会默认安装一个orcl数据库。我们也可以通过 Database Configuration Assistant 来创建新的数据库。操作如下：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/690ec72dddb34349a0b554d66da18e2e.png)
+
+进入操作
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/efd28c94522e45419cbfd9c8f2323953.png)
+
+创建数据库
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/d8b4bb28492f40e8897ca64ee67f6397.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/f74e22fb9ab84bcbb2f8acaadfba3165.png)
+
+创建数据库的唯一标识SID
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/8628513b415645bfaa43a1dad631609d.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/db52d0c4d2f84f2e8f357f852869fa23.png)
+
+指定口令
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/ed00df3ef69f431993b44b67ced2160a.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/09153e4a382b478e8f7d5e8a88915fdb.png)
+
+下一步
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/1f637a3212064c55b84b3f570773d7be.png)
+
+一直下一步。最后完成
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/6f58d5cb489d4ebfb0807bc6e3dc311c.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/cd096af985bb4d0bbf21ccc80ea364ef.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/cecc676ae79e4c6388e766b37eb81bf8.png)
+
+创建完成
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/7c908a7ca84045448b7de0fb659daa53.png)
+
+## 4.PLSQL
+
+客户端工具下载：https://www.oracle.com/tools/downloads/sqldev-downloads-2143.html
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/37d2d659448a45b3996bdad0a26c7682.png)
+
+解压缩出来后运行
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/abc7f67246a6459c92cc04f2cfc6ba4e.png)
+
+打开后的主页
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/371bad4f8a5d4d1e8c6ea1d2a5613adc.png)
+
+建立连接
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/3679b30567cb4570ad861f5558cd6b0e.png)
+
+录入相关的信息：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/269dd9b0cfea46bb82ad7fcb53f2d9b9.png)
+
+添加测试。查看是否能够连接成功
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/35a7e4fff89d4d239e925fade06364be.png)
+
+提示：状态：成功。说明我们连接正常了
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/23d68afa0ad7411aa71f6378817fc98d.png)
+
+点开+我们就可以看到相关的数据库的信息了。
+
+# 三、数据库的卸载
+
+## 1.关闭相关服务
+
+&emsp;&emsp;我们进入 `service`中，关闭所有和oracle相关的服务
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/919f993ff094449fbc0f4224fe095f60.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/c15b50d679104059a057e4bd556507e1.png)
+
+## 3.卸载软件
+
+&emsp;&emsp;在搜索中找到Universal Installer。双击开始卸载
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/204326be76ea4b6895af877a0282f8bc.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/0612d3a15cba453b9ddab73199d17621.png)
+
+选中要删除的Oracle产品，然后点击删除
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/a7395f26618b4e3aad12d3cd9ebea71b.png)
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/1c7605381a8f4726b987353903df6f99.png)
+
+在你安装的app文件夹里面找到deinstall.bat文件，然后双击
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/8c81b83d93b94552a2a34c0d8232fefb.png)
+
+双击后：出现指定要取消配置的所有单示例监听程序【LISTENER】：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/180d7e2dd07a48b3947cacdaba059b05.png)
+
+没有权限需要通过管理员打开
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/d02aa686967a45f09d44979751baf4d2.png)
+
+然后再输入OCRL
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/3ec63a75b8d14da5802c8cb711374666.png)
+
+等待时间比较长。输入y继续操作
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/056afdd71100453192518267185cc6ef.png)
+
+继续
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/834a52491e6349ef8b2a7aa0c7bc0790.png)
+
+到这一步再CMD里面的操作就完成了，等待CMD界面自动消失即可
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/39863e21762449628776d98ed41223f8.png)
+
+## 3.删除注册信息
+
+&emsp;&emsp;然后我们进入注册表中删除oracle的相关注册信息。输入: regedit 进入
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/b03abd4b6c524e0b821084527925fdd8.png)
+
+删除HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ 路径下的所有Oracle开始的服务名称
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/cd3f237d2a62490d81614b827e67fe74.png)
+
+删除：HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Application注册表的所有Oracle开头的所有文件
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/d3b8745f75fa4d93a74db050590842f7.png)
+
+删除：HKEY_LOCAL_MACHINE\SOFTWARE\ORACLE 注册表
+
+若环境变量中存在Oracle相关的设置，直接删除，没有就跳过这一步
+
+删除E:\app目录下的所有文件，根据自己的安装目录来
+
+删除C盘下C:\Program File 目录下的Oracle目录
+
+再删除C盘下C:\用户\dpb这个Oracle文件
+
+注：所删除过程中遇到java.exe程序正在运行，按CTRL+shift+esc进入任务管理器，结束这个任务。
+
+删除干净后重启电脑即可。
+
+# 四、用户和权限
+
+&emsp;&emsp;Oracle中，一般不会轻易在一个服务器上创建多个数据库，在一个数据库中，不同的项目由不同的用户访问，每一个用户拥有自身创建的数据库对象，因此用户的概念在Oracle中非常重要。Oracle的用户可以用CREATE USER命令来创建。其语法是：
+
+> CREATE
+> USER 用户名 IDENTIFIED BY 口令 [ACCOUNT LOCK|UNLOCK]
+
+说明：LOCK|UNLOCK创建用户时是否锁定，默认为锁定状态。锁定的用户无法正常的登录进行数据库操作。
+
+案例：
+
+CREATE  USER dpb IDENTIFIED BY  123456 ACCOUNT UNLOCK;
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/a13282fc654447c3aa33da4124134088.png)
+
+&emsp;&emsp;尽管用户成功创建，但是还不能正常的登录Oracle数据库系统，因为该用户还没有任何权限。如果用户能够正常登录，至少需要CREATE SESSION系统权限。
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/eee1ed136fc84aaeb38788b400f08e14.png)
+
+&emsp;&emsp;Oracle用户对数据库管理或对象操作的权利，分为系统权限和数据库对象权限。系统权限比如：CREATE SESSION，CREATE TABLE等，拥有系统权限的用户，允许拥有相应的系统操作。数据库对象权限，比如对表中的数据进行增删改操作等，拥有数据库对象权限的用户可以对所拥有的对象进行对应的操作。
+
+
+还有一个概念就是数据库角色（role），数据库角色就是若干个系统权限的集合。下面介绍几个常用角色：
+
+* CONNECT角色，主要应用在临时用户，特别是那些不需要建表的用户，通常只赋予他们CONNECT role。CONNECT是使用Oracle的简单权限，拥有CONNECT角色的用户，可以与服务器建立连接会话（session，客户端对服务器连接，称为会话）。
+* RESOURCE角色 **，** 更可靠和正式的数据库用户可以授予RESOURCE
+  role。RESOURCE提供给用户另外的权限以创建他们自己的表、序列、过程（procedure）、触发器（trigger）、索引（index）等。
+* DBA角色，DBA role拥有所有的系统权限----包括无限制的空间限额和给其他用户授予各种权限的能力。用户SYSTEM拥有DBA角色。
+
+一般情况下，一个普通的用户（如SCOTT），拥有CONNECT和RESOURCE两个角色即可进行常规的数据库开发工作。
+
+可以把某个权限授予某个角色，可以把权限、角色授予某个用户。系统权限只能由DBA用户授权，对象权限由拥有该对象的用户授权，授权语法是：
+
+> GRANT 角色|权限 TO 用户（角色）
+
+案例：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/8cea6156f3744049b1e7f73088a187b6.png)
+
+之后就可以通过 `dpb`这个账号来正常的登录了
+
+删除用户操作：
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/8e01cbbc3b364800951fb0da32b7ec5e.png)
+
+其他操作：
+
+> //回收权限
+>
+> REVOKE
+> 角色|权限 FROM 用户（角色）
+>
+> //修改用户的密码
+>
+> ALTER USER 用户名 IDENTIFIED BY 新密码
+>
+> //修改用户处于锁定（非锁定）状态
+>
+> ALTER USER 用户名 ACCOUNT LOCK|UNLOCK
+
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/2735942adbde4e2eb95eaa46651de1ce.png)
+
+
 
 
 
