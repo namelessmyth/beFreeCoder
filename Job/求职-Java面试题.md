@@ -8486,6 +8486,18 @@ D，Durability，持久性，事务的操作结果一定持久保持下去。即
 
 
 
+### PK，UK，CK，FK，DF是什么
+
+PK: Primary Key ，主键约束
+
+UK: Unique Key，唯一约束
+
+CK: check()，检查约束
+
+FK: Foreign Key，外键约束
+
+DF: default ，默认约束
+
 
 
 ## MySQL
@@ -8589,6 +8601,12 @@ MySQL5.5.5之前默认的存储引擎是MyISAM，之后默认的是InnoDB。
 
 
 
+### 事务的2阶段提交
+
+https://www.yuque.com/hollis666/vzy8n3/geuks1bbiwd39h1r
+
+
+
 ### Mysql的存储引擎及区别
 
 innodb，5.5之后默认的存储引擎。支持表锁行锁，聚集索引，外键。不保存表的总行数。
@@ -8674,6 +8692,12 @@ show table status from 数据库名 like '<数据表名>';
 
 
 
+### buffer pool介绍
+
+https://www.yuque.com/hollis666/vzy8n3/cskzcn42f9dggat0
+
+https://www.yuque.com/hollis666/vzy8n3/npkvvofcuc0g9n7m
+
 
 
 ### Mysql锁分类
@@ -8732,6 +8756,12 @@ https://www.yuque.com/hollis666/vzy8n3/ionc18
 
 
 
+### MySQL乐观锁没有用任何锁？
+
+https://www.yuque.com/hollis666/vzy8n3/vk7tpwcpzfh35d04
+
+
+
 ### 记录锁，间隙锁，临建锁
 
 https://www.yuque.com/hollis666/vzy8n3/kfygzw
@@ -8741,6 +8771,18 @@ https://www.yuque.com/hollis666/vzy8n3/kfygzw
 ### MySQL意向锁
 
 https://www.yuque.com/hollis666/vzy8n3/zf7nalngrigml547
+
+
+
+### MySQL字典锁
+
+https://www.yuque.com/hollis666/vzy8n3/ru6eaoolefdo0lor
+
+
+
+### OnlineDDL是什么
+
+https://www.yuque.com/hollis666/vzy8n3/lwxtmggon7ir4zzz
 
 
 
@@ -8783,17 +8825,13 @@ https://www.yuque.com/hollis666/vzy8n3/zf7nalngrigml547
 
 ### MySQL表的设计原则
 
-### 有没有关注过公司的慢SQL,怎么优化
-
-首先看SQL语句中有没有使用函数等会导致索引失效的问题。
-
-然后通过explain看函数是否走了索引。
-
-然后再看索引建的是否合理，比如是否建立在了一个离散度很低的字段。
 
 
+### 为什么不建议使用外键
 
-### Innodb的结构，磁盘页和缓存区是怎么配合的？
+https://www.yuque.com/hollis666/vzy8n3/tm4gg1mwdsgaqy9a
+
+
 
 ### 缓冲区和磁盘数据不一致怎么办？
 
@@ -8807,15 +8845,27 @@ char，最大长度255，一旦确定后长度固定， 即每行数据占用等
 
 varchar，最大长度为65535，确定后可以存储在长度范围内的字符，只存储实际字符的内容。
 
-按照查询速度： char> varchar
+按照查询速度： char > varchar
+
+
+
+### binlog，redolog，undolog
+
+https://www.yuque.com/hollis666/vzy8n3/tdlgfm
 
 
 
 
 
-### MySQL的binlog是在什么时候写入的？提交前提交后？
+### binlog是何时写入？提交前提交后？
+
+参考[更新语句执行流程](#更新语句执行流程)。提交前。
 
 
+
+### binlog有哪几种格式？
+
+https://www.yuque.com/hollis666/vzy8n3/pl5wcg4cmn8dgufn
 
 
 
@@ -9034,6 +9084,8 @@ https://www.yuque.com/hollis666/vzy8n3/le8gbo472cpxv63z
 
 ### MySQL索引的最左匹配
 
+https://www.yuque.com/hollis666/vzy8n3/cc9mglopp4nigg59
+
 https://www.yuque.com/hollis666/vzy8n3/nz5520o4qu5yohzv
 
 
@@ -9052,9 +9104,15 @@ https://www.yuque.com/hollis666/vzy8n3/gux80i
 
 
 
-### Innodb页和B+树的关系
+### Innodb数据页和B+树的关系
 
 https://www.yuque.com/hollis666/vzy8n3/vebvlntlc6rnvuu0
+
+
+
+### 页分裂和页合并
+
+https://www.yuque.com/hollis666/vzy8n3/lq17kh7gaf8ayipw
 
 
 
@@ -9076,9 +9134,23 @@ https://www.yuque.com/hollis666/vzy8n3/glycgnryk8953c24
 
 
 
+### 主键自增用完了怎么办？
+
+https://www.yuque.com/hollis666/vzy8n3/eob7raeqaenifzpp
+
+
+
 ### UUID和自增哪个更适合主键
 
 https://www.yuque.com/hollis666/vzy8n3/uted9tvkngs62pmu
+
+
+
+### 介绍MySQL的Hash Join
+
+https://www.yuque.com/hollis666/vzy8n3/ci3ae75ktzkmz1dw
+
+Hash Join是MySQL8.0.18推出的一种多表join算法。
 
 
 
@@ -9091,6 +9163,20 @@ https://www.yuque.com/hollis666/vzy8n3/sckebi
 ### limit 0,10和limit 10000,10一样么
 
 https://www.yuque.com/hollis666/vzy8n3/gtpc5u4i7xmy13el
+
+
+
+### where条件的顺序影响索引么
+
+假如有一个联合索引 (a,b) ，那么如下两个SQL的性能有差别么?
+```sql
+SELECT * FROM tableA WHERE a = 'value1' AND b ='value2';
+SELECT * FROM tableA WHERE b = 'value2' AND a ='value1';
+```
+
+结论是没影响的，也就是说WHERE子句后面多个字段的先后顺序通常不会影响查询的结果。MySQL查询的WHERE子句只是用来过滤满足指定条件的行，而不涉及字段之间的顺序。
+
+因为有查询优化器的存在，字段的先后顺序并不重要，不信的话可以explain看一下上面两个SQL的执行计划，都是可以命中(a,b)的联合索引的。
 
 
 
@@ -9117,6 +9203,12 @@ https://www.yuque.com/hollis666/vzy8n3/gal4lxk8ug9g2bwk
 一般会设计2个主键，一个业务主键一个逻辑主键即ID字段。一般采用自增。
 
 也有部分系统用的uuid方式。这种方式比较适合用在分库分表的场景下。
+
+
+
+### MySQL组提交
+
+https://www.yuque.com/hollis666/vzy8n3/bb860tpuha0cuza2
 
 
 
@@ -9210,15 +9302,23 @@ PS：有的时候查询慢，不一定是SQL语句的问题，也有可能是服
 
 
 
+
+
+### MySQL执行计划要关注哪些
+
+https://www.yuque.com/hollis666/vzy8n3/fho0bamf4qpcril5
+
+
+
 ### 走了索引还是慢的原因
 
 https://www.yuque.com/hollis666/vzy8n3/st7he2np7e9trg9k
 
 
 
-### MySQL执行计划要关注哪些
+### 执行计划Key有值还是慢咋办
 
-https://www.yuque.com/hollis666/vzy8n3/fho0bamf4qpcril5
+https://www.yuque.com/hollis666/vzy8n3/upcggbxiyk11gudc
 
 
 
@@ -9234,9 +9334,34 @@ https://www.yuque.com/hollis666/vzy8n3/mgpczmz7la99dkft
 
 
 
-### MySQL驱动表如何选的
+### MySQL如何选择驱动表
 
 https://www.yuque.com/hollis666/vzy8n3/vs83kfhxbz19mkcg
+
+
+
+### MySQL如何优化like查询
+
+https://www.yuque.com/hollis666/vzy8n3/zrt2y30mhdgiremc
+
+
+
+### MySQL大事务存在的问题
+
+所谓大事务，一般是指事务中要执行的SQL很多，事务的时间比较长。
+
+这样的事务会有如下问题：
+
+1. 占用数据库连接。这个很容易理解，SQL多了，执行的就会很慢，那么大的事务就会很长时间占用数据库链接，但是因为数据库连接是有限的，被长事务占用后，就会导致其他事务可能无法获取连接，导致应用的吞吐量下降，影响系统可用性。
+2. 难以回滚。由于大事务涉及的数据量较大，执行回滚操作可能会变得非常耗时。如果事务需要回滚或失败，可能需要花费很长时间才能完全回滚所有修改，这会对数据库的可用性和性能造成负面影响。
+3. 锁竞争。大事务的话，写操作多了就可能要锁定许多数据。这可能导致其他并发事务在访问相同资源时遇到锁3竞争，从而导致性能下降和延迟增加。长时间的锁定还可能导致其他事务的等待和阻塞。
+4. 日志空间占用。大事务会生成大量的日志，尤其是Binlog，当单个事务最大允许使用的Binlog文件的大小超过了max_binlog_cache_size时，会导致报错: Multi-statement transaction required more than max_binlog_cache_size' bytes of storage; increase this mysqld variable and try again
+
+解决方案
+
+拆分。把大事务拆分成一个个小事务。尽量把不需要放在事务中的操作挪到事务外面。例如：内存计算，IO操作，读操作，远程调用等。
+
+
 
 
 
@@ -9248,9 +9373,39 @@ https://www.yuque.com/hollis666/vzy8n3/vs83kfhxbz19mkcg
 
 
 
+### MySQL热点数据如何高效更新
+
+https://www.yuque.com/hollis666/vzy8n3/rfqcbz190k9egley
+
+
+
+### MySQL如何加密解密
+
+https://www.yuque.com/hollis666/vzy8n3/xg32pfnstsrh9pdp
+
+
+
+### 加密之后如何查询？
+
+https://www.yuque.com/hollis666/vzy8n3/ri2ky6kb6pvxy656
+
+
+
 ### MySQL主从复制过程
 
 https://www.yuque.com/hollis666/vzy8n3/hoi4ql
+
+
+
+### MySQL并行复制原理
+
+https://www.yuque.com/hollis666/vzy8n3/igarxy867n7bgq1q
+
+
+
+### MySQL延迟复制原理
+
+https://www.yuque.com/hollis666/vzy8n3/et8lo7l10rg7g7iy
 
 
 
@@ -9258,7 +9413,19 @@ https://www.yuque.com/hollis666/vzy8n3/hoi4ql
 
 
 
+### 怎么解决主从复制延迟
+
+https://www.yuque.com/hollis666/vzy8n3/weszn2kock8k8wld
+
+
+
 ### 分库分表时跨库join如何解决？
+
+
+
+### MyISAM的索引结构
+
+https://www.yuque.com/hollis666/vzy8n3/mcl4sn8mcutieesz
 
 
 
