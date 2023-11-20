@@ -5201,11 +5201,13 @@ https://www.oracle.com/cn/database/technologies/
 
 #### 安装包下载
 
-官网上推荐安装的是较新的版本，如果想要下载11g的，可以从[这个官网地址](https://www.oracle.com/partners/campaign/112010-win64soft-094461.html)下载；
+官网上默认打开的是最新的Oracle版本，如果想要下载11g的，可以从[这个官网地址下载](https://www.oracle.com/partners/campaign/112010-win64soft-094461.html)；
 
-下载之前勾选"Accept License Agreement"。windows用户可以选择这个版本：“**Oracle Database 11g Release 2 (11.2.0.1.0) for Microsoft Windows (x64)**”。注意：如果没有登录则需要先登录后才能下载。
+打开网页后，勾选"Accept License Agreement"。windows用户可以选择这个版本：“**Oracle Database 11g Release 2 (11.2.0.1.0) for Microsoft Windows (x64)**”。注意：需要先登录Oralce账号后才能下载。
 
 下载之后会有2个zip压缩包，将其合并解压缩成一个database文件夹。
+
+
 
 #### 安装步骤
 
@@ -5249,11 +5251,15 @@ https://www.oracle.com/cn/database/technologies/
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/6351ac79d9f349088288a41268d82b9c.png)
 
+
+
 #### Oracle服务说明
 
 Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 安装oracle 11g R2中的方法成功安装Oracle 11g后，共有7个服务，这7个服务的含义分别为
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/fd8a3909921e4d898c132beaab75dc4e.png)
 
 1. Oracle ORCL VSS Writer Service：Oracle卷映射拷贝写入服务，VSS（Volume Shadow Copy Service）能够让存储基础设备（比如磁盘，阵列等）创建高保真的时间点映像，即映射拷贝（shadow copy）。它可以在多卷或者单个卷上创建映射拷贝，同时不会影响到系统的系统能。（非必须启动）
 2. OracleDBConsoleorcl：Oracle数据库控制台服务，orcl是Oracle的实例标识，默认的实例为orcl。在运行Enterprise Manager（企业管理器OEM）的时候，需要启动这个服务。（非必须启动）
@@ -5261,18 +5267,21 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 4. OracleMTSRecoveryService：服务端控制。该服务允许数据库充当一个微软事务服务器MTS、COM/COM+对象和分布式环境下的事务的资源管理器。（非必须启动）
 5. OracleOraDb11g_home1ClrAgent：Oracle数据库.NET扩展服务的一部分。 （非必须启动）
 6. OracleOraDb11g_home1TNSListener：监听器服务，服务只有在数据库需要远程访问的时候才需要。（非必须启动，下面会有详细详解）。
-7. OracleServiceORCL：数据库服务(数据库实例)，是Oracle核心服务该服务，是数据库启动的基础， 只有该服务启动，Oracle数据库才能正常启动。(必须启动)那么在开发的时候到底需要启动哪些服务呢？对新手来说，要是只用Oracle自带的sql*plus的话，只要启动OracleServiceORCL即可，要是使用PL/SQL Developer等第三方工具的话，OracleOraDb11g_home1TNSListener服务也要开启。OracleDBConsoleorcl是进入基于web的EM必须开启的，其余服务很少用。
-   注：ORCL是数据库实例名，默认的数据库是ORCL，你可以创建其他的，即OracleService+数据库名
+7. OracleServiceORCL：数据库服务(数据库实例)，是Oracle核心服务该服务，是数据库启动的基础， 只有该服务启动，Oracle数据库才能正常启动。(必须启动)
+8. 那么在开发的时候到底需要启动哪些服务呢？
+   1. 对新手来说，要是只用Oracle自带的sql*plus的话，只要启动OracleServiceORCL即可，要是使用PL/SQL Developer等第三方工具的话，OracleOraDb11g_home1TNSListener服务也要开启。OracleDBConsoleorcl是进入基于web的EM必须开启的，其余服务很少用。
+   2. 注：ORCL是数据库实例名，默认的实例名是ORCL，你也可以改成其他的，服务名也会对应修改：OracleService+数据库名
 
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/fd8a3909921e4d898c132beaab75dc4e.png)
+**个人开发电脑推荐：**
 
-服务管理：
+1. 所有Oracle服务建议都改成"手动"。
 
-1、所有的服务改成"手动"
-2、启动两个
+2. 需要使用数据库时，启动如下两个
 
-1. 监听服务：OracleOraDb10g_home1TNSListener监听客户端的连接
-2. 数据库服务：OracleServiceORCL 命名规则：OracleService+实例名
+   1. 监听服务：OracleOraDb10g_home1TNSListener监听客户端的连接
+
+   2. 数据库服务：OracleServiceORCL 命名规则：OracleService+实例名
+
 
 
 
@@ -5320,9 +5329,13 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/7c908a7ca84045448b7de0fb659daa53.png)
 
-## 4.PLSQL
+#### SQL Developer
 
-客户端工具下载：https://www.oracle.com/tools/downloads/sqldev-downloads-2143.html
+最新版下载（JDK11）：https://www.oracle.com/database/sqldeveloper/technologies/download/
+
+21.4.3支持JDK8的最新版：https://www.oracle.com/tools/downloads/sqldev-downloads-2143.html
+
+20的最新版：https://www.oracle.com/tools/downloads/sqldev-downloads-2041.html
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/37d2d659448a45b3996bdad0a26c7682.png)
 
@@ -5352,9 +5365,9 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 点开+我们就可以看到相关的数据库的信息了。
 
-# 三、数据库的卸载
+#### Oracle卸载
 
-## 1.关闭相关服务
+##### 1.关闭相关服务
 
 &emsp;&emsp;我们进入 `service`中，关闭所有和oracle相关的服务
 
@@ -5362,7 +5375,7 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/c15b50d679104059a057e4bd556507e1.png)
 
-## 3.卸载软件
+##### 3.卸载软件
 
 &emsp;&emsp;在搜索中找到Universal Installer。双击开始卸载
 
@@ -5404,7 +5417,7 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1677919260096/39863e21762449628776d98ed41223f8.png)
 
-## 3.删除注册信息
+##### 3.删除注册信息
 
 &emsp;&emsp;然后我们进入注册表中删除oracle的相关注册信息。输入: regedit 进入
 
@@ -5432,7 +5445,7 @@ Oracle 11g服务详细介绍及哪些服务是必须开启的？
 
 删除干净后重启电脑即可。
 
-# 四、用户和权限
+#### 用户和权限
 
 &emsp;&emsp;Oracle中，一般不会轻易在一个服务器上创建多个数据库，在一个数据库中，不同的项目由不同的用户访问，每一个用户拥有自身创建的数据库对象，因此用户的概念在Oracle中非常重要。Oracle的用户可以用CREATE USER命令来创建。其语法是：
 
