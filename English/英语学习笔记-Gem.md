@@ -186,6 +186,12 @@
 
 
 
+#### live up to your reputation
+
+不辜负你的名誉
+
+
+
 ## 中英
 
 ### 表情

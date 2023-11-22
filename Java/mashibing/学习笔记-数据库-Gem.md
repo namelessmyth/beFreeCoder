@@ -5372,7 +5372,7 @@ https://blog.csdn.net/ShayneLee8/article/details/130576985
 
 最新版下载（JDK11）：https://www.oracle.com/database/sqldeveloper/technologies/download/
 
-21.4.3支持JDK8的最新版：https://www.oracle.com/tools/downloads/sqldev-downloads-2143.html
+21.4.3，支持JDK8的最新版：https://www.oracle.com/tools/downloads/sqldev-downloads-2143.html
 
 20的最新版：https://www.oracle.com/tools/downloads/sqldev-downloads-2041.html
 
@@ -6838,6 +6838,287 @@ select * from v_student1;
 create [unique | bitmap] index [schema.] 索引名
 on [schema.] 表名 (列名1, .., 列名N);
 ```
+
+
+
+## 性能优化
+
+### 综述
+
+积极分析业务，从业务角度思考问题。
+
+#### 性能优化原则
+
+- 不是所有数据库都需要（能够）优化
+- 数据库的性能，大多数都不是数据库层面能够解决的。
+  - 在功能设计的时候，就要尽可能考虑性能。有些功能，能够预见到性能问题的尽量多和用户沟通。
+  - 一旦业务确定SQL确定了，可以优化的空间就相对较少了。即使DBA也不能轻易更改SQL的业务逻辑。
+- 在不了解业务之前，不可能找到正确的优化思路。
+- 优化要有个度，并不是“没有最优，只有更优”。
+
+
+
+#### 导致性能问题的可能原因
+
+- 表没有正确的创建索引----错误的执行计划
+- 表没有及时的分析-------错误的执行计划
+- 热块-------数据块的争用(反向索引?)
+- 锁的阻塞------业务设计缺陷
+  - 例如：一个事务更新了某一行数据后，迟迟没有提交。导致这一行锁定。
+- SQL解析消耗大量CPU----变量绑定
+  - 数据库每分钟要处理上万条SQL，而这些SQL都没有变量绑定，导致每次都要硬解析。
+- 低效的SQL-----SQL自身的问题
+  - 功能在开发过程中就完全没考虑性能，只是考虑功能。后期问题就会主键暴露。
+- 数据库整体负载过程----架构设计的问题
+  - 数据库设计时，没有对数据库的总体容量，并发量做一个总体预估。
+
+
+
+#### 性能问题定位
+
+原则，尽可能从小范围分析问题。
+
+- SQL层
+
+  - 如果已经能定位到某个SQL有问题，就不要从会话层面分析
+  - 工具：执行计划，10053(分析执行计划的产生),10046(分析SQL资源消耗情况)...
+- 会话层
+
+  - 会话层的意思是找到是哪个用户引起了性能问题。也是最常用的。
+  - 如果能定位到会话，就不要从系统层面分析
+    - `V$SESSION,V$SESSTAT,V$SESSION WAIT,V$SQL,V$LOCK，SQL_TRACE`
+- 系统层
+
+  - 如果上述办法无法定位到性能问题，那从系统层面入手
+    - AWR (8i可以用STATSPACK)，OS Tools(TOP，IOSTAT....)
+
+
+
+#### 不要迷恋优化器
+
+不要迷信优化器，优化器永远无法知道你的业务需求
+
+优化器永远无法按照你的业务需求来重写你的SQL语句
+
+优化器只能在数学(集合)逻辑上做SQL的重写
+
+高效的SOL来自于对业务的理解和对SOL执行过程的理解
+
+##### 窗口函数案例1
+
+假设现在有这样一张表mytable，字段（id，value）。现在要求返回每一行的叠加值。如下表格：
+
+| id（主键） | value（非空） | sum（每一行累加） |
+| ---------- | ------------- | ----------------- |
+| 1          | 10            | 10                |
+| 2          | 20            | 30                |
+| 3          | 15            | 45                |
+
+第一版SQL如下：
+
+```sql
+-- 查询sql
+select t1.id, t1.value, sum(t2.value) as sum
+from mytable t1
+join mytable t2 on t2.id <= t1.id
+GROUP BY t1.id, t1.value
+
+-- ----------------------------
+-- Table structure for MYTABLE
+-- ----------------------------
+DROP TABLE "SCOTT"."MYTABLE";
+CREATE TABLE "SCOTT"."MYTABLE" (
+  "ID" NUMBER(16,0) NOT NULL,
+  "VALUE" NUMBER NOT NULL
+);
+
+-- ----------------------------
+-- Records of MYTABLE
+-- ----------------------------
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('1', '10');
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('2', '20');
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('3', '15');
+```
+
+通过解释计划分析，这个SQL有2次全表扫描，并且一致性读（consistent get）有14次
+
+```sql	
+-- 执行计划
+SELECT STATEMENT ()		ALL_ROWS	9	1	52				
+ HASH (GROUP BY)			       9	1	52				
+  MERGE JOIN ()			      8	1	52				
+   SORT (JOIN)			         4	3	78				
+    TABLE ACCESS (FULL)	MYTABLE		3	3	78				
+   SORT (JOIN)			         4	3	78			INTERNAL_FUNCTION("T2"."ID")<=INTERNAL_FUNCTION()
+    TABLE ACCESS (FULL)	MYTABLE		3	3	78			
+
+-- 统计结果
+0   recursive calls
+0   db block gets
+14   consistent gets
+```
+
+通过上文可以知道Oracle是基于CBO来执行SQL语句的并不是基于业务，他并不知道这个SQL要实现什么样的功能。上面的执行计划就是他基于目前的这个SQL和给出的成本最优的执行方式。但其实这个业务还有其他的SQL实现方式，可以使用窗口函数。例如：
+
+```sql
+-- 窗口函数实现
+select t1.id, t1.value, sum(t1.value) over(order by id) as sum
+from mytable t1
+
+-- 新的执行计划
+SELECT STATEMENT ()		ALL_ROWS	4	3	78				
+ WINDOW (SORT)	 		            4   3  	78				
+  TABLE ACCESS (FULL)	MYTABLE		3	3	78		
+
+-- 统计结果
+0   recursive calls
+0   db block gets
+7   consistent gets
+```
+
+从结果上可以看出consistent gets变成了7，比原来下降了一半，执行计划比之前简单了很多，全表扫描也变成了1次。性能是显著提高了。但是CBO自己是无法自动改写SQL的，他只能基于SQL去优化。这个只能靠写SQL语句的人后期优化SQL的人来完成。
+
+
+
+#### 为什么高效的SQL难写
+
+- SQL语句本质是对数据集合的一种操作。
+- 存在很多数据访问方式
+  - tablescan
+  - index range scan
+  - index fast scan
+  - nested loop join 
+  - merge join
+  - hash join
+- 优化器机制比较复杂，存在大量因素会影响SQL的执行性能，需要额外花时间学习
+- 受数据的影响，SQL的性能并不是一成不变的，而是动态的。
+
+
+
+### 锁
+
+系统慢一般有2种原因
+
+系统资源耗尽，性能到达极限，这种情况就只能扩容，做系统资源升级。
+
+系统资源没有耗尽，但程序就是卡在某处不动或者被阻塞了。这个就涉及到了锁。
+
+
+
+### 锁类型
+
+Enqueues：队列类型的锁，通常和业务相关，比较常见。例如：dml操作。
+Latches：保护系统资源方面的锁，比如：某个会话要访问内存中的某个数据时，或者解析SQL时。
+
+
+
+### 锁产生条件
+
+一般是并发才会产生锁的问题，如果数据库只有一个会话在执行，即使有锁但也不会出现阻塞问题。
+
+例如：存在表A，id为主键字段。事务1往表A中插入一条数据id=1，没有提交。这时另一个事务2也往这个表插入了一行id=1的数据。由于事务1并没有提交，oracle会为这种情况自动加锁，导致事务2阻塞。直到事务1提交了。事务2才能继续。
+
+- 只有被修改时，行才会被锁定
+- 当一条语句修改了一条记录，只有这条记录上被锁定，在Oracle数据库中不存在锁升级。
+  - 某些数据库，当一个表里一定量的数据被锁定后，会将行锁升级为表锁。oracle不会。
+- 当某行被修改时，将在这个行上加上行锁（TX），用于阻止其它事务对相同行的修改。
+- 读操作不会阻塞写操作。但有个例外，就是select ...for update。写也不会阻塞读。
+- 当一行被修改后，Oracle通过回滚段提供给数据的一致性读
+  - 回滚段里存储当前事务提交前的数据。确保其他事务不会读到未提交的数据。
+- 表锁（TM），发生在insert，update，delete以及select for update 操作时。确保操作能够正常完成。
+  - 防止执行期间其他事务对表进行DDL操作。例如：update到一半，表都删了。
+
+![image-20231122225347376](学习笔记-数据库-Gem.assets/image-20231122225347376.png)
+
+相关SQL
+
+```sql
+-- 查看行锁和表锁信息
+select sid,type,id1,id2,lmode,request,block,obj.object_name
+from v$lock l
+left join dba_objects obj on l.id1 = obj.object_id 
+where type in ('TM','TX') 
+order by 1,2
+
+-- 查看当前的sessionid
+select DISTINCT sid from v$mystat;
+```
+
+
+
+
+
+### Latch
+
+
+
+
+
+### 优化器和执行计划
+
+
+
+
+
+### Hints
+
+
+
+
+
+### 等待事件
+
+
+
+
+
+### 索引和分区
+
+(包括11g下新的组合分区)地8周分析及动态采样(包括11g下的extended statistics技术)
+
+
+
+
+
+### 并行执行
+
+
+
+
+
+### 变量绑定
+
+(包括11g下Adaptive cursor sharing技术)
+
+
+
+### sql_trace及10046
+
+
+
+
+
+### 10053事件
+
+
+
+
+
+### 视图和性能参数
+
+
+
+
+
+### 性能报告分析(AWR，ASH)
+
+
+
+
+
+### Oracle RAC架构的性能优化
+
+
 
 
 
