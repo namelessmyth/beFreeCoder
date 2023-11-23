@@ -7005,14 +7005,14 @@ SELECT STATEMENT ()		ALL_ROWS	4	3	78
 
 
 
-### 锁类型
+#### 锁类型
 
 Enqueues：队列类型的锁，通常和业务相关，比较常见。例如：dml操作。
 Latches：保护系统资源方面的锁，比如：某个会话要访问内存中的某个数据时，或者解析SQL时。
 
 
 
-### 锁产生条件
+#### 锁产生条件
 
 一般是并发才会产生锁的问题，如果数据库只有一个会话在执行，即使有锁但也不会出现阻塞问题。
 
@@ -7030,19 +7030,162 @@ Latches：保护系统资源方面的锁，比如：某个会话要访问内存�
 
 ![image-20231122225347376](学习笔记-数据库-Gem.assets/image-20231122225347376.png)
 
-相关SQL
+#### update锁
+
+相关SQL，block代表这个事务阻塞了多少个其他事务。
+
+当锁为表锁的时候，id1为锁住表的名字。当锁为行锁的时候，id1和id2代表回滚段位置。
+
+lmode，锁模式，3代表共享锁；6代表排他锁。
 
 ```sql
+-- 在sqlplus中执行
+SQL> update mytable set value = 11 where id = 1;
+
 -- 查看行锁和表锁信息
-select sid,type,id1,id2,lmode,request,block,obj.object_name
+SQL> select sid,type,id1,id2,lmode,request,block,obj.object_name
 from v$lock l
 left join dba_objects obj on l.id1 = obj.object_id 
 where type in ('TM','TX') 
-order by 1,2
+order by 1,2;
+
+-- 执行结果
+       SID TYPE        ID1        ID2      LMODE    REQUEST      BLOCK    OBJECT_NAME
+---------- ---- ---------- ---------- ---------- ---------- ---------- -------------
+       114 TM        74597          0          3          0          0    MYTABLE
+       114 TX       655372       1504          6          0          0
 
 -- 查看当前的sessionid
-select DISTINCT sid from v$mystat;
+SQL> select DISTINCT sid from v$mystat;
+       SID
+----------
+       114
+       
+ -- 这时候新建一个sqlplus窗口执行
+SQL> update mytable set value = 12 where id = 1;
+
+-- 除非另一个事务提交否则当前是否会一直阻塞。
+-- 此时在执行 查看行锁表锁的sql 会查出4行数据
+       SID TYPE        ID1        ID2      LMODE    REQUEST      BLOCK    OBJECT_NAME
+---------- ---- ---------- ---------- ---------- ---------- ---------- -------------
+       81  TM        74597          0          3          0          0    MYTABLE
+       81  TX       655372       1504          6          6          0
+       114 TM        74597          0          3          0          0    MYTABLE
+       114 TX       655372       1504          6          0          1
+
+-- 视图v$session_wait可以更直观的看到哪些会话被阻塞了。
+SQL> select sid,event from v$session_wait where sid in (81, 114);
+
+
+-- 提交事务 114
+SQL> commit;
+提交完成。
+
+-- 再去查锁信息，此时只能查到81的信息。
+       SID TYPE        ID1        ID2      LMODE    REQUEST      BLOCK    OBJECT_NAME
+---------- ---- ---------- ---------- ---------- ---------- ---------- -------------
+       81  TM        74597          0          3          0          0    MYTABLE
+       81  TX       655372       1504          6          0          0
 ```
+
+
+
+##### insert锁
+
+如果表里存在主键，insert锁会产生一条request=4的TX锁。它是对表里面头信息的锁定，为了确保表中不存在重复数据
+
+```sql
+       SID TYPE        ID1        ID2      LMODE    REQUEST      BLOCK   OBJECT_NAME
+---------- ---- ---------- ---------- ---------- ---------- ---------- --------------
+        81 TM        74597          0          3          0          0   MYTABLE
+        81 TX       655361       1506          6          0          1
+        
+       101 TM        74597          0          3          0          0   MYTABLE
+       101 TX       589832        874          6          0          0
+       101 TX       655361       1506          0          4          0
+```
+
+
+
+#### select for update
+
+对某些场景下，为了确保查询出来的数据不被修改。可以使用select for update。
+
+例如：事务开始时，查询某个id的记录是存在的，当时当执行update的时候却发现这条记录已经被删除了。但这个时候就可以使用for update提前锁定这条记录。确保事务结束前不被修改。
+
+
+
+#### 锁模式
+
+2，row share（RS），共享行锁。
+
+3，row exclusive table lock，RX，排他行锁。
+
+4，share table lock，S，共享表锁。
+
+5，Share row Exclusive Table Lock，SRX。
+
+6，Exclusive Table lock，排他表锁。 他和其他所有锁不能共存。
+
+![image-20231123165945188](学习笔记-数据库-Gem.assets/image-20231123165945188.png)
+
+
+
+#### RI锁
+
+RI锁是一种基于引用关系的锁定。当对具有主外键关系的表做DML操作时，锁定不单单发生在操作表上，相应的引用表上也可能加上相应的锁定。
+
+由于目前大部分公司都已经不用外键了，本章内容不做深入展开了。
+
+
+
+#### 死锁
+
+两个会话互相持有对方的资源就是死锁。oracle可以自动检测到死锁，并强制让其中一个事务回滚。
+
+```sql
+-- 在事务1中插入一行id为6的数据
+SQL> insert into mytable values(6,40);
+已创建 1 行。
+
+-- 在事务2中插入一行id为7的数据
+SQL> insert into mytable values(7,40);
+已创建 1 行。
+
+-- 查看锁情况，互相创建了行锁和表锁，由于id不一样，所以没有相互阻塞
+SQL> select sid,type,id1,id2,lmode,request,block,obj.object_name
+  2  from v$lock l
+  3  left join dba_objects obj on l.id1 = obj.object_id
+  4  where type in ('TM','TX')
+  5  order by 1,2;
+
+       SID TYPE        ID1        ID2      LMODE    REQUEST      BLOCK  OBJECT_NAME
+---------- ---- ---------- ---------- ---------- ---------- ---------- --------------
+        81 TM        74597          0          3          0          0  MYTABLE
+        81 TX       655367       1506          6          0          0
+
+       101 TM        74597          0          3          0          0  MYTABLE
+       101 TX       131078        813          6          0          0
+
+-- 此时在事务1中插入一行id为7的数据
+SQL> insert into mytable values(7,40);
+
+-- 在事务2中插入一行id为6的数据
+SQL> insert into mytable values(6,40);
+
+-- 此时事务1就报错了。
+             *
+第 1 行出现错误:
+ORA-00060: 等待资源时检测到死锁
+```
+
+
+
+结论--锁定是一个开发的范畴
+
+通过锁定，可以达到预期的业务需求
+
+通过对业务深入的分析，可以最大程度的避免不必要锁定的发生
 
 
 
@@ -7050,17 +7193,486 @@ select DISTINCT sid from v$mystat;
 
 ### Latch
 
+#### 目的
+
+- 保证资源的串行访问
+  - 保护SGA的资源访问
+  - 保护内存的分配
+- 保证执行的串行化
+  - 保护关键资源的串行执行
+  - 防止内存结构损坏
+
+对比
+
+|        | Latch            | Lock                 |
+| ------ | ---------------- | -------------------- |
+| 队列性 | No               | Yes                  |
+| 时长   | 很短             | 可能很长             |
+| 层面   | 数据库资源层     | 业务应用层           |
+| 目的   | 保证资源的完整性 | 保证业务操作的完整性 |
+|        |                  |                      |
+
+
+
+#### Latch在哪里
+
+SGA，资源的请求和分配
+
+- 共享池
+  - sql解析，sql重用...
+- 数据缓冲池
+  - 数据访问，数据写入磁盘，数据读入内存...
+  - 修改数据块
+  - 数据段扩展
+
+
+
+#### Latch查询
+
+select * from v$latchname where rownum < 10;
+
+select * from v$latch where rownum < 10;
+
+v$latch这个视图实际上是Oracle对每个latch的统计信息的一个汇总，每一条记录表示一种latch.
+
+NAME：latch名称
+
+GETS：以Willing to wait请求模式latch的请求成功数
+
+MISSES：初次尝试请求不成功次数
+
+SLEEPS：成功获取前sleeping次数
+
+IMMEDIATE_GETS：以Immediate模式latch请求数
+
+IMMEDIATE_MISSES：以Immediate模式l请求失败数
+
+
+
+#### Latch机制
+
+- wait方式--如果无法获取请求的latch，则:
+  - spin
+    - 当一个会话无法获得需要的latch时，会继续使用CPU(CPU 空转)，达到一个间隔后再次尝试申请latch，直到达到最大的重试次数
+  - sleep
+    - 当一个会话无法获得需要的latch时，会等待一段时间(sleep)，达到一个间隔后，再次尝试申请latch,如此反复，直到达到最大的重试次数。
+- Nowait方式--如果无法获取请求的latch，则:
+  - 不会发生sleep或者spin
+  - 转而去获取其它可用的Latch
+  - 和latch种类有关
 
 
 
 
-### 优化器和执行计划
+
+### 执行计划和优化器
+
+执行计划，告诉你数据是如何访问和处理的，但不仅仅是这些。
+
+#### 数据的访问
+
+直接访问表
+
+- 并行
+- 多数据块
+
+通过索引访问
+
+- index unique scan
+- indeX range scan
+  - 例如：范围查询，id > 1 and id < 10 
+- index full scan
+  - 通过扫描索引，来获取要查询的全部数据。比全表扫描还是快的。
+- index fast full scan
+  - 把一整个索引切分好多快，分别扫描。
+- index skip scan
+  - 索引跳跃式扫描，https://www.cnblogs.com/xqzt/p/4467482.html
 
 
+
+#### 数据处理
+
+将需要的数据查询出来之后，还需要处理，常见的处理如下
+
+- order by
+- group by
+- count
+- avg
+- sum
+
+
+
+#### 关联处理
+
+https://www.cnblogs.com/xiaohuizhenyoucai/p/10983783.html
+
+##### Nested loop join
+
+对于被连接的数据子集较小的情况，Nested Loop是个较好的选择。Nested  Loop就是扫描一个表（外表t1），每读到一条记录，就根据Join字段上的索引去另一张表（内表）里面查找，若Join字段上没有索引查询优化器一般就不会选择 Nested Loop。在Nested  Loop中，内表（一般是带索引的大表）被外表（也叫“驱动表”，一般为小表——不紧相对其它表为小表，而且记录数的绝对值也较小，不要求有索引）驱动，外表返回的每一行都要在内表中检索找到与它匹配的行，因此整个查询返回的结果集不能太大（大于1 万不适合）。Nested Loop适用于结果集很小（一般要求小于一万条），并且内表在Join字段上建有索引（这点非常非常非常重要）。
+
+
+
+##### Hash Join
+
+Hash Join是做大数据集连接时的常用方式，优化器使用两个表中较小（相对较小）的表利用Join Key在内存中建立散列表，然后扫描较大的表并探测散列表，找出与Hash表匹配的行。
+
+这种方式适用于较小的表完全可以放于内存中的情况，这样总成本就是访问两个表的成本之和。但是在表很大的情况下并不能完全放入内存，这时优化器会将它分割成若干不同的分区，不能放入内存的部分就把该分区写入磁盘的临时段，此时要求有较大的临时段从而尽量提高I/O 的性能。它能够很好的工作于没有索引的大表和并行查询的环境中，并提供最好的性能。大多数人都说它是Join的重型升降机。Hash  Join只能应用于等值连接(如WHERE A.COL3 = B.COL4)，这是由Hash的特点决定的。
+
+
+
+##### Merge Join
+
+通常情况下Hash Join的效果都比排序合并连接要好，然而如果两表已经被排过序，在执行排序合并连接时不需要再排序了，这时Merge Join的性能会优于Hash Join。Merge join的操作通常分三步：
+
+1. 对连接的每个表做table access full;
+2. 对table access full的结果进行排序。
+3. 进行merge join对排序结果进行合并。
+
+在全表扫描比索引范围扫描再进行表访问更可取的情况下，Merge Join会比Nested Loop性能更佳。当表特别小或特别巨大的时候，实行全表访问可能会比索引范围扫描更有效。Merge  Join的性能开销几乎都在前两步。Merge  Join可适于于非等值Join（>，<，>=，<=，但是不包含!=，也即<>）
+
+
+
+##### 对比
+
+| 类别     | Nested Loop                                                  | Hash Join                                                    | Merge Join                                                   |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 使用条件 | 任何条件                                                     | 等值连接（=）                                                | 等值或非等值连接(>，<，=，>=，<=)，‘<>’除外                  |
+| 相关资源 | CPU、磁盘I/O                                                 | 内存、临时空间                                               | 内存、临时空间                                               |
+| 特点     | 当有高选择性索引或进行限制性搜索时效率比较高，能够快速返回第一次的搜索结果。 | 当缺乏索引或者索引条件模糊时，Hash Join比Nested Loop有效。通常比Merge Join快。在数据仓库环境下，如果表的纪录数多，效率高。 | 当缺乏索引或者索引条件模糊时，Merge Join比Nested Loop有效。非等值连接时，Merge Join比Hash Join更有效 |
+| 缺点     | 当索引丢失或者查询条件限制不够时，效率很低；当表的纪录数多时，效率低。 | 为建立哈希表，需要大量内存。第一次的结果返回较慢。           | 所有的表都需要排序。它为最优化的吞吐量而设计，并且在结果没有全部找到前不返回数据。 |
+
+
+
+#### 查看执行计划
+
+##### autotrace
+
+```sql
+SQL> set autotrace trace exp;
+-- 解决显示结果格式凌乱
+-- 设置一行显示的字符数量，默认情况下显示80个字符
+SQL> set linesize 1000;
+-- 设置每一页的大小，从而控制每一页显示的数据量，最大值为50000，默认值为14
+SQL> set pagesize 100;
+SQL> select * from mytable;
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1015944200
+
+-----------------------------------------------------------------------------
+| Id  | Operation         | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |         |     3 |    18 |     3   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS FULL| MYTABLE |     3 |    18 |     3   (0)| 00:00:01 |
+-----------------------------------------------------------------------------
+```
+
+结果查看方式
+
+越靠右的越先执行，如果缩进一样，那上面的比下面的先执行。上面案例中的执行计划意思是：
+
+- 先把整个表扫描一遍，然后将select后面的字段返回。
+
+字段说明
+
+##### cost
+
+这里的cost是执行计划最重要的部分，是Oracle优化器根据他的数学模型和规则计算出来的。并不是实际的代价。
+
+执行计划中父级的代价是子集的和。
+
+rows
+
+Oracle估算出来的这一步可能返回的行数，并不是实际行数。在10gR2之前叫cardinality
+
+
+
+#### INDEX UNIQUE SCAN
+
+```sql
+SQL> select * from mytable where id = 1;
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3020342229
+
+--------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name         | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |              |     1 |     6 |     1   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| MYTABLE      |     1 |     6 |     1   (0)| 00:00:01 |
+|*  2 |   INDEX UNIQUE SCAN         | SYS_C0011111 |     1 |       |     0   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ID"=1)
+```
+
+由于这次是用主键字段id进行等值查询，执行计划就跟上面的不一样了。
+
+- 首先是使用唯一索引（SYS_C0011111）进行扫描，扫描到1行（rows=1）
+- 通过索引中的rowid去表中访问记录行。扫描到1行，字节是6字节。
+- 根据select后面的字段，返回数据给客户端。
+
+
+
+#### INDEX RANGE SCAN
+
+```sql
+SQL> select * from mytable where id < 10;
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1076573521
+
+--------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name         | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |              |     3 |    18 |     3   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| MYTABLE      |     3 |    18 |     3   (0)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN          | SYS_C0011111 |     3 |       |     1   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("ID"<10)
+```
+
+这次条件是一个范围用到的是INDEX RANGE SCAN 。
+
+- 首先是使用唯一索引（SYS_C0011111）进行范围扫描，扫描到3行（rows=1）
+- 通过索引中的rowid去表中访问记录行。扫描到3行，字节是18字节。
+- 根据select后面的字段，返回数据给客户端。
+
+
+
+#### INDEX FULL SCAN
+
+```sql
+SQL> select count(*) from mytable;
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 180710207
+
+-------------------------------------------------------------------------
+| Id  | Operation        | Name         | Rows  | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------
+|   0 | SELECT STATEMENT |              |     1 |     1   (0)| 00:00:01 |
+|   1 |  SORT AGGREGATE  |              |     1 |            |          |
+|   2 |   INDEX FULL SCAN| SYS_C0011111 |     3 |     1   (0)| 00:00:01 |
+-------------------------------------------------------------------------
+```
+
+
+
+#### INDEX fast full scan
+
+#### Index skip scan
+
+
+
+#### 并行
+
+执行计划里面出现PX就代表并行执行。具体要并行多少个线程，Oracle会自行决定。
+
+![image-20231123214145931](学习笔记-数据库-Gem.assets/image-20231123214145931.png)
+
+
+
+#### 优化器
+
+优化器是产生执行计划的地方，他主要有如下2种。
+
+RBO(8i之前) -Rule based optimizer
+
+一套死板的规则来控制数据的访问
+
+CBO(8i之后) -Cost based optimizer
+
+依据一套数据模型，计算数据访问和处理的成本，择最优成本为执行方案
+
+
+
+##### 工作模式
+
+all_rows  ---以结果集的全部处理完毕为目的
+
+select id,count(*) from t group by id,order by id.
+
+first_rows(n) --- 以最快返回n行为目的
+
+SELECT OBJECT_NAME
+
+FROM (
+
+​	SELECT ROWNUM RNOBJECT NAME
+
+​	FROM (
+
+​		SELECT OBJECT_NAME FROM TORDER BY OBJECT NAME
+
+​	) WHERE ROWNUM  =20
+
+) WHERE RN >= 11;
+
+
+
+##### 设置方式
+
+```sql
+-- 参数设置 一旦设置对整个实例所有会话都有效。
+optimizer_mode   string   ALL_ROWS
+
+-- 会话设置
+SQL> alter session set optimizer_mode = all_rows;
+
+-- SQL设置（hint）
+SQL> select /*+ all_rows */ count(*) from t;
+```
+
+
+
+##### clustering factor
+
+https://blog.csdn.net/leshami/article/details/8847959
+
+聚簇因子是 Oracle  统计信息中在CBO优化器模式下用于计算cost的参数之一，决定了当前的SQL语句是否走索引，还是全表扫描以及是否作为嵌套连接外部表等。如此这般，那到底什么是聚簇因子，那些情况下会影响到聚簇因子，以及如何提高聚簇因子？本文将对此展开描述。
+
+select index_name, clustering_factor from user_indexes where table_name = 'T';
+
+Oracle优化器使用这个参数
+
+
+
+##### 总结
+
+优化器是Oracle一个不断完善的数学模型
+
+每个版本的机制有较大的差异。
+
+I/0成本最为关键(执行计划)。
+
+无法对SQL进行智能优化。
 
 
 
 ### Hints
+
+Hints是用来约束型优化器行为的一种技术。
+
+优化器模式
+
+- all rows（推荐group by时使用）
+- first rows
+
+数据访问路径
+
+- 基于表的数据访问
+- 基于索引的数据访问表
+
+关联的方式
+
+- NL
+- MJ
+- HJ
+
+#### 使用范畴
+
+尽量避免在开发中使用。一旦用了，执行计划就固定下来了。存在风险。
+
+DBA用来辅助做性能排查和优化。
+
+
+
+#### 分类
+
+Oprimization Goals and approaches (2)
+ALL ROWS
+FIRST ROWS
+
+Access Path Hints (17)
+
+CLUSTER
+FUll
+HASH
+INDEX
+NO_INDEX
+INDEX_ASC
+INDEX_DESC
+INDEX_COMBINE
+INDEX_JOIN
+INDEX_FFS
+INDEX_SS
+INDEX_SS_ASC
+INDEX_SS_DESC
+NATIVE_FULL_OUTER_JOIN
+NO_NATIVE_FULL_OUTER_JOIN
+NO_INDEX_FFS
+NO_INDEX_SS
+
+other (20)
+
+APPEND
+NOAPPEND
+CACHE
+NOCACHE
+CURSOR SHARING EXACT
+DRIVING SITE
+DYNAMIC SAMPLING
+MODEL MINANALYSIS
+MoNITor
+NO MONITOR
+OPT PARAM
+PUSH PRED
+NO PUSH PRED
+PUSH SUBQ
+NO PUSH SUBQ
+PXJOIN FILTER
+NO PXJOIN FILTER
+
+QB NAME
+RESULTCACHE
+NO RESULT CACHE
+
+join Operation (7)
+
+USE HASH
+
+NO USE HASH
+
+USE MERGE
+NO USE MERGE
+USE NL
+USE NL WITH INDEX
+
+NO USE NL
+
+
+
+#### 访问路径Hints
+
+##### FULL
+
+/*+ FULL(t1) */，强制优化器使用全表扫描。全表扫描并不是总是性能最差的。如果要读的数据很多，全表扫描存在多块读以及并发的机制，并不一定比走索引差。
+
+##### INDEX
+
+/*+ INDEX(t1 index_name) */，强制优化器使用某一个索引。
+
+##### NO_INDEX
+
+/*+ NO_INDEX(t1 index_name) */，强制优化器不要使用某一个索引。
+
+##### INDEX_FFS
+
+FFS是fast full scan的意思。强制优化器使用索引并使用fast full scan方式扫描
+
+
 
 
 
