@@ -7074,7 +7074,7 @@ SQL> update mytable set value = 12 where id = 1;
        114 TX       655372       1504          6          0          1
 
 -- 视图v$session_wait可以更直观的看到哪些会话被阻塞了。
-SQL> select sid,event from v$session_wait where sid in (81, 114);
+SQL> select sid,event,state from v$session_wait where sid in (81, 114);
 
 
 -- 提交事务 114
@@ -7680,13 +7680,415 @@ FFS是fast full scan的意思。强制优化器使用索引并使用fast full sc
 
 ### 等待事件
 
+#### 简单的等待事件案例
+
+当我们使用sqlplus登录oracle之后。会产生一个等待事件。这一般情况是正常的。
+
+```sql
+SQL> select distinct(sid) from v$mystat;
+       SID
+----------
+        66
+
+SQL> select sid,event,state from v$session_wait where sid = 66;
+
+       SID     EVENT                          STATE
+---------- ------------------------------   ----------------------------------------------------------
+        66   SQL*Net message to client      WAITED SHORT TIME                                                                                         
+```
 
 
 
+#### 等待产生场景
 
-### 索引和分区
+1. 请求的资源太忙，需要等待资源释放
+2. 会话处于空闲状态，等待新的任务
+3. 会话被阻塞，需要等待阻塞解除
 
-(包括11g下新的组合分区)地8周分析及动态采样(包括11g下的extended statistics技术)
+
+
+#### 等待说明
+
+- 数据库处理数据，只要有时间的消耗，就会有等待事件
+- 性能和等待是一个矛盾体
+- 理解出现某种等待事件的原因
+- 结合业务，主观的看待等待事件
+  - 制定基线(baseline)发现异常等待事件
+  - 接受合理的等待事件
+
+总之，等待是不是性能问题引起的。需要具体问题具体分析了。
+
+
+
+#### 等待原因定位
+
+##### 10046 event
+
+http://blog.itpub.net/29320885/viewspace-1223962
+
+
+
+##### v$session_wait
+
+例如：某个用户反馈说，他现在用的功能非常慢，需要查原因。就可以用这个视图来查询一下是哪个事件在等待。
+
+一个功能比较慢，在这个会话中可以这么查。（注意，只有当功能正在执行时才能查到）
+
+```sql
+-- 使用功能相关的用户登录数据库，
+select distinct sid from v$mystat;
+
+-- 查询会话有哪些等待事件
+select sid,event,state from v$session_wait where sid in (1,2);
+
+-- 以下是可能遇到的事件
+SID  EVENT
+---  --------------------------
+166  db file sequential read
+166  log file switch <archiving needed>
+```
+
+在v$session_wait中还有P1，P2，P3相关字段。分别代表等待事件的不同参数。
+
+不同的事件参数是不一样的。其中P1代表文件id，P2代表数据块号，P3代表读取的数据块号。
+
+```sql
+-- 查询等待事件的参数
+select sid,event,state,p1,p1text,p2,p2text,p3,p3text from v$session_wait where sid in (1,2);
+```
+
+
+
+##### v$session_event
+
+这张视图里面有所有事件信息，不仅仅是等待状态的。
+
+```sql
+select event,total_waits from v$session_event where sid in (165);
+
+EUENT                              TOTAL_WAITS
+--------------------------------   -------------------------
+Disk file operations I/0            3
+log file switch completion          4
+log file sync                       2
+Ib file sequential read             1622
+dh file scattered read              31
+direct path read                    178
+SQLxNet message to client           33
+SQLxNet message from client         32
+3QLaNet break/reset to client       32
+Otherevents in waitclass            25
+```
+
+
+
+##### v$system_event
+
+和上面的视图雷同，但是这个是实例级的。上面是会话级的。
+
+
+
+##### AWR报告(v$system_event)
+
+Top 5 Timed Events（前5位的）
+
+![1](https://ask.qcloudimg.com/http-save/7525075/i6s4gwzi98.png)
+
+Event 代表事件的名称
+
+Waits代表 该事件等待的次数，CPU Time不适用
+
+Time(s)代表该事件等待的总时间，单位为秒
+
+Avg Wait(ms) 代表平均等待时间(Time(s)/Waits)，单位为毫秒
+
+% Total Call Time 代表该事件占整个Call Time的比例，该栏位从10g开始提供
+
+Wait Class 代表等待事件的类型，该栏位从10g开始提供
+
+常见的**Wait Class** 如下
+
+**Administrative**
+
+由于DBA命令导致的等待(如 重建索引)
+
+Waits resulting from DBA commands that cause users to wait (for example, an index rebuild)
+
+------
+
+**Application**
+
+用户程序代码导致的等待(如 锁等待)
+
+Waits resulting from user application code (for example, lock waits caused by row level locking or explicit lock commands)
+
+------
+
+**Cluster**
+
+和RAC 资源相关的等待(如gc cr block busy)
+
+Waits related to Real Application Cluster resources (for example, global cache resources such as ‘gc cr block busy’)
+
+------
+
+**Commit**
+
+这个等待只包含log file sync
+
+This wait class only comprises one wait event - wait for redo log write confirmation after a commit (that is, ‘log file sync’)
+
+------
+
+**Concurrency**  数据库内部资源的等待(如latches)
+
+Waits for internal database resources (for example, latches)
+
+------
+
+**Configuration**
+
+由于配置不正确导致的等待(如日志文件大小和共享池大小)
+
+Waits caused by inadequate configuration of database or instance resources (for example, undersized log file sizes, shared pool size)
+
+------
+
+**Idle**
+
+空闲等待，一般不需要关注，但有的需要查看,如DB-LINK相关的
+
+Waits that signify the session is inactive, waiting for work (for example, ‘SQL*Net message from client’)
+
+------
+
+**Network**
+
+和网络传输相关的等待
+
+Waits related to network messaging (for example, ‘SQL*Net more data to dblink’)
+
+------
+
+**Other**
+
+一些不会发生在系统层面的等待
+
+Waits which should not typically occur on a system (for example, ‘wait for EMON to spawn’)
+
+------
+
+**Scheduler**
+
+资源管理相关的等待
+
+Resource Manager related waits (for example, ‘resmgr: become active’)
+
+------
+
+**System I/O**
+
+后台进程IO相关的等待
+
+Waits for background process IO (for example, DBWR wait for ‘db file parallel write’)
+
+------
+
+**User I/O**
+
+重要： 和用户IO 相关的等待(如db file sequential read 等)  Waits for user IO (for example ‘db file sequential read’)
+
+
+
+#### 常见等待事件
+
+##### idle wait events
+
+进程由于无事可做，等待分派任务
+空等待一般意味着空闲。有时，还意味着其它的事情.
+案例1：当前会话请求了一个热块资源，但是整个系统很忙释放不了这个资源，导致了空闲等待事件。
+
+就好像整条路的车都堵死了，单独去看排在后面的车，可能会发现司机很闲还在玩手机。
+
+所以空闲等待也要结合具体场景下去分析。
+
+案例2：在并发读取的场景下，多个子进程都在通过IO读取数据，然后父进程由于接受不到数据而处于空闲状态。
+
+
+
+##### CPU等待
+
+CPU不属于等待事件。可以通过awr报告查看，其中的CPU time就是。注意：要真正利用好这些数据，最好能做一个基线，然后判断当前数据和基线的偏移量来做判断，才会相对比较准确。
+
+![1](https://ask.qcloudimg.com/http-save/7525075/i6s4gwzi98.png)
+
+
+
+##### db file scattered read
+
+scattered read指的是散列读。指的是Oracle读取数据放到内存中的时候不一定是连续的。
+
+当数据块以multiblock read的行式被读取到SGA中时。一般有以下场景会进行multiblock read
+
+- FTS(full table scan)
+- IFFS(index fast full scan)
+- 一次性读取的数据量配置：db_file_multiblock_read_count
+
+案例：如下的t表没有建索引，所以虽然用的是等值查询，但还是全表扫描，从而触发了这个等待事件
+
+![image-20231124220733183](学习笔记-数据库-Gem.assets/image-20231124220733183.png)
+
+**等待事件解决**
+
+- 无需解决
+  - 部分等待事件是正常的，从磁盘读取数据到内存本身就是要时间的。所以必然会产生等待事件。
+  - 上文提到了，首先要建立基线，如果严重超出基线的等待才需要解决。
+- 考虑建索引
+  - 如果对原表的全表扫描导致了长时间等待，这个时候就考虑建索引。
+- 考虑并行
+  - 如果索引已经建了。或者访问的数据确实比较多。那可以考虑并行。尤其是全表扫描。
+  - 使用并行时要充分考虑系统性能，并发过高超出系统可支持的范围会导致更严重的性能问题。
+
+
+
+##### DB File Sequential Read
+
+当把一个数据块读入SGA时，发生db file sequential等待
+
+单数据块的读，通常指索引的读取，但不绝对。
+
+- 有些索引读取会发生db file scattered read等待。
+- 有时候表的读取会发生db file sequential等待。
+- undo的读取，会使用DB File Sequential.
+
+以下案例使用了hint强制走索引，模拟产生了DB File Sequential Read
+
+![image-20231124221758010](学习笔记-数据库-Gem.assets/image-20231124221758010.png)
+
+**如何解决**
+
+- 无需解决
+- SQL语句的效率
+- 考虑其它方式的索引
+  - 复合索引
+  - 位图索引，例如：给一个重复率高的字段建立B树索引。
+  - 全文索引
+- 全表扫描+并行
+- 改善磁盘I/0，例如：换成固态硬盘。
+
+
+
+##### Direct Path Read
+
+- 数据被直接读取到PGA内存中时，发生的等待
+  - 排序数据由于内存不足，被写到磁盘上(temp表空间数据文件，然后重新读取时
+  - 并行操作的slave进程的数据读取
+  - 其它的属于某个会话私有数据的读取操作。
+- 参数说明
+  - P1，读取的文件ID
+  - P2，读取开始的数据块ID
+  - P3，读取的数据块数量
+
+
+
+##### Log File Sync
+
+用户commit或者rollback时，lgwr需要将log buffer的数据写到log file上面，发生的等待事件。
+
+出现这个事件，意味提交太频繁。可能在进行批量业务操作。
+
+参数说明
+
+P1，写入文件的数据块数I
+P2，无
+P3，无
+
+> WAIT #16: nam='log file sync' ela= 1286 buffer#=11910 p2=0 p3=0
+
+**如何解决**
+
+减少commit的频率（错误的频繁提交）。例如：在循环中开启事务，提交事务。
+
+如果业务确实只能分批提交或者系统确实有很高的并发操作，那就只能提高磁盘I/O性能了。
+
+
+
+##### Buffer Busy Waits
+
+内存中对相同的数据（热块）有多个并发请求时，导致这个等待
+
+参数说明
+
+P1，读取数据块所在的文件ID
+
+P2，读取的数据块ID
+
+P3，等待类型(classid)
+
+解决。如果是热块
+
+segment header--ASSM
+
+data block--ASSM，反向索引。
+
+undo header-- automatic undo management
+
+undo block---增大回滚段
+
+
+
+##### free buffer waits
+
+server process无法找一个可用的内存空间
+
+- 系统I/O成为瓶颈或者性能不够。
+- 等待资源latch争用
+- SGA太小
+- SGA太大，脏数据太多，dbwr无法快速的把脏数据刷到磁盘上
+
+参数说明
+
+- P1，读取数据块所在的文件ID
+- P2，读取的数据块ID
+- P3，无
+
+解决
+
+- 优化I/O
+- 提高I/O通道的性能。
+- 异步I/0
+- 增加多个dbwr进程。
+- 增大SGA
+
+
+
+### 索引
+
+#### 索引目的
+
+提升数据访问效率，来看下面的案例，同样是根据id=100这个条件来访问表t，左边使用了索引，右边使用的是全表扫描
+
+![image-20231125204452058](学习笔记-数据库-Gem.assets/image-20231125204452058.png)
+
+从图下面的统计信息中可以看出，使用索引只有3次一致性读，而使用全表扫描用了375次读。
+
+使用索引的3次一致性读细节，大概如下：
+
+1. 访问到B树索引的根，root。
+2. 经过根找支，在找到数据所在的叶。
+3. 通过索引上记录的rowid去表里找到要找的数据。
+
+为什么全表扫描用了这么多次一致性读？
+
+id等于100的数据不一定就存在第100的位置，Oracle为了读到这个数据要遍历表里面的所有数据块。一个数据块可能是1行，多行，也可能不到一行。
+
+
+
+#### 索引类型
+
+- B-tree索引 B树索引
+- Bitmap索引 位图索引，主要用于存储选择性低的字段。
+- TEXT index 全文索引，通过拆词拆分来存储大文本。
 
 
 
