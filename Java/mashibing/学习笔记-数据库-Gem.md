@@ -5551,7 +5551,7 @@ CREATE  USER dpb IDENTIFIED BY  123456 ACCOUNT UNLOCK;
 
 
 
-## SQL使用
+## 功能使用
 
 ### DQL
 
@@ -5633,7 +5633,304 @@ full join tableB b on a.bid = b.id
 
 
 
-## 高级特性
+### 触发器
+
+#### 1.触发器的基本讲解
+
+&emsp;&emsp;当特定事件出现时自动执行的存储过程
+
+语法结构
+
+```sql
+CREATE [OR REPLACE] TRIGGER trigger_name
+AFTER | BEFORE | INSTEAD OF
+[INSERT] [[OR] UPDATE [OF column_list]] 
+[[OR] DELETE]
+ON table_or_view_name
+[REFERENCING {OLD [AS] old / NEW [AS] new}]
+[FOR EACH ROW]
+[WHEN (condition)]
+declare
+begin
+end;
+```
+
+案例：对学生表进行增加删除修改后打印一句  操作成功
+
+```sql
+create or replace trigger trigger01
+after insert or update or delete on t_student
+declare
+   
+begin
+   dbms_output.put_line('操作成功');
+end ;
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/5c4f229453584703904b28b59256fce0.png)
+
+#### 2.触发器的类型
+
+##### 2.1 语句级触发器
+
+&emsp;关注的是执行了这条语句
+
+案例：创建一个对学生表的增删改的审计触发器
+
+准备表
+
+```sql
+CREATE TABLE t_audit_table
+(
+  stablename varchar2(30),
+  nins number,--记录添加次数
+  nupd number,--记录修改次数
+  ndel number,--记录删除次数
+  startdate date,
+  enddate date
+)
+```
+
+实现：
+
+```sql
+create or replace trigger trigger02
+    after insert or delete or update on t_student
+    declare
+       v_count number(3);
+    begin
+        -- 先判断t_student在这个日志表中是否有这条记录，如果没有，要先插入数据
+        select count(*) into v_count from t_audit_table where stablename='t_student';
+        if v_count<=0 then
+             insert into t_audit_table(stablename,nins,nupd,ndel) values('t_student', 0,0 ,0);
+        end if;
+  
+        if inserting then
+            update t_audit_table set nins=nins+1 where stablename='t_student';
+        end if;
+        if updating then
+             update t_audit_table set nupd=nupd+1 where stablename='t_student';
+        end if;
+        if deleting then
+            update t_audit_table set ndel=ndel+1 where stablename='t_student';
+        end if;
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/5ca7d187910441b4a2a2bacb16f50b7f.png)
+
+##### 2.2 行级触发器
+
+&emsp;&emsp;和影响的行数：影响了多少行数据。那么这个触发器就会触发多少次
+
+```sql
+create or replace trigger trigger02
+    after insert or delete or update on t_student
+    FOR EACH ROW
+    declare
+       v_count number(3);
+    begin
+        -- 先判断t_student在这个日志表中是否有这条记录，如果没有，要先插入数据
+        select count(*) into v_count from t_audit_table where stablename='t_student';
+        if v_count<=0 then
+             insert into t_audit_table(stablename,nins,nupd,ndel) values('t_student', 0,0 ,0);
+        end if;
+  
+        if inserting then
+            update t_audit_table set nins=nins+1 where stablename='t_student';
+        end if;
+        if updating then
+             update t_audit_table set nupd=nupd+1 where stablename='t_student';
+        end if;
+        if deleting then
+            update t_audit_table set ndel=ndel+1 where stablename='t_student';
+        end if;
+  
+```
+
+##### 2.3 限制行级触发器
+
+&emsp;&emsp;对部分数据做特定的处理，比如：不能删除管理员
+
+```sql
+create or replace trigger trigger03
+   before  delete on t_student
+    for each row
+    when(old.stuname='小李6')  
+  declare
+  begin
+         dbms_output.put_line('班长不能被删除');
+   
+        RAISE_APPLICATION_ERROR(-20001, '班长不能被删除');
+  end;
+```
+
+![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/8bbcee36b1fb48b48b6cb7b7961c9e25.png)
+
+### 视图和索引
+
+#### 1. 视图
+
+##### 1.1 视图的介绍
+
+**&emsp;&emsp;视图** 是一种数据库对象，是从 一个或者多个 数据表或视图中导出的  **虚表** 。
+
+1. 视图所对应的数据，  **并不是真正的存储在 视图 中** ，而是 **存储在所引用的数据表** 中。
+2. 视图的结构和数据，是对数据表进行查询的结果。
+
+&emsp;&emsp;根据创建视图时给定的条件，视图可以是一个数据表的一部分，也可以是多个基表的联合。它存储了要执行检索的  **查询语句的定义** ，以便在引用该视图时使用。
+
+使用视图的优点:
+
+* 简化数据操作：视图可以简化用户处理数据的方式。
+* 着重于特定数据：不必要的数据 或 敏感数据，可以不出现在视图中。视图提供了一个简单而有效的安全机制，可以定制不同用户对数据的访问权限。
+* 提供向后兼容性：视图使用户能够在表的架构更改时，为表创建向后兼容接口。
+* 集中分散数据。
+* 简化查询语句。
+* 重用SQL语句。
+* 保护数据安全。
+* 共享所需数据。
+* 更改数据格式。
+
+##### 1.2 视图的语法
+
+```sql
+CREATE [OR REPLACE] [FORCE] VIEW '视图名'
+AS '子查询'
+[WITH [CASCADED|LOCAL] CHECK OPTION]
+-- 只读。
+[WITH READ ONLY] 
+
+```
+
+说明：
+OR REPLACE：若所创建的试图已经存在，Oracle 自动重建该视图
+FORCE：不管基表是否存在，Oracle 都会自动创建该视图
+sub_query：一条完整的 SELECT 语句，可以在该语句中定义别名
+WITH CHECK OPTION：数据表 插入或修改 的数据行，必须满足视图定义的约束
+WITH READ ONLY：该视图上不能进行任何 DML 操作
+
+简单案例
+
+```sql
+CREATE OR REPLACE VIEW v_student
+AS 
+SELECT * FROM t_student
+WHERE age >= 18
+WITH CHECK OPTION;
+```
+
+查看视图
+
+```sql
+select * from v_student
+```
+
+删除视图
+
+```sql
+DROP VIEW [IF EXISTS] '视图名'[,'视图名2'] ... [RESTRICT|CASCADE];
+-- RESTRICT：限制。
+-- CASCADE：级联。
+
+DROP VIEW 'view_name'; 
+
+```
+
+##### 1.3 视图案例
+
+###### 1.3.1 简单视图
+
+如果视图中的语句只是  **单表查询** ，并且  **没有聚合函数** ，我们就称之为  **简单视图** 。
+
+```sql
+-- 1.简单视图：针对单表查询。没有使用聚合函数，这一类的视图我们就称为简单视图
+create or replace view v_t_student
+as
+select * from t_student;
+
+select * from v_t_student where id = 1;
+-- 简单视图可以像普通的表结构那样去使用。不仅可以查询。还可以DML操作,本质还是对物理表做的DML操作
+update v_t_student set age = 22 where id = 1;
+```
+
+###### 1.3.2 带检查约束视图
+
+&emsp;&emsp;视图的数据可能只是原来数据的一部分。那么我们做更新处理的时候也不能超过数据的访问
+
+```sql
+create or replace view v_t_student
+as
+select * from t_student where id in (1,2,3,4,5)
+with check option;
+
+select * from v_t_student;
+
+update v_t_student set age = 33 where id = 306;
+```
+
+###### 1.3.3 只读视图
+
+&emsp;&emsp;有些情况下我们为了保证数据的安全。访问改视图的用户我们不允许做DML操作。这时我们可以添加 with read only 关键字
+
+```
+-- 只读视图：有些情况下我们为了保证数据的安全。访问改视图的用户我们不允许做DML操作。这时我们可以添加 with read only 关键字
+create or replace view v_t_student
+as
+select id,name from t_student
+with read only; -- 表示该视图只读
+```
+
+###### 1.3.4 带错误视图
+
+&emsp;&emsp;有的时候。创建视图的时候，表可能并不存在。创建视图后可能存在。如果此时我们需要创建这样的视图，那么需要添加 `force` 关键字
+
+```sql
+create or replace force view v_t_student
+as
+select id,name from t_student1
+with read only; -- 表示该视图只读
+```
+
+###### 1.3.5 复杂视图
+
+&emsp;&emsp;在视图的SQL语句中。有聚会函数或者多表关联查询。
+
+```sql
+-- 复杂视图
+create or replace view v_student1
+as
+select t1.id,t1.name,t2.name className
+from t_student t1 left join t_class t2
+on t1.class_id = t2.id;
+
+select * from v_student1;
+-- 在复杂视图中。我们可以DML操作主表。不能对从表做处理
+update v_student1 set name = '波哥' where id = 4;
+update v_student1 set classname = 'aa' where id = 302;
+--复杂视图还有 聚合函数的使用-这种情况肯定不能DML操作了
+create or replace view v_student1
+as
+select count(1) num ,avg(age) avgage from t_student;
+select * from v_student1;
+```
+
+
+#### 2.索引
+
+&emsp;&emsp;索引是建立在表的一列或多个列上的辅助对象，目的是加快访问表中的数据；Oracle存储索引的数据结构是B树，位图索引也是如此，只不过是叶子节点不同B数索引；索引由根节点、分支节点和叶子节点组成，上级索引块包含下级索引块的索引数据，叶节点包含索引数据和确定行实际位置的rowid。
+
+语法：
+
+```
+create [unique | bitmap] index [schema.] 索引名
+on [schema.] 表名 (列名1, .., 列名N);
+```
+
+
+
+
+
+## PLSQL编程
 
 ### 一、PLSQL编程
 
@@ -6546,454 +6843,9 @@ end;
 select pak01.myfun02 from dual;
 ```
 
-### 四、触发器
 
-#### 1.触发器的基本讲解
 
-&emsp;&emsp;当特定事件出现时自动执行的存储过程
-
-语法结构
-
-```sql
-CREATE [OR REPLACE] TRIGGER trigger_name
-AFTER | BEFORE | INSTEAD OF
-[INSERT] [[OR] UPDATE [OF column_list]] 
-[[OR] DELETE]
-ON table_or_view_name
-[REFERENCING {OLD [AS] old / NEW [AS] new}]
-[FOR EACH ROW]
-[WHEN (condition)]
-declare
-begin
-end;
-```
-
-案例：对学生表进行增加删除修改后打印一句  操作成功
-
-```sql
-create or replace trigger trigger01
-after insert or update or delete on t_student
-declare
-   
-begin
-   dbms_output.put_line('操作成功');
-end ;
-```
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/5c4f229453584703904b28b59256fce0.png)
-
-#### 2.触发器的类型
-
-##### 2.1 语句级触发器
-
-&emsp;关注的是执行了这条语句
-
-案例：创建一个对学生表的增删改的审计触发器
-
-准备表
-
-```sql
-CREATE TABLE t_audit_table
-(
-  stablename varchar2(30),
-  nins number,--记录添加次数
-  nupd number,--记录修改次数
-  ndel number,--记录删除次数
-  startdate date,
-  enddate date
-)
-```
-
-实现：
-
-```sql
-create or replace trigger trigger02
-    after insert or delete or update on t_student
-    declare
-       v_count number(3);
-    begin
-        -- 先判断t_student在这个日志表中是否有这条记录，如果没有，要先插入数据
-        select count(*) into v_count from t_audit_table where stablename='t_student';
-        if v_count<=0 then
-             insert into t_audit_table(stablename,nins,nupd,ndel) values('t_student', 0,0 ,0);
-        end if;
-  
-        if inserting then
-            update t_audit_table set nins=nins+1 where stablename='t_student';
-        end if;
-        if updating then
-             update t_audit_table set nupd=nupd+1 where stablename='t_student';
-        end if;
-        if deleting then
-            update t_audit_table set ndel=ndel+1 where stablename='t_student';
-        end if;
-```
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/5ca7d187910441b4a2a2bacb16f50b7f.png)
-
-##### 2.2 行级触发器
-
-&emsp;&emsp;和影响的行数：影响了多少行数据。那么这个触发器就会触发多少次
-
-```sql
-create or replace trigger trigger02
-    after insert or delete or update on t_student
-    FOR EACH ROW
-    declare
-       v_count number(3);
-    begin
-        -- 先判断t_student在这个日志表中是否有这条记录，如果没有，要先插入数据
-        select count(*) into v_count from t_audit_table where stablename='t_student';
-        if v_count<=0 then
-             insert into t_audit_table(stablename,nins,nupd,ndel) values('t_student', 0,0 ,0);
-        end if;
-  
-        if inserting then
-            update t_audit_table set nins=nins+1 where stablename='t_student';
-        end if;
-        if updating then
-             update t_audit_table set nupd=nupd+1 where stablename='t_student';
-        end if;
-        if deleting then
-            update t_audit_table set ndel=ndel+1 where stablename='t_student';
-        end if;
-  
-```
-
-##### 2.3 限制行级触发器
-
-&emsp;&emsp;对部分数据做特定的处理，比如：不能删除管理员
-
-```sql
-create or replace trigger trigger03
-   before  delete on t_student
-    for each row
-    when(old.stuname='小李6')  
-  declare
-  begin
-         dbms_output.put_line('班长不能被删除');
-   
-        RAISE_APPLICATION_ERROR(-20001, '班长不能被删除');
-  end;
-```
-
-![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/8bbcee36b1fb48b48b6cb7b7961c9e25.png)
-
-### 五、视图和索引
-
-#### 1. 视图
-
-##### 1.1 视图的介绍
-
-**&emsp;&emsp;视图** 是一种数据库对象，是从 一个或者多个 数据表或视图中导出的  **虚表** 。
-
-1. 视图所对应的数据，  **并不是真正的存储在 视图 中** ，而是 **存储在所引用的数据表** 中。
-2. 视图的结构和数据，是对数据表进行查询的结果。
-
-&emsp;&emsp;根据创建视图时给定的条件，视图可以是一个数据表的一部分，也可以是多个基表的联合。它存储了要执行检索的  **查询语句的定义** ，以便在引用该视图时使用。
-
-使用视图的优点:
-
-* 简化数据操作：视图可以简化用户处理数据的方式。
-* 着重于特定数据：不必要的数据 或 敏感数据，可以不出现在视图中。视图提供了一个简单而有效的安全机制，可以定制不同用户对数据的访问权限。
-* 提供向后兼容性：视图使用户能够在表的架构更改时，为表创建向后兼容接口。
-* 集中分散数据。
-* 简化查询语句。
-* 重用SQL语句。
-* 保护数据安全。
-* 共享所需数据。
-* 更改数据格式。
-
-##### 1.2 视图的语法
-
-```sql
-CREATE [OR REPLACE] [FORCE] VIEW '视图名'
-AS '子查询'
-[WITH [CASCADED|LOCAL] CHECK OPTION]
--- 只读。
-[WITH READ ONLY] 
-
-```
-
-说明：
-OR REPLACE：若所创建的试图已经存在，Oracle 自动重建该视图
-FORCE：不管基表是否存在，Oracle 都会自动创建该视图
-sub_query：一条完整的 SELECT 语句，可以在该语句中定义别名
-WITH CHECK OPTION：数据表 插入或修改 的数据行，必须满足视图定义的约束
-WITH READ ONLY：该视图上不能进行任何 DML 操作
-
-简单案例
-
-```sql
-CREATE OR REPLACE VIEW v_student
-AS 
-SELECT * FROM t_student
-WHERE age >= 18
-WITH CHECK OPTION;
-```
-
-查看视图
-
-```sql
-select * from v_student
-```
-
-删除视图
-
-```sql
-DROP VIEW [IF EXISTS] '视图名'[,'视图名2'] ... [RESTRICT|CASCADE];
--- RESTRICT：限制。
--- CASCADE：级联。
-
-DROP VIEW 'view_name'; 
-
-```
-
-##### 1.3 视图案例
-
-###### 1.3.1 简单视图
-
-如果视图中的语句只是  **单表查询** ，并且  **没有聚合函数** ，我们就称之为  **简单视图** 。
-
-```sql
--- 1.简单视图：针对单表查询。没有使用聚合函数，这一类的视图我们就称为简单视图
-create or replace view v_t_student
-as
-select * from t_student;
-
-select * from v_t_student where id = 1;
--- 简单视图可以像普通的表结构那样去使用。不仅可以查询。还可以DML操作,本质还是对物理表做的DML操作
-update v_t_student set age = 22 where id = 1;
-```
-
-###### 1.3.2 带检查约束视图
-
-&emsp;&emsp;视图的数据可能只是原来数据的一部分。那么我们做更新处理的时候也不能超过数据的访问
-
-```sql
-create or replace view v_t_student
-as
-select * from t_student where id in (1,2,3,4,5)
-with check option;
-
-select * from v_t_student;
-
-update v_t_student set age = 33 where id = 306;
-```
-
-###### 1.3.3 只读视图
-
-&emsp;&emsp;有些情况下我们为了保证数据的安全。访问改视图的用户我们不允许做DML操作。这时我们可以添加 with read only 关键字
-
-```
--- 只读视图：有些情况下我们为了保证数据的安全。访问改视图的用户我们不允许做DML操作。这时我们可以添加 with read only 关键字
-create or replace view v_t_student
-as
-select id,name from t_student
-with read only; -- 表示该视图只读
-```
-
-###### 1.3.4 带错误视图
-
-&emsp;&emsp;有的时候。创建视图的时候，表可能并不存在。创建视图后可能存在。如果此时我们需要创建这样的视图，那么需要添加 `force` 关键字
-
-```sql
-create or replace force view v_t_student
-as
-select id,name from t_student1
-with read only; -- 表示该视图只读
-```
-
-###### 1.3.5 复杂视图
-
-&emsp;&emsp;在视图的SQL语句中。有聚会函数或者多表关联查询。
-
-```sql
--- 复杂视图
-create or replace view v_student1
-as
-select t1.id,t1.name,t2.name className
-from t_student t1 left join t_class t2
-on t1.class_id = t2.id;
-
-select * from v_student1;
--- 在复杂视图中。我们可以DML操作主表。不能对从表做处理
-update v_student1 set name = '波哥' where id = 4;
-update v_student1 set classname = 'aa' where id = 302;
---复杂视图还有 聚合函数的使用-这种情况肯定不能DML操作了
-create or replace view v_student1
-as
-select count(1) num ,avg(age) avgage from t_student;
-select * from v_student1;
-```
-
-
-#### 2.索引
-
-&emsp;&emsp;索引是建立在表的一列或多个列上的辅助对象，目的是加快访问表中的数据；Oracle存储索引的数据结构是B树，位图索引也是如此，只不过是叶子节点不同B数索引；索引由根节点、分支节点和叶子节点组成，上级索引块包含下级索引块的索引数据，叶节点包含索引数据和确定行实际位置的rowid。
-
-语法：
-
-```
-create [unique | bitmap] index [schema.] 索引名
-on [schema.] 表名 (列名1, .., 列名N);
-```
-
-
-
-## 性能优化
-
-### 综述
-
-积极分析业务，从业务角度思考问题。
-
-#### 性能优化原则
-
-- 不是所有数据库都需要（能够）优化
-- 数据库的性能，大多数都不是数据库层面能够解决的。
-  - 在功能设计的时候，就要尽可能考虑性能。有些功能，能够预见到性能问题的尽量多和用户沟通。
-  - 一旦业务确定SQL确定了，可以优化的空间就相对较少了。即使DBA也不能轻易更改SQL的业务逻辑。
-- 在不了解业务之前，不可能找到正确的优化思路。
-- 优化要有个度，并不是“没有最优，只有更优”。
-
-
-
-#### 导致性能问题的可能原因
-
-- 表没有正确的创建索引----错误的执行计划
-- 表没有及时的分析-------错误的执行计划
-- 热块-------数据块的争用(反向索引?)
-- 锁的阻塞------业务设计缺陷
-  - 例如：一个事务更新了某一行数据后，迟迟没有提交。导致这一行锁定。
-- SQL解析消耗大量CPU----变量绑定
-  - 数据库每分钟要处理上万条SQL，而这些SQL都没有变量绑定，导致每次都要硬解析。
-- 低效的SQL-----SQL自身的问题
-  - 功能在开发过程中就完全没考虑性能，只是考虑功能。后期问题就会主键暴露。
-- 数据库整体负载过程----架构设计的问题
-  - 数据库设计时，没有对数据库的总体容量，并发量做一个总体预估。
-
-
-
-#### 性能问题定位
-
-原则，尽可能从小范围分析问题。
-
-- SQL层
-
-  - 如果已经能定位到某个SQL有问题，就不要从会话层面分析
-  - 工具：执行计划，10053(分析执行计划的产生),10046(分析SQL资源消耗情况)...
-- 会话层
-
-  - 会话层的意思是找到是哪个用户引起了性能问题。也是最常用的。
-  - 如果能定位到会话，就不要从系统层面分析
-    - `V$SESSION,V$SESSTAT,V$SESSION WAIT,V$SQL,V$LOCK，SQL_TRACE`
-- 系统层
-
-  - 如果上述办法无法定位到性能问题，那从系统层面入手
-    - AWR (8i可以用STATSPACK)，OS Tools(TOP，IOSTAT....)
-
-
-
-#### 不要迷恋优化器
-
-不要迷信优化器，优化器永远无法知道你的业务需求
-
-优化器永远无法按照你的业务需求来重写你的SQL语句
-
-优化器只能在数学(集合)逻辑上做SQL的重写
-
-高效的SOL来自于对业务的理解和对SOL执行过程的理解
-
-##### 窗口函数案例1
-
-假设现在有这样一张表mytable，字段（id，value）。现在要求返回每一行的叠加值。如下表格：
-
-| id（主键） | value（非空） | sum（每一行累加） |
-| ---------- | ------------- | ----------------- |
-| 1          | 10            | 10                |
-| 2          | 20            | 30                |
-| 3          | 15            | 45                |
-
-第一版SQL如下：
-
-```sql
--- 查询sql
-select t1.id, t1.value, sum(t2.value) as sum
-from mytable t1
-join mytable t2 on t2.id <= t1.id
-GROUP BY t1.id, t1.value
-
--- ----------------------------
--- Table structure for MYTABLE
--- ----------------------------
-DROP TABLE "SCOTT"."MYTABLE";
-CREATE TABLE "SCOTT"."MYTABLE" (
-  "ID" NUMBER(16,0) NOT NULL,
-  "VALUE" NUMBER NOT NULL
-);
-
--- ----------------------------
--- Records of MYTABLE
--- ----------------------------
-INSERT INTO "SCOTT"."MYTABLE" VALUES ('1', '10');
-INSERT INTO "SCOTT"."MYTABLE" VALUES ('2', '20');
-INSERT INTO "SCOTT"."MYTABLE" VALUES ('3', '15');
-```
-
-通过解释计划分析，这个SQL有2次全表扫描，并且一致性读（consistent get）有14次
-
-```sql	
--- 执行计划
-SELECT STATEMENT ()		ALL_ROWS	9	1	52				
- HASH (GROUP BY)			       9	1	52				
-  MERGE JOIN ()			      8	1	52				
-   SORT (JOIN)			         4	3	78				
-    TABLE ACCESS (FULL)	MYTABLE		3	3	78				
-   SORT (JOIN)			         4	3	78			INTERNAL_FUNCTION("T2"."ID")<=INTERNAL_FUNCTION()
-    TABLE ACCESS (FULL)	MYTABLE		3	3	78			
-
--- 统计结果
-0   recursive calls
-0   db block gets
-14   consistent gets
-```
-
-通过上文可以知道Oracle是基于CBO来执行SQL语句的并不是基于业务，他并不知道这个SQL要实现什么样的功能。上面的执行计划就是他基于目前的这个SQL和给出的成本最优的执行方式。但其实这个业务还有其他的SQL实现方式，可以使用窗口函数。例如：
-
-```sql
--- 窗口函数实现
-select t1.id, t1.value, sum(t1.value) over(order by id) as sum
-from mytable t1
-
--- 新的执行计划
-SELECT STATEMENT ()		ALL_ROWS	4	3	78				
- WINDOW (SORT)	 		            4   3  	78				
-  TABLE ACCESS (FULL)	MYTABLE		3	3	78		
-
--- 统计结果
-0   recursive calls
-0   db block gets
-7   consistent gets
-```
-
-从结果上可以看出consistent gets变成了7，比原来下降了一半，执行计划比之前简单了很多，全表扫描也变成了1次。性能是显著提高了。但是CBO自己是无法自动改写SQL的，他只能基于SQL去优化。这个只能靠写SQL语句的人后期优化SQL的人来完成。
-
-
-
-#### 为什么高效的SQL难写
-
-- SQL语句本质是对数据集合的一种操作。
-- 存在很多数据访问方式
-  - tablescan
-  - index range scan
-  - index fast scan
-  - nested loop join 
-  - merge join
-  - hash join
-- 优化器机制比较复杂，存在大量因素会影响SQL的执行性能，需要额外花时间学习
-- 受数据的影响，SQL的性能并不是一成不变的，而是动态的。
-
-
+## 体系特性
 
 ### 锁
 
@@ -7265,11 +7117,171 @@ IMMEDIATE_MISSES：以Immediate模式l请求失败数
 
 
 
+
+
+
+
+## 性能优化
+
+### 综述
+
+积极分析业务，从业务角度思考问题。
+
+#### 性能优化原则
+
+- 不是所有数据库都需要（能够）优化
+- 数据库的性能，大多数都不是数据库层面能够解决的。
+  - 在功能设计的时候，就要尽可能考虑性能。有些功能，能够预见到性能问题的尽量多和用户沟通。
+  - 一旦业务确定SQL确定了，可以优化的空间就相对较少了。即使DBA也不能轻易更改SQL的业务逻辑。
+- 在不了解业务之前，不可能找到正确的优化思路。
+- 优化要有个度，并不是“没有最优，只有更优”。
+
+
+
+#### 导致性能问题的可能原因
+
+- 表没有正确的创建索引----错误的执行计划
+- 表没有及时的分析-------错误的执行计划
+- 热块-------数据块的争用(反向索引?)
+- 锁的阻塞------业务设计缺陷
+  - 例如：一个事务更新了某一行数据后，迟迟没有提交。导致这一行锁定。
+- SQL解析消耗大量CPU----变量绑定
+  - 数据库每分钟要处理上万条SQL，而这些SQL都没有变量绑定，导致每次都要硬解析。
+- 低效的SQL-----SQL自身的问题
+  - 功能在开发过程中就完全没考虑性能，只是考虑功能。后期问题就会主键暴露。
+- 数据库整体负载过程----架构设计的问题
+  - 数据库设计时，没有对数据库的总体容量，并发量做一个总体预估。
+
+
+
+#### 性能问题定位
+
+原则，尽可能从小范围分析问题。
+
+- SQL层
+
+  - 如果已经能定位到某个SQL有问题，就不要从会话层面分析
+  - 工具：执行计划，10053(分析执行计划的产生),10046(分析SQL资源消耗情况)...
+- 会话层
+
+  - 会话层的意思是找到是哪个用户引起了性能问题。也是最常用的。
+  - 如果能定位到会话，就不要从系统层面分析
+    - `V$SESSION,V$SESSTAT,V$SESSION WAIT,V$SQL,V$LOCK，SQL_TRACE`
+- 系统层
+
+  - 如果上述办法无法定位到性能问题，那从系统层面入手
+    - AWR (8i可以用STATSPACK)，OS Tools(TOP，IOSTAT....)
+
+
+
+#### 不要迷恋优化器
+
+不要迷信优化器，优化器永远无法知道你的业务需求
+
+优化器永远无法按照你的业务需求来重写你的SQL语句
+
+优化器只能在数学(集合)逻辑上做SQL的重写
+
+高效的SOL来自于对业务的理解和对SOL执行过程的理解
+
+##### 窗口函数案例1
+
+假设现在有这样一张表mytable，字段（id，value）。现在要求返回每一行的叠加值。如下表格：
+
+| id（主键） | value（非空） | sum（每一行累加） |
+| ---------- | ------------- | ----------------- |
+| 1          | 10            | 10                |
+| 2          | 20            | 30                |
+| 3          | 15            | 45                |
+
+第一版SQL如下：
+
+```sql
+-- 查询sql
+select t1.id, t1.value, sum(t2.value) as sum
+from mytable t1
+join mytable t2 on t2.id <= t1.id
+GROUP BY t1.id, t1.value
+
+-- ----------------------------
+-- Table structure for MYTABLE
+-- ----------------------------
+DROP TABLE "SCOTT"."MYTABLE";
+CREATE TABLE "SCOTT"."MYTABLE" (
+  "ID" NUMBER(16,0) NOT NULL,
+  "VALUE" NUMBER NOT NULL
+);
+
+-- ----------------------------
+-- Records of MYTABLE
+-- ----------------------------
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('1', '10');
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('2', '20');
+INSERT INTO "SCOTT"."MYTABLE" VALUES ('3', '15');
+```
+
+通过解释计划分析，这个SQL有2次全表扫描，并且一致性读（consistent get）有14次
+
+```sql	
+-- 执行计划
+SELECT STATEMENT ()		ALL_ROWS	9	1	52				
+ HASH (GROUP BY)			       9	1	52				
+  MERGE JOIN ()			      8	1	52				
+   SORT (JOIN)			         4	3	78				
+    TABLE ACCESS (FULL)	MYTABLE		3	3	78				
+   SORT (JOIN)			         4	3	78			INTERNAL_FUNCTION("T2"."ID")<=INTERNAL_FUNCTION()
+    TABLE ACCESS (FULL)	MYTABLE		3	3	78			
+
+-- 统计结果
+0   recursive calls
+0   db block gets
+14   consistent gets
+```
+
+通过上文可以知道Oracle是基于CBO来执行SQL语句的并不是基于业务，他并不知道这个SQL要实现什么样的功能。上面的执行计划就是他基于目前的这个SQL和给出的成本最优的执行方式。但其实这个业务还有其他的SQL实现方式，可以使用窗口函数。例如：
+
+```sql
+-- 窗口函数实现
+select t1.id, t1.value, sum(t1.value) over(order by id) as sum
+from mytable t1
+
+-- 新的执行计划
+SELECT STATEMENT ()		ALL_ROWS	4	3	78				
+ WINDOW (SORT)	 		            4   3  	78				
+  TABLE ACCESS (FULL)	MYTABLE		3	3	78		
+
+-- 统计结果
+0   recursive calls
+0   db block gets
+7   consistent gets
+```
+
+从结果上可以看出consistent gets变成了7，比原来下降了一半，执行计划比之前简单了很多，全表扫描也变成了1次。性能是显著提高了。但是CBO自己是无法自动改写SQL的，他只能基于SQL去优化。这个只能靠写SQL语句的人后期优化SQL的人来完成。
+
+
+
+#### 为什么高效的SQL难写
+
+- SQL语句本质是对数据集合的一种操作。
+- 存在很多数据访问方式
+  - tablescan
+  - index range scan
+  - index fast scan
+  - nested loop join 
+  - merge join
+  - hash join
+- 优化器机制比较复杂，存在大量因素会影响SQL的执行性能，需要额外花时间学习
+- 受数据的影响，SQL的性能并不是一成不变的，而是动态的。
+
+
+
 ### 执行计划和优化器
+
+#### 执行计划是什么
 
 执行计划，告诉你数据是如何访问和处理的，但不仅仅是这些。
 
-#### 数据的访问
+##### 数据的访问
 
 直接访问表
 
@@ -7290,7 +7302,7 @@ IMMEDIATE_MISSES：以Immediate模式l请求失败数
 
 
 
-#### 数据处理
+##### 数据处理
 
 将需要的数据查询出来之后，还需要处理，常见的处理如下
 
@@ -7302,7 +7314,7 @@ IMMEDIATE_MISSES：以Immediate模式l请求失败数
 
 
 
-#### 关联处理
+##### 关联处理
 
 https://www.cnblogs.com/xiaohuizhenyoucai/p/10983783.html
 
@@ -7343,9 +7355,54 @@ Hash Join是做大数据集连接时的常用方式，优化器使用两个表�
 
 
 
-#### 查看执行计划
+#### 执行计划查看方法
+
+https://www.cnblogs.com/xwg168/p/15093339.html
+
+Oracle的六种执行计划
+
+1. set autotrace on
+2. explain plan for
+3. statistics_level=all
+4. dbms_xplan.display_cursor获取
+5. 事件10046 trace跟踪
+6. awrsqrpt.sql
+
+
 
 ##### autotrace
+
+使用步骤
+
+   步骤一：sql> set autotrace traceonly;
+
+   步骤二：sql> 执行查询Sql语句
+
+   步骤三：sql> set autotrace off;
+
+优点：
+
+1.可以输出运行时的相关统计信息（产生多少逻辑读、多少次递归调用、多少次物理读等）；
+
+2.虽然要等语句执行完才能输出执行计划，但是可以有traceonly开关来控制返回结果不打屏输出；
+
+缺点：
+
+1.必须要等SQL语句执行完，才出结果；
+
+2.无法看到表被访问了多少次；
+
+**autotrace命令介绍**
+
+| 序号 | 命令                               | 解释                                      |
+| ---- | ---------------------------------- | ----------------------------------------- |
+| 1    | set autotrace off;                 | 此为默认值，即关闭Autotrace               |
+| 2    | set autotrace traceonly;           | 常用，显示explain和statistics（统计信息） |
+| 3    | set autotrace on;                  | 记录集+explain+statistics（统计信息）     |
+| 4    | set autotrace traceonly explain;   | explain                                   |
+| 4    | set autotrace traceonly statistic; | statistics                                |
+
+**使用案例**
 
 ```sql
 SQL> set autotrace trace exp;
@@ -7376,7 +7433,7 @@ Plan hash value: 1015944200
 
 字段说明
 
-##### cost
+###### cost
 
 这里的cost是执行计划最重要的部分，是Oracle优化器根据他的数学模型和规则计算出来的。并不是实际的代价。
 
@@ -7385,6 +7442,42 @@ Plan hash value: 1015944200
 rows
 
 Oracle估算出来的这一步可能返回的行数，并不是实际行数。在10gR2之前叫cardinality
+
+
+
+1.2：谓词说明：
+
+Predicate Information (identified by operation id):
+
+    access("A"."EMPNO"="B"."MGR")
+    
+    filter("B"."MGR" IS NOT NULL)
+     
+    Access: 表示这个谓词条件的值将会影响数据的访问路劲（表还是索引）。
+    
+    Filter：表示谓词条件的值不会影响数据的访问路劲，只起过滤的作用。
+
+
+
+##### explain for
+
+步骤一：explain for 查询sql语句
+
+步骤二：select * from table(dbms_xplan.display());
+
+优点：
+
+无需真正执行，快捷方便；
+
+缺点：
+
+1.没有输出相关统计信息，例如产生了多少逻辑读，多少次物理读，多少次递归调用的情况；
+
+2.无法判断处理了多少行；
+
+3.无法判断表执行了多少次
+
+ 
 
 
 
@@ -8089,6 +8182,344 @@ id等于100的数据不一定就存在第100的位置，Oracle为了读到这个
 - B-tree索引 B树索引
 - Bitmap索引 位图索引，主要用于存储选择性低的字段。
 - TEXT index 全文索引，通过拆词拆分来存储大文本。
+
+
+
+#### B树索引
+
+基本使用于所有数据库，没有明显的缺点。
+
+高效的场景
+
+索引字段有着很高的selectivity或者结果集很小的时候
+
+当使用b树索引时且使用等值查询时，数据库中的数量对查询效率的影响不大。也就是说查第10条和第1亿条的性能是接近的。
+
+低效的场景
+
+索引字段有着很低的selectivity或者结果集很大的时候
+
+例如：给性别做B树索引，如果搜索“男”的记录，通过索引找到之后，可能还有几千万条数据要扫描。
+
+当查询的数据行超过表中总数据的三分之一的时候，使用查询的效率将明显下降。
+
+
+
+#### 位图索引
+
+一般在字段的重复率比较高的时候使用。例如：上文提到过的性别字段。
+
+例如，下面的案例是一张客户表，其中cust_sex字段就是性别字段，F代表女，M代表男
+
+| cust_id | cust_last | cust_mar | cust_sex |
+| ------- | --------- | -------- | -------- |
+| 1       | kessel    |          | M        |
+| 2       | gem       |          | F        |
+| 3       | jack      |          | M        |
+| 4       | gowen     |          | M        |
+| 5       | charles   |          | F        |
+| 6       | ingram    | single   | F        |
+| 7       | doom      | single   | M        |
+
+以下是位图索引的存储方式。
+
+| value | row 1 | row 2 | row 3 | row 4 | row 5 | row 6 | row 7 |
+| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
+| M     | 1     | 0     | 1     | 1     | 0     | 0     | 1     |
+| F     | 0     | 1     | 0     | 0     | 1     | 1     | 0     |
+
+
+
+##### 使用场景
+
+- 使用场景
+  - OLAP（在线分析处理）
+  - 重复率很高的键值
+- 不适用的场景
+  - OLTP（在线事务处理）
+  - DML频繁操作。
+
+
+
+##### 案例
+
+以下两张表的数据都是来源于dba_objects，一张表用位图索引，另一张用B树索引，可以看出位图索引的一致性读比B树少很多。
+
+```sql
+SQL> create table objects_btree as select * from dba_objects;
+表已创建。
+
+SQL> create table objects_bitmap as select * from dba_objects;
+表已创建。
+
+SQL> create index idx_objects_btree on objects_btree(owner);
+索引已创建。
+
+SQL> create index idx_objects_bitmap on objects_bitmap(owner);
+索引已创建。
+
+-- 下面的指令请在SQL命令行中执行
+SQL> exec dbms_stats.gather_table_stats('scott','objects_btree', cascade => true);
+PL/SQL 过程已成功完成。
+
+SQL> exec dbms_stats.gather_table_stats('scott','objects_bitmap', cascade => true);
+PL/SQL 过程已成功完成
+
+-- 显示两种索引的执行计划
+SQL> set autotrace traceonly;
+SQL> set linesize 1000;
+SQL> set pagesize 100;
+SQL> select * from objects_bitmap where owner = 'SYS';
+
+已选择30889行。
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 2580675431
+
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |                    |  2502 |   237K|   245   (0)| 00:00:03 |
+|   1 |  TABLE ACCESS BY INDEX ROWID | OBJECTS_BITMAP     |  2502 |   237K|   245   (0)| 00:00:03 |
+|   2 |   BITMAP CONVERSION TO ROWIDS|                    |       |       |            |          |
+|*  3 |    BITMAP INDEX SINGLE VALUE | IDX_OBJECTS_BITMAP |       |       |            |          |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       2814  consistent gets
+          0  physical reads
+          0  redo size
+    3513914  bytes sent via SQL*Net to client
+      23173  bytes received via SQL*Net from client
+       2061  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+
+SQL> select * from objects_btree where owner = 'SYS';
+
+已选择30889行。
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 4209942776
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                   |  2502 |   237K|    73   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| OBJECTS_BTREE     |  2502 |   237K|    73   (0)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN          | IDX_OBJECTS_BTREE |  2502 |       |     6   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       4921  consistent gets
+          0  physical reads
+          0  redo size
+    3513914  bytes sent via SQL*Net to client
+      23173  bytes received via SQL*Net from client
+       2061  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+      30889  rows processed
+
+
+-- 加上Or条件之后的效果位图的性能优势更加明显。
+SQL> select count(*) from objects_bitmap where owner='SYS' or owner = 'PM';
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3317043697
+
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |                    |     1 |     6 |     2   (0)| 00:00:01 |
+|   1 |  SORT AGGREGATE              |                    |     1 |     6 |            |          |
+|   2 |   INLIST ITERATOR            |                    |       |       |            |          |
+|   3 |    BITMAP CONVERSION COUNT   |                    |  5004 | 30024 |     2   (0)| 00:00:01 |
+|*  4 |     BITMAP INDEX SINGLE VALUE| IDX_OBJECTS_BITMAP |       |       |            |          |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - access("OWNER"='PM' OR "OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+          5  consistent gets
+          0  physical reads
+          0  redo size
+        536  bytes sent via SQL*Net to client
+        524  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+          
+SQL> select count(*) from objects_btree where owner='SYS' or owner = 'PM';
+执行计划
+----------------------------------------------------------
+Plan hash value: 1182452345
+
+----------------------------------------------------------------------------------------
+| Id  | Operation          | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |                   |     1 |     6 |    13   (0)| 00:00:01 |
+|   1 |  SORT AGGREGATE    |                   |     1 |     6 |            |          |
+|   2 |   INLIST ITERATOR  |                   |       |       |            |          |
+|*  3 |    INDEX RANGE SCAN| IDX_OBJECTS_BTREE |  5004 | 30024 |    13   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("OWNER"='PM' OR "OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+         69  consistent gets
+          0  physical reads
+          0  redo size
+        536  bytes sent via SQL*Net to client
+        524  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+```
+
+
+
+##### 索引锁定
+
+位图索引是按键值锁定的而不是按行。也就说当一个键值被更新时，这个键值对应的所有行都会被锁定。直到当前会话提交，其他会话才能修改这个键值对应的行。
+
+看下面的案例。
+
+```sql
+-- 此时一个会话更新位图索引的键值为sys的一行记录。未提交。
+SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 20;
+已更新 1 行
+
+-- 另一个会话更新sys的另一行记录被阻塞。
+SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 46;
+
+-- 再开一个会话修改另一个键值则可以修改成功。
+SQL> update objects_bitmap set owner='PM1' where owner='PM' and object_id = 46;
+已更新 27 行
+```
+
+故这就是为什么位图索引不适用于并发修改频繁的OLTP系统的原因。
+
+
+
+#### 全文索引
+
+##### 背景介绍
+
+很多时候需要根据key words关键字去匹配对应的值，对于大量的数据而已，如果使用like，或者instr函数，速度则会很慢，这个时候，全文检索对比其他的模糊查询，有着明显的速度优势。但是因为分词，所以会占用的一定的空间。如果空间足够以及对速度有一样的需求，可以考虑全文检索。根据自身的需求而定。
+https://blog.csdn.net/weeknd/article/details/71576864
+
+优点
+
+当b树和位图索引无法发挥作用时可以使用，例如：like '%abc%';
+
+缺点
+
+占用过大磁盘空间。全文索引一般要比原表还要大。
+
+维护成本高。全文索引一旦损坏，如果要重建成本较大。即使建成分区全文索引，某个分区的数据坏了，要整个重建。
+
+bug较多。用的人少，oracle通过用户汇报bug，来解决bug。
+
+
+
+### 分区
+
+分区表的几点注意
+
+表分区后，分区变成各自的段，而表表成一个逻辑名称
+
+通过user_extends查不到表的表空间，而是要去查这个表的分区，然后在查询分区对应的表空间。
+
+分区裁剪。当用户访问分区表时，Oracle会自动识别要查询的数据分布在哪些分区中。如果只有一个分区，则只会扫描一个分区，减少了扫描数据的范围。
+
+
+
+#### 分区分类
+
+分区主要有如下几种。
+
+List Partitioning，列表分区。意思就是按一个下拉列表来划分分区。例如：可以将中国按省份分区。
+
+Range Partitioning，范围分区。尤其是按时间分区。例如：将数据按年来分区。或者每3年一个分区。
+
+Hash Partitioning，哈希分区。这种分区一般和业务无关。按某个列的哈希值来分区。一般很少用。因为数据的分布不可控。
+
+组合分区，或者子分区。例如：某些大厂可能一个月的数据就上亿了，按年分区之后可以再按月来分区。
+
+组合方式
+
+Oracle10g提供两种分区组合
+Range-hash
+Range-list
+Oracle11g增加了四种组合
+RANGE-RANGE
+LIST-RANGE
+LIST-HASH
+LIST-LIST
+
+
+
+#### 分区索引
+
+分区索引分本地索引和全局索引。
+
+本地索引
+
+##### local index
+
+分区表的DML操作无需rebuild索引，不同分区之间的索引不影响。
+
+可以非常方便的管理数据。
+
+##### global index
+
+表的DDL操作会导致索引无效
+
+
+
+
+
+### 数据分析
 
 
 
