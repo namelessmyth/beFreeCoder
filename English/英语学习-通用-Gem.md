@@ -4623,6 +4623,20 @@ There were **two birds** sat on a stone. （*Two Birds*）
 
 
 
+### 定语+谓语+状语
+
+这种句型口语中会出现，说话时一般都会有说话对象，可以省略主语
+
+Better work faster. 最好干快点。
+
+
+
+### 表+主+系
+
+there you are，你在这里。
+
+
+
 ## 英语从句
 
 https://zhuanlan.zhihu.com/p/23502612
