@@ -5204,7 +5204,7 @@ insert into a select b where 条件1。这个sql如果where条件没法走索引
 本文内容来源于个人实践以及工作经验总结，还有部分参考了以下内容。
 
 - 马士兵教育视频教程及配套笔记（[Oracle关系型数据库2023版-邓鹏波](https://www.mashibing.com/study?courseNo=2280&sectionNo=94022&courseVersionId=3084)）
-- 
+- B站视频教程（[Oracle 11g 大师级性能优化艺术视频教程](https://www.bilibili.com/video/BV1PY4y1E7A5?p=1)）
 
 
 
@@ -5766,11 +5766,9 @@ create or replace trigger trigger03
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/1462/1679296827057/8bbcee36b1fb48b48b6cb7b7961c9e25.png)
 
-### 视图和索引
+### 视图
 
-#### 1. 视图
-
-##### 1.1 视图的介绍
+#### 1.1 视图的介绍
 
 **&emsp;&emsp;视图** 是一种数据库对象，是从 一个或者多个 数据表或视图中导出的  **虚表** 。
 
@@ -5791,7 +5789,7 @@ create or replace trigger trigger03
 * 共享所需数据。
 * 更改数据格式。
 
-##### 1.2 视图的语法
+#### 1.2 视图的语法
 
 ```sql
 CREATE [OR REPLACE] [FORCE] VIEW '视图名'
@@ -5836,9 +5834,9 @@ DROP VIEW 'view_name';
 
 ```
 
-##### 1.3 视图案例
+#### 1.3 视图案例
 
-###### 1.3.1 简单视图
+##### 1.3.1 简单视图
 
 如果视图中的语句只是  **单表查询** ，并且  **没有聚合函数** ，我们就称之为  **简单视图** 。
 
@@ -5853,7 +5851,7 @@ select * from v_t_student where id = 1;
 update v_t_student set age = 22 where id = 1;
 ```
 
-###### 1.3.2 带检查约束视图
+##### 1.3.2 带检查约束视图
 
 &emsp;&emsp;视图的数据可能只是原来数据的一部分。那么我们做更新处理的时候也不能超过数据的访问
 
@@ -5868,7 +5866,7 @@ select * from v_t_student;
 update v_t_student set age = 33 where id = 306;
 ```
 
-###### 1.3.3 只读视图
+##### 1.3.3 只读视图
 
 &emsp;&emsp;有些情况下我们为了保证数据的安全。访问改视图的用户我们不允许做DML操作。这时我们可以添加 with read only 关键字
 
@@ -5880,7 +5878,7 @@ select id,name from t_student
 with read only; -- 表示该视图只读
 ```
 
-###### 1.3.4 带错误视图
+##### 1.3.4 带错误视图
 
 &emsp;&emsp;有的时候。创建视图的时候，表可能并不存在。创建视图后可能存在。如果此时我们需要创建这样的视图，那么需要添加 `force` 关键字
 
@@ -5891,7 +5889,7 @@ select id,name from t_student1
 with read only; -- 表示该视图只读
 ```
 
-###### 1.3.5 复杂视图
+##### 1.3.5 复杂视图
 
 &emsp;&emsp;在视图的SQL语句中。有聚会函数或者多表关联查询。
 
@@ -5915,18 +5913,489 @@ select * from v_student1;
 ```
 
 
-#### 2.索引
 
-&emsp;&emsp;索引是建立在表的一列或多个列上的辅助对象，目的是加快访问表中的数据；Oracle存储索引的数据结构是B树，位图索引也是如此，只不过是叶子节点不同B数索引；索引由根节点、分支节点和叶子节点组成，上级索引块包含下级索引块的索引数据，叶节点包含索引数据和确定行实际位置的rowid。
+### 物化视图
 
-语法：
+原文链接：https://blog.csdn.net/namelessmyth/article/details/122595036
+
+优点
+
+可以显著提升查询性能。物化视图其实可以看做一种特殊的物理表，查询时不会去访问基础表而是直接访问物化视图表。也可以给物化视图建立索引进一步提升性能。
+
+相对于人工建表并维护其中的数据，物化视图可以省去这部分工作量。它支持多种数据自动刷新方式以及多种刷新触发条件。支持基表数据有变动自动同步到对应的物化视图。
+
+物化视图有视图的优点，视图可以简化用户的操作，可以隐藏数据表之间的关系（引申出来能够对机密数据提供安全保护），可以对重构数据库提供一定的逻辑独立性等等。
+
+缺点
+
+数据及时性降低。不适用于对数据及时性以及准确性要求较高的业务场景。
+
+虽然物化视图支持多种自动刷新方式。但查询语句越复杂用到的基表越多，刷新需要的时间也会越长。
+
+
+
+
+### 索引
+
+#### 索引介绍
+
+索引是建立在表的一列或多个列上的辅助对象，目的是加快访问表中的数据；Oracle存储索引的数据结构是B树，位图索引也是如此，只不过是叶子节点不同B数索引；索引由根节点、分支节点和叶子节点组成，上级索引块包含下级索引块的索引数据，叶节点包含索引数据和确定行实际位置的rowid。
+
+提升数据访问效率，来看下面的案例，同样是根据id=100这个条件来访问表t，左边使用了索引，右边使用的是全表扫描
+
+![image-20231125204452058](学习笔记-数据库-Gem.assets/image-20231125204452058.png)
+
+从图下面的统计信息中可以看出，使用索引只有3次一致性读，而使用全表扫描用了375次读。
+
+使用索引的3次一致性读细节，大概如下：
+
+1. 访问到B树索引的根，root。
+2. 经过根找支，在找到数据所在的叶。
+3. 通过索引上记录的rowid去表里找到要找的数据。
+
+为什么全表扫描用了这么多次一致性读？
+
+id等于100的数据不一定就存在第100的位置，Oracle为了读到这个数据要遍历表里面的所有数据块。一个数据块可能是1行，多行，也可能不到一行。
+
+
+
+#### 索引类型
+
+- B-tree索引 B树索引
+- Bitmap索引 位图索引，主要用于存储选择性低的字段。
+- TEXT index 全文索引，通过拆词拆分来存储大文本。
+
+下文将分别详细介绍
+
+
+
+#### B树索引
+
+基本使用于所有数据库，没有明显的缺点。
+
+高效的场景
+
+索引字段有着很高的selectivity或者结果集很小的时候
+
+当使用b树索引时且使用等值查询时，数据库中的数量对查询效率的影响不大。也就是说查第10条和第1亿条的性能是接近的。
+
+低效的场景
+
+索引字段有着很低的selectivity或者结果集很大的时候
+
+例如：给性别做B树索引，如果搜索“男”的记录，通过索引找到之后，可能还有几千万条数据要扫描。
+
+当查询的数据行超过表中总数据的三分之一的时候，使用查询的效率将明显下降。
+
+
+
+#### 位图索引
+
+一般在字段的重复率比较高的时候使用。例如：上文提到过的性别字段。
+
+例如，下面的案例是一张客户表，其中cust_sex字段就是性别字段，F代表女，M代表男
+
+| cust_id | cust_last | cust_mar | cust_sex |
+| ------- | --------- | -------- | -------- |
+| 1       | kessel    |          | M        |
+| 2       | gem       |          | F        |
+| 3       | jack      |          | M        |
+| 4       | gowen     |          | M        |
+| 5       | charles   |          | F        |
+| 6       | ingram    | single   | F        |
+| 7       | doom      | single   | M        |
+
+以下是位图索引的存储方式。
+
+| value | row 1 | row 2 | row 3 | row 4 | row 5 | row 6 | row 7 |
+| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
+| M     | 1     | 0     | 1     | 1     | 0     | 0     | 1     |
+| F     | 0     | 1     | 0     | 0     | 1     | 1     | 0     |
+
+
+
+##### 使用场景
+
+- 使用场景
+  - OLAP（在线分析处理）
+  - 重复率很高的键值
+- 不适用的场景
+  - OLTP（在线事务处理）
+  - DML频繁操作。
+
+
+
+##### 案例
+
+以下两张表的数据都是来源于dba_objects，一张表用位图索引，另一张用B树索引，可以看出位图索引的一致性读比B树少很多。
+
+```sql
+SQL> create table objects_btree as select * from dba_objects;
+表已创建。
+
+SQL> create table objects_bitmap as select * from dba_objects;
+表已创建。
+
+SQL> create index idx_objects_btree on objects_btree(owner);
+索引已创建。
+
+SQL> create index idx_objects_bitmap on objects_bitmap(owner);
+索引已创建。
+
+-- 下面的指令请在SQL命令行中执行
+SQL> exec dbms_stats.gather_table_stats('scott','objects_btree', cascade => true);
+PL/SQL 过程已成功完成。
+
+SQL> exec dbms_stats.gather_table_stats('scott','objects_bitmap', cascade => true);
+PL/SQL 过程已成功完成
+
+-- 显示两种索引的执行计划
+SQL> set autotrace traceonly;
+SQL> set linesize 1000;
+SQL> set pagesize 100;
+SQL> select * from objects_bitmap where owner = 'SYS';
+
+已选择30889行。
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 2580675431
+
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |                    |  2502 |   237K|   245   (0)| 00:00:03 |
+|   1 |  TABLE ACCESS BY INDEX ROWID | OBJECTS_BITMAP     |  2502 |   237K|   245   (0)| 00:00:03 |
+|   2 |   BITMAP CONVERSION TO ROWIDS|                    |       |       |            |          |
+|*  3 |    BITMAP INDEX SINGLE VALUE | IDX_OBJECTS_BITMAP |       |       |            |          |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       2814  consistent gets
+          0  physical reads
+          0  redo size
+    3513914  bytes sent via SQL*Net to client
+      23173  bytes received via SQL*Net from client
+       2061  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+
+SQL> select * from objects_btree where owner = 'SYS';
+
+已选择30889行。
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 4209942776
+
+-------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                   |  2502 |   237K|    73   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| OBJECTS_BTREE     |  2502 |   237K|    73   (0)| 00:00:01 |
+|*  2 |   INDEX RANGE SCAN          | IDX_OBJECTS_BTREE |  2502 |       |     6   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       4921  consistent gets
+          0  physical reads
+          0  redo size
+    3513914  bytes sent via SQL*Net to client
+      23173  bytes received via SQL*Net from client
+       2061  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+      30889  rows processed
+
+
+-- 加上Or条件之后的效果位图的性能优势更加明显。
+SQL> select count(*) from objects_bitmap where owner='SYS' or owner = 'PM';
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3317043697
+
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT             |                    |     1 |     6 |     2   (0)| 00:00:01 |
+|   1 |  SORT AGGREGATE              |                    |     1 |     6 |            |          |
+|   2 |   INLIST ITERATOR            |                    |       |       |            |          |
+|   3 |    BITMAP CONVERSION COUNT   |                    |  5004 | 30024 |     2   (0)| 00:00:01 |
+|*  4 |     BITMAP INDEX SINGLE VALUE| IDX_OBJECTS_BITMAP |       |       |            |          |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - access("OWNER"='PM' OR "OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+          5  consistent gets
+          0  physical reads
+          0  redo size
+        536  bytes sent via SQL*Net to client
+        524  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+          
+SQL> select count(*) from objects_btree where owner='SYS' or owner = 'PM';
+执行计划
+----------------------------------------------------------
+Plan hash value: 1182452345
+
+----------------------------------------------------------------------------------------
+| Id  | Operation          | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |                   |     1 |     6 |    13   (0)| 00:00:01 |
+|   1 |  SORT AGGREGATE    |                   |     1 |     6 |            |          |
+|   2 |   INLIST ITERATOR  |                   |       |       |            |          |
+|*  3 |    INDEX RANGE SCAN| IDX_OBJECTS_BTREE |  5004 | 30024 |    13   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   3 - access("OWNER"='PM' OR "OWNER"='SYS')
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+         69  consistent gets
+          0  physical reads
+          0  redo size
+        536  bytes sent via SQL*Net to client
+        524  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
 
 ```
-create [unique | bitmap] index [schema.] 索引名
-on [schema.] 表名 (列名1, .., 列名N);
+
+
+
+##### 索引锁定
+
+位图索引是按键值锁定的而不是按行。也就说当一个键值被更新时，这个键值对应的所有行都会被锁定。直到当前会话提交，其他会话才能修改这个键值对应的行。
+
+看下面的案例。
+
+```sql
+-- 此时一个会话更新位图索引的键值为sys的一行记录。未提交。
+SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 20;
+已更新 1 行
+
+-- 另一个会话更新sys的另一行记录被阻塞。
+SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 46;
+
+-- 再开一个会话修改另一个键值则可以修改成功。
+SQL> update objects_bitmap set owner='PM1' where owner='PM' and object_id = 46;
+已更新 27 行
+```
+
+故这就是为什么位图索引不适用于并发修改频繁的OLTP系统的原因。
+
+
+
+#### 全文索引
+
+##### 背景介绍
+
+很多时候需要根据key words关键字去匹配对应的值，对于大量的数据而已，如果使用like，或者instr函数，速度则会很慢，这个时候，全文检索对比其他的模糊查询，有着明显的速度优势。但是因为分词，所以会占用的一定的空间。如果空间足够以及对速度有一样的需求，可以考虑全文检索。根据自身的需求而定。
+https://blog.csdn.net/weeknd/article/details/71576864
+
+优点
+
+当b树和位图索引无法发挥作用时可以使用，例如：like '%abc%';
+
+缺点
+
+占用过大磁盘空间。全文索引一般要比原表还要大。
+
+维护成本高。全文索引一旦损坏，如果要重建成本较大。即使建成分区全文索引，某个分区的数据坏了，要整个重建。
+
+bug较多。用的人少，oracle通过用户汇报bug，来解决bug。
+
+
+
+##### 词法分析器
+
+一、设置词法分析器
+
+Oracle实现全文检索，其机制其实很简单。即通过Oracle专利的词法分析器(lexer),将文章中所有的表意单元（Oracle 称为 term）找出来，记录在一组 以dr$开头的表中，同时记下该term出现的位置、次数、hash 值等信息。检索时，Oracle 从这组表中查找相应的term，并计算其出现频率，根据某个算法来计算每个文档的得分（score）,即所谓的‘匹配率’。而lexer则是该机制的核心，它决定了全文检索的效率。Oracle 针对不同的语言提供了不同的 lexer, 而我们通常能用到其中的三个：
+
+ 1、basic_lexer: 针对英语。它能根据空格和标点来将英语单词从句子中分离，还能自动将一些出现频率过高已经失去检索意义的单词作为‘垃圾’处理，如if ,  is 等，具有较高的处理效率。但该lexer应用于汉语则有很多问题，由于它只认空格和标点，而汉语的一句话中通常不会有空格，因此，它会把整句话作为一个term,事实上失去检索能力。以‘中国人民站起来了’这句话为例，basic_lexer 分析的结果只有一个term ,就是‘中国人民站起来了’。此时若检索‘中国’，将检索不到内容。
+
+2、chinese_vgram_lexer: 专门的汉语分析器，支持所有汉字字符集（ZHS16CGB231280 ZHS16GBK ZHT32EUC ZHT16BIG5 ZHT32TRIS ZHT16MSWIN950 ZHT16HKSCS UTF8 ）。该分析器按字为单元来分析汉语句子。‘中国人民站起来了’这句话，会被它分析成如下几个term:  ‘中’，‘中国’，‘国人’，‘人民’，‘民站’，‘站起’，起来’，‘来了’，‘了’。可以看出，这种分析方法，实现算法很简单，并且能实现‘一网打尽’，但效率则是差强人意。
+
+3、chinese_lexer: 这是一个新的汉语分析器，只支持utf8字符集。上面已经看到，chinese_vgram_lexer这个分析器由于不认识常用的汉语词汇，因此分析的单元非常机械，像上面的‘民站’，‘站起’在汉语中根本不会单独出现，因此这种term是没有意义的，反而影响效率。chinese_lexer的最大改进就是该分析器 能认识大部分常用汉语词汇，因此能更有效率地分析句子，像以上两个愚蠢的单元将不会再出现，极大提高了效率。但是它只支持utf8, 如果你的数据库是zhs16gbk字符集，则只能使用笨笨的那个chinese_vgram_lexer. 
+
+如果不做任何设置，Oracle 缺省使用basic_lexer这个分析器。要指定使用哪一个lexer, 可以这样操作：
+
+BEGIN
+
+ctx_ddl.create_preference ('my_lexer', 'chinese_vgram_lexer');
+
+END;
+/
+
+其中my_lexer是分析器名。
+
+
+
+##### 全文索引类型
+
+例如：ctxsys.context，包括四种：context, ctxcat, ctxrule, ctxxpath。 
+
+context用于对含有大量连续文本数据进行检索。支持word、html、xml、text等很多数据格式。支持范围（range）分区，支持并行创建索引（Parallel indexing）的索引类型。 
+
+支持类型：VARCHAR2, CLOB, BLOB, CHAR, BFILE, XMLType, and  URIType.DML。操作后，需要CTX_DDL.SYNC_INDEX手工同步索引如果有查询包含多个词语，直接用空格隔开(如 oracle  itpub)。 
+
+查询标识符CONTAINS 
+CTXCAT适用于混合查询语句（如查询条件包括产品id，价格，描述等）。适合于查询较小的具有一定结构的文本段。具有事务性。DML 操作后，索引会自动进行同步。 
+
+操作符：and,or,&gt,;<, =,between,in 
+查询标识符CATSEARCH 
+CTXRULE查询标识符MATCHES。 
+CTXXPATH（这两个索引没有去更多搜索相关内容） 
+一般来说我们建立CONTEXT类型的索引（CONTAINS来查询）。 
+
+
+
+案例
+
+```sql
+-- 测试用户为scott，建立此用户和对应表空间的内容就不写了：
+-- 步骤一：授权，ctxsys登陆并对scott用户授权：
+
+alter user ctxsys identified by oracle account unlock;
+create user scott identified by oracle;
+
+GRANT resource, connect, ctxapp TO scott;
+GRANT execute ON ctxsys.ctx_cls TO scott;
+GRANT execute ON ctxsys.ctx_ddl TO scott;
+GRANT execute ON ctxsys.ctx_doc TO scott;
+GRANT execute ON ctxsys.ctx_output TO scott;
+GRANT execute ON ctxsys.ctx_query TO scott;
+GRANT execute ON ctxsys.ctx_report TO scott;
+GRANT execute ON ctxsys.ctx_thes TO scott;
+GRANT execute ON ctxsys.ctx_ulexer TO scott;
+
+-- 步骤二：设置词法分析器，使用chinese_vgram_lexer作为分析器：
+conn scott/oracle@service_name
+
+BEGIN -- 设置词法分析器
+ctx_ddl.create_preference ('scott_lexer', 'chinese_vgram_lexer');
+END;
+/
+
+-- 可以通过下面的语句查看系统默认及设置的oracle text参数：
+SELECT pre_name, pre_object FROM ctx_preferences;
+
+-- 可以看到我刚刚设置的语法分析器参数scott_lexer，（默认的有一个MY_LEXER的语法分析器参数）。
+
+-- 步骤三：建立测试表，插入测试数据：
+CREATE TABLE textdemo(
+id number NOT NULL PRIMARY KEY,
+book_author varchar2(20),--作者
+publish_time date,--发布日期
+title varchar2(400),--标题
+book_abstract varchar2(2000),--摘要
+path varchar2(200)--路径
+);
+
+INSERT INTO textdemo VALUES(1,'宫琦峻',to_date('2008-10-07','yyyy-mm-dd'),' 移动城堡','故事发生在19世纪末的欧洲，善良可爱的苏菲被恶毒的女巫施下魔咒，从18岁的女孩变成90岁的婆婆，孤单无助的她无意中走入镇外的移动城堡，据说它的主人哈尔以吸取女孩的灵魂为乐，但是事情并没有人们传说的那么可怕，性情古怪的哈尔居然收留了苏菲，两个人在四脚的移动城堡中开始了奇妙的共同生活，一段交织了爱与痛、乐与悲的爱情故事在战火中悄悄展开','E:\textsearch\moveingcastle.doc');
+
+INSERT INTO textdemo VALUES(2,'莫贝克曼贝托夫',to_date('2008-10-07','yyyy-mm-dd'),' 子弹转弯','这部由俄罗斯导演提莫贝克曼贝托夫执导的影片自6 月末在北美上映以来，已经在全球取得了超过3亿美元的票房收入。在亚洲上映后也先后拿下日本、韩国等地的票房冠军宝座。虽然不少网友在此之前也相继通过各种渠道接触到本片，但相信影片凭着在大银幕上呈现出的超酷的视听效果，依然能够吸引大量影迷前往影院捧场。','E:\textsearch\catch.pdf');
+
+INSERT INTO textdemo VALUES(3,'袁泉',to_date('2008-10-07','yyyy-mm-dd'),'主演吴彦祖和袁泉现身','电影《如梦》在上海同乐坊拍摄，主演吴彦祖和袁泉现身。由于是深夜拍摄，所以周围并没有过多的fans注意到，给了剧组一个很清净的拍摄环境，站在街头的袁泉低着头，在寒冷的夜里看上去还真有些像女鬼，令人毛骨悚然。','E:\textsearch\dream.txt');
+commit;
+
+-- 步骤四：在book_abstract字段建立索引使用刚刚设置的scott_LEXER ：chinese_vgram_lexer作为分析器。
+CREATE INDEX demo_abstract ON textdemo(book_abstract) indextype IS ctxsys.context parameters('lexer scott_LEXER');
+
+-- 之后如上所述多出很多dr$开头的表和索引，系统会创建四个相关的表：
+DR$DEMO_ABSTRACT$I(分词后的TOKEN表)\
+DR$DEMO_ABSTRACT$K\
+DR$DEMO_ABSTRACT$N \
+DR$DEMO_ABSTRACT$R
+
+-- 下面的语句可以查看索引创建过程中是否发生了错误：
+SELECT * FROM ctx_USER_index_errors 
+
+-- 步骤五：查询测试
+-- 查询或
+SELECT score(20),t.* FROM textdemo t WHERE contains(book_abstract,'移动城堡 or 俄罗斯',20)>0;
+SELECT score(20),t.* FROM textdemo t WHERE contains(book_abstract,'移动城堡 or 欧洲',20)>0;
+--基本查询
+SELECT score(20),t.* FROM textdemo t WHERE contains(book_abstract,'移动城堡',20)>0;
+--查询包含多个词语and测试通过
+SELECT score(20),t.* FROM textdemo t WHERE contains(book_abstract,'移动城堡 and 欧洲',20)>0; 
 ```
 
 
+
+#### 分区索引
+
+分区索引分本地索引和全局索引。
+
+本地索引
+
+##### local index
+
+分区表的DML操作无需rebuild索引，不同分区之间的索引不影响。
+
+可以非常方便的管理数据。
+
+##### global index
+
+表的DDL操作会导致索引无效
+
+
+
+### 导入导出
+
+#### exp
+
+
+
+#### imp
+
+
+
+#### expdb
+
+
+
+#### impdb
 
 
 
@@ -8155,318 +8624,27 @@ server process无法找一个可用的内存空间
 
 
 
-### 索引
-
-#### 索引目的
-
-提升数据访问效率，来看下面的案例，同样是根据id=100这个条件来访问表t，左边使用了索引，右边使用的是全表扫描
-
-![image-20231125204452058](学习笔记-数据库-Gem.assets/image-20231125204452058.png)
-
-从图下面的统计信息中可以看出，使用索引只有3次一致性读，而使用全表扫描用了375次读。
-
-使用索引的3次一致性读细节，大概如下：
-
-1. 访问到B树索引的根，root。
-2. 经过根找支，在找到数据所在的叶。
-3. 通过索引上记录的rowid去表里找到要找的数据。
-
-为什么全表扫描用了这么多次一致性读？
-
-id等于100的数据不一定就存在第100的位置，Oracle为了读到这个数据要遍历表里面的所有数据块。一个数据块可能是1行，多行，也可能不到一行。
-
-
-
-#### 索引类型
-
-- B-tree索引 B树索引
-- Bitmap索引 位图索引，主要用于存储选择性低的字段。
-- TEXT index 全文索引，通过拆词拆分来存储大文本。
-
-
-
-#### B树索引
-
-基本使用于所有数据库，没有明显的缺点。
-
-高效的场景
-
-索引字段有着很高的selectivity或者结果集很小的时候
-
-当使用b树索引时且使用等值查询时，数据库中的数量对查询效率的影响不大。也就是说查第10条和第1亿条的性能是接近的。
-
-低效的场景
-
-索引字段有着很低的selectivity或者结果集很大的时候
-
-例如：给性别做B树索引，如果搜索“男”的记录，通过索引找到之后，可能还有几千万条数据要扫描。
-
-当查询的数据行超过表中总数据的三分之一的时候，使用查询的效率将明显下降。
-
-
-
-#### 位图索引
-
-一般在字段的重复率比较高的时候使用。例如：上文提到过的性别字段。
-
-例如，下面的案例是一张客户表，其中cust_sex字段就是性别字段，F代表女，M代表男
-
-| cust_id | cust_last | cust_mar | cust_sex |
-| ------- | --------- | -------- | -------- |
-| 1       | kessel    |          | M        |
-| 2       | gem       |          | F        |
-| 3       | jack      |          | M        |
-| 4       | gowen     |          | M        |
-| 5       | charles   |          | F        |
-| 6       | ingram    | single   | F        |
-| 7       | doom      | single   | M        |
-
-以下是位图索引的存储方式。
-
-| value | row 1 | row 2 | row 3 | row 4 | row 5 | row 6 | row 7 |
-| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
-| M     | 1     | 0     | 1     | 1     | 0     | 0     | 1     |
-| F     | 0     | 1     | 0     | 0     | 1     | 1     | 0     |
-
-
-
-##### 使用场景
-
-- 使用场景
-  - OLAP（在线分析处理）
-  - 重复率很高的键值
-- 不适用的场景
-  - OLTP（在线事务处理）
-  - DML频繁操作。
-
-
-
-##### 案例
-
-以下两张表的数据都是来源于dba_objects，一张表用位图索引，另一张用B树索引，可以看出位图索引的一致性读比B树少很多。
-
-```sql
-SQL> create table objects_btree as select * from dba_objects;
-表已创建。
-
-SQL> create table objects_bitmap as select * from dba_objects;
-表已创建。
-
-SQL> create index idx_objects_btree on objects_btree(owner);
-索引已创建。
-
-SQL> create index idx_objects_bitmap on objects_bitmap(owner);
-索引已创建。
-
--- 下面的指令请在SQL命令行中执行
-SQL> exec dbms_stats.gather_table_stats('scott','objects_btree', cascade => true);
-PL/SQL 过程已成功完成。
-
-SQL> exec dbms_stats.gather_table_stats('scott','objects_bitmap', cascade => true);
-PL/SQL 过程已成功完成
-
--- 显示两种索引的执行计划
-SQL> set autotrace traceonly;
-SQL> set linesize 1000;
-SQL> set pagesize 100;
-SQL> select * from objects_bitmap where owner = 'SYS';
-
-已选择30889行。
-
-执行计划
-----------------------------------------------------------
-Plan hash value: 2580675431
-
----------------------------------------------------------------------------------------------------
-| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
----------------------------------------------------------------------------------------------------
-|   0 | SELECT STATEMENT             |                    |  2502 |   237K|   245   (0)| 00:00:03 |
-|   1 |  TABLE ACCESS BY INDEX ROWID | OBJECTS_BITMAP     |  2502 |   237K|   245   (0)| 00:00:03 |
-|   2 |   BITMAP CONVERSION TO ROWIDS|                    |       |       |            |          |
-|*  3 |    BITMAP INDEX SINGLE VALUE | IDX_OBJECTS_BITMAP |       |       |            |          |
----------------------------------------------------------------------------------------------------
-
-Predicate Information (identified by operation id):
----------------------------------------------------
-
-   3 - access("OWNER"='SYS')
-
-
-统计信息
-----------------------------------------------------------
-          0  recursive calls
-          0  db block gets
-       2814  consistent gets
-          0  physical reads
-          0  redo size
-    3513914  bytes sent via SQL*Net to client
-      23173  bytes received via SQL*Net from client
-       2061  SQL*Net roundtrips to/from client
-          0  sorts (memory)
-          0  sorts (disk)
-
-SQL> select * from objects_btree where owner = 'SYS';
-
-已选择30889行。
-
-
-执行计划
-----------------------------------------------------------
-Plan hash value: 4209942776
-
--------------------------------------------------------------------------------------------------
-| Id  | Operation                   | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
--------------------------------------------------------------------------------------------------
-|   0 | SELECT STATEMENT            |                   |  2502 |   237K|    73   (0)| 00:00:01 |
-|   1 |  TABLE ACCESS BY INDEX ROWID| OBJECTS_BTREE     |  2502 |   237K|    73   (0)| 00:00:01 |
-|*  2 |   INDEX RANGE SCAN          | IDX_OBJECTS_BTREE |  2502 |       |     6   (0)| 00:00:01 |
--------------------------------------------------------------------------------------------------
-
-Predicate Information (identified by operation id):
----------------------------------------------------
-
-   2 - access("OWNER"='SYS')
-
-
-统计信息
-----------------------------------------------------------
-          0  recursive calls
-          0  db block gets
-       4921  consistent gets
-          0  physical reads
-          0  redo size
-    3513914  bytes sent via SQL*Net to client
-      23173  bytes received via SQL*Net from client
-       2061  SQL*Net roundtrips to/from client
-          0  sorts (memory)
-          0  sorts (disk)
-      30889  rows processed
-
-
--- 加上Or条件之后的效果位图的性能优势更加明显。
-SQL> select count(*) from objects_bitmap where owner='SYS' or owner = 'PM';
-
-执行计划
-----------------------------------------------------------
-Plan hash value: 3317043697
-
----------------------------------------------------------------------------------------------------
-| Id  | Operation                    | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
----------------------------------------------------------------------------------------------------
-|   0 | SELECT STATEMENT             |                    |     1 |     6 |     2   (0)| 00:00:01 |
-|   1 |  SORT AGGREGATE              |                    |     1 |     6 |            |          |
-|   2 |   INLIST ITERATOR            |                    |       |       |            |          |
-|   3 |    BITMAP CONVERSION COUNT   |                    |  5004 | 30024 |     2   (0)| 00:00:01 |
-|*  4 |     BITMAP INDEX SINGLE VALUE| IDX_OBJECTS_BITMAP |       |       |            |          |
----------------------------------------------------------------------------------------------------
-
-Predicate Information (identified by operation id):
----------------------------------------------------
-
-   4 - access("OWNER"='PM' OR "OWNER"='SYS')
-
-
-统计信息
-----------------------------------------------------------
-          1  recursive calls
-          0  db block gets
-          5  consistent gets
-          0  physical reads
-          0  redo size
-        536  bytes sent via SQL*Net to client
-        524  bytes received via SQL*Net from client
-          2  SQL*Net roundtrips to/from client
-          0  sorts (memory)
-          0  sorts (disk)
-          1  rows processed
-          
-SQL> select count(*) from objects_btree where owner='SYS' or owner = 'PM';
-执行计划
-----------------------------------------------------------
-Plan hash value: 1182452345
-
-----------------------------------------------------------------------------------------
-| Id  | Operation          | Name              | Rows  | Bytes | Cost (%CPU)| Time     |
-----------------------------------------------------------------------------------------
-|   0 | SELECT STATEMENT   |                   |     1 |     6 |    13   (0)| 00:00:01 |
-|   1 |  SORT AGGREGATE    |                   |     1 |     6 |            |          |
-|   2 |   INLIST ITERATOR  |                   |       |       |            |          |
-|*  3 |    INDEX RANGE SCAN| IDX_OBJECTS_BTREE |  5004 | 30024 |    13   (0)| 00:00:01 |
-----------------------------------------------------------------------------------------
-
-Predicate Information (identified by operation id):
----------------------------------------------------
-
-   3 - access("OWNER"='PM' OR "OWNER"='SYS')
-
-
-统计信息
-----------------------------------------------------------
-          1  recursive calls
-          0  db block gets
-         69  consistent gets
-          0  physical reads
-          0  redo size
-        536  bytes sent via SQL*Net to client
-        524  bytes received via SQL*Net from client
-          2  SQL*Net roundtrips to/from client
-          0  sorts (memory)
-          0  sorts (disk)
-          1  rows processed
-
-```
-
-
-
-##### 索引锁定
-
-位图索引是按键值锁定的而不是按行。也就说当一个键值被更新时，这个键值对应的所有行都会被锁定。直到当前会话提交，其他会话才能修改这个键值对应的行。
-
-看下面的案例。
-
-```sql
--- 此时一个会话更新位图索引的键值为sys的一行记录。未提交。
-SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 20;
-已更新 1 行
-
--- 另一个会话更新sys的另一行记录被阻塞。
-SQL> update objects_bitmap set owner='SYSTEM' where owner='SYS' and object_id = 46;
-
--- 再开一个会话修改另一个键值则可以修改成功。
-SQL> update objects_bitmap set owner='PM1' where owner='PM' and object_id = 46;
-已更新 27 行
-```
-
-故这就是为什么位图索引不适用于并发修改频繁的OLTP系统的原因。
-
-
-
-#### 全文索引
-
-##### 背景介绍
-
-很多时候需要根据key words关键字去匹配对应的值，对于大量的数据而已，如果使用like，或者instr函数，速度则会很慢，这个时候，全文检索对比其他的模糊查询，有着明显的速度优势。但是因为分词，所以会占用的一定的空间。如果空间足够以及对速度有一样的需求，可以考虑全文检索。根据自身的需求而定。
-https://blog.csdn.net/weeknd/article/details/71576864
-
-优点
-
-当b树和位图索引无法发挥作用时可以使用，例如：like '%abc%';
-
-缺点
-
-占用过大磁盘空间。全文索引一般要比原表还要大。
-
-维护成本高。全文索引一旦损坏，如果要重建成本较大。即使建成分区全文索引，某个分区的数据坏了，要整个重建。
-
-bug较多。用的人少，oracle通过用户汇报bug，来解决bug。
-
-
-
 ### 分区
 
-分区表的几点注意
+#### 分区概述
 
-表分区后，分区变成各自的段，而表表成一个逻辑名称
+1. 目的：提高大表的查询效率。
+2. 概念：将一个表划分为多个分区表，"分而治之"
+3. 优点：
+   (1) '改善查询性能': 分区对象的查询仅搜索自己关系的分区
+   (2) '增强可用性'  : 如果某个分区出现故障，其它分区的数据仍然可用
+   (3) '维护方便' : 如果某个分区出现故障，仅修复该分区即可
+   (4) '均衡I/O' : 将不同的分区放置不同的磁盘，以均衡I/O，改善整个系统性能
+4. 缺点：
+   (1) 已经存在的表无法直接转化为分区表 -- 不过有很多间接方法，如：重定义表
+5. 适用情况
+   (1) 表的大小超过 2GB
+
+
+
+#### 分区注意
+
+表分区后，分区变成各自的段，而原表变成一个逻辑名称
 
 通过user_extends查不到表的表空间，而是要去查这个表的分区，然后在查询分区对应的表空间。
 
@@ -8491,6 +8669,7 @@ Hash Partitioning，哈希分区。这种分区一般和业务无关。按某个
 Oracle10g提供两种分区组合
 Range-hash
 Range-list
+
 Oracle11g增加了四种组合
 RANGE-RANGE
 LIST-RANGE
@@ -8499,27 +8678,239 @@ LIST-LIST
 
 
 
-#### 分区索引
+### 索引优化
 
-分区索引分本地索引和全局索引。
-
-本地索引
-
-##### local index
-
-分区表的DML操作无需rebuild索引，不同分区之间的索引不影响。
-
-可以非常方便的管理数据。
-
-##### global index
-
-表的DDL操作会导致索引无效
-
-
+https://www.cnblogs.com/hmwh/p/12198302.html
 
 
 
 ### 数据分析
+
+数据分析的最终目的是为了让Oracle的CBO优化器理解数据。
+
+#### 没有分析数据时
+
+```sql
+SOL> create table t_analyze as select * from dba_objects;
+表已创建
+
+SQL> select segment_type, extents, blocks from user_segments where segment_name='T_ANALYZE';
+SEGMENT_TYPE                            EXTENTS     BLOCKS
+------------------------------------ ---------- ----------
+TABLE                                        24       1152
+
+-- 下面这个查询是没有数据的。
+SQL> select num_rows, blocks from user_tables where table_name='T_ANALYZE';
+  NUM_ROWS     BLOCKS
+---------- ----------
+
+SQL> set autotrace traceonly;
+SQL> set linesize 1000;
+
+-- 禁用动态采样去查询这张表的行数
+SQL> select /*+ dynamic_sampling(t 0)*/ count(*) from T_ANALYZE t;
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3304868404
+
+------------------------------------------------------------------------
+| Id  | Operation          | Name      | Rows  | Cost (%CPU)| Time     |
+------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |           |     1 |   290   (1)| 00:00:04 |
+|   1 |  SORT AGGREGATE    |           |     1 |            |          |
+|   2 |   TABLE ACCESS FULL| T_ANALYZE | 86581 |   290   (1)| 00:00:04 |
+------------------------------------------------------------------------
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+       1039  consistent gets
+          0  physical reads
+          0  redo size
+        536  bytes sent via SQL*Net to client
+        524  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> select count(*) from T_ANALYZE t;
+count(*)
+---------------
+72597
+
+-- 从上面的结果可以看出，Oracle计算出来的Rows是不准确的。他是用下面的公式算出来的。
+Cardinality = num_of_blocks * (block_size - cache_layer)/avg_row_len
+```
+
+
+
+#### 分析数据不足时
+
+紧接着上面的案例，执行下面的操作。然后执行分析函数，但是不生成直方图。Oracle的统计数据依然是错的
+
+```sql
+SQL> drop table t_analyze;
+SQL> create table t_analyze as select * from dba_objects;
+
+SQL> update T_ANALYZE set object_id=1 where object_id<1001;
+已更新943行。
+
+SQL> exec dbms_stats.gather_table_stats('scott','T_ANALYZE', method_opt => 'for all columns size 1');
+PL/SQL 过程已成功完成。
+
+SQL> select num_rows, blocks from user_tables where table_name='T_ANALYZE';
+
+  NUM_ROWS     BLOCKS
+---------- ----------
+     72598       1060
+
+SQL> set autotrace traceonly;
+SQL> set linesize 1000;
+
+-- 然后下面的SQL，Oracle的执行计划是错误的。他预估的只有1条，但是实际是943，而且还用了全表扫描
+SQL> select * from T_ANALYZE where object_id = 1;
+已选择943行。
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1988957032
+
+-------------------------------------------------------------------------------
+| Id  | Operation         | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |           |     1 |    97 |   291   (1)| 00:00:04 |
+|*  1 |  TABLE ACCESS FULL| T_ANALYZE |     1 |    97 |   291   (1)| 00:00:04 |
+-------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("OBJECT_ID"=1)
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+       1102  consistent gets
+          0  physical reads
+          0  redo size
+      45206  bytes sent via SQL*Net to client
+       1206  bytes received via SQL*Net from client
+         64  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+        943  rows processed
+
+-- 这时候我们重新执行数据分析并且把直方图加进去。并执行查询。
+SQL> exec dbms_stats.gather_table_stats('scott','T_ANALYZE', method_opt => 'for all columns size 254');
+PL/SQL 过程已成功完成。
+SQL> select * from T_ANALYZE where object_id = 1;
+已选择943行。
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 1988957032
+
+-- 可以看到这里面的rows数据明显和真实值943接近了。
+-------------------------------------------------------------------------------
+| Id  | Operation         | Name      | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |           |   857 | 83129 |   291   (1)| 00:00:04 |
+|*  1 |  TABLE ACCESS FULL| T_ANALYZE |   857 | 83129 |   291   (1)| 00:00:04 |
+-------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("OBJECT_ID"=1)
+
+
+统计信息
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+       1102  consistent gets
+          0  physical reads
+          0  redo size
+      45206  bytes sent via SQL*Net to client
+       1206  bytes received via SQL*Net from client
+         64  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+        943  rows processed
+
+SQL>
+```
+
+
+
+#### 数据分析来源
+
+- 初始化参数
+  - 优化参数，cbo计算时会读取。
+  - CPU
+  - 数据块大小
+  - 多块读的大小
+- 数据字典
+  - user_tables,user_tab_partitions
+  - user_indexes,user_ind_partitions
+  - user_tab_col_statistics
+
+
+
+#### 数据分析方法
+
+- analyze命令已经过时
+  - 无法提供灵活的分析选项
+  - 无法提供并行的分析
+  - 无法对分析数据进行管理
+- DBMS_STATS
+  - 专门为CBO提供信息来源
+  - 可以进行数据分析的多种组合可以对分区进行分析
+  - 可以进行分析数据管理
+    - 备份，恢复，删除，设置....
+  - [DBMS_STATS包详解](https://blog.csdn.net/qingzhuoran/article/details/53927439)
+- 自动分析
+  - Oracle11g的一个默认设置。不用额外修改就会自动分析。
+  - 当分析对象的数据修改超过10%时，Oracle会重新分析
+  - 定时任务GATHER_STATS_JOB负责重新定时收集过旧数据的信息。11g默认是每天晚上2点。
+    - 任务执行信息查看：select * from dba_scheduler_job_run_details where job_name = 'GATHER_STATS_JOB';
+  - 通过这个命令可以立即执行：exec DBMS_STATS.FLUSH_DATABASE_MONITORING_INFO;
+  - user_tab_modification跟踪表分析数据的修改：select * from user_tab_modifications;
+
+**什么时候需要自动分析？**
+
+当数据执行计划保持不错的时候，可以依赖自动分析
+
+比如，OLTP系统否则
+
+需要手工介入
+
+比如，OLAP系统
+
+没有一个适合所有系统的数据分析方法
+
+
+
+##### gather_table_stats
+
+默认参数
+
+exec dbms_stats.gather_table_stats('scott', 'T_ANALYZE');
+
+指定method_opt参数
+
+exec dbms_stats.gather_table_stats('scott', 'T_ANALYZE', cascade => true);
+
+指定method_opt参数
+
+exec dbms_stats.gather_table_stats('scott','T_ANALYZE', method_opt => 'for all columns size 254');
 
 
 
@@ -8537,7 +8928,47 @@ LIST-LIST
 
 
 
-### sql_trace及10046
+### sql_trace(10046)
+
+#### 概述
+
+用以描述SQL执行过程的trace输出
+SQL是如何操作数据的
+SQL执行过程中产生了哪些等待时间。
+SQL执行中消耗了多少资源
+SQL的实际执行计划。
+SQL产生的递归语句
+
+使用场景
+
+当需要分析执行计划及CBO行为时，使用SET AUTO TRACE (EXPLAIN PLAN)
+当要看一条SQL的真实运行效果时，使用: SQL_TRACE(10046)
+
+
+
+#### 使用步骤
+
+```sql
+-- 开启sql trace
+SQL> alter session set sql_trace=true;
+会话已更改。
+-- 执行SQL
+SQL> select count(*) from t;
+
+-- 关闭sql trace
+SQL> alter session set sql_trace=false;
+会话已更改
+
+-- 去指定目录查找trc文件，如果找不到需要退出sqlplus窗口。
+select * from v$diag_info where name like 'Default%';
+   INST_ID NAME   VALUE
+---------- --------------------------- ----------------------------------
+1 Default Trace File d:\programfiles\oracle\diag\rdbms\study\study\trace\study_ora_8780.trc
+
+-- 使用记事本打开文件。
+```
+
+
 
 
 
@@ -8549,15 +8980,487 @@ LIST-LIST
 
 
 
-### 视图和性能参数
+### 参数优化
+
+#### CPU
+
+##### cpu_count
+
+CPU_COUNT参数决定了Oracle同时可以使用多少个内核来支持并发请求，通过控制Oracle能使用多少资源来支持并发查询，从而提高查询性能，减少假死现象。
+
+正确设置CPU_COUNT： 
+
+1、首先，应根据CPU核心数进行设置，一般情况下，CPU_COUNT 的取值等于物理机的CPU核心数。可以通过Linux的文件系统或Windows的Task Manager查看CPU核心数。
+
+2、其次，也可以根据系统的负载情况来进行调整，一般情况下，如果物理机CPU核心数大于数据库需要使用的CPU资源，应将CPU_COUNT减小；如果CPU核心数小于数据库需要使用的CPU资源，应将CPU_COUNT增大。
+
+3、最后，可以根据实际的服务器使用情况来进行调整，如果服务器的其他服务没有使用太多的CPU资源，可以增大CPU_COUNT的数值；反之， 如果服务器的其他服务正在使用大量的CPU资源，则应该减小CPU_COUNT的数值。
+
+
+
+#### 内存
+
+Oracle在简化内存管理方面过去几年做了巨大的努力，从Oracle 9i通过PGA_AGGREGATE_TARGET参数实现PGA自动管理开始，Oracle 10g通过SGA_TARGET参数实现了SGA的自动管理，Oracle 11g更是惊人地实现了数据库所有内存块的全自动化管理，它使得动态管理SGA和PGA成为现实。
+
+**MEMORY_TARGET**
+
+Oracle11g开始引入，代表Oracle总共可以使用的共享内存大小。默认为0，代表关闭内存自动管理。内存的管理方式与oracle10g保持一致。
+
+如果这个参数不为0，代表开启内存自动管理，Oracle会动态调整SGA和PGA的大小。启用这个功能时，官方建议将sga_target、pga_aggregate_target设置为0。
+
+它不能超过MEMORY_MAX_TARGET参数设置的大小。如果这个参数为0，则关闭内存自动管理，
+
+**MEMORY_MAX_TARGET**
+
+memory_max_target 是设定 Oracle 最多能占物理内存多大空间，一个是 Oracle SGA 区最大能占多大内存空间+PGA区多大空间，memory_max_target是memory_target上限值，如果只设置了memory_max_target没有设置memory_target，则Oracle认为memory_target=0不使用内存自动管理。
+
+这个时候如果sga_max_size也设置为了0，那么在数据库启动的时候，sga_max_size会自动设置为memory_target*0.6，也就是说sga_target最大不会超过memory_target * 0.6，如果sga_max_size设置为了一个数值，那么在数据库启动的时候，sga会分配为memory_target * 0.6，pga会分配为memory_target * 0.4，后期会根据实际使用情况自动进行调整，但是不会超过sga_max_size。
+
+比如：memory_target=100G，人为将alter system set sga_max_size=0 scope=spfile;那么数据库启动的时候sga_max_size会被设置为60G，也就是说sga运行期间不会超过60G。如果alter system set sga_max_size=90G scope=spfile;那么虽然数据库启动的时候sga分配成了60G，但是数据库运行期间会自动进行调整，但最高不超过90G
+
+**sga_target**
+
+动态调整SGA相关参数。SGA相关参数可以通过下面的命令查看。
+
+```sql
+SQL> show sga;
+
+Total System Global Area 6714322944 bytes
+Fixed Size                  2188448 bytes
+Variable Size            3489663840 bytes
+Database Buffers         3204448256 bytes
+Redo Buffers               18022400 bytes
+```
+
+**pga_aggregate_target**
+
+PGA内存空间总和的动态调整
 
 
 
 
 
-### 性能报告分析(AWR，ASH)
+#### 网络
+
+processes：数据库允许产生的process数量。
+
+sessions：数据库允许产生的session数量，等于(1.5 * processes) + 22
+
+process和session的关系
+
+process表示操作系统级别的一个进程。
+
+session表示Process和数据库建立的回话数量。
+
+Process可以等于session，也可以小于session，还可以大于session。
+
+process > session的情况，sqlplus /nolog连上数据库后，此时只有进程，没有session。conn之后才会有session。
+
+process = session的情况，大部分就是这个情况。
+
+process < session的情况，当使用set autotrace on;显示执行计划时，oracle内部会创建一个新的session去执行。
+
+**open_cursors**
+
+指定每个会话能够打开的最大游标数当这个参数设置太小时，可能会导致程序执行出错
+默认值50，取值0到65535。
 
 
+
+#### I/0
+
+**DB_FILE_MULTIBLOCK_READ_COUNT**
+
+初始化参数db_file_multiblock_read_count  影响Oracle在执行连续的数据库扫描时，一次I/O允许读取的最大数据块数，这个参数的设置可能影响到CBO的执行计划选择。但db_file_multiblock_read_count的设置要受系统最大IO能力影响，也就是说，如果你系统的硬件IO能力有限，即使设置再大的db_file_multiblock_read_count也是没有用。理论上，最大db_file_multiblock_read_count和系统IO能力有如下关系：Max(db_file_multiblock_read_count) = MaxOsIOsize/db_block_size，当然这个Max(db_file_multiblock_read_count)还要受Oracle的限制，目前Oracle所支持的最大db_file_multiblock_read_count 值为128.
+在Oracle10gR2之后的版本（10gR2和11g）中，Oracle数据库已经可以根据系统的IO能力以及Buffer Cache的大小来动态调整该参数值，Oracle建议不要显式设置该参数值。
+
+**DB_WRITER_PROCESSES**
+
+我们可以设置多个DB_WRITER进程，以加快数据从缓冲区先磁盘写入的速度，这在写操作非常大的数据库上非常有用。
+
+需要注意的是，这个参数只用于数据库的写操作，和数据读取没有任何关系，数据块的读取是用户会话的服务端进程来完成的。
+
+**DISK_ASYNCH_IO**
+
+同步方式写入数据
+
+for i in 1 ... 100
+loop
+	将数据块X从数据缓冲池中向磁盘写入，然后等待磁盘写入完成的消息。
+end loop
+
+异步方式写入数据
+
+for i in 1 ... 100
+loop
+	DB_WRITER把数据块直接送给操作系统，不再等待操作系统的反馈，继续下一个块操作。
+
+end loop
+
+**DBWR_IO_SLAVES**
+
+DBWR_IO_SLAVES参数控制数据库操作进程(DBWR)使用的文件I/O从进程数量。当系统出现磁盘I/O性能瓶颈，建议将该参数值设置大一点，以提高磁盘I/O的吞吐量。
+
+默认情况下，DBWR_IO_SLAVES的值为0，表示不开启从进程，只有主进程。如果确实有I/O性能缓慢的情况出现，可以适当调整该参数。
+
+正确设置DBWR_IO_SLAVES参数的方法是：
+
+1、使用SQL或者SQL*Plus查看I/O使用的情况，比如可以使用`V$SESSTAT`和`V$SYSSTAT`视图，查看I/O操作的耗时和I/O调用次数；
+
+2、如果耗时较高和调用次数较多，则适当调大DBWR_IO_SLAVES参数值，比如从0->2；
+
+3、注意，调大DBWR_IO_SLAVES参数值有可能会降低系统性能，要根据实际情况来选择合适的值，并且需要经过一段时间的性能测试才能确定最佳参数值；
+
+4、最终选择完成后，用alter system命令即可更新数据库参数。
+
+
+
+#### 优化器
+
+**optimizer_index_cost_adj**
+
+https://www.cnblogs.com/timlong/p/6197189.html
+
+这个参数表示全表扫描和索引扫描的百分比，取值范围[1,10000]，缺省为100。
+
+告诉优化器：走索引和走全表扫描的代价的比值是多少。默认值100，意味着索引访问与全表扫描是完全等价的。
+
+这个值越小，Oracle越倾向于使用索引。值越大，越倾向于使用全表扫描。
+
+**optimizer_mode**
+
+https://developer.aliyun.com/article/421719
+
+first_rows:这种工作模式要求把前n条记录马上处理完优先返回给用户，场合：搜索，论坛，电商推荐，网上购物
+
+all_rows:这种工作模式要求一次性处理完全部的数据返回给用户，场合：报表系统，金融系统
+
+
+
+### 性能视图
+
+#### CPU
+
+**v$mystat**,**v$sesstat**是用来分别统计会话级别和自实例起动以来数据库各种统计信息的。两个视图结构一致，只是统计数据不一致。**v$mystat**是**v$sesstat**的子集。**v$mystat**视图中只会有当前用户的会话信息，**v$sesstat**会有整个实例内所有会话信息
+
+按照OracleDocument中的描述，v$sysstat存储自数据库实例运行那刻起就开始累计全实例(instance-wide)的资源使用情况。
+
+**类似于v$sesstat****，该视图存储下列的统计信息：**
+
+```sql
+-- 查询会话占用的CPU
+select a.name, b.value, b.sid
+from v$sesstat b,v$statname a
+where a.statistic#=b.statistic#
+and a.name = 'CPU used by this session'
+-- and a.name like '%CPU%'
+and b.sid =136
+
+e'CPU used by this session
+```
+
+
+
+#### 内存
+
+
+
+#### 网络
+
+v$session --某会话的当前各种状态比如关联 `$sql` 视图查看当前会话的SQL语句。
+
+v$session_wait --会话当前等待事件的详细信息
+
+v$session_event --会话的所有等待事件的详细信息
+
+v$sesstat --会话的资源统计信息
+
+#### I/O
+
+V$IOSTAT_FILE
+
+显示各种文件的I/O统计信息
+
+数据文件，临时文件，控制文件，日志文件，归档文件
+
+select * from V$IOSTAT_FILE;
+
+#### 对象
+
+
+
+#### 等待事件
+
+
+
+
+
+### 性能报告(AWR，ASH)
+
+#### AWR报告来源
+
+select * from dict where table_name like 'DBA_HIST_%';
+
+TABLE_NAME	COMMENTS
+DBA_HIST_ACTIVE_SESS_HISTORY	Active Session Historical Statistics Information
+DBA_HIST_ASH_SNAPSHOT	
+DBA_HIST_BASELINE	Baseline Metadata Information
+DBA_HIST_BASELINE_DETAILS	Baseline Stats on per Instance Level
+DBA_HIST_BASELINE_METADATA	Baseline Metadata Information
+DBA_HIST_BASELINE_TEMPLATE	Baseline Template Information
+DBA_HIST_BG_EVENT_SUMMARY	Summary of Background Event Historical Statistics Information
+DBA_HIST_BUFFERED_QUEUES	STREAMS Buffered Queues Historical Statistics Information
+DBA_HIST_BUFFERED_SUBSCRIBERS	STREAMS Buffered Queue Subscribers Historical Statistics Information
+DBA_HIST_BUFFER_POOL_STAT	Buffer Pool Historical Statistics Information
+DBA_HIST_CLUSTER_INTERCON	Cluster Interconnect Historical Stats
+DBA_HIST_COLORED_SQL	Marked SQLs for snapshots
+DBA_HIST_COMP_IOSTAT	I/O stats aggregated on component level
+DBA_HIST_CR_BLOCK_SERVER	Consistent Read Block Server Historical Statistics
+DBA_HIST_CURRENT_BLOCK_SERVER	Current Block Server Historical Statistics
+DBA_HIST_DATABASE_INSTANCE	Database Instance Information
+DBA_HIST_DATAFILE	Names of Datafiles
+DBA_HIST_DB_CACHE_ADVICE	DB Cache Advice History Information
+DBA_HIST_DISPATCHER	Dispatcher statistics
+DBA_HIST_DLM_MISC	Distributed Lock Manager Miscellaneous Historical Statistics Information
+DBA_HIST_DYN_REMASTER_STATS	Dynamic remastering statistics
+DBA_HIST_ENQUEUE_STAT	Enqueue Historical Statistics Information
+DBA_HIST_EVENT_HISTOGRAM	Event Histogram Historical Statistics Information
+DBA_HIST_EVENT_NAME	Event Names
+DBA_HIST_FILEMETRIC_HISTORY	File Metrics History
+DBA_HIST_FILESTATXS	Datafile Historical Statistics Information
+DBA_HIST_IC_CLIENT_STATS	Historical interconnect client statistics
+DBA_HIST_IC_DEVICE_STATS	Historical interconnect device statistics
+DBA_HIST_INSTANCE_RECOVERY	Instance Recovery Historical Statistics Information
+DBA_HIST_INST_CACHE_TRANSFER	Instance Cache Transfer Historical Statistics
+DBA_HIST_INTERCONNECT_PINGS	Instance to instance ping stats
+DBA_HIST_IOSTAT_DETAIL	Historical I/O statistics by function and filetype
+DBA_HIST_IOSTAT_FILETYPE	Historical I/O statistics by file type
+DBA_HIST_IOSTAT_FILETYPE_NAME	File type names for historical I/O statistics
+DBA_HIST_IOSTAT_FUNCTION	Historical I/O statistics by function
+DBA_HIST_IOSTAT_FUNCTION_NAME	Function names for historical I/O statistics
+DBA_HIST_JAVA_POOL_ADVICE	Java Pool Advice History
+DBA_HIST_LATCH	Latch Historical Statistics Information
+DBA_HIST_LATCH_CHILDREN	Latch Children Historical Statistics Information
+DBA_HIST_LATCH_MISSES_SUMMARY	Latch Misses Summary Historical Statistics Information
+DBA_HIST_LATCH_NAME	Latch Names
+DBA_HIST_LATCH_PARENT	Latch Parent Historical Historical Statistics Information
+DBA_HIST_LIBRARYCACHE	Library Cache Historical Statistics Information
+DBA_HIST_LOG	Log Historical Statistics Information
+DBA_HIST_MEMORY_RESIZE_OPS	Memory Resize Operations History
+DBA_HIST_MEMORY_TARGET_ADVICE	Memory Target Advice History
+DBA_HIST_MEM_DYNAMIC_COMP	Historical memory component sizes
+DBA_HIST_METRIC_NAME	Segment Names
+DBA_HIST_MTTR_TARGET_ADVICE	Mean-Time-To-Recover Target Advice History
+DBA_HIST_MUTEX_SLEEP	Mutex Sleep Summary Historical Statistics Information
+DBA_HIST_OPTIMIZER_ENV	Optimizer Environment Information
+DBA_HIST_OSSTAT	Operating System Historical Statistics Information
+DBA_HIST_OSSTAT_NAME	Operating System Statistic Names
+DBA_HIST_PARAMETER	Parameter Historical Statistics Information
+DBA_HIST_PARAMETER_NAME	Parameter Names
+DBA_HIST_PERSISTENT_QUEUES	STREAMS AQ Persistent Queues Historical Statistics Information
+DBA_HIST_PERSISTENT_SUBS	STREAMS AQ Persistent Queue Subscribers Historical Statistics Information
+DBA_HIST_PGASTAT	PGA Historical Statistics Information
+DBA_HIST_PGA_TARGET_ADVICE	PGA Target Advice History
+DBA_HIST_PLAN_OPERATION_NAME	Optimizer Explain Plan Operation Names
+DBA_HIST_PLAN_OPTION_NAME	Optimizer Explain Plan Option Names
+DBA_HIST_PROCESS_MEM_SUMMARY	Process Memory Historical Summary Information
+DBA_HIST_RESOURCE_LIMIT	Resource Limit Historical Statistics Information
+DBA_HIST_ROWCACHE_SUMMARY	Row Cache Historical Statistics Information Summary
+DBA_HIST_RSRC_CONSUMER_GROUP	Historical resource consumer group statistics
+DBA_HIST_RSRC_PLAN	Historical resource plan statistics
+DBA_HIST_RULE_SET	Rule sets historical statistics information
+DBA_HIST_SEG_STAT	 Historical Statistics Information
+DBA_HIST_SEG_STAT_OBJ	Segment Names
+DBA_HIST_SERVICE_NAME	Service Names
+DBA_HIST_SERVICE_STAT	Historical Service Statistics
+DBA_HIST_SERVICE_WAIT_CLASS	Historical Service Wait Class Statistics
+DBA_HIST_SESSMETRIC_HISTORY	System Metrics History
+DBA_HIST_SESS_TIME_STATS	CPU and I/O time for interesting (STREAMS) sessions
+DBA_HIST_SGA	SGA Historical Statistics Information
+DBA_HIST_SGASTAT	SGA Pool Historical Statistics Information
+DBA_HIST_SGA_TARGET_ADVICE	SGA Target Advice History
+DBA_HIST_SHARED_POOL_ADVICE	Shared Pool Advice History
+DBA_HIST_SHARED_SERVER_SUMMARY	Shared Server summary statistics
+DBA_HIST_SNAPSHOT	Snapshot Information
+DBA_HIST_SNAP_ERROR	Snapshot Error Information
+DBA_HIST_SQLBIND	SQL Bind Information
+DBA_HIST_SQLCOMMAND_NAME	Sql command types
+DBA_HIST_SQLSTAT	SQL Historical Statistics Information
+DBA_HIST_SQLTEXT	SQL Text
+DBA_HIST_SQL_BIND_METADATA	SQL Bind Metadata Information
+DBA_HIST_SQL_PLAN	SQL Plan Information
+DBA_HIST_SQL_SUMMARY	Summary of SQL Statistics
+DBA_HIST_SQL_WORKAREA_HSTGRM	SQL Workarea Histogram History
+DBA_HIST_STAT_NAME	Statistic Names
+DBA_HIST_STREAMS_APPLY_SUM	STREAMS Apply Historical Statistics Information
+DBA_HIST_STREAMS_CAPTURE	STREAMS Capture Historical Statistics Information
+DBA_HIST_STREAMS_POOL_ADVICE	Streams Pool Advice History
+DBA_HIST_SYSMETRIC_HISTORY	System Metrics History
+DBA_HIST_SYSMETRIC_SUMMARY	System Metrics History
+DBA_HIST_SYSSTAT	System Historical Statistics Information
+DBA_HIST_SYSTEM_EVENT	System Event Historical Statistics Information
+DBA_HIST_SYS_TIME_MODEL	System Time Model Historical Statistics Information
+DBA_HIST_TABLESPACE_STAT	Tablespace Historical Statistics Information
+DBA_HIST_TBSPC_SPACE_USAGE	Tablespace Usage Historical Statistics Information
+DBA_HIST_TEMPFILE	Names of Temporary Datafiles
+DBA_HIST_TEMPSTATXS	Temporary Datafile Historical Statistics Information
+DBA_HIST_THREAD	Thread Historical Statistics Information
+DBA_HIST_TOPLEVELCALL_NAME	Oracle top level call type
+DBA_HIST_UNDOSTAT	Undo Historical Statistics Information
+DBA_HIST_WAITCLASSMET_HISTORY	Wait Class Metric History
+DBA_HIST_WAITSTAT	Wait Historical Statistics Information
+DBA_HIST_WR_CONTROL	Workload Repository Control Information
+DBA_HISTOGRAMS	Synonym for DBA_TAB_HISTOGRAMS
+
+
+
+#### AWR报告产生
+
+在$ORACLE_HOME\RDBMS\ADMIN目录下有一些列awr开头的sql文件
+
+例如：我的电脑是这个目录D:\ProgramFiles\Oracle\product\11.2.0\dbhome_1\RDBMS\ADMIN
+
+awrgdrpi.sql
+awrddrpi.sql
+awrgrpt.sql
+awrgdrpt.sql
+awrload.sql
+awrextr.sql
+awrgrpti.sql
+awrginp.sql
+awrgdinp.sql
+awrblmig.sql
+awrinput.sql
+awrddrpt.sql
+awrddinp.sql
+awrrpti.sql
+awrsqrpt.sql
+awrsqrpi.sql
+awrinpnm.sql
+awrinfo.sql
+**awrrpt.sql**
+
+使用sys或者system用户，执行sql。执行后，会交互式的回答几个问题
+
+```sql
+SQL> @D:\ProgramFiles\Oracle\product\11.2.0\dbhome_1\RDBMS\ADMIN\awrrpt.sql
+
+Current Instance
+~~~~~~~~~~~~~~~~
+
+   DB Id    DB Name      Inst Num Instance
+----------- ------------ -------- ------------
+ 3170995514 STUDY               1 study
+
+
+Specify the Report Type
+~~~~~~~~~~~~~~~~~~~~~~~
+Would you like an HTML report, or a plain text report?
+Enter 'html' for an HTML report, or 'text' for plain text
+Defaults to 'html'
+-- 这里是问生成报告的类型，可以选html或者text，如果想在linux里面直接看就选text。
+输入 report_type 的值:  html
+
+Type Specified:                  html
+
+
+Instances in this Workload Repository schema
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   DB Id     Inst Num DB Name      Instance     Host
+------------ -------- ------------ ------------ ------------
+* 3170995514        1 STUDY        study        DELL-3020S
+
+Using 3170995514 for database Id
+Using          1 for instance number
+
+
+Specify the number of days of snapshots to choose from
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Entering the number of days (n) will result in the most recent
+(n) days of snapshots being listed.  Pressing <return> without
+specifying a number lists all completed snapshots.
+
+-- 这里是要生成最近几天的报告，如果直接回车代表全部的。
+输入 num_days 的值:  3
+
+-- 接下来会根据你选择的天数列出具体的报告，需要选择开始的和结束的Snapshots id。
+Listing the last 3 days of Completed Snapshots
+
+                                                        Snap
+Instance     DB Name        Snap Id    Snap Started    Level
+------------ ------------ --------- ------------------ -----
+study        STUDY               90 27 11月 2023 08:44     1
+                                 91 27 11月 2023 10:00     1
+                                 92 27 11月 2023 11:00     1
+                                 93 27 11月 2023 12:00     1
+                                 94 27 11月 2023 13:00     1
+                                 95 27 11月 2023 14:00     1
+                                 96 27 11月 2023 15:00     1
+                                 97 27 11月 2023 16:00     1
+                                 98 27 11月 2023 17:00     1
+                                 99 27 11月 2023 18:00     1
+                                100 27 11月 2023 19:00     1
+                                101 27 11月 2023 20:00     1
+                                102 27 11月 2023 21:00     1
+                                103 27 11月 2023 22:00     1
+                                104 27 11月 2023 23:00     1
+                                
+Specify the Begin and End Snapshot Ids
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+输入 begin_snap 的值:  122
+Begin Snapshot Id specified: 122
+
+输入 end_snap 的值:  129
+End   Snapshot Id specified: 129
+
+
+-- 这里已经生成好报告了，如果直接使用就回车就行了。
+Specify the Report Name
+~~~~~~~~~~~~~~~~~~~~~~~
+The default report file name is awrrpt_1_122_129.html.  To use this name,
+press <return> to continue, otherwise enter an alternative.
+
+输入 report_name 的值:
+
+Using the report name awrrpt_1_122_129.html
+
+-- 下面是对报告内容的实时预览，建议大家去目录中下载下来之后打开看。
+<html><head><title>AWR Report for DB: STUDY, Inst: study, Snaps: 122-129</title>
+```
+
+windows电脑，生成报告是在文档目录中。如果是linux/unix,应该是当前目录。
+
+#### 报告分析
+
+https://www.cnblogs.com/mzq123/p/10741208.html
+
+或者看这个视频：https://www.bilibili.com/video/BV1PY4y1E7A5?p=29
+
+
+
+#### ASH报告
+
+视频讲解：https://www.bilibili.com/video/BV1PY4y1E7A5?p=30
+
+ASH：Active Session History
+
+ASH报表间隔时间可以精确到分钟，因而ASH可以提供比AWR更详细的关于历史会话的信息，可以作为AWR的补充。
+
+信息来源
+
+`v$active_session_history` --当前会话的采样数据(1秒钟一次快照)
+dba_hist_active_sess_history（保留v$active_session_history再早的数据）
+
+[ASH的使用场景以及和AWR的对比](https://blog.csdn.net/enmotech/article/details/109684930)
+
+总的来说：
+
+AWR，系统级实例级
+
+ASH，会话级
+
+Sql Trace，单条SQL级
 
 
 
@@ -9040,3 +9943,12 @@ test> db.collection1.find();
 test> 
 ```
 
+
+
+# Elastic Search
+
+## 简介
+
+一句话形容：性能强悍，超快无比，快到不可思议。PB级数据也可以达到秒级。
+
+从这个数据库排名的网站上也可以看出，在Search Engines搜索引擎这个分类下，ES是第1名。
