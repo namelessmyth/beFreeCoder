@@ -76,7 +76,7 @@ knock it off.
 
 quadrant
 
-**treacherous**
+***treacherous***，
 
 stretch
 
@@ -84,25 +84,25 @@ rucksack
 
 beat the hell out of
 
-**tatter**
+**tatter**，1
 
 clap
 
 clown
 
-**marquee**
+**marquee**，1
 
-**menagerie**
+***menagerie***
 
 midst
 
 abduction
 
-**theatrics**
+***theatrics***
 
 green room
 
-**scour**
+***scour***
 
 cadet
 
@@ -120,7 +120,7 @@ just a snack
 
 as a token of our gratitude
 
-**hunt down**
+**hunt down**，1
 
 will always have each other's back.
 
@@ -128,11 +128,9 @@ in that case
 
 if the path to what you want seems too easy then you're on the wrong path.
 
-Batten down the hatches
-
 Jolly Roger
 
-fresh out
+**fresh out**
 
 
 
@@ -170,7 +168,7 @@ homicidal
 
 unicycle
 
-**relent**
+**relent**，1
 
 ring a bell
 
@@ -212,7 +210,7 @@ render useless from a few splash
 
 turn over
 
-**outcast**
+***outcast***
 
 a freak, scorned and abandoned
 
@@ -234,11 +232,11 @@ rub off.
 
 tank of doom
 
-**tear apart**
+***tear apart***
 
 be my guest
 
-**crate**
+**crate**，1
 
 bazooka
 
@@ -278,23 +276,23 @@ headgear
 
 ditch
 
-**rigging**
+**rigging**，1
 
 have a head start
 
 once I sink my teeth in
 
-**get dragged along for**
+**get dragged along for**，1
 
 tie that knot
 
-**slipped**
+**slipped**，1
 
-**show me up**
+**show me up**，1
 
 secured this rigging
 
-**drilling**
+**drilling**，1
 
 raw recruit
 
@@ -314,15 +312,17 @@ show is on **hiatus**
 
 want a word
 
-impressive **figurehead**
+impressive **figurehead**，1
 
-**mast**
+**mast**，1
 
-crow's nest
+**crow's nest**
 
 desperate soul
 
 a little less flashy
+
+**How lax the security is**.
 
 pitch that to the salesman
 
@@ -350,15 +350,15 @@ do you even work here?
 
 chief technician
 
-encrustation removal
+**encrustation removal**
 
-aviary waste eradication
+**aviary waste eradication**
 
-scrub barnacles
+**scrub barnacles**
 
-strike a deal with her
+**strike a deal with her**
 
-it couldn't hurt to say hello.
+**it couldn't hurt to say hello.**
 
 you've quite a handle on basic seamanship.
 
@@ -368,11 +368,11 @@ in the bilge.
 
 Our experience don't define us.It's what we gain from them that matters.
 
-butler and a few other staff
+**butler** and a few other staff
 
 who people truely are
 
-rob the place blind
+**rob the place blind**
 
 at least a little blurry
 
@@ -380,7 +380,7 @@ this guy's full of shit
 
 oops
 
-buddy
+**buddy**
 
 i know nothing of the sort
 
@@ -390,39 +390,41 @@ show usopp and his friends to the guest suites.
 
 you will bathe and change before dinner.
 
-one of these days
+**one of these days**
 
 So what if he does?
 
 a giant pearl
 
-weather a storm
+**weather a storm**
 
-capsize
+**capsize**
 
-i barely made landfall
+**i barely made landfall**
 
 a massive piece of goldfish shit
 
 for the world
 
-how edgy
+**how edgy**
 
-what the terms?
+what's the terms?
 
 convince kaya to give us that ship
 
 a tad overprotective at times
 
-lighten up
+**lighten up**
+
+chef's reflex
 
 nonsense
 
-decisively
+**decisively**
 
-these young upstart
+these young **upstart**.                                                                                                                                     这些年轻新冒出来的海贼。
 
-swift hand put them back in their place
+they need a swift hand put them back in their place
 
 slayed a dragon
 
@@ -430,7 +432,7 @@ open flame
 
 both personal and professional
 
-intricacies of the shipbuilding business
+**intricacies of the shipbuilding business**
 
 absolutely radiant
 
@@ -450,4 +452,117 @@ this ought to be good
 
 raided a marine base
 
-bring riffraff to our doorstep
+bring **riffraff** to our doorstep
+
+#### 2023-11-30
+
+get Beaten
+
+what is it ?
+
+spot the wreckage
+
+gather a landing party
+
+make for shore
+
+I want those pirates found.
+
+has proven unwarranted
+
+Nepotism can only get you so far
+
+show me what you've got.
+
+heaven
+
+give me a fright
+
+I tent to be light on my feet.
+
+unusual
+
+run this estate
+
+it is only nature
+
+be through enough
+
+take advantage of
+
+ask for an autograph
+
+**sheesh**
+
+house seats
+
+**pull a job**
+
+pay tribute
+
+small potatos
+
+Pirating's more of a side gig.
+
+**ransack**
+
+fixer-upper              
+
+prick
+
+knock over
+
+be talking shit about
+
+spread their filth across the seas.
+
+midnight snack
+
+pillowcase
+
+found some of the decor to be a bit **gaudy**
+
+donate it to charity
+
+have a sleepover
+
+get carried away
+
+brave exploits and grand adventures
+
+take it pretty hard
+
+go through their belongings
+
+I'm jealous
+
+Said the rich girl
+
+notorious pirate
+
+hang out
+
+wine cellar
+
+a clever **ruse**
+
+One that imbecile's ego helped me perpetuate
+
+this may not be my place
+
+**crack on**
+
+get hold of you kid
+
+
+
+### 第四集
+
+worth their salt
+
+No closer to finding the straw hat than we were hours ago
+
+by all means
+
+
+
