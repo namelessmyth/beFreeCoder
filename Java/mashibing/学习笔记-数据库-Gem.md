@@ -9479,7 +9479,8 @@ Sql Trace，单条SQL级
 本文内容参考了以下链接中的内容。
 
 - 马士兵教育视频教程及配套笔记（[PostgreSQL关系型数据库（分章节版）](https://www.mashibing.com/study?courseNo=2312&sectionNo=94926&systemId=1&courseVersionId=3118)）
-- B站视频教程（[Oracle 11g 大师级性能优化艺术视频教程](https://www.bilibili.com/video/BV1PY4y1E7A5?p=1)）
+- PostgreSQL14.1中文手册：http://www.postgres.cn/docs/14/index.html
+- 
 
 
 
@@ -9487,7 +9488,7 @@ Sql Trace，单条SQL级
 
 PostgreSQL是一个功能强大的 **开源** 的关系型数据库。底层基于C实现。
 
-PostgreSQL的开源协议和Linux内核版本的开源协议是一样的。。BDS协议，这个协议基本和MIT开源协议一样，说人话，就是你可以对PostgreSQL进行一些封装，然后商业化是收费。
+PostgreSQL的开源协议和Linux内核版本的开源协议是一样的。BDS协议，这个协议基本和MIT开源协议一样，就是你可以对PostgreSQL进行一些封装，然后商业化是收费。
 
 PostgreSQL的名字咋来的。之前叫Ingres，后面为了解决一些ingres中的一些问题，作为后面的ingres，就起名叫postgre。
 
@@ -9495,8 +9496,8 @@ PostgreSQL版本迭代的速度比较快，现在最新的正式的发布版本�
 
 PGSQL的版本选择一般有两种：
 
-* 如果为了稳定的运行，推荐使用12.x版本。
-* 如果想体验新特性，推荐使用14.x版本。
+* 如果为了稳定的运行，推荐使用14.x版本。
+* 如果想体验新特性，推荐使用16.x版本。
 
 PGSQL允许跨版本升级，而且没有什么大问题。
 
@@ -9524,11 +9525,9 @@ PGSQL的国内社区：http://www.postgres.cn/v2/home
 
 ### Linux手动安装
 
-推荐在Linux中安装，不推荐大家在Windows下安装。
-
 Linux的版本尽量使用CentOS 7.x版本，推荐是7.6、7.8、7.9。
 
-去官网找安装方式：https://www.postgresql.org/download/，（官网访问比较慢，会科学上网的同学可自行加速）
+去官网找安装方式：https://www.postgresql.org/download/，（国外网站，访问可能比较慢）
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/2746/1668770654044/76cab4c3cc3c4d079eeb2c7b3e5341bc.png)
 
@@ -10022,6 +10021,8 @@ https://www.postgresql.org/ftp/pgadmin/pgadmin4/v6.9/windows/
 
 ### 数据类型
 
+#### 总览
+
 PGSQL支持的类型特别丰富，大多数的类型和MySQL都有对应的关系
 
 | 名称         | 说明                                                         | 对比MySQL                                                    |
@@ -10038,13 +10039,11 @@ PGSQL支持的类型特别丰富，大多数的类型和MySQL都有对应的关�
 | **数组类型** | 在类型后，追加[]，代表存储数组，支持多维数组。               | MySQL没有~~~                                                 |
 | JSON类型     | json（存储JSON数据的文本），jsonb（存储JSON二进制，可以加索引，可以对里面的字段进行操作） | 可以存储JSON，MySQL8.x也支持                                 |
 | **ip类型**   | cidr（存储ip地址）                                           | MySQL不支持~                                                 |
-|              |                                                              |                                                              |
+| 文本搜索型   | 用于全文搜索，中文不支持自动分词（需要安装插件zhparser）。   | MySQL不支持~                                                 |
 
 等等  http://www.postgres.cn/docs/14/datatype.html
 
 
-
-### 基本操作&数据类型
 
 #### 单引号和双引号
 
@@ -10135,8 +10134,6 @@ MySQL中的主键自增，是基于auto_increment去实现。MySQL里没有序�
 
 PGSQL和Oracle十分相似，支持序列：sequence。
 
-PGSQL可没有auto_increment。
-
 序列的正常构建方式：
 
 ```sql
@@ -10163,15 +10160,15 @@ insert into laozheng.xxx (name) values ('xxx');
 select * from laozheng.xxx;
 ```
 
-上面这种写法没有问题，但是很不爽~很麻烦。
 
-PGSQL提供了序列的数据类型，可以在声明表结构时，直接指定序列的类型即可。
 
-bigserial相当于给bigint类型设置了序列实现自增。
+PGSQL还提供了序列数据类型，可以在声明表结构时像MySQL那样自动自增。PGSQL自动创建序列。
 
-* smallserial
-* serial
-* bigserial
+占用空间
+
+* smallserial，2字节
+* serial，4字节
+* bigserial，8字节
 
 ```sql
 -- 表自增（爽）
@@ -10183,9 +10180,52 @@ insert into laozheng.yyy (name) values ('yyy');
 ```
 
 在drop表之后，序列不会被删除，但是序列会变为不可用的状态。
+
 因为序列在使用serial去构建时，会绑定到指定表的指定列上。
 
 如果是单独构建序列，再构建表，使用传统方式实现，序列和表就是相对独立的。
+
+
+
+##### identity
+
+为了兼容SQL Server或SQL标准，PostgreSQL 10加入了IDENTITY列的支持。实际上功效类似，都是为了生成默认值。
+
+create table语法中，在列的类型后使用如下语法定义identity列。
+
+ALWAYS，表示优先使用系统列生成的自增值。
+
+BY DEFAULT，表示优先使用用户输入的值。
+
+使用COPY导入数据时，输入的值会强行覆盖IDENTITY的设置。不管使用always还是by default。
+
+```sql
+GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( sequence_options ) ]  
+
+postgres=# create table test (id int GENERATED ALWAYS AS IDENTITY (cache 100), info text);  
+CREATE TABLE  
+  
+postgres=# create table test1 (id int GENERATED BY DEFAULT AS IDENTITY (cache 100), info text);  
+CREATE TABLE  
+  
+postgres=# \d test  
+                          Table "public.test"  
+ Column |  Type   | Collation | Nullable |           Default              
+--------+---------+-----------+----------+------------------------------  
+ id     | integer |           | not null | generated always as identity  
+ info   | text    |           |          |   
+  
+postgres=# \d test1  
+                            Table "public.test1"  
+ Column |  Type   | Collation | Nullable |             Default                
+--------+---------+-----------+----------+----------------------------------  
+ id     | integer |           | not null | generated by default as identity  
+ info   | text    |           |          | 
+```
+
+
+
+详细介绍参考：https://developer.aliyun.com/article/241188
 
 ##### 数值的常见操作
 
@@ -10368,35 +10408,33 @@ JSON中key对应的value的数据类型
    nickname
   -----------
    goodspeed
-  
-  作者：goodspeed
-  链接：https://juejin.cn/post/6844903857009623048
-  来源：稀土掘金
-  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
   ```
 
 * 构建表存储JSON
 
   ```sql
-  create table test(
+  drop table  IF EXISTS test_json;
+  create table test_json(
       id bigserial,
       info json,
       infob jsonb
   );
-  insert into test (info,infob) values 
-  ('{"name":            "张三"              ,"age": 23,"birthday": "2011-11-11","gender": null}',
-  '{"name":               "张三"             ,"age": 23,"birthday": "2011-11-11","gender": null}')
-  select * from test;
+  
+  insert into test_json (info,infob) values 
+  ('{"name":"张三", "age": 23,"birthday": "2011-11-11","gender": null}',
+  '{"name":"张三", "age": 23,"birthday": "2011-11-11","gender": null}');
+  
+  select * from test_json;
   ```
 
 * 构建索引的效果![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/2746/1668770654044/8836eb90caa244e3936eb94cad67c0d6.png)
 
   ```
-  create index json_index on test(info);
-  create index jsonb_index on test(infob);
+  create index json_index on test_json(info);
+  create index jsonb_index on test_json(infob);
   ```
 
-JSON还支持很多函数。可以直接查看 http://www.postgres.cn/docs/12/functions-json.html。
+JSON还支持很多函数。可以直接查看 http://www.postgres.cn/docs/14/functions-json.html。
 
 
 
@@ -10434,7 +10472,7 @@ insert into tb_user (info) values (('李四',24));
 select * from tb_user;
 ```
 
-#### 8.11 数组类型
+#### 数组类型
 
 数组还是要依赖其他类型，比如在设置住址，住址可能有多个住址，可以采用数组类型去修饰字符串。
 
@@ -10488,11 +10526,233 @@ select array[2,4,4,45,1] && array[1];
 
 
 
+#### 文本搜索类型
+
+text search types
+
+tsvector，顾名思义，该数据类型存储的是一个vector（向量），包含了文本中的所有词元，vector中的元素是经过排序的。 
+
+tsquery，存储一组需要搜索的词元。 
+
+```text
+ mydb=# CREATE TABLE test_tsvector (name text, raw text, vector tsvector);
+```
+
+可以看出中文不支持自动分词（需要安装插件zhparser）。
+
+可以在应用程序做好分词后再写入，这样可以降低数据库的运算压力。
+
+```text
+mydb=# INSERT INTO test_tsvector (name, raw, vector) VALUES ('allen', 'I love swimming', to_tsvector('I love swimming'));
+mydb=# INSERT INTO test_tsvector (name, raw, vector) VALUES ('李雷', '我喜欢游泳', to_tsvector('我喜欢游泳'));
+mydb=# INSERT INTO test_tsvector (name, raw, vector) VALUES ('bob', 'I love football', to_tsvector('I love football'));
+mydb=# INSERT INTO test_tsvector (name, raw, vector) VALUES ('kate', 'I love badminton', to_tsvector('I love badminton'));
+mydb=# INSERT INTO test_tsvector (name,raw,vector) VALUES ('李雷','喜欢足球','喜欢:2 足球:3'::tsvector);
+mydb=# SELECT * FROM test_tsvector;
+name  |       raw        |         vector        
+-------+------------------+------------------------
+allen | I love swimming  | 'love':2 'swim':3
+李雷  | 我喜欢游泳       | '我喜欢游泳':1
+bob   | I love football  | 'footbal':3 'love':2
+kate  | I love badminton | 'badminton':3 'l
+```
+
+**条件查询**
+
+```text
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('喜欢 & 足球');
+name |   raw    |      vector      
+------+----------+-------------------
+李雷 | 喜欢足球 | '喜欢':2 '足球':3
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('足球');
+name |   raw    |      vector      
+------+----------+-------------------
+李雷 | 喜欢足球 | '喜欢':2 '足球':3
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('足球 & 喜欢');
+name |   raw    |      vector      
+------+----------+-------------------
+李雷 | 喜欢足球 | '喜欢':2 '足球':3
+```
+
+**非标准化输入** 
+
+可以看出，大写会被忽略，变形单词会被提取为原词
+
+```text
+mydb=# INSERT INTO test_tsvector (name,raw,vector) VALUES ('mary','love dancing',to_tsvector('Love Dancing'));
+mydb=# SELECT * FROM test_tsvector WHERE name='mary';
+name |     raw      |      vector      
+------+--------------+-------------------
+mary | love dancing | 'danc':2 'love':1
+mydb=# INSERT INTO test_tsvector (name,raw,vector) VALUES ('annie','loves dancing',to_tsvector('Loves Dancing'));
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('dancing');
+name  |      raw      |      vector      
+-------+---------------+-------------------
+mary  | love dancing  | 'danc':2 'love':1
+annie | loves dancing | 'danc':2 'love':1
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('dance');
+name  |      raw      |      vector      
+-------+---------------+-------------------
+mary  | love dancing  | 'danc':2 'love':1
+annie | loves dancing | 'danc':2 'love':1
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ to_tsquery('足球 | dancing');
+name  |      raw      |      vector      
+-------+---------------+-------------------
+李雷  | 喜欢足球      | '喜欢':2 '足球':3
+mary  | love dancing  | 'danc':2 'love':1
+annie | loves dancing | 'danc':2 'love':1 
+```
+
+操作符及函数
+
+- [@@](https://zhuanlan.zhihu.com/p/105097036/edit#)： tsvector是否匹配tsquery
+- to_tsvector()：将文本转换为tsvector
+- to_tsquery()：将文本转换为tsquery
+
+tsquery相关操作符
+
+- &&，与
+- ||，或
+- !!，非
+- <->，跟随，用于有序匹配，例如to_tsquery('love') <-> to_tsquery('dance') 
+
+```text
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ (to_tsquery('dance') || to_tsquery('足球'));
+name  |      raw      |      vector      
+-------+---------------+-------------------
+李雷  | 喜欢足球      | '喜欢':2 '足球':3
+mary  | love dancing  | 'danc':2 'love':1
+annie | loves dancing | 'danc':2 'love':1
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ (to_tsquery('dance') && to_tsquery('足球'));
+name | raw | vector
+------+-----+--------
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ !!to_tsquery('dance');
+name  |       raw        |         vector        
+-------+------------------+------------------------
+allen | I love swimming  | 'love':2 'swim':3
+李雷  | 我喜欢游泳       | '我喜欢游泳':1
+bob   | I love football  | 'footbal':3 'love':2
+kate  | I love badminton | 'badminton':3 'love':2
+李雷  | 喜欢足球         | '喜欢':2 '足球':3
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ (to_tsquery('love') <-> to_tsquery('dance'));
+name  |      raw      |      vector      
+-------+---------------+-------------------
+mary  | love dancing  | 'danc':2 'love':1
+annie | loves dancing | 'danc':2 'love':1
+mydb=# SELECT * FROM test_tsvector WHERE vector @@ (to_tsquery('dance') <-> to_tsquery('love'));
+name | raw | vector
+------+-----+--------
+```
+
+**创建索引**
+
+```sh
+ mydb=# CREATE INDEX vector_idx ON test_tsvector USING GIN (vector); 
+```
+
+
+
+#### 几何类型
+
+geometric types
+
+point，二维平面上的点，用(x, y)表示，x、y分别表示x轴、y轴的坐标值
+
+```text
+mydb=# create table test_point (name text, pt point);
+mydb=# INSERT INTO test_point (name, pt) VALUES ('p1', '(1.1,22.0)');
+mydb=# INSERT INTO test_point (name, pt) VALUES ('p2', '(10.1,22.0)');
+mydb=# INSERT INTO test_point (name, pt) VALUES ('p3', '(1.1,2.0)');
+mydb=# SELECT * FROM test_point;
+name |    pt    
+------+-----------
+p1   | (1.1,22)
+p2   | (10.1,22)
+p3   | (1.1,2)
+mydb=# SELECT * FROM test_point WHERE pt ?- '(0,22)';
+name |    pt    
+------+-----------
+p1   | (1.1,22)
+p2   | (10.1,22)
+mydb=# SELECT * FROM test_point WHERE pt ?| '(1.1,0)';
+name |    pt    
+------+----------
+p1   | (1.1,22)
+p3   | (1.1,2)
+```
+
+操作符
+
+- ?-：是否横向齐平（y坐标是否相同）
+- ?|：是否纵向齐平（x坐标是否相同）
+
+circle，圆，用圆心和半径表示，如 x, y, r，其中(x，y)为圆心，r为半径。
+
+```text
+mydb=# CREATE table test_circle (name text, cc circle);
+mydb=# INSERT INTO test_circle (name, cc) VALUES ('c1', '1,2,2');
+mydb=# INSERT INTO test_circle (name, cc) VALUES ('c1', '10.2,-15,10');
+mydb=# SELECT * FROM test_circle WHERE point '(1,2)' <@ cc;
+name |    cc    
+------+-----------
+c1   | <(1,2),2>
+mydb=# SELECT * FROM test_circle WHERE cc @> point '(1,2)';
+name |    cc    
+------+-----------
+c1   | <(1,2),2>
+mydb=# SELECT * FROM test_circle WHERE cc << circle '10,6,3';
+name |    cc    
+------+-----------
+c1   | <(1,2),2>
+mydb=# SELECT * FROM test_circle WHERE cc >> circle '0,0,0.1';
+name |       cc        
+------+-----------------
+c1   | <(10.2,-15),10>
+mydb=# SELECT circle '((0,0),1)' <-> circle '((5,0),1)';
+?column?
+----------
+       3
+```
+
+操作符
+
+- <@ 点是否位于圆内
+- @> 圆是否包含点
+- <<  圆是否严格在圆的左侧
+- \>>  圆是否严格在圆的右侧 
+- <-> 两个圆之间的距离
+
+line，线，在坐标系上用Ax + By + C = 0表示，也就是一个二元一次方程，A、B表示斜率，C表示偏移量。
+
+```text
+mydb=# CREATE TABLE test_line (name text, info line);=
+mydb=# INSERT INTO test_line VALUES ('c1', '(0,1), (2,3)');
+mydb=# INSERT INTO test_line VALUES ('c2', '(-5,6), (3,7)');
+mydb=# SELECT * FROM test_line;
+name |       info      
+------+------------------
+c1   | {1,-1,1}
+c2   | {0.125,-1,6.625}
+mydb=# SELECT * FROM test_line WHERE info ?|| '{1,-1,10}';
+name |   info  
+------+----------
+c1   | {1,-1,1}
+mydb=# SELECT * FROM test_line WHERE info ?-| '{1,1,10}';
+name |   info  
+------+----------
+c1   | {1,-1,1} 
+```
+
+操作符
+
+- ?|| 两条线是否平行
+- ?-| 两条线是否垂直
+
+
+
 ### 表
 
-表的构建语句，基本都会。
-
-核心在于构建表时，要指定上一些约束。
+表的构建语句，基本和其他数据库大同小异。核心在于构建表时，要指定上一些约束。
 
 #### 约束
 
@@ -10527,12 +10787,12 @@ create table test(
     name varchar(32) not null,
     id_card varchar(32) unique
 );
-insert into test (name,id_card) values ('张三','333333333333333333');
-insert into test (name,id_card) values ('李四','333333333333333333');
-insert into test (name,id_card) values (NULL,'433333333333333333');
+insert into test (name,id_card) values ('张三', '333333333333333333');
+insert into test (name,id_card) values ('李四', '333333333333333333');
+insert into test (name,id_card) values (NULL, '433333333333333333');
 ```
 
-##### 检查
+##### 检查（MySQL没有）
 
 ```sql
 -- 检查约束
@@ -10564,9 +10824,11 @@ create table test(
 );
 ```
 
+
+
 #### 触发器
 
-触发器Trigger，是由事件出发的一种存储过程
+Oracle支持，MySQL8开始支持。触发器Trigger，是由事件触发的一种存储过程
 
 当对标进行insert，update，delete，truncate操作时，会触发表的Trigger（看触发器的创建时指定的事件）
 
@@ -10699,6 +10961,8 @@ select * from student;
 select * from score;
 delete from student where id = 1;
 ```
+
+
 
 #### 表空间（问题填坑）
 
@@ -10971,22 +11235,7 @@ select * from test;
 
 ## 事务
 
-### 10.1 什么是ACID？（常识）
-
-在日常操作中，对于一组相关操作，通常要求要么都成功，要么都失败。在关系型数据库中，称这一组操作为事务。为了保证整体事务的安全性，有ACID这一说：
-
-* 原子性A：事务是一个最小的执行单位，一次事务中的操作要么都成功，要么都失败。
-* 一致性C：在事务完成时，所有数据必须保持在一致的状态。（事务完成后吗，最终结果和预期结果是一致的）
-* 隔离性：一次事务操作，要么是其他事务操作前的状态，要么是其他事务操作后的状态，不存在中间状态。
-* 持久性：事务提交后，数据会落到本地磁盘，修改是永久性的。
-
-PostgreSQL中，在事务的并发问题里，也是基于MVCC，多版本并发控制去维护数据的一致性。相比于传统的锁操作，MVCC最大的有点就是可以让 **读写互相不冲突** 。
-
-当然，PostgreSQL也支持表锁和行锁，可以解决写写的冲突问题。
-
-PostgreSQL相比于其他数据，有一个比较大的优化，DDL也可以包含在一个事务中。比如集群中的操作，一个事务可以保证多个节点都构建出一个表，才算成功。
-
-### 10.2 事务的基本使用
+### 事务基本使用
 
 首先基于前面的各种操作，应该已经体会到了，PostgreSQL是自动提交事务。跟MySQL是一样的。
 
@@ -11011,7 +11260,7 @@ insert into test values (7,'bbb',12,5);
 commit;
 ```
 
-### 10.3 保存点（了解）
+### 保存点（了解）
 
 比如项目中有一个大事务操作，不好控制，超时有影响，回滚会造成一切重来，成本太高。
 
@@ -11043,9 +11292,7 @@ rollback to savepoint ok1;
 commit;
 ```
 
-## 并发问题
-
-### 11.1 事务的隔离级别
+### 事务隔离级别
 
 在不考虑隔离性的前提下，事务的并发可能会出现的问题：
 
@@ -11062,7 +11309,7 @@ commit;
 
 PGSQL在老版本中，只有两个隔离级别，读已提交和串行化。在PGSQL中就不存在脏读问题。
 
-### 11.2 MVCC
+### MVCC
 
 首先要清楚，为啥要有MVCC。
 
@@ -11183,23 +11430,27 @@ commit;
 
 ## 备份&恢复
 
-防止数据丢失的第一道防线就是备份。数据丢失有的是硬件损坏，还有人为的误删之类的，也有BUG的原因导致误删数据。
+数据丢失的原因可能有：有的是硬件损坏，还有人为的误删之类的，也有BUG的原因导致误删数据。
 
-正常备份和恢复，如果公司有DBA，一般咱们不用参与，BUT，学的Java，啥都得会点~~
+防止数据丢失的第一道防线就是备份。正常备份和恢复，如果公司有DBA，一般开发不参与，但技多不压身。
 
 在PostgreSQL中，有三种备份方式：
 
-**SQL备份（逻辑备份）** ：其实就是利用数据库自带的类似dump的命令，或者是你用图形化界面执行导入导出时，底层就是基于这个dump命令实现的。备份出来一份sql文件，谁需要就复制给谁。
+**SQL备份（逻辑备份）**
+
+其实就是利用数据库自带的类似dump的命令，或者是你用图形化界面执行导入导出时，底层就是基于这个dump命令实现的。备份出来一份sql文件，谁需要就复制给谁。
 
 优点：简单，方便操作，有手就行，还挺可靠。
 
-缺点：数据数据量比较大，这种方式巨慢，可能导出一天，都无法导出完所有数据。
+缺点：数据数据量比较大，这种方式很慢，可能导出一天，都无法导出完所有数据。
 
-**文件系统备份（物理备份）** ：其实就是找到当前数据库，数据文件在磁盘存储的位置，将数据文件直接复制一份或多份，存储在不同的物理机上，即便物理机爆炸一个，还有其他物理机。
+**文件系统备份（物理备份）**
+
+其实就是找到当前数据库，数据文件在磁盘存储的位置，将数据文件直接复制一份或多份，存储在不同的物理机上，即便物理机宕机一个，还有其他物理机。
 
 优点：相比逻辑备份，恢复的速度快。
 
-缺点：在备份数据时，可能数据还正在写入，一定程度上会丢失数据。 在恢复数据时，也需要注意数据库的版本和环境必须保持高度的一致。如果是线上正在运行的数据库，这种复制的方式无法在生产环境实现。
+缺点：在备份数据时，可能数据还正在写入，一定程度上会丢失数据。 在恢复数据时，也需要注意数据库的版本和环境必须保持高度的一致。如果是线上正在运行的数据库，这种复制的方式无法实现。
 
 **如果说要做数据的迁移，这种方式还不错滴。**
 
@@ -11337,7 +11588,9 @@ pg_basebackup会做两个事情、
 ## -U 用户名（要拥有备份的权限）
 ## -h ip地址  -p 端口号
 ## -R 复制写配置文件
-pg_basebackup -D /pg_basebackup -Ft -Pv -Upostgres -h 192.168.11.32 -p 5432 -R
+pg_basebackup -D /home/postgres/backup -Ft -Pv -Upostgres -h 192.168.11.32 -p 5432 -R
+## 本地执行可以简写为
+pg_basebackup -D /home/postgres/backup -Ft -Pv -Upostgres -R
 ```
 
 准备测试，走你~
@@ -11353,13 +11606,30 @@ pg_basebackup -D /pg_basebackup -Ft -Pv -Upostgres -h 192.168.11.32 -p 5432 -R
 
 * 执行备份
 
-  ```
-  pg_basebackup -D /pg_basebackup -Ft -Pv -Upostgres -h 192.168.11.32 -p 5432 -R
+  ```sh
+  pg_basebackup -D /home/postgres/backup -Ft -Pv -Upostgres -R
+  ##执行日志
+  pg_basebackup: initiating base backup, waiting for checkpoint to complete
+  pg_basebackup: checkpoint completed
+  pg_basebackup: write-ahead log start point: 0/2000028 on timeline 1
+  pg_basebackup: starting background WAL receiver
+  pg_basebackup: created temporary replication slot "pg_basebackup_6005"
+  34856/34856 kB (100%), 1/1 tablespace                                         
+  pg_basebackup: write-ahead log end point: 0/2000100
+  pg_basebackup: waiting for background process to finish streaming ...
+  pg_basebackup: syncing data to disk ...
+  pg_basebackup: renaming backup_manifest.tmp to backup_manifest
+  pg_basebackup: base backup completed
+  -bash-4.2$ ll
+  总用量 51428
+  -rw------- 1 postgres postgres   181142 12月  1 22:17 backup_manifest
+  -rw------- 1 postgres postgres 35694080 12月  1 22:17 base.tar
+  -rw------- 1 postgres postgres 16778752 12月  1 22:17 pg_wal.tar
   ```
 
 * 需要输入postgres的密码，这里可以设置，重新备份。![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/2746/1668770654044/ab3f9e3db3ad4f769499eaf50a29d806.png)
 
-* 执行备份![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/2746/1668770654044/232a538ba0604be5a7bbcb6f9649a728.png)![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/fyfile/2746/1668770654044/3bc6360d43664e8eb9fed78551507cff.png)
+* 
 
 ### 13.3 物理恢复（归档+物理）
 
