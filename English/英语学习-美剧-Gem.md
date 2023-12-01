@@ -68,7 +68,7 @@ overboard
 
 not cool
 
-mess with
+**mess with**
 
 one man's trash is another man's treasure.
 
@@ -84,25 +84,25 @@ rucksack
 
 beat the hell out of
 
-**tatter**，1
+**tatter**，2
 
 clap
 
 clown
 
-**marquee**，1
+**marquee**，2
 
-***menagerie***
+**menagerie**，1
 
 midst
 
 abduction
 
-***theatrics***
+**theatrics**
 
 green room
 
-***scour***
+**scour**
 
 cadet
 
@@ -120,7 +120,7 @@ just a snack
 
 as a token of our gratitude
 
-**hunt down**，1
+**hunt down**，2
 
 will always have each other's back.
 
@@ -130,13 +130,13 @@ if the path to what you want seems too easy then you're on the wrong path.
 
 Jolly Roger
 
-**fresh out**
+**fresh out**，1
 
 
 
 ### 第二集
 
-2023-11-27
+#### 2023-11-27
 
 better work faster
 
@@ -232,11 +232,11 @@ rub off.
 
 tank of doom
 
-***tear apart***
+**tear apart**
 
 be my guest
 
-**crate**，1
+**crate**，2
 
 bazooka
 
@@ -276,27 +276,27 @@ headgear
 
 ditch
 
-**rigging**，1
+**rigging**，2
 
 have a head start
 
 once I sink my teeth in
 
-**get dragged along for**，1
+**get dragged along for**，2
 
 tie that knot
 
-**slipped**，1
+**slipped**，2
 
-**show me up**，1
+**show me up**，2
 
 secured this rigging
 
-**drilling**，1
+**drilling**，2
 
 raw recruit
 
-fresh start
+**fresh start**
 
 all the more reason
 
@@ -308,21 +308,21 @@ rubber hose
 
 little runt
 
-show is on **hiatus**
+show is on **hiatus**，2
 
 want a word
 
-impressive **figurehead**，1
+impressive **figurehead**，2
 
 **mast**，1
 
-**crow's nest**
+**crow's nest**，1
 
 desperate soul
 
 a little less flashy
 
-**How lax the security is**.
+How **lax** the security is.
 
 pitch that to the salesman
 
@@ -350,29 +350,29 @@ do you even work here?
 
 chief technician
 
-**encrustation removal**
+**encrustation removal**，1
 
-**aviary waste eradication**
+**aviary waste eradication**，1
 
-**scrub barnacles**
+**scrub barnacles**，1
 
-**strike a deal with her**
+**strike a deal with her**，1
 
-**it couldn't hurt to say hello.**
+**it couldn't hurt to say hello.**，1
 
 you've quite a handle on basic seamanship.
 
 alongside the crew.
 
-in the bilge.
+in the **bilge**.
 
 Our experience don't define us.It's what we gain from them that matters.
 
-**butler** and a few other staff
+**butler** and a few other staff，1
 
 who people truely are
 
-**rob the place blind**
+**rob the place blind**，1
 
 at least a little blurry
 
@@ -380,7 +380,7 @@ this guy's full of shit
 
 oops
 
-**buddy**
+**buddy**,1
 
 i know nothing of the sort
 
@@ -390,17 +390,17 @@ show usopp and his friends to the guest suites.
 
 you will bathe and change before dinner.
 
-**one of these days**
+**one of these days**，1
 
 So what if he does?
 
 a giant pearl
 
-**weather a storm**
+**weather a storm**，1
 
-**capsize**
+**capsize**，1
 
-**i barely made landfall**
+**i barely made landfall**，1
 
 a massive piece of goldfish shit
 
@@ -492,11 +492,11 @@ take advantage of
 
 ask for an autograph
 
-**sheesh**
+***sheesh***
 
 house seats
 
-**pull a job**
+**pull a job**，1
 
 pay tribute
 
@@ -504,9 +504,9 @@ small potatos
 
 Pirating's more of a side gig.
 
-**ransack**
+**ransack**，1
 
-fixer-upper              
+fixer-upper
 
 prick
 
@@ -564,5 +564,116 @@ No closer to finding the straw hat than we were hours ago
 
 by all means
 
+#### 2023-12-01
 
+bitter and savory
 
+ sweet, salty, sour, bitter, and umami
+
+maid
+
+sell yourself short
+
+I can't hear myself think over your inbred nonsence
+
+how fortuitous
+
+toss him in the well with the green-haird oaf
+
+don't you dare track in mud all over my floors
+
+stay put
+
+get the better of
+
+try one's utmost to help
+
+he was never quite the same after his mother's passing.
+
+gloves
+
+bruise
+
+it can't help but to rotten at the core
+
+fugitive
+
+horrible bunch
+
+drank the place dry
+
+stick to captain's plan
+
+insatiable appetite
+
+liquor
+
+creak
+
+can't reason with madness.
+
+your movements say otherwise.
+
+mock
+
+katanas it is.
+
+you're not make any sense
+
+she overheard everything
+
+put this farce to bed
+
+put you up to this.
+
+crank
+
+in the east wing
+
+I don't deserve to wield a sword
+
+give me the creeps
+
+screw this
+
+place you under arrest
+
+elbow grease
+
+there's no point
+
+it is exhausting putting on airs.
+
+you are a pathetic, spoiled, sniveling, little brat.
+
+incessant whining.
+
+rip your tongue out
+
+split up
+
+you are annoyingly resilient
+
+a lifetime of looking over your shoulder
+
+than I care to remember.
+
+expendable
+
+i'm done talking.
+
+did ya
+
+companion
+
+a great sharp shooter
+
+don't get used to it
+
+you flushed them out
+
+two points aft the starboard beam                                                                   右舷正横后2度
+
+unparalleled artistic talent
+
+ta-da
