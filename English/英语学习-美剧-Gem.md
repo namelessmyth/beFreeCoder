@@ -6,7 +6,7 @@
 
 | 文档名称     | 美剧-英语学习 |
 | ------------ | ------------- |
-| 文档分类     | 学习笔记-英语 |
+| 文档分类     | 英语学习-美剧 |
 | 版本号       | 1.1           |
 | 最后更新日期 | 2023-11-29    |
 | 最后更新人   | Gem Shen      |
@@ -76,7 +76,7 @@ knock it off.
 
 quadrant
 
-***treacherous***，
+**treacherous**，1
 
 stretch
 
@@ -84,25 +84,25 @@ rucksack
 
 beat the hell out of
 
-**tatter**，2
+tatter，3
 
 clap
 
 clown
 
-**marquee**，2
+marquee，3
 
-**menagerie**，1
+**menagerie**，2
 
 midst
 
 abduction
 
-**theatrics**
+**theatrics**，1
 
 green room
 
-**scour**
+**scour**，1
 
 cadet
 
@@ -120,7 +120,7 @@ just a snack
 
 as a token of our gratitude
 
-**hunt down**，2
+hunt down，3
 
 will always have each other's back.
 
@@ -130,7 +130,7 @@ if the path to what you want seems too easy then you're on the wrong path.
 
 Jolly Roger
 
-**fresh out**，1
+**fresh out**，2
 
 
 
@@ -174,7 +174,7 @@ ring a bell
 
 stuff
 
-insignia
+**insignia**
 
 add up
 
@@ -210,7 +210,7 @@ render useless from a few splash
 
 turn over
 
-***outcast***
+**outcast**，1
 
 a freak, scorned and abandoned
 
@@ -232,11 +232,11 @@ rub off.
 
 tank of doom
 
-**tear apart**
+**tear apart**，1
 
 be my guest
 
-**crate**，2
+crate，3
 
 bazooka
 
@@ -276,37 +276,37 @@ headgear
 
 ditch
 
-**rigging**，2
+rigging，3
 
 have a head start
 
 once I sink my teeth in
 
-**get dragged along for**，2
+get dragged along for，3
 
 tie that knot
 
-**slipped**，2
+slipped，3
 
-**show me up**，2
+show me up，3
 
 secured this rigging
 
-**drilling**，2
+drilling，3
 
 raw recruit
 
-**fresh start**
+fresh start                                                                                                           
 
-all the more reason
+**all the more reason**
 
-sloop
+**sloop**
 
 turns out
 
 rubber hose
 
-little runt
+little runt                                                                                                              小矮子
 
 show is on **hiatus**，2
 
@@ -350,7 +350,7 @@ do you even work here?
 
 chief technician
 
-**encrustation removal**，1
+**encrustation removal**，2
 
 **aviary waste eradication**，1
 
@@ -358,13 +358,13 @@ chief technician
 
 **strike a deal with her**，1
 
-**it couldn't hurt to say hello.**，1
+**it couldn't hurt to say hello**，1
 
 you've quite a handle on basic seamanship.
 
 alongside the crew.
 
-in the **bilge**.
+in the **bilge**
 
 Our experience don't define us.It's what we gain from them that matters.
 
@@ -400,7 +400,7 @@ a giant pearl
 
 **capsize**，1
 
-**i barely made landfall**，1
+**I barely made landfall**，1
 
 a massive piece of goldfish shit
 
@@ -496,7 +496,7 @@ ask for an autograph
 
 house seats
 
-**pull a job**，1
+**pull a job**，2
 
 pay tribute
 
@@ -520,7 +520,7 @@ midnight snack
 
 pillowcase
 
-found some of the decor to be a bit **gaudy**
+found some of the decor to be a bit **gaudy**，2
 
 donate it to charity
 
@@ -544,13 +544,13 @@ hang out
 
 wine cellar
 
-a clever **ruse**
+a clever **ruse**，2
 
 One that imbecile's ego helped me perpetuate
 
 this may not be my place
 
-**crack on**
+**crack on**，2
 
 get hold of you kid
 
@@ -568,7 +568,7 @@ by all means
 
 bitter and savory
 
- sweet, salty, sour, bitter, and umami
+ sweet, salty, **sour**, bitter, and umami
 
 maid
 
@@ -578,13 +578,13 @@ I can't hear myself think over your inbred nonsence
 
 how fortuitous
 
-toss him in the well with the green-haird oaf
+**toss** him in the well with the green-haird **oaf**
 
-don't you dare track in mud all over my floors
+don't you dare **track in** mud all over my floors
 
 stay put
 
-get the better of
+**get the better of**
 
 try one's utmost to help
 
@@ -592,47 +592,49 @@ he was never quite the same after his mother's passing.
 
 gloves
 
-bruise
+**bruise**
 
-it can't help but to rotten at the core
+it can't help but to **rotten** at the core
 
-fugitive
+**fugitive**
 
-horrible bunch
+horrible **bunch**
 
 drank the place dry
 
-stick to captain's plan
+**stick to captain's plan**
 
-insatiable appetite
+**insatiable appetite**
 
 liquor
 
-creak
+**creak**
 
 can't reason with madness.
 
 your movements say otherwise.
 
-mock
+**mock**
 
-katanas it is.
+**katanas** it is.
 
 you're not make any sense
 
 she overheard everything
 
-put this farce to bed
+be of age.
 
-put you up to this.
+**put this farce to bed**
 
-crank
+put you up to this.                                                                                                  让你这么做的
+
+**crank**
 
 in the east wing
 
 I don't deserve to wield a sword
 
-give me the creeps
+give me the **creeps**
 
 screw this
 
@@ -646,9 +648,9 @@ it is exhausting putting on airs.
 
 you are a pathetic, spoiled, sniveling, little brat.
 
-incessant whining.
+incessant **whining**.
 
-rip your tongue out
+rip your **tongue** out
 
 split up
 
@@ -670,10 +672,25 @@ a great sharp shooter
 
 don't get used to it
 
-you flushed them out
+you **flushed them out**
 
 two points aft the starboard beam                                                                   右舷正横后2度
 
 unparalleled artistic talent
 
-ta-da
+flair for design
+
+this is what it's all about
+
+put one off their stern rail
+
+
+
+### 第5集
+
+#### 2023-12-03
+
+hoist the yard                                                                                   吊起桅横杆
+
+raise the mizzenmast                                                                      升起后桅杆
+
