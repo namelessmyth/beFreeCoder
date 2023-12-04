@@ -120,39 +120,308 @@ public Node getLoopNode(Node head){
 
 
 
-## 多线程
-
-### 基础
-
-### 原子性，可见性，有序性解释
+## 多线程并发
 
 ### 并发和并行
 
-并发，指的是多个任务，在同一时间段内同时发生了。 
+并行(Parallel)，当系统有一个以上CPU时，当一个CPU执行一个进程时，另一个CPU可以执行另一个进程，两个进程互不抢占CPU资源，可以同时进行，这种方式我们称之为并行(Parallel)。
 
-并行，指的是多个任务，在同一时间点上同时发生了。
+并发(Concurrent)，在操作系统中，是指一个时间段中有几个程序都处于已启动运行到运行完毕之间，目这几个程序都是在同一个处理器,上运行。
 
-并发的多个任务之间是互相抢占资源的。 
+总结：
 
-并行的多个任务之间是不互相抢占资源的.
+并发的多个任务之间是互相抢占资源的。 并发单核处理中也存在
+
+并行的多个任务之间是不互相抢占资源的。并行只在多处理器中才会存在。
 
 
 
-### 线程的创建方式有哪些
+### 解释多线程上下文切换
+
+**概念**
+
+上下文切换是指CPU的控制权或者时间片从一个线程转到另一个线程，为了确保下一次恢复执行该线程时能够正确地运行，需要保存当前线程的上下文状态。
+
+**线程和进程**
+
+进程上下文切换与线程上下文切换最主要的区别就是线程的切换虚拟空间内存是相同的（因为都是属于自己的进程），但是，进程切换的虚拟空间内存则是不同的。线程上下文切换比进程上下文切换快的多。
+
+**切换分类**
+
+（1）主动切换或让步式上下文切换:
+
+指执行线程时间片没到主动释放CPU，与锁竞争严重程度成正比，可通过减少锁竞争来避免；
+
+（2）抢占式上下文切换:
+
+指线程因分配的时间片用尽而被迫放弃CPU或者被其他优先级更高的线程所抢占，
+一般由于线程数大于CPU可用核心数引起，可通过调整线程数，适当减少线程数来避免。
+
+**上下文切换算法**
+
+最简单最常用的就是基于时间片轮转调度算法。时间片轮转调度算法是非常公平的处理机分配方式，可以使就绪队列的每个进程每次仅运行一个时间片。 
+
+原理：在时间片轮转调度算法中，系统根据先来先服务的原则，将所有的就绪进程排成一个就绪队列，并且每隔一段时间产生一次中断，激活系统中的进程调度程序，完成一次处理机调度，把处理机分配给就绪队列队首进程，让其执行指令。当时间片结束或进程执行结束，系统再次将CPU分配给队首进程。
+
+**如何减少上下文切换**
+
+（1）无锁并发编程。
+
+多线程竞争时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据的ID按照Hash取模分段，不同的线程处理不同段的数据
+
+（2）CAS算法。
+
+  Java的Atomic包使用CAS算法来更新数据，而不需要加锁
+
+（3）使用最少线程。
+
+  避免创建不需要的线程，比如任务很少，但是创建了很多线程来处理，这样会造成大量线程都处于等待状态
+
+（4）协程。
+
+ 在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换。
+
+
+
+### 对线程安全的理解
+
+**线程安全是什么**
+
+当多个线程访问一个对象时，如果不进行额外的同步控制或者其他的协调操作，调用这个对象的行为都可以获得正确的结果，我们就说这个对象是线程安全的。
+
+线程安全也可以指某一段代码。例如：i++是不是线程安全的？答案：不是。
+
+**原子性：** 提供互斥访问，同一时刻只能有一个线程对数据进行操作；例如：atomicXXX类，synchronized关键字的应用。
+
+**有序性：** 一个线程观察其他线程中的指令执行顺序，由于指令重排序，该观察结果一般杂乱无序；例如，happens-before原则。
+
+**可见性：** 一个线程对主内存的修改可以及时地被其他线程看到；例如：synchronized,volatile。
+
+参考文章：[对线程安全的理解](https://zhuanlan.zhihu.com/p/446262986)
+
+
+
+### 守护线程是什么
+
+在Java中线程分2类：User Thread(用户线程)、Daemon Thread(守护线程)。一般默认创建的就是用户线程，用于执行用户级任务。守护线程也就是“后台线程”，一般用来执行后台任务，守护线程的典型应用是GC(垃圾回收器)。
+
+这两种线程唯一的区别是，Java虚拟机退出时会等待所有<用户线程>都结束而不会等<守护线程>执行完。
+
+**守护线程创建**
+
+可以通过使用setDaemon(true)方法，使线程成为一个守护线程。我们需要在启动线程之前调用一个线程的setDaemon0方法。否则，就会抛出一个java.lang.lllegalThreadStateException。可以使用isDaemon()方法来检查线程是否是守护线程。
+
+
+
+### JDK21中的虚拟线程
+
+JDK21中的虚拟线程其实这就是协程。是在JDK19中引入，在JDK21中成为正式功能。
+
+在以前的JDK中，Java的线程模型比较简单，在大多数操作系统中，主要采用的是基于轻量级进程实现的一对的线程模型，简单来说就是每一个Java线程对应一个操作系统中的轻量级进程，这种线程模型中的线程创建、析构及同步等动作，都需要进行系统调用。而系统调用则需要在用户态 (User Mode) 和内核态(Kernel Mode)中来回切换，所以性能开销还是很大的。
+
+而新引入的虚拟线程，是JDK实现的轻量级线程，他可以避免上下文切换带来的的额外耗费。他的实现原理其实是JDK不再是每一个线程都一对一的对应一个操作系统的线程了，而是会将多个虚拟线程映射到少量操作系统线程中，通过有效的调度来避免那些上下文切换
+
+在JDK21中，创建协程的方法，如下
+
+Thread.startVirtualThread()
+
+Executors.newVirtualThreadPerTaskExecutor()
+
+性能对比：有人测试过，相同的代码逻辑从线程改成携程后，执行时间从100秒降为1.6秒。
+
+原文链接：https://www.yuque.com/hollis666/vzy8n3/ac1a0q
+
+
 
 ### 线程的生命周期
 
-### 启动线程调用start还是run方法, 为什么?
+#### 前言
 
-### Callable和Runnable有啥区别
+线程的生命周期指的是线程从创建出来到最终消亡的整个过程，以及过程中的状态变化。
 
-Callable有返回值，另一个没有。
+#### 线程状态图
+
+以下图用mermaid语法绘制：
+
+```mermaid
+stateDiagram
+    [*] --> new
+    new --> RUNNABLE : start()
+    RUNNABLE --> BLOCKED : 竞争synchronized锁
+    RUNNABLE --> WAITING : Ojbect.wait()
+    WAITING --> RUNNABLE : Ojbect.notify()
+    RUNNABLE --> TIMED_WAITING : thread.join(long)
+    TIMED_WAITING --> RUNNABLE : 等待时间到
+    RUNNABLE --> TERMINATED : 执行结束
+    TERMINATED --> [*]
+```
+
+#### 状态变化说明
+
+java线程对象的所有状态存放在**Thread类的内部类(State)**中：
+
+1. 初始(NEW)
+   1. 新创建了一个线程对象，但还没有调用start()方法
+2. 运行(RUNNABLE)
+   1. Java线程中将就绪(READY) 和运行中(RUNNING) 两种状笼统的称为“可运行"
+   2. 就绪(READY)
+      1. 线程对象创建后，其他线程(比如main线程调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中并分配cpu使用权
+   3. 运行中 (RUNNING)
+      1. 就绪(READY)的线程获得了cpu 时间片，开始执行程序代码
+3. 阻塞(BLOCKED)
+   1. 表示线程被锁阻塞时的状态。例如：多个线程竞争synchronized锁，有1个线程得到了锁，其他线程就是阻塞状态
+4. 等待(WAITING)
+   1. 线程暂停运行，等待其他线程唤醒之后再继续执行。
+   2. 进入方法，例如：thread.join()，Ojbect.wait()，LockSupport.park()方法
+   3. 唤醒方法，例如：Object.notify()或者Object.notifyAll()
+5. 定时等待(TIMED_WAITING)
+   1. 该状态不同于WAITING，它可以在指定的时间后自行恢复
+   2. 进入方法，例如：Thread.sleep(long)，Object.wait(long)，thread.join(long)，LockSupport.parkNanos，LockSupport.parkUntil
+6. 终止(TERMINATED)
+   1. 表示该线程已经执行结束或者异常中断；
+   2. 线程一旦终止,就不能再重启启动,否则报错(IllegalThreadStateException)
+
+#### 补充说明
+
+在Thread类中过时的方法(因为存在线程安全问题,所以弃用了
+
+-  void suspend()：暂停当前线程
+-  void resume()：恢复当前线程
+-  void stop()：结束当前线程
 
 
 
-### 有t1、t2、t3三个线程怎么确保他的顺序。
+
+
+
+
+### 线程的创建方式
+
+在Java中，有如下方式可以创建线程
+
+1. 继承Thread类创建线程
+2. 实现Runnable接口创建线程
+3. 通过Callable和FutureTask创建线程
+4. 通过线程池创建
+
+
+
+### Callable和Runnable的区别
+
+Runnable接口和Callable接口都可以用来创建新线程，他们有如下不同：
+
+1. 实现Runnable接口，需要实现run方法；实现Callable接口的话，需要实现call方法。
+2. Runnable的run方法无返回值，Callable的call方法有返回值，类型为Obiect
+3. Callable中可以抛出checked exception，Runnable不可以。
+4. Callable和Runnable都可以应用于executors。而Thread类只支持Runnable。
+
+
+
+### run和start的区别
+
+start是用来启动线程的。线程获得CPU时间片后执行的是run方法中的代码。
+
+
+
+### sleep和wait的区别
+
+1. sleep是线程的静态方法，wait是Object对象方法。
+2. sleep()方法可以在任何地方使用；而wait()方法则只能在同步方法或同步块中使用
+3. wait()方法会释放对象锁，但sleep()方法不会；
+4. wait后线程会进入到WAITING状态，直到被唤醒；sleep后进入到TIMED_WAITING状态。
+
+
+
+### notify和notifyAll的区别
+
+相同点
+
+- 这2个方法都是用于唤醒waiting状态的线程，
+- 唤醒的这些线程只是进入争夺队列，并不表示立即就可以获得CPU开始执行，因为wait方法被调用的时候线程已经释放了对象锁。
+- notify和notifyAll因为也是操作对象的，所以把他们定义在Object类中。
+
+区别是：
+
+- 使用notifyAll可以唤醒所有处于waiting状态的线程，使其重新进入锁的争夺队列中，而notify只能唤醒一个。
+- notifyAll可以把所有线程都唤醒，让他们都可以竞争锁，但是最终也只有一个可以获得锁并执行。
+
+
+
+
+
+### 如何让多个线程按顺序执行
+
+例如：有t1、t2、t3三个线程，怎么让他的顺序是t1, t2 , t3。
+
+#### join()
+
+#### future
 
 可以通过join()或者callable+future来得到返回值。
+
+
+
+### 如何让线程池按顺序执行
+
+首先线程池设计出来就是用来提升并发处理性能的，他本身并不提供内部线程顺序执行的方法。这道题主要考察开发人员对线程池类型的掌握
+
+#### 单线程线程池
+
+单线程池中只有1个线程，自然提交进去的线程只能顺序执行。
+
+#### 返回值依赖
+
+线程提交到线程池时，有一个得到返回值的方法，可以让另一个线程必须得到上一个线程的返回值之后才开始执行。
+
+```java
+public class PoolSequential {
+    public static void singleThreadPool() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> System.out.println("t1..."));
+        executor.submit(() -> System.out.println("t2..."));
+        executor.submit(() -> System.out.println("t3..."));
+        executor.shutdown();
+    }
+
+    public static void ScheduledExecutor() throws ExecutionException, InterruptedException {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Callable t1 = new Callable() {
+            @Override
+            public Long call() throws Exception {
+                System.out.println("t1...");
+                return 0L;
+            }
+        };
+        ScheduledFuture<?> future1 = executor.schedule(t1, 0, TimeUnit.MILLISECONDS);
+        Callable t2 = new Callable() {
+            @Override
+            public Long call() throws Exception {
+                System.out.println("t2...");
+                return 0L;
+            }
+        };
+        ScheduledFuture<?> future2 = executor.schedule(t2, (Long) future1.get(), TimeUnit.MILLISECONDS);
+
+        Callable t3 = new Callable() {
+            @Override
+            public Long call() throws Exception {
+                System.out.println("t3...");
+                return 0L;
+            }
+        };
+        ScheduledFuture<?> future3 = executor.schedule(t3, (Long) future2.get(), TimeUnit.MILLISECONDS);
+        executor.shutdown();
+    }
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        singleThreadPool();
+        System.out.println("...");
+        ScheduledExecutor();
+    }
+}
+```
+
+
 
 
 
@@ -1029,10 +1298,6 @@ https://www.cnblogs.com/qlqwjy/p/7929414.html
 标记清除，标记整理，标记复制。并行，并发，串行。
 
 ![image-20210611180449346](../../../文档/开发文档/面试题积累.assets/image-20210611180449346.png)
-
-
-
-
 
 
 

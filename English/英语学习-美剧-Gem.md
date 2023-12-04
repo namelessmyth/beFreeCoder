@@ -56,11 +56,15 @@ but as long as he gets us inside the house, who cares?
 
 ### 第一集
 
-pistol, 
+**brimming** with mystery,
 
-glue
+**teemming** with danger,
 
-There's no such thing as a free lunch
+pistol,
+
+glue,
+
+There's no such thing as a free lunch,
 
 then some
 
@@ -76,7 +80,7 @@ knock it off.
 
 quadrant
 
-**treacherous**，1
+**treacherous**，2
 
 stretch
 
@@ -92,17 +96,17 @@ clown
 
 marquee，3
 
-**menagerie**，2
+**menagerie**，3
 
 midst
 
 abduction
 
-**theatrics**，1
+**theatrics**，2
 
 green room
 
-**scour**，1
+**scour**，2
 
 cadet
 
@@ -130,7 +134,7 @@ if the path to what you want seems too easy then you're on the wrong path.
 
 Jolly Roger
 
-**fresh out**，2
+fresh out，3
 
 
 
@@ -168,13 +172,13 @@ homicidal
 
 unicycle
 
-**relent**，1
+**relent**，2
 
 ring a bell
 
 stuff
 
-**insignia**
+**insignia**，1
 
 add up
 
@@ -232,7 +236,7 @@ rub off.
 
 tank of doom
 
-**tear apart**，1
+**tear apart**，2
 
 be my guest
 
@@ -298,15 +302,15 @@ raw recruit
 
 fresh start                                                                                                           
 
-**all the more reason**
+**all the more reason**，                                                                                                        更有理由。
 
-**sloop**
+**sloop**，1
 
 turns out
 
 rubber hose
 
-little runt                                                                                                              小矮子
+little **runt**                                                                                                              小矮子
 
 show is on **hiatus**，2
 
@@ -350,29 +354,29 @@ do you even work here?
 
 chief technician
 
-**encrustation removal**，2
+**encrustation removal**，3
 
 **aviary waste eradication**，1
 
-**scrub barnacles**，1
+**scrub barnacles**，2
 
-**strike a deal with her**，1
+**strike a deal with her**，2
 
-**it couldn't hurt to say hello**，1
+**it couldn't hurt to say hello**，2
 
 you've quite a handle on basic seamanship.
 
 alongside the crew.
 
-in the **bilge**
+in the **bilge**，2
 
 Our experience don't define us.It's what we gain from them that matters.
 
-**butler** and a few other staff，1
+**butler** and a few other staff，2
 
 who people truely are
 
-**rob the place blind**，1
+**rob the place blind**，2
 
 at least a little blurry
 
@@ -380,7 +384,7 @@ this guy's full of shit
 
 oops
 
-**buddy**,1
+**buddy**，2
 
 i know nothing of the sort
 
@@ -390,23 +394,23 @@ show usopp and his friends to the guest suites.
 
 you will bathe and change before dinner.
 
-**one of these days**，1
+**one of these days**，2
 
 So what if he does?
 
 a giant pearl
 
-**weather a storm**，1
+**weather a storm**，2
 
-**capsize**，1
+**capsize**，2
 
-**I barely made landfall**，1
+**I barely made landfall**，2
 
 a massive piece of goldfish shit
 
 for the world
 
-**how edgy**
+**how edgy**，2
 
 what's the terms?
 
@@ -414,15 +418,15 @@ convince kaya to give us that ship
 
 a tad overprotective at times
 
-**lighten up**
+**lighten up**，2
 
 chef's reflex
 
 nonsense
 
-**decisively**
+**decisively**，2
 
-these young **upstart**.                                                                                                                                     这些年轻新冒出来的海贼。
+these young **upstart**. 2                                                                                                                                   这些年轻新冒出来的海贼。
 
 they need a swift hand put them back in their place
 
@@ -432,9 +436,9 @@ open flame
 
 both personal and professional
 
-**intricacies of the shipbuilding business**
+**intricacies of the shipbuilding business**，2
 
-absolutely radiant
+absolutely **radiant**
 
 highly doubtful
 
@@ -452,7 +456,7 @@ this ought to be good
 
 raided a marine base
 
-bring **riffraff** to our doorstep
+bring **riffraff** to our doorstep，2
 
 #### 2023-11-30
 
@@ -492,11 +496,11 @@ take advantage of
 
 ask for an autograph
 
-***sheesh***
+***sheesh***，2
 
 house seats
 
-**pull a job**，2
+**pull a job**，3
 
 pay tribute
 
@@ -504,7 +508,7 @@ small potatos
 
 Pirating's more of a side gig.
 
-**ransack**，1
+**ransack**，2
 
 fixer-upper
 
@@ -520,7 +524,7 @@ midnight snack
 
 pillowcase
 
-found some of the decor to be a bit **gaudy**，2
+found some of the decor to be a bit gaudy，3
 
 donate it to charity
 
@@ -544,7 +548,7 @@ hang out
 
 wine cellar
 
-a clever **ruse**，2
+a clever **ruse**，3
 
 One that imbecile's ego helped me perpetuate
 
@@ -578,13 +582,13 @@ I can't hear myself think over your inbred nonsence
 
 how fortuitous
 
-**toss** him in the well with the green-haird **oaf**
+**toss** him in the well with the green-haird ***oaf***
 
 don't you dare **track in** mud all over my floors
 
 stay put
 
-**get the better of**
+**get the better of**，2
 
 try one's utmost to help
 
@@ -592,29 +596,29 @@ he was never quite the same after his mother's passing.
 
 gloves
 
-**bruise**
+***bruise***
 
 it can't help but to **rotten** at the core
 
-**fugitive**
+***fugitive***
 
-horrible **bunch**
+horrible **bunch**，2
 
 drank the place dry
 
-**stick to captain's plan**
+**stick to captain's plan**，2
 
-**insatiable appetite**
+**insatiable appetite**，2
 
-liquor
+**liquor**，1
 
-**creak**
+**creak**，1
 
 can't reason with madness.
 
 your movements say otherwise.
 
-**mock**
+**mock**，1
 
 **katanas** it is.
 
@@ -624,9 +628,9 @@ she overheard everything
 
 be of age.
 
-**put this farce to bed**
+**put this *farce* to bed**
 
-put you up to this.                                                                                                  让你这么做的
+**put you up to this**                                                                                                  让你这么做的
 
 **crank**
 
@@ -634,9 +638,9 @@ in the east wing
 
 I don't deserve to wield a sword
 
-give me the **creeps**
+give me the ***creeps***
 
-screw this
+**screw this**
 
 place you under arrest
 
@@ -680,17 +684,59 @@ unparalleled artistic talent
 
 flair for design
 
-this is what it's all about
+**this is what it's all about**
 
 put one off their stern rail
 
 
 
-### 第5集
+### 第5集           
 
-#### 2023-12-03
+#### 2023-12-04
 
-hoist the yard                                                                                   吊起桅横杆
-
-raise the mizzenmast                                                                      升起后桅杆
-
+| 英语单词                                                 | 时间     | 记次数 | 忘次数 | 中文含义                       |
+| -------------------------------------------------------- | -------- | ------ | ------ | ------------------------------ |
+| hoist the yard                                           |          | 1      |        | 吊起帆桁                       |
+| raise the mizzenmast                                     |          | 1      |        | 升起后桅杆                     |
+| steal our wind                                           |          |        |        |                                |
+| pull up alongside us                                     |          |        |        |                                |
+| sheet in and hard to port                                |          |        |        | 拉帆绳，左满舵                 |
+| light the fuse                                           |          |        |        |                                |
+| pirate vessel                                            |          |        |        |                                |
+| lower your sails and submit to my authority              |          |        |        |                                |
+| broken railing                                           |          |        |        |                                |
+| in this soup                                             |          |        |        |                                |
+| lay low                                                  |          |        |        |                                |
+| wait out any reinforcements                              |          |        |        |                                |
+| on the bow                                               |          |        |        |                                |
+| first mate                                               |          |        |        |                                |
+| Kind of seems like that falls under your job description |          |        |        |                                |
+| take a couple of hits during the battle                  |          |        |        |                                |
+| Smells like butter, soy sauce, and meat                  |          |        |        |                                |
+| playing follow the smell is fun and all                  |          |        |        |                                |
+| five degrees starboard                                   |          |        |        |                                |
+| add food to the equation                                 |          |        |        | （必须考虑多种因素的）复杂局面 |
+| disguise the ship                                        |          |        |        |                                |
+| turn away the future king of pirates                     |          |        |        |                                |
+| right this way, ma'am                                    | 00:09:03 |        |        |                                |
+| works, every time                                        | 00:09:04 |        |        |                                |
+| check your swords                                        |          |        |        |                                |
+| get a move on                                            |          |        |        | 赶紧行动                       |
+| call it a true bluefin saute                             |          |        |        |                                |
+| elephant tuna, seared asparagus                          |          |        |        | 大象金枪鱼，烤芦笋             |
+| in a sweet soy reduction                                 | 00:10:36 |        |        | 加入甜酱油                     |
+| little eggplant                                          |          |        |        | 小茄                           |
+| hell freeze over                                         | 00:10:42 |        |        | 地狱结冰，世界末日             |
+| sling one more prime rib medium-well                     |          |        |        | 再挑一块上等七分熟肋排         |
+| drop dead of boredom                                     |          |        |        | 无聊死了                       |
+| off the line                                             |          |        |        | 离线了，离开一线               |
+| wait tables                                              |          |        |        | 为顾客提供餐食服务             |
+| like to see you try                                      |          |        |        |                                |
+| on the house                                             |          |        |        |                                |
+| over my dead body                                        |          |        |        |                                |
+| no cause for alarm                                       |          |        |        | 无需惊慌                       |
+| shitty restaurant                                        |          |        |        |                                |
+| ambience                                                 |          |        |        |                                |
+| signature cocktail                                       |          |        |        |                                |
+| choke down your meal                                     |          |        |        |                                |
+| hard sell                                                |          |        |        | 硬推销，强行推销               |

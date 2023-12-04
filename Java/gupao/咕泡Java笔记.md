@@ -3325,7 +3325,7 @@ tomcat默认承载的最大并发数是150；当超过这个并发数之后，�
 - 创建（NEW）：创建一个线程，但是还没有调用执行方法；
 - 就绪（Runnable）：调用线程的start()方法，进入就绪状态，告诉CPU我已经准备好了，可以执行了，进行抢占CPU；
 - 运行（running）：从就绪状态抢占到CPU，开始执行工作，就是运行状态；
-- 堵塞（BLOCKED）：多个线程竞争synchronized锁，有一个线程得到了锁，其他线程就是阻塞状态。
+- 堵塞（BLOCKED）：多个线程竞争synchronized锁，有一个线程得到了锁，其他线程就是阻塞状态。 Object.wait.
 - 等待（WAITING）：线程暂停运行，等待唤醒之后再继续执行。例如：Thread.join()，Ojbect.wait方法；这时候需要其他线程将处于等待状态的线程唤醒，比如调用Object.notify或者Object.notifyAll方法，唤醒的线程不会立即执行run方法，需要再次等待CPU分配资源进入运行状态
 - 超时等待（Timed Waiting）：有时间的等待状态，时间一到，自动结束等待状态，进行CPU争夺；例如：Thread.sleep(long)，Object.wait(long)，Thread.join(long)
 - 死亡（TERMINATED）：run方法执行结束，或者异常中断，调用stop()方法等；
