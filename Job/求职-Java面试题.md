@@ -213,6 +213,152 @@ public Node getLoopNode(Node head){
 
 
 
+### Happens-Before原则
+
+#### 介绍
+
+happens-before是指如果A线程的写操作a，与B线程的读操作b之间存在happens-before关系，尽管a操作和b操作在不同的线程中执行，但JMM向程序员保证a操作将对b操作可见。具体的定义如下：
+
+1. 如果一个操作happens-before另一个操作，那么第一个操作的执行结果将对第二个操作可见，而且第一个操作的执行顺序排在第二个操作之前。
+2. 两个操作之间存在happens-before关系，并不意味着Java平台的具体实现必须要按照happens-before关系指定的顺序来执行。如果重排序之后的执行结果，与按happens-before关系来执行的结果一致，那么这种重排序并不非法（也就是说，JMM允许这种重排序）。
+
+#### 程序顺序规则
+
+一个线程中，按照程序的顺序，前面的操作happens-before后续的任何操作。
+
+对于这一点，可能会有疑问。顺序性是指，我们可以按照顺序推演程序的执行结果，但是编译器未必一定会按照这个顺序编译，但是编译器保证结果一定等于程序顺序推演的结果。
+
+```java
+int a = 2;
+int b = 3;
+int c = a*b;//无论怎么排序不能改变单线程下 c=6的这个结果
+```
+
+
+
+#### 传递性规则
+
+如果 a happens before b, b happens before c
+
+那 a happens before  c
+
+
+
+#### volatile变量规则
+
+对一个volatile变量的写操作，Happens-Before于后续对这个变量的读操作。
+
+也就是说，只要有一个线程先对volatile变量进行写操作，那后面线程去读这个变量时一定能读到正确的结果。这个需要大家重点理解。
+
+#### 监视器锁规则
+
+如果存在锁，那一个线程对锁的释放，一定happens before其他线程对于这个变量的加锁操作。也就是说一定是一个线程先释放锁，其他线程才能加锁。
+
+```java
+//如果存在锁，那一个线程对锁的释放，一定happens before其他线程对于这个变量的加锁操作
+int x = 0;
+synchronized(this){
+    //其他线程这个地方读到一定是12
+    if(x < 12){
+        X = 12;
+    }
+}
+```
+
+#### 线程启动规则
+
+在主线程A中启动子线程B，那么主线程A在start子线程之前的操作对线程B中的所有操作可见。
+
+```java
+//在线程start之前的操作一定happens before 线程内部的操作。
+public static void StartDemo(){
+    int x = 0;
+    Thread t = new Thread(()->{
+        if(x == 20){
+            //这里X一定是20
+        }
+    });
+    
+    x = 20;
+    t.start();
+}
+```
+
+#### 线程Join规则
+
+一个线程join()之前的操作，一定对调用join方法的主线程可见
+
+```java
+int x = 0;
+public static void joinDemo(){
+    Thread t = new Thread(()->{
+        x = 200;
+    });
+    t.start();
+    t.join();
+    //这里X一定是200
+}
+```
+
+#### 线程中断规则
+
+对线程interrupt()方法的调用Happens-Before于被中断线程的代码检测到中断事件的发生。
+
+例如：下面的例子中在调用interrupt方法前x被改成了100，所以线程b判断中断代码的内部读到的一定是100。
+
+```java
+    //在线程A中将x变量的值初始化为0
+    private int x = 0;
+
+    public void execute(){
+        //在线程A中初始化线程B
+        Thread threadB = new Thread(()->{
+            //线程B检测自己是否被中断
+            if (Thread.currentThread().isInterrupted()){
+                //如果线程B被中断，则此时X的值为100
+                System.out.println(x);
+            }
+        });
+        //在线程A中启动线程B
+        threadB.start();
+        //在线程A中将共享变量X的值修改为100
+        x = 100;
+        //在线程A中中断线程B
+        threadB.interrupt();
+    }
+```
+
+
+
+#### 对象终结规则
+
+一个对象的初始化完成Happens-Before于它的finalize()方法的开始。就是初始化结束了之后才有可能会调用finalize方法。
+
+下面代码执行结果一定是1，2。
+
+```java
+public class TestThread {
+
+   public TestThread(){
+       System.out.println("1");
+   }
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("2");
+    }
+
+    public static void main(String[] args){
+        new TestThread();
+        System.gc();
+    }
+}
+```
+
+
+
+
+
 ### JDK21中的虚拟线程
 
 JDK21中的虚拟线程其实这就是协程。是在JDK19中引入，在JDK21中成为正式功能。
@@ -358,6 +504,73 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 #### future
 
 可以通过join()或者callable+future来得到返回值。
+
+
+
+### 介绍一下线程池
+
+线程池是一种线程的使用模式，他是一种池化技术的典型实现，所谓池化技术就是提前保存大量的资源，以降低资源创建和销毁的开销。同时也能防止线程过多占用系统资源。
+
+线程池就是提前创建好一定数量的线程，然后维护在线程池中。当有任务需要执行的时候，从线程池中选一个线程来执行任务。
+
+在编程领域，比较典型的池化技术有：线程池、数据库连接池、对象池（字符窜常量池，Integer常亮池）等。
+
+#### 线程池创建
+
+线程池的创建通过Executors类，创建出来的线程池都实现了ExecutorService接口。常用方法有以下几个：
+
+newFixedThreadPool(int Threads)：创建固定数目线程的线程池。
+
+newCachedThreadPool()：创建一个可缓存的线程池，调用execute 将重用以前构造的线程（如果线程可用）。如果没有可用的线程，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。
+
+newSingleThreadExecutor()：创建一个单线程的线程池。
+
+newScheduledThreadPool(int corePoolSize)：创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代Timer类。
+
+#### 线程池实现原理
+
+类图（绿色：接口集成，蓝色：类继承，虚线：接口实现）
+
+![image-20231205173103979](求职-Java面试题.assets/image-20231205173103979.png)
+
+上面不同类型的线程池创建方法，底层都复用了这个方法。
+
+```java
+public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {
+    if (corePoolSize < 0 ||
+        maximumPoolSize <= 0 ||
+        maximumPoolSize < corePoolSize ||
+        keepAliveTime < 0)
+        throw new IllegalArgumentException();
+    if (workQueue == null || threadFactory == null || handler == null)
+        throw new NullPointerException();
+    this.acc = System.getSecurityManager() == null ?
+            null :
+            AccessController.getContext();
+    this.corePoolSize = corePoolSize;
+    this.maximumPoolSize = maximumPoolSize;
+    this.workQueue = workQueue;
+    this.keepAliveTime = unit.toNanos(keepAliveTime);
+    this.threadFactory = threadFactory;
+    this.handler = handler;
+}
+```
+
+- acc: 获取调用上下文
+- corePoolSize: 核心线程数量或保留线程数量，即使空闲也不会回收。
+- maximumPoolSize: 最大的线程数量，常驻+临时线程数量
+- workQueue: 当提交的任务数超过核心线程数后，再提交的任务就存放在这里。它仅仅用来存放被 execute 方法提交的 Runnable 任务.
+- keepAliveTime: 非核心线程空闲时间，当临时线程空闲超过这个时间，就自动销毁。
+- threadFactory: 创建线程的工厂，在这个地方可以统一处理创建线程的属性。
+- handler: 当提交的任务超过了最大线程数量时的拒绝策略。默认是不处理，抛出异常告诉任务提交者，我这忙不过来了
+
+
 
 
 

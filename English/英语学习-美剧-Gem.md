@@ -54,7 +54,7 @@ but as long as he gets us inside the house, who cares?
 
 
 
-### 第一集
+### 第1集
 
 **brimming** with mystery,
 
@@ -72,15 +72,15 @@ overboard
 
 not cool
 
-**mess with**
+**mess with**，1
 
 one man's trash is another man's treasure.
 
-knock it off.
+knock it off
 
 quadrant
 
-**treacherous**，2
+treacherous，3
 
 stretch
 
@@ -96,17 +96,17 @@ clown
 
 marquee，3
 
-**menagerie**，3
+menagerie，3
 
 midst
 
 abduction
 
-**theatrics**，2
+theatrics，3
 
 green room
 
-**scour**，2
+scour，3
 
 cadet
 
@@ -138,7 +138,7 @@ fresh out，3
 
 
 
-### 第二集
+### 第2集
 
 #### 2023-11-27
 
@@ -172,13 +172,13 @@ homicidal
 
 unicycle
 
-**relent**，2
+relent，3
 
 ring a bell
 
 stuff
 
-**insignia**，1
+**insignia**，2
 
 add up
 
@@ -214,15 +214,15 @@ render useless from a few splash
 
 turn over
 
-**outcast**，1
+**outcast**，2
 
 a freak, scorned and abandoned
 
 it's curtains for you.
 
-grind you up
+**grind you up**，1
 
-make bandit sausage
+make bandit **sausage**
 
 all the drowning
 
@@ -256,7 +256,7 @@ savor
 
 
 
-### 第三集
+### 第3集
 
 #### 2023-11-28
 
@@ -302,15 +302,15 @@ raw recruit
 
 fresh start                                                                                                           
 
-**all the more reason**，                                                                                                        更有理由。
+**all the more reason**，2                                                                                                        更有理由。
 
-**sloop**，1
+sloop，3
 
 turns out
 
 rubber hose
 
-little **runt**                                                                                                              小矮子
+little **runt**，2                                                                                                             小矮子
 
 show is on **hiatus**，2
 
@@ -318,15 +318,15 @@ want a word
 
 impressive **figurehead**，2
 
-**mast**，1
+**mast**，2
 
-**crow's nest**，1
+**crow's nest**，2
 
 desperate soul
 
 a little less flashy
 
-How **lax** the security is.
+How **lax** the security is，2
 
 pitch that to the salesman
 
@@ -354,29 +354,29 @@ do you even work here?
 
 chief technician
 
-**encrustation removal**，3
+encrustation removal，3
 
-**aviary waste eradication**，1
+**aviary waste eradication**，2
 
-**scrub barnacles**，2
+scrub barnacles，3
 
-**strike a deal with her**，2
+strike a deal with her，3
 
-**it couldn't hurt to say hello**，2
+it couldn't hurt to say hello，3
 
 you've quite a handle on basic seamanship.
 
 alongside the crew.
 
-in the **bilge**，2
+in the bilge，3
 
 Our experience don't define us.It's what we gain from them that matters.
 
-**butler** and a few other staff，2
+butler and a few other staff，3
 
 who people truely are
 
-**rob the place blind**，2
+rob the place blind，3
 
 at least a little blurry
 
@@ -384,7 +384,7 @@ this guy's full of shit
 
 oops
 
-**buddy**，2
+buddy，3
 
 i know nothing of the sort
 
@@ -394,23 +394,23 @@ show usopp and his friends to the guest suites.
 
 you will bathe and change before dinner.
 
-**one of these days**，2
+one of these days，3
 
 So what if he does?
 
 a giant pearl
 
-**weather a storm**，2
+weather a storm，3
 
-**capsize**，2
+capsize，3
 
-**I barely made landfall**，2
+I barely made landfall，3
 
 a massive piece of goldfish shit
 
 for the world
 
-**how edgy**，2
+how edgy，3
 
 what's the terms?
 
@@ -418,15 +418,15 @@ convince kaya to give us that ship
 
 a tad overprotective at times
 
-**lighten up**，2
+lighten up，3
 
 chef's reflex
 
 nonsense
 
-**decisively**，2
+decisively，3
 
-these young **upstart**. 2                                                                                                                                   这些年轻新冒出来的海贼。
+these young upstart. 3                                                                                                                                   这些年轻新冒出来的海贼。
 
 they need a swift hand put them back in their place
 
@@ -436,9 +436,9 @@ open flame
 
 both personal and professional
 
-**intricacies of the shipbuilding business**，2
+**intricacies of the shipbuilding business**，3
 
-absolutely **radiant**
+absolutely **radiant**，1
 
 highly doubtful
 
@@ -496,11 +496,11 @@ take advantage of
 
 ask for an autograph
 
-***sheesh***，2
+**sheesh**，2
 
 house seats
 
-**pull a job**，3
+pull a job，3
 
 pay tribute
 
@@ -508,7 +508,7 @@ small potatos
 
 Pirating's more of a side gig.
 
-**ransack**，2
+ransack，3
 
 fixer-upper
 
@@ -548,19 +548,19 @@ hang out
 
 wine cellar
 
-a clever **ruse**，3
+a clever ruse，3
 
 One that imbecile's ego helped me perpetuate
 
 this may not be my place
 
-**crack on**，2
+crack on，3
 
 get hold of you kid
 
 
 
-### 第四集
+### 第4集
 
 worth their salt
 
@@ -570,11 +570,11 @@ by all means
 
 #### 2023-12-01
 
-bitter and savory
+bitter and **savory**
 
- sweet, salty, **sour**, bitter, and umami
+ sweet, salty, **sour**, bitter, and umami，1
 
-maid
+**maid**
 
 sell yourself short
 
@@ -582,13 +582,13 @@ I can't hear myself think over your inbred nonsence
 
 how fortuitous
 
-**toss** him in the well with the green-haird ***oaf***
+**toss** him in the well with the green-haird ***oaf***，2
 
-don't you dare **track in** mud all over my floors
+don't you dare **track in** mud all over my floors，2
 
 stay put
 
-**get the better of**，2
+get the better of，3
 
 try one's utmost to help
 
@@ -596,31 +596,31 @@ he was never quite the same after his mother's passing.
 
 gloves
 
-***bruise***
+***<u>bruise</u>***
 
-it can't help but to **rotten** at the core
+it can't help but to **rotten** at the core，2
 
-***fugitive***
+***<u>fugitive</u>***
 
-horrible **bunch**，2
+horrible bunch，3
 
 drank the place dry
 
-**stick to captain's plan**，2
+**stick to captain's plan**，3
 
 **insatiable appetite**，2
 
-**liquor**，1
+**liquor**，2
 
-**creak**，1
+**creak**，2
 
 can't reason with madness.
 
 your movements say otherwise.
 
-**mock**，1
+**mock**，2
 
-**katanas** it is.
+**katanas** it is，2
 
 you're not make any sense
 
@@ -628,19 +628,19 @@ she overheard everything
 
 be of age.
 
-**put this *farce* to bed**
+**put this *farce* to bed**，1
 
-**put you up to this**                                                                                                  让你这么做的
+**put you up to this**，1                                                                                                 让你这么做的
 
-**crank**
+***crank***
 
 in the east wing
 
 I don't deserve to wield a sword
 
-give me the ***creeps***
+give me the ***<u>creeps</u>***
 
-**screw this**
+**screw this**，1
 
 place you under arrest
 
@@ -652,9 +652,9 @@ it is exhausting putting on airs.
 
 you are a pathetic, spoiled, sniveling, little brat.
 
-incessant **whining**.
+incessant **whining**，1
 
-rip your **tongue** out
+rip your **tongue** out，1
 
 split up
 
@@ -676,7 +676,7 @@ a great sharp shooter
 
 don't get used to it
 
-you **flushed them out**
+you **flushed them out**，1
 
 two points aft the starboard beam                                                                   右舷正横后2度
 
@@ -684,7 +684,7 @@ unparalleled artistic talent
 
 flair for design
 
-**this is what it's all about**
+**this is what it's all about**，1
 
 put one off their stern rail
 
@@ -694,49 +694,98 @@ put one off their stern rail
 
 #### 2023-12-04
 
-| 英语单词                                                 | 时间     | 记次数 | 忘次数 | 中文含义                       |
-| -------------------------------------------------------- | -------- | ------ | ------ | ------------------------------ |
-| hoist the yard                                           |          | 1      |        | 吊起帆桁                       |
-| raise the mizzenmast                                     |          | 1      |        | 升起后桅杆                     |
-| steal our wind                                           |          |        |        |                                |
-| pull up alongside us                                     |          |        |        |                                |
-| sheet in and hard to port                                |          |        |        | 拉帆绳，左满舵                 |
-| light the fuse                                           |          |        |        |                                |
-| pirate vessel                                            |          |        |        |                                |
-| lower your sails and submit to my authority              |          |        |        |                                |
-| broken railing                                           |          |        |        |                                |
-| in this soup                                             |          |        |        |                                |
-| lay low                                                  |          |        |        |                                |
-| wait out any reinforcements                              |          |        |        |                                |
-| on the bow                                               |          |        |        |                                |
-| first mate                                               |          |        |        |                                |
-| Kind of seems like that falls under your job description |          |        |        |                                |
-| take a couple of hits during the battle                  |          |        |        |                                |
-| Smells like butter, soy sauce, and meat                  |          |        |        |                                |
-| playing follow the smell is fun and all                  |          |        |        |                                |
-| five degrees starboard                                   |          |        |        |                                |
-| add food to the equation                                 |          |        |        | （必须考虑多种因素的）复杂局面 |
-| disguise the ship                                        |          |        |        |                                |
-| turn away the future king of pirates                     |          |        |        |                                |
-| right this way, ma'am                                    | 00:09:03 |        |        |                                |
-| works, every time                                        | 00:09:04 |        |        |                                |
-| check your swords                                        |          |        |        |                                |
-| get a move on                                            |          |        |        | 赶紧行动                       |
-| call it a true bluefin saute                             |          |        |        |                                |
-| elephant tuna, seared asparagus                          |          |        |        | 大象金枪鱼，烤芦笋             |
-| in a sweet soy reduction                                 | 00:10:36 |        |        | 加入甜酱油                     |
-| little eggplant                                          |          |        |        | 小茄                           |
-| hell freeze over                                         | 00:10:42 |        |        | 地狱结冰，世界末日             |
-| sling one more prime rib medium-well                     |          |        |        | 再挑一块上等七分熟肋排         |
-| drop dead of boredom                                     |          |        |        | 无聊死了                       |
-| off the line                                             |          |        |        | 离线了，离开一线               |
-| wait tables                                              |          |        |        | 为顾客提供餐食服务             |
-| like to see you try                                      |          |        |        |                                |
-| on the house                                             |          |        |        |                                |
-| over my dead body                                        |          |        |        |                                |
-| no cause for alarm                                       |          |        |        | 无需惊慌                       |
-| shitty restaurant                                        |          |        |        |                                |
-| ambience                                                 |          |        |        |                                |
-| signature cocktail                                       |          |        |        |                                |
-| choke down your meal                                     |          |        |        |                                |
-| hard sell                                                |          |        |        | 硬推销，强行推销               |
+| 英语单词                                                 | 忘记数 | 记次数 | 时间     | 中文含义                       |
+| -------------------------------------------------------- | ------ | ------ | -------- | ------------------------------ |
+| hoist the yard                                           |        | 1      |          | 吊起帆桁                       |
+| raise the mizzenmast                                     | 1      | 1      |          | 升起后桅杆                     |
+| steal our wind                                           |        | 1      |          | 占上风                         |
+| pull up alongside us                                     | 1      |        |          | 停止                           |
+| sheet in and hard to port                                | 1      |        |          | 拉帆绳，左满舵                 |
+| light the fuse                                           |        | 1      |          |                                |
+| pirate vessel                                            |        |        |          |                                |
+| lower your sails and submit to my authority              | 1      |        |          | 放下帆，向我军投降             |
+| broken railing                                           |        |        |          |                                |
+| in this soup                                             |        |        |          |                                |
+| lay low                                                  |        |        |          |                                |
+| wait out any reinforcements                              |        |        |          | 等待援军撤离。                 |
+| on the bow                                               |        |        |          |                                |
+| first mate                                               |        |        |          |                                |
+| Kind of seems like that falls under your job description |        |        | 00:05:24 | 某种程度上这是你的职责         |
+| take a couple of hits during the battle                  |        |        |          |                                |
+| Smells like butter, soy sauce, and meat                  |        |        |          |                                |
+| playing follow the smell is fun and all                  |        |        |          | 寻味游戏挺好玩的               |
+| five degrees starboard                                   |        |        | 00:06:56 | 右舵5度                        |
+| add food to the equation                                 |        |        |          | （必须考虑多种因素的）复杂局面 |
+| disguise the ship                                        | 1      |        |          |                                |
+| turn away the future king of pirates                     |        |        |          |                                |
+| right this way, ma'am                                    | 1      |        | 00:09:03 | 往这走，女士                   |
+| works, every time                                        | 1      |        | 00:09:04 | 屡试不爽                       |
+| check your swords                                        |        |        |          |                                |
+| get a move on                                            | 1      |        |          | 赶紧行动                       |
+| call it a true Bluefin Saute                             | 1      |        |          | 真嫩煎（蓝鳍）金枪鱼           |
+| elephant tuna, seared asparagus                          | 1      |        |          | 大象金枪鱼，烤芦笋             |
+| in a sweet soy reduction                                 | 1      |        | 00:10:36 | 加入浓甜酱油                   |
+| little eggplant                                          |        |        |          | 小茄子                         |
+| hell freeze over                                         |        |        | 00:10:42 | 地狱结冰，世界末日             |
+| sling one more prime rib medium-well                     | 1      |        |          | 再挑一块上等七分熟肋排         |
+| drop dead of boredom                                     |        |        |          | 无聊死了                       |
+| off the line                                             |        |        |          | 离线了，离开一线               |
+| wait tables                                              |        |        |          | 为顾客提供餐食服务             |
+| like to see you try                                      |        |        |          |                                |
+| on the house                                             |        |        |          |                                |
+| over my dead body                                        |        |        |          |                                |
+| no cause for alarm                                       | 1      |        |          | 无需惊慌                       |
+| shitty restaurant                                        | 1      |        |          |                                |
+| ambience                                                 | 1      |        |          |                                |
+| signature cocktail                                       | 1      |        | 00:12:12 | 招牌鸡尾酒                     |
+| choke down your meal                                     | 1      |        | 00:12:12 | 咽下你的饭                     |
+| hard sell                                                |        |        |          | 硬推销，强行推销               |
+
+#### 2023-12-05
+
+| 英语单词                            | 忘次数 | 记次数 | 时间 | 中文含义                 |
+| ----------------------------------- | ------ | ------ | ---- | ------------------------ |
+| Would you care for                  |        |        |      | 你是否介意               |
+| aperitif                            |        |        |      | 开胃酒                   |
+| umeshu                              |        |        |      | 日本梅酒                 |
+| blinded by your beauty              |        |        |      | 被你的美貌闪到了         |
+| still, sparkling, mineral           |        |        |      | 无气泡水                 |
+| cubed or crushed                    |        |        |      | 冰块或碎冰               |
+| shore up the yard                   |        |        |      | 加固帆桁                 |
+| catch sb in the middle of something |        |        |      | 干扰某人（某事做到一半） |
+| kill some time                      |        |        |      | 消磨一些时间             |
+| who's the quarry                    |        |        |      | 猎物是谁？               |
+| fancy himself a pirate              |        |        |      |                          |
+| wild card                           |        |        |      | 百搭牌                   |
+| final gambit                        |        |        |      | 最后的王牌               |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
+|                                     |        |        |      |                          |
