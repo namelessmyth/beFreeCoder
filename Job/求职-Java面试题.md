@@ -493,8 +493,6 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 
 
 
-
-
 ### 如何让多个线程按顺序执行
 
 例如：有t1、t2、t3三个线程，怎么让他的顺序是t1, t2 , t3。
@@ -509,11 +507,16 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 
 ### 介绍一下线程池
 
-线程池是一种线程的使用模式，他是一种池化技术的典型实现，所谓池化技术就是提前保存大量的资源，以降低资源创建和销毁的开销。同时也能防止线程过多占用系统资源。
-
-线程池就是提前创建好一定数量的线程，然后维护在线程池中。当有任务需要执行的时候，从线程池中选一个线程来执行任务。
+线程池是一种线程的使用模式，他是一种池化技术的典型实现，线程池就是提前创建好一定数量的线程，然后维护在线程池中。当有任务需要执行的时候，从线程池中选一个线程来执行任务。
 
 在编程领域，比较典型的池化技术有：线程池、数据库连接池、对象池（字符窜常量池，Integer常亮池）等。
+
+#### 线程池的优势
+
+- 降低资源消耗：通过池化技术重复利用已创建的线程，降低线程创建和销毁造成的损耗。
+- 提高响应速度：任务到达时，无需等待线程创建即可立即执行。
+- 提高线程的可管理性：线程是稀缺资源，如果无限制创建，不仅会消耗系统资源，还会因为线程的不合理分布导致资源调度失衡，降低系统的稳定性。使用线程池可以进行统一的分配、调优和监控。
+- 提供更多更强大的功能：线程池具备可拓展性，允许开发人员向其中增加更多的功能。比如延时定时线程池 ScheduledThreadPoolExecutor，就允许任务延期执行或定期执行。
 
 #### 线程池创建
 
@@ -562,15 +565,141 @@ public ThreadPoolExecutor(int corePoolSize,
 }
 ```
 
+参数说明
+
 - acc: 获取调用上下文
 - corePoolSize: 核心线程数量或保留线程数量，即使空闲也不会回收。
 - maximumPoolSize: 最大的线程数量，常驻+临时线程数量
 - workQueue: 当提交的任务数超过核心线程数后，再提交的任务就存放在这里。它仅仅用来存放被 execute 方法提交的 Runnable 任务.
 - keepAliveTime: 非核心线程空闲时间，当临时线程空闲超过这个时间，就自动销毁。
+- unit：keepAliveTime 的时间单位
 - threadFactory: 创建线程的工厂，在这个地方可以统一处理创建线程的属性。
 - handler: 当提交的任务超过了最大线程数量时的拒绝策略。默认是不处理，抛出异常告诉任务提交者，我这忙不过来了
 
+#### 线程池实现原理
 
+流程图：
+
+```mermaid
+flowchart LR
+
+submit["提交任务"]-->if1{判断核心线<br>程数是否已满}
+-->|是|if2{判断阻塞队<br>列是否已满}
+-->|是|if3{判断最大线程<br>数是否已满}
+-->|是|reject[执行拒绝策略]
+if1-->|否|add1[创建核心线程执行任务]
+if2-->|否|addList[加入阻塞队列]
+if3-->|否|add2[创建非核心线程执行任务]
+```
+
+
+
+线程池源码分析：https://zhuanlan.zhihu.com/p/350067478
+
+
+
+### 线程池有哪些使用建议
+
+#### 使用 ThreadPoolExecutor 的构造函数创建线程池
+
+避免使用`Executors` 类的方法来创建线程池，可能会有 OOM 的风险。
+
+- `FixedThreadPool` 和 `SingleThreadExecutor` ： 允许请求的队列长度为 `Integer.MAX_VALUE`，可能堆积大量的请求，从而导致 OOM。
+- `CachedThreadPool` 和 `ScheduledThreadPool` ： 允许创建的线程数量为 `Integer.MAX_VALUE` ，可能会创建大量线程，从而导致 OOM。
+
+实际使用中需要根据自己机器的性能、业务场景来手动配置线程池的参数比如核心线程数、使用的任务队列、饱和策略等等。
+
+我们应该显示地给我们的线程池命名，这样有助于我们定位问题
+
+案例代码：
+
+```java
+public class ThreadPoolExecutorTest {
+    public static ExecutorService NamedExecutor1(String[] args) throws Exception {
+        //自己创建ThreadFactory
+        ThreadFactory threadFactory = new ThreadFactoryBuilder().setNamePrefix("gem-test-").setDaemon(false).setPriority(Thread.NORM_PRIORITY).build();
+        ExecutorService executorService = Executors.newFixedThreadPool(2, threadFactory);
+        return executorService;
+    }
+
+    public static ThreadPoolExecutor NamedExecutor2() {
+        //使用Hutool的ThreadFactory
+        return new ThreadPoolExecutor(10, 30, 60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(1000), new NamedThreadFactory("gem-test", false));
+    }
+
+    public static ExecutorService NamedExecutor3(String[] args) throws Exception {
+        //自己创建ThreadFactory
+        ThreadFactory threadFactory = new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                //要把任务Runnable设置给新创建的线程
+                Thread thread = new Thread(r);
+                //设置线程的命名规则
+                thread.setName("我的线程" + r.hashCode());
+                //设置线程的优先级
+                thread.setPriority(Thread.MAX_PRIORITY);
+                return thread;
+            }
+        };
+        ExecutorService executorService = Executors.newFixedThreadPool(2, threadFactory);
+        return executorService;
+    }
+}
+```
+
+#### 合理分配线程池参数
+
+要想合理的配置线程池，就必须首先分析任务特性，可以从以下几个角度来进行分析：
+
+1. 任务的性质：CPU密集型任务，IO密集型任务和混合型任务。
+2. 任务的优先级：高，中和低。
+3. 任务的执行时间：长，中和短。
+4. 任务的依赖性：是否依赖其他系统资源，如数据库连接。
+
+任务性质不同的任务可以用不同规模的线程池分开处理。CPU密集型任务配置尽可能少的线程数量，如配置**Ncpu+1**个线程的线程池。IO密集型任务则由于需要等待IO操作，线程并不是一直在执行任务，则配置尽可能多的线程，如**2*Ncpu**。混合型的任务，如果可以拆分，则将其拆分成一个CPU密集型任务和一个IO密集型任务，只要这两个任务执行的时间相差不是太大，那么分解后执行的吞吐率要高于串行执行的吞吐率，如果这两个任务执行时间相差太大，则没必要进行分解。我们可以通过`Runtime.getRuntime().availableProcessors()`方法获得当前设备的CPU个数。
+
+优先级不同的任务可以使用优先级队列PriorityBlockingQueue来处理。它可以让优先级高的任务先得到执行，需要注意的是如果一直有优先级高的任务提交到队列里，那么优先级低的任务可能永远不能执行。
+
+执行时间不同的任务可以交给不同规模的线程池来处理，或者也可以使用优先级队列，让执行时间短的任务先执行。
+
+依赖数据库连接池的任务，因为线程提交SQL后需要等待数据库返回结果，如果等待的时间越长CPU空闲时间就越长，那么线程数应该设置越大，这样才能更好的利用CPU。
+
+并且，阻塞队列**最好是使用有界队列**，如果采用无界队列的话，一旦任务积压在阻塞队列中的话就会占用过多的内存资源，甚至会使得系统崩溃。
+
+#### 监测线程池运行状态
+
+可以通过一些手段来检测线程池的运行状态比如 SpringBoot 中的 Actuator 组件。
+
+除此之外，我们还可以利用 `ThreadPoolExecutor` 的相关 API 做一个简陋的监控。从下图可以看出， `ThreadPoolExecutor`提供了线程池当前的线程数和活跃线程数、已经执行完成的任务数、正在排队中的任务数等等。
+
+案例代码：
+
+```java
+/**
+     * 打印线程池的状态
+     *
+     * @param threadPool 线程池对象
+     */
+    public static void printThreadPoolStatus(ThreadPoolExecutor threadPool) {
+        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, createThreadFactory("print-thread-pool-status", false));
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            log.info("=========================");
+            log.info("ThreadPool Size: [{}]", threadPool.getPoolSize());
+            log.info("Active Threads: {}", threadPool.getActiveCount());
+            log.info("Number of Tasks : {}", threadPool.getCompletedTaskCount());
+            log.info("Number of Tasks in Queue: {}", threadPool.getQueue().size());
+            log.info("=========================");
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+```
+
+#### 建议不同类别的业务用不同的线程池
+
+很多人在实际项目中都会有类似这样的问题：**项目中多个业务需要用到线程池，是为每个线程池都定义一个还是说定义一个公共的线程池呢？**
+
+一般建议是不同的业务使用不同的线程池，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为不同的业务的并发以及对资源的使用情况都不同，重心优化系统性能瓶颈相关的业务。
 
 
 
@@ -635,6 +764,54 @@ public class PoolSequential {
 ```
 
 
+
+### 线程池submit和execute方法
+
+共同点：都可以执行任务，submit内部还是会调用execute方法
+
+区别：
+
+submit的参数是callable和runnable，execute方法只能是runnable。
+
+submit有future返回值，execute无返回值。
+
+execute在执行任务时，如果遇到异常会直接抛出，而submit不会直接抛出，只有在使用Future的get方法获取返回值时，才会抛出异常。
+
+https://www.cnblogs.com/jxxblogs/p/11882381.html
+
+
+
+### 线程池的拒绝策略
+
+AbortPolicy - 这是默认的拒绝策略，当线程池无法接受新任务时，会抛出RejectedExecutionException异常。这意味着新任务会被立即拒绝，不会加入到任务队列中，也不会执行。通常情况下都是使用这种拒绝策
+
+DiscardPolicy - 这个策略在任务队列已满时，会丢弃新的任务而且不会抛出异常。新任务提交后会被默默地丢弃，不会有任何提示或执行。这个策略一般用于日志记录、统计等不是非常关键的任务。
+
+DiscardOldestPolicy - 这个策略也会丢弃新的任务，但它会先尝试将任务队列中最早的任务删除，然后再尝试提交新任务。如果任务队列已满，且线程池中的线程都在工作，可能会导致一些任务被丢弃。这个策略对于些实时性要求较高的场景比较合适。
+
+CallerRunsPolicy - 这个策略将任务回退给调用线程，而不会抛出异常。调用线程会尝试执行任务。这个策略可以降低任务提交速度，适用于任务提交者能够承受任务执行的压力，但希望有一种缓冲机制的情况。
+
+
+
+### ForkJoinPool和其他线程池的区别
+
+ForkJoinPool和ExecutorService都是Java中常用的线程池的实现，他们主要在实现方式上有一定的区别，所以也就会同时带来的适用场景上面的区别。
+
+首先在实现方式上，ForkJoinPool 是基于工作窃取 (Work-Stealing) 算法实现的线程池，ForkJoinPool 中每个线程都有自己的工作队列，用于存储待执行的任务。当一个线程执行完自己的任务之后，会从其他线程的工作队列中窃取任务执行，以此来实现任务的动态均衡和线程的利用率最大化
+
+ThreadPoolExecutor 是基于任务分配 (Task-Assignment)算法实现的线程池，ThreadPoolExecutor 中线程池中有一个共享的工作队列，所有任务都将提交到这个队列中。线程池中的线程会从队列中获取任务执行，如果队列为空，则线程会等待，直到队列中有任务为止。
+
+ForkJoinPool 中的任务通常是一些可以分割成多个子任务的任务，例如递归地计算斐波那契数列。每个任务都可以分成两个或多个子任务，然后由不同的线程来执行这些子任务在这个过程中，ForkJoinPool 会自动管理任务的执行、分割和合并，从而实现任务的动态分配和最优化执行
+
+ForkJoinPool 中的工作线程是一种特殊的线程，与普通线程池中的工作线程有所不同。它们会自动地创建和销毁，以及自动地管理线程的数量和调度。这种方式可以降低线程池的管理成本，提高线程的利用率和并行度。
+
+ThreadPoolExecutor 中线程的创建和销毁是静态的，线程池创建后会预先创建一定数量的线程，根据任务的数量动态调整线程的利用率，不会销毁线程。如果线程长时间处于空闲状态，可能会占用过多的资源。
+
+在使用场景上也有区别，ForkJoinPool 适用于处理大量、独立、可分解的任务，并且任务之间不存在依赖关系例如，计算斐波那契数列、归并排序、图像处理等任务
+
+ExecutorService 适用于处理较小的、相对独立的任务，任务之间存在一定的依赖关系。例如，处理网络请求、读取文件、执行数据库操作等任务。
+
+https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
 
 
 
@@ -7744,7 +7921,9 @@ public class AsyncService {
 }
 ```
 
+#### 线程池隔离
 
+https://blog.csdn.net/dyc87112/article/details/120361886
 
 
 
