@@ -493,6 +493,28 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 
 
 
+### 线程什么时候抛出InterruptedException
+
+调用interrupt方法时。
+抛出InterruptedException应该怎么处理
+抛出异常后会默认复位。必须做出明确的处理。不能仅仅打印日志
+
+
+
+### interrupt()的作用？线程复位及其方式
+
+ interrupt()的作用是中断线程。将线程变量interrupt标记为true，
+
+线程的复位就是将变量interrupt改为false，并且唤醒线程；
+
+线程复位的方式有：抛出InterruptException异常，通过Thread.interrupted();
+
+
+
+### java如何停止一个线程，interrupt，interrupted，isInterrupted()区别
+
+
+
 ### 如何让多个线程按顺序执行
 
 例如：有t1、t2、t3三个线程，怎么让他的顺序是t1, t2 , t3。
@@ -658,7 +680,15 @@ public class ThreadPoolExecutorTest {
 3. 任务的执行时间：长，中和短。
 4. 任务的依赖性：是否依赖其他系统资源，如数据库连接。
 
-任务性质不同的任务可以用不同规模的线程池分开处理。CPU密集型任务配置尽可能少的线程数量，如配置**Ncpu+1**个线程的线程池。IO密集型任务则由于需要等待IO操作，线程并不是一直在执行任务，则配置尽可能多的线程，如**2*Ncpu**。混合型的任务，如果可以拆分，则将其拆分成一个CPU密集型任务和一个IO密集型任务，只要这两个任务执行的时间相差不是太大，那么分解后执行的吞吐率要高于串行执行的吞吐率，如果这两个任务执行时间相差太大，则没必要进行分解。我们可以通过`Runtime.getRuntime().availableProcessors()`方法获得当前设备的CPU个数。
+任务性质不同的任务可以用不同规模的线程池分开处理。
+
+CPU密集型任务配置尽可能少的线程数量，如配置：**N~cpu~+1**个线程的线程池。
+
+IO密集型任务则由于需要等待IO操作，线程并不是一直在执行任务，则配置尽可能多的线程，如：**2*N~cpu~+1**。
+
+混合型的任务，如果可以拆分，则将其拆分成一个CPU密集型任务和一个IO密集型任务，只要这两个任务执行的时间相差不是太大，那么分解后执行的吞吐率要高于串行执行的吞吐率，如果这两个任务执行时间相差太大，则没必要进行分解。
+
+N~cpu~为CPU的核心数。可以通过`Runtime.getRuntime().availableProcessors()`方法获得当前设备的CPU个数。
 
 优先级不同的任务可以使用优先级队列PriorityBlockingQueue来处理。它可以让优先级高的任务先得到执行，需要注意的是如果一直有优先级高的任务提交到队列里，那么优先级低的任务可能永远不能执行。
 
@@ -815,25 +845,38 @@ https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
 
 
 
-### 线程什么时候抛出InterruptedException
+### ThreadLocal是什么
 
-调用interrupt方法时。
-抛出InterruptedException应该怎么处理
-抛出异常后会默认复位。必须做出明确的处理。不能仅仅打印日志
+ThreadLocal是java.lang下面的一个类，是用来解决java多线程程序中并发问题的一种途径，通过为每一个线程建一份共享变量的副本来保证各个线程之间的变量的访问和修改互相不影响。
+
+ThreadLocal存放的值是线程内共享的，线程间与斥的，主要用于线程内共享一些数据，避免通过参数来传递，这样处理后，能够优雅的解决一些实际问题。
+
+比如一次用户的页面操作请求，我们可以在最开始的filter中，把用户的信息保存在ThreadLocal中，在同一次请求中，在使用到用户信息，就可以直接到ThreadLocal中获取就可以了。
+
+ThreadLocal有四个方法，分别为:
+
+- initialValue
+  - 返回此线程局部变量的初始值
+- get
+  - 返回此线程局部变量的当前线程副本中的值。如果这是线程第一次调用该方法，则创建并初始化此副本。
+- set
+  - 将此线程局部变量的当前线程副本中的值设置为指定值。许多应用程序不需要这项功能，它们只依赖于initialValue()方法来设置线程局部变量的值
+- remove
+  - 移除此线程局部变量的值
 
 
 
-### interrupt()的作用？线程复位及其方式
+### ThreadLocal实现原理
 
- interrupt()的作用是中断线程。将线程变量interrupt标记为true，
+ThreadLocal中用于保存线程独有变量的数据结构是一个内部类：ThreadLocalMap，也是k-v结构。
 
-线程的复位就是将变量interrupt改为false，并且唤醒线程；
-
-线程复位的方式有：抛出InterruptException异常，通过Thread.interrupted();
+key就是当前的ThreadLocal对象，而V就是我们想要保存的值
 
 
 
-### java如何停止一个线程，interrupt，interrupted，isInterrupted()区别
+### ThreadLocal内存泄漏问题
+
+
 
 
 
