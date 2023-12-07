@@ -60,9 +60,9 @@ but as long as he gets us inside the house, who cares?
 
 #### 2023-11-25
 
-**brimming** with mystery，1
+**brimming** with mystery，2
 
-**teemming** with danger，1
+**teemming** with danger，2
 
 pistol,
 
@@ -76,7 +76,7 @@ overboard
 
 not cool
 
-**mess with**，2
+mess with，3
 
 one man's trash is another man's treasure.
 
@@ -84,7 +84,7 @@ knock it off
 
 quadrant
 
-**treacherous**，3
+**treacherous**，4
 
 stretch
 
@@ -224,9 +224,9 @@ a freak, scorned and abandoned
 
 it's curtains for you.
 
-**grind you up**，2
+grind you up，3
 
-make bandit **sausage**，2
+make bandit sausage，3
 
 all the drowning
 
@@ -360,7 +360,7 @@ chief technician
 
 encrustation removal，3
 
-**aviary waste eradication**，2
+aviary waste eradication，3
 
 scrub barnacles，3
 
@@ -440,9 +440,9 @@ open flame
 
 both personal and professional
 
-**intricacies of the shipbuilding business**，3
+intricacies of the shipbuilding business，4
 
-absolutely **radiant**，2
+absolutely radiant，3
 
 highly doubtful
 
@@ -574,11 +574,11 @@ by all means
 
 #### 2023-12-01
 
-bitter and **savory**，1
+bitter and **savory**，2
 
  sweet, salty, **sour**, bitter, and umami，2
 
-**maid**，1
+**maid**，2
 
 sell yourself short
 
@@ -586,7 +586,7 @@ I can't hear myself think over your inbred nonsence
 
 how fortuitous
 
-**toss** him in the well with the green-haird ***oaf***，3
+toss him in the well with the green-haird ***oaf***，4
 
 don't you dare track in mud all over my floors，3
 
@@ -600,11 +600,11 @@ he was never quite the same after his mother's passing.
 
 gloves
 
-***bruise***，1
+**bruise**，2
 
 it can't help but to **rotten** at the core，3
 
-***<u>==fugitive==</u>***
+***<u>fugitive</u>***，1
 
 horrible bunch，3
 
@@ -624,7 +624,7 @@ your movements say otherwise.
 
 mock，3
 
-**katana** it is，2
+**katana** it is，3
 
 you're not make any sense
 
@@ -632,19 +632,19 @@ she overheard everything
 
 be of age.
 
-**put this *farce* to bed**，2
+put this farce to bed，3
 
 **put you up to this**，2                                                                                                 让你这么做的
 
-***<u>crank</u>***
+***<u>==crank==</u>***
 
 in the east wing
 
 I don't deserve to wield a sword
 
-give me the ***creeps***，1
+give me the **creeps**，2
 
-**screw this**，2
+screw this，3
 
 place you under arrest
 
@@ -656,9 +656,9 @@ it is exhausting putting on airs.
 
 you are a pathetic, spoiled, sniveling, little brat.
 
-incessant **whining**，2
+incessant whining，3
 
-rip your **tongue** out，2
+rip your tongue out，3
 
 split up
 
@@ -682,15 +682,15 @@ don't get used to it
 
 you **flushed them out**，2
 
-two points aft the starboard beam                                                                   右舷正横后2度
+two points aft the starboard beam                                                                                        右舷正横后2度
 
 unparalleled artistic talent
 
 flair for design
 
-**this is what it's all about**，2
+this is what it's all about，3
 
-**put one off their stern rail**，                                                                                             拖住他们的船尾栏杆
+**put one off their stern rail**，1                                                                                              拖住他们的船尾栏杆
 
 
 
@@ -700,62 +700,57 @@ flair for design
 
 | 英语单词                                                 | 忘记数 | 记次数 | 时间     | 中文含义                       |
 | -------------------------------------------------------- | ------ | ------ | -------- | ------------------------------ |
-| hoist the yard                                           | 1      | 1      |          | 吊起帆桁                       |
-| raise the mizzenmast                                     | 1      | 1      |          | 升起后桅杆                     |
-| steal our wind                                           |        | 2      |          | 占上风                         |
-| pull up alongside us                                     | 1      |        |          | 在我们边上停止                 |
+| hoist the yard                                           | 1      | 2      |          | 吊起帆桁                       |
+| raise the mizzenmast                                     | 1      | 2      |          | 升起后桅杆                     |
+| steal our wind                                           |        | 3      |          | 占上风                         |
+| pull up alongside us                                     | 2      |        |          | 在我们边上停止                 |
 | sheet in and hard to port                                | 2      |        |          | 拉帆绳，左满舵                 |
 | light the fuse                                           |        | 1      |          |                                |
 | pirate vessel                                            |        |        |          |                                |
-| lower your sails and submit to my authority              | 1      | 1      |          | 放下帆，向我军投降             |
+| lower your **sails** and submit to my authority          | 2      | 1      |          | 放下帆，向我军投降             |
 | broken railing                                           |        |        |          |                                |
 | in this soup                                             |        |        |          |                                |
 | lay low                                                  |        |        |          |                                |
-| wait out any reinforcements                              | 1      | 1      |          | 等待援军撤离。                 |
+| wait out any reinforcements                              | 1      | 2      |          | 等待援军撤离。                 |
 | on the bow                                               |        |        |          |                                |
 | first mate                                               |        | 1      |          |                                |
-| Kind of seems like that falls under your job description | 1      | 1      | 00:05:24 | 某种程度上这是你的职责         |
+| Kind of seems like that falls under your job description | 1      | 2      | 00:05:24 | 某种程度上这是你的职责         |
 | take a couple of hits during the battle                  |        | 1      |          |                                |
 | Smells like butter, soy sauce, and meat                  |        | 1      |          |                                |
 | playing follow the smell is fun and all                  |        | 2      |          | 寻味游戏挺好玩的               |
 | five degrees starboard                                   |        | 1      | 00:06:56 | 右舵5度                        |
 | add food to the equation                                 |        |        |          | （必须考虑多种因素的）复杂局面 |
-| disguise the ship                                        | 1      | 1      |          |                                |
+| disguise the ship                                        | 1      | 2      |          |                                |
 | turn away the future king of pirates                     |        | 1      |          |                                |
-| right this way, ma'am                                    | 1      | 1      | 00:09:03 | 往这走，女士，madam            |
-| works, every time                                        | 1      | 1      | 00:09:04 | 屡试不爽                       |
+| right this way, ma'am                                    | 1      | 2      | 00:09:03 | 往这走，女士，madam            |
+| works, every time                                        | 1      | 2      | 00:09:04 | 屡试不爽                       |
 | check your swords                                        |        |        |          |                                |
-| get a move on                                            | 1      | 1      |          | 赶紧行动                       |
-| call it a true Bluefin Saute                             | 1      |        |          | 真嫩煎（蓝鳍）金枪鱼           |
-| elephant tuna, seared **asparagus**                      | 2      |        |          | 大象金枪鱼，烤芦笋             |
-| in a sweet soy reduction                                 | 1      |        | 00:10:36 | 加入浓甜酱油                   |
-| little eggplant                                          |        | 1      |          | 小茄子                         |
+| get a move on                                            | 1      | 2      |          | 赶紧行动                       |
+| call it a true Bluefin Saute                             | 1      | 2 |          | 真嫩煎（蓝鳍）金枪鱼           |
+| elephant tuna, seared **asparagus**                      | 2      | 2 |          | 大象金枪鱼，烤芦笋             |
+| in a sweet soy reduction                                 | 1      | 1 | 00:10:36 | 加入浓甜酱油                   |
+| little eggplant                                          |        | 2      |          | 小茄子                         |
 | hell freeze over                                         |        |        | 00:10:42 | 地狱结冰，世界末日             |
-| **sling** one more prime rib medium-well                 | 2      |        |          | 再挑一块上等七分熟肋排         |
+| **sling** one more prime rib medium-well                 | 2      | 1 |          | 再挑一块上等七分熟肋排         |
 | drop dead of boredom                                     |        |        |          | 无聊死了                       |
 | off the line                                             |        |        |          | 离线了，离开一线               |
-| wait tables                                              | 2      |        |          | 为顾客提供餐食服务             |
+| wait tables                                              | 2      | 1 |          | 为顾客提供餐食服务             |
 | like to see you try                                      |        |        |          |                                |
 | on the house                                             |        |        |          | 免费                           |
 | over my dead body                                        |        |        |          |                                |
-| no cause for alarm                                       | 1      | 1      |          | 无需惊慌                       |
-| **shitty** restaurant                                    | 2      |        |          |                                |
-| ambience                                                 | 1      | 1      |          |                                |
-| signature cocktail                                       | 1      | 1      | 00:12:12 | 招牌鸡尾酒                     |
-| choke down your meal                                     | 1      | 1      | 00:12:12 | 咽下你的饭                     |
-| hard sell                                                |        |        |          | 硬推销，强行推销               |
-
-#### 2023-12-05
-
-| 英语单词                                         | 忘次数 | 记次数 | 时间     | 中文含义                 |
-| ------------------------------------------------ | ------ | ------ | -------- | ------------------------ |
-| Would you care for                               |        | 1      |          | 你是否介意               |
-| aperitif                                         | 1      |        |          | 开胃酒                   |
-| umeshu                                           | 1      |        |          | 日本梅酒                 |
-| blinded by your beauty                           | 1      |        |          | 被你的美貌蒙蔽了双眼     |
-| still, sparkling, mineral                        |        | 1      |          | 无气泡水                 |
-| cubed or crushed                                 |        | 1      |          | 冰块或碎冰               |
-| shore up the yard                                | 1      |        |          | 加固帆桁                 |
+| no cause for alarm                                       | 1      | 2      |          | 无需惊慌                       |
+| **shitty** restaurant                                    | 2      | 1 |          |                                |
+| ambience                                                 | 1      | 2      |          |                                |
+| signature cocktail                                       | 1     | 2      | 00:12:12 | 招牌鸡尾酒                     |
+| choke down your meal                                     | 1      | 2      | 00:12:12 | 咽下你的饭                     |
+| hard sell                                                |        | 2 |          | 硬推销，强行推销               |
+| Would you care for                               |        | 2      |          | 你是否介意               |
+| aperitif                                         | 1      | 1 |          | 开胃酒                   |
+| umeshu                                           | 1      | 1 |          | 日本梅酒                 |
+| blinded by your beauty                           | 1      | 2 |          | 被你的美貌蒙蔽了双眼     |
+| still, sparkling, mineral                        |        | 2      |          | 无气泡水                 |
+| cubed or crushed                                 |        | 2      |          | 冰块或碎冰               |
+| shore up the yard                                | 1      | 1 |          | 加固帆桁                 |
 | catch sb in the middle of something              |        | 1      |          | 干扰某人（某事做到一半） |
 | kill some time                                   |        | 1      |          | 消磨一些时间             |
 | who's the quarry                                 |        | 1      |          | 猎物是谁？               |
@@ -764,32 +759,32 @@ flair for design
 | final gambit                                     |        | 1      |          | 最后的王牌               |
 | pique my interest                                |        | 1      |          | 勾起了我的兴趣           |
 | you said it                                      |        | 1      |          | 你说对了                 |
-| do a toast                                       | 1      |        |          | 干杯                     |
-| grab your glasses                                |        | 1      |          | 举起酒杯                 |
-| by all rights                                    | 1      |        |          | 按道理                   |
-| elephant in the room                             |        | 1      |          | 明显的重大问题           |
+| do a toast                                       | 2      |        |          | 干杯                     |
+| grab your glasses                                | 1 | 2      |          | 举起酒杯                 |
+| by all rights                                    | 1      | 1 |          | 按道理                   |
+| elephant in the room                             |        | 2      |          | 明显的重大问题           |
 | sign up for                                      |        | 1      |          | 报名参加                 |
-| as opposed to wrecking a base commander's office |        | 1      |          |                          |
-| offer credit                                     |        | 1      |          |                          |
-| how's that                                       |        | 1      |          | 怎么说                   |
+| as opposed to wrecking a base commander's office |        | 2      |          | 与……相对比 |
+| offer credit                                     |  | 2      |          |                          |
+| how's that                                       | 1 | 1      |          | 怎么说                   |
 | treasure tab                                     |        | 1      |          | 财富待付账单             |
-| what pray tell is that                           | 1      |        |          | 请告诉我那是什么         |
-| chore boy                                        | 1      |        |          | 临时工人                 |
-| for starters                                     |        | 1      |          |                          |
-| for all I care                                   | 1      |        |          |                          |
-| that's fine by me                                |        | 1      |          |                          |
-| pace yourself                                    | 1      |        |          | 控制你的节奏             |
-| be messed up                                     | 1      |        |          | 一团糟                   |
-| my treat                                         |        | 1      |          |                          |
+| what pray tell is that                           | 1      | 1 |          | 请告诉我那是什么         |
+| chore boy                                        | 1      | 1 |          | 临时工人                 |
+| for starters                                     |        | 2      |          |                          |
+| for all I care                                   | 2      |        |          |                          |
+| that's fine by me                                |        | 2      |          |                          |
+| pace yourself                                    | 1      | 1 |          | 控制你的节奏             |
+| be messed up                                     | 1      | 1 |          | 一团糟                   |
+| my treat                                         |        | 2      |          |                          |
 | secure passage                                   |        |        |          |                          |
 | I'm at slip 22                                   |        |        |          | 我在22号泊位             |
 | The seven warloads of the seas.                  |        |        |          | 王下七武海               |
 | each one worse than the next                     |        |        |          |                          |
-| terrorizing                                      | 1      |        |          |                          |
-| go after them                                    | 1      |        |          |                          |
+| terrorizing                                      | 1      | 1 |          |                          |
+| go after them                                    | 1      | 1 |          |                          |
 | all-out war                                      |        |        |          |                          |
 | as allies                                        |        |        |          | 盟友                     |
-| give free rein                                   | 1      |        |          |                          |
+| give free rein                                   | 1      | 1 |          |                          |
 | never seems to get any smaller                   |        |        |          |                          |
 | IOU                                              |        |        |          | 借条，I own you          |
 | Not that it matters                              |        |        |          |                          |
@@ -797,19 +792,19 @@ flair for design
 | couldn't help myself                             |        |        |          | 情不自禁,忍不住          |
 | stubborn                                         |        |        |          | 倔强的                   |
 | corned-beef fried rice                           |        |        |          | 腌牛肉炒饭               |
-| give handouts to every down-on-his-luck pirate   | 1      |        |          | 救济每一个倒霉的海盗     |
+| give handouts to every down-on-his-luck pirate   | 1      | 1 |          | 救济每一个倒霉的海盗     |
 | your funeral                                     |        |        |          |                          |
 | I'm serious, for real                            |        |        |          |                          |
 | mighty pirate armada                             |        |        |          |                          |
-| hell-bent on doing                               | 1      |        |          | 拼命想做                 |
+| hell-bent on doing                               | 1      | 1 |          | 拼命想做                 |
 | undoing                                          |        |        |          | 毁灭，祸根               |
 | like a frantic, uncoordinated sea slug           |        |        |          |                          |
 | what are you carrying around                     |        |        |          |                          |
 | i know more about you than you do about me       |        |        |          |                          |
 | hang out in swanky bars                          |        |        |          |                          |
-| a tangerine grove                                | 1      |        |          |                          |
-| I had you read all the way                       |        |        |          | 我早就看透你了           |
-| i signed an oath to                              | 1      |        |          |                          |
+| a **tangerine** grove                            | 1      |        |          |                          |
+| I had you read all the way                       |  | 1 |          | 我早就看透你了           |
+| i signed an **oath** to                          | 2      |        |          |                          |
 | i'm not meant to be a marine                     |        |        |          | 我不适合做海军           |
 | fleet admiral                                    |        |        |          |                          |
 | between order and anarchy                        |        |        |          |                          |
@@ -820,11 +815,51 @@ flair for design
 | slice you into sashimi                           |        |        |          |                          |
 | get the hell out of                              |        |        |          |                          |
 | something to be swatted and forgotten            | 1      |        |          |                          |
-| butt out                                         |        |        |          |                          |
+| butt out                                         |        | 1 |          |                          |
 | get in the way of                                |        |        | 00:37:07 |                          |
-| give a shit                                      | 1      |        |          |                          |
+| give a shit                                      | 1      | 1 |          |                          |
 | that remain to be seen                           |        |        |          |                          |
 | got you on the run                               |        |        |          |                          |
 | a little frog croaking in a well                 |        |        |          |                          |
-| That's more like it.                             |        |        |          |                          |
+| That's more like it                             |        |        |          |                          |
 | magnificent                                      |        |        |          |                          |
+
+### 第6集
+
+| 英语单词                                | 忘记数 | 记次数 | 时间 | 中文含义         |
+| --------------------------------------- | ------ | ------ | ---- | ---------------- |
+| freakishly                              |        |        |      |                  |
+| what does that have to do with anything |        |        |      |                  |
+| first aid kit                           |        |        |      | 急救箱           |
+| chopping carrots, chef                  |        |        |      |                  |
+| i demoted you                           |        |        |      |                  |
+| sleep off a brutal hangover             |        |        |      |                  |
+| oregano is for savages                  |        |        |      |                  |
+| remoulade                               |        |        |      | 千岛酱           |
+| slow down                               |        |        |      |                  |
+| hope your friend makes it               |        |        |      |                  |
+| a fresh yellowtail from the cooler      |        |        |      | 鰤鱼             |
+| sterilize the wounds                    |        |        |      |                  |
+| old seaman's **trick**                  |        |        |      | 老船员的偏方     |
+| staunch the wounds                      |        |        |      | 伤口止血         |
+| heal the flesh a lot faster             |        |        |      | 愈合速度加快很多 |
+| but it might not be                     |        |        |      | 事实可能并非如此 |
+| got one foot in each world              |        |        |      |                  |
+| caught between life and death           |        |        |      |                  |
+| keep him **tether**ed to our world      |        |        |      |                  |
+| sing him sea shanties                   |        |        |      | 海上民谣，船夫曲 |
+| announce yourself                       |        |        |      |                  |
+| dismiss                                 |        |        |      | 解散，解雇       |
+| come now                                |        |        |      |                  |
+| the likes of you                        |        |        |      |                  |
+| serve at the pleasure                   |        |        |      |                  |
+| without our immunity                    |        |        |      |                  |
+| cut out for you                         |        |        |      |                  |
+| mess hall                               |        |        |      |                  |
+| itty-bitty chance                       |        |        |      |                  |
+| in the mood for saffron risotto         |        |        |      |                  |
+| Waddy Itchy Monkey                      |        |        |      | 痒猴一棒子       |
+| rice balls soaked in beer               |        |        |      |                  |
+| the dreaded cook pirate                 |        |        |      |                  |
+| veloute                                 |        |        |      |                  |
+| get the texture just right              |        |        |      |                  |
