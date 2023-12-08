@@ -209,7 +209,37 @@ public Node getLoopNode(Node head){
 
 **守护线程创建**
 
-可以通过使用setDaemon(true)方法，使线程成为一个守护线程。我们需要在启动线程之前调用一个线程的setDaemon0方法。否则，就会抛出一个java.lang.lllegalThreadStateException。可以使用isDaemon()方法来检查线程是否是守护线程。
+可以通过使用setDaemon(true)方法，使线程成为一个守护线程。我们需要在启动线程之前调用一个线程的setDaemon(true)方法。否则，就会抛出一个java.lang.lllegalThreadStateException。可以使用isDaemon()方法来检查线程是否是守护线程。
+
+```java
+public class DeamonExit {
+    /**
+     * 此方法只会打印一遍守护线程中的内容就会退出。因为jvm不会等守护线程执行完毕才退出。
+     * 但如果把 childThread.setDaemon(true);注释就会一直执行
+     * @param args
+     */
+    public static void main(String[] args) {
+        Thread childThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 1000; i++) {
+                        System.out.println("I'm a Deamon thread:" + i);
+                        TimeUnit.SECONDS.sleep(1);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        childThread.setDaemon(true);
+        childThread.start();
+        System.out.println("I'm a main thread...");
+    }
+}
+```
+
+
 
 
 
@@ -511,9 +541,7 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 
 
 
-### java如何停止一个线程，interrupt，interrupted，isInterrupted()区别
-
-
+### interrupt, interrupted, isInterrupted()区别
 
 ### 如何让多个线程按顺序执行
 
@@ -524,6 +552,479 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 #### future
 
 可以通过join()或者callable+future来得到返回值。
+
+
+
+### 讲一下JMM
+
+#### 硬件层面原因
+
+由于CPU和内存之间几个量级的速度差异。引入了告诉缓存，但由于CPU每个核心的高速缓存互相之间的不可见性。出现缓存一致性问题。解决缓存一致性问题有2个方案：总线锁和MESI协议。
+
+总线锁虽然能解决可行性问题但是会带来性能问题。因为一个cpu在操作共享变量时其他cpu都是阻塞的。
+
+MESI协议，当CPU0修改变量时如果发现当前变量是共享状态（S），会通知其他cpu先将这个共享变量置为失效状态I，等到其他cpu修改完毕并且回复CPU0时，CPU0才会将共享变量改成E独占状态。修改完成之后改成M状态。然后数据写入缓存行中。
+
+这样做性能虽然比总线锁提高了。但是有个缺点是CPU需要在等待所有的Invalid ack之后才会进行下面的操作。这会让CPU产生一定的阻塞，无法充分利用CPU。这个时候就出来了写缓冲器和无效队列化。
+
+虽然写缓冲器虽然进一步优化了性能，但还是会带来可见性问题。这就需要借助内存屏障来配合解决可见性问题。
+
+#### JMM介绍
+
+由于存在上述硬件层面问题。JMM规定了JVM和计算机内存的协同工作方式。例如：一个线程何时和如何看到另一个线程的修改过的共享变量的值。如何的同步的访问共享变量。JMM屏蔽了各种硬件和操作系统对系统内存的访问方式。让Java可以跨平台的实现多线程并发操作的一致性。
+
+Volatile的解决可见性问题。当共享变量在修改时会使用写屏障，确保共享变量的值从高速缓存写入主存。当读取共享变量的时候会生成读屏障确保从主存中读取最新的值。
+
+调用栈和本地变量存放在线程栈上，对象存放在堆上。
+
+一个本地变量可能是原始类型，在这种情况下，它总是“呆在”线程栈上。
+
+一个本地变量也可能是指向一个对象的一个引用。在这种情况下，引用（这个本地变量）存放在线程栈上，但是对象本身存放在堆上。
+
+一个对象可能包含方法，这些方法可能包含本地变量。这些本地变量仍然存放在线程栈上，即使这些方法所属的对象存放在堆上。
+
+一个对象的成员变量可能随着这个对象自身存放在堆上。不管这个成员变量是原始类型还是引用类型。
+
+静态成员变量跟随着类定义一起也存放在堆上。
+
+
+
+### 对volatile的理解
+
+### 新建t1, t2, t3三个线程, 如何保证他们按顺序执行?
+
+### Synchronized加锁的范围有哪些?
+
+
+
+### synchronized和重入锁实现原理以及区别？
+
+
+
+### Synchronized在JDK1.6之后的优化
+
+
+
+### sleep，join，yield的区别。
+
+sleep：睡眠指定时间，睡眠期间不会释放锁，超时后让出CPU时间片；
+
+yield，和sleep(0)作用类似，让出当前线程的时间片
+
+join：让调用该方法的线程的执行结果对主线程可见，内部基于wait notify实现；
+
+
+
+### i++是线程安全的么？
+
+不是。原子性，可见性，有序性。++操作不符合原子性。
+
+### java如何实现多线程之间通讯和协作
+
+
+
+### 死锁
+
+#### 死锁介绍
+
+死锁是指两个或两个以上的进程(或线程)在执行过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去。此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为死锁进程。
+
+比如: 丈母娘要求先买房才能结婚，但是女婿说先结婚买房
+
+#### 死锁条件
+
+1. 互斥条件: 一个资源每次只能被一个进程使用
+2. 占有且等待:一个进程因请求资源而阻塞时，对已获得的资源保持不放。
+3. 不可强行占有: 进程已获得的资源，在未使用完之前，不能强行剥夺
+4. 循环等待条件: 若干进程之间形成一种头尾相接的循环等待资源关系
+
+#### 死锁案例
+
+```java
+public class DeadLockDemo {
+    public static void main(String[] args) {
+        DeadLock d1 = new DeadLock(true);
+        DeadLock d2 = new DeadLock(false);
+        Thread t1 = new Thread(d1);
+        Thread t2 = new Thread(d2);
+        t1.start();
+        t2.start();
+    }
+}
+
+//定义锁对象
+class MyLock {
+    public static Object obj1 = new Object();
+    public static Object obj2 = new Object();
+}
+
+//死锁代码
+class DeadLock implements Runnable {
+    private boolean flag;
+
+    DeadLock(boolean flag) {
+        this.flag = flag;
+    }
+
+    @Override
+    public void run() {
+        if (flag) {
+            while (true) {
+                synchronized (MyLock.obj1) {
+                    System.out.println(Thread.currentThread().getName() + "----if获得obj1锁");
+                    synchronized (MyLock.obj2) {
+                        System.out.println(Thread.currentThread().getName() + "----if获得obj2锁");
+                    }
+                }
+            }
+        } else {
+            while (true) {
+                synchronized (MyLock.obj2) {
+                    System.out.println(Thread.currentThread().getName() + "----否则获得obj2锁");
+                    synchronized (MyLock.obj1) {
+                        System.out.println(Thread.currentThread().getName() + "----否则获得obj1锁");
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+#### 解决死锁
+
+想要解除和预防死锁，就避免4个条件同时发生就行了，一般从以下几个方面入手
+
+破坏不可抢占: 设置优先级，使优先级高的可以抢占资源；
+
+破坏循环等待:保证多个进程 (线程) 的执行顺序相同即可避免循环等待
+
+如执行顺序都是: A->B->C，那就可以避免循环等待
+
+最常用的避免方法就是破坏循环等待，就是当我们有多个事务的时候，最好让这几个事务的执行顺序相同。
+
+如事务1: A->B->C，事务2: C->D->A，这种情况就有可能导致死锁
+
+即事务1占有了A，等待C，而事务2占有了C在等待A。
+
+所以，要避免死锁就把事务2改为: A -> D->C
+
+
+
+
+
+### 怎么样唤醒一个阻塞的线程?
+
+### 是否能创建volatile数组？
+
+可以，但volatile仅针对引用可见，数组中的数组不可见。
+
+
+
+### JUC
+
+### ConcurrentHashMap实现原理
+
+
+
+### 什么是ReentrantLock?底层怎么实现锁的?
+
+### 什么是公平锁和非公平锁? 怎么体现? Synchronize属于公平还是非公平锁?
+
+### cas是什么, 会有什么问题? 如何解决?
+
+### Semaphore的作用是什么?
+
+### ConcurrentHashmap和JDK1.7和1.8的区别?  
+
+
+
+### 如何保证多个线程不重复处理相同的数据。
+
+1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
+2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
+3. 给每个任务分配一个唯一ID，将所有待处理的任务加载到一个Map里面，key存任务ID，value存任务状态。当有线程处理任务时直接修改这个map的状态。如果处理成功则将key移除。
+
+
+
+### 实现线程同步的方式
+
+线程同步指的就是让多个线程之间按照顺序访问同一个共享资源，避免因为并发冲突导致的问题，主要有以下几种方式:
+
+synchronized
+
+Java中最基本的线程同步机制，可以修饰代码块或方法，保证同一时间只有一个线程访问该代码块或方法，其他线程需要等待锁的释放
+
+ReentrantLock
+
+与synchronied关键字类似，也可以保证同一时间只有一个线程访问共享资源，但是更灵活支持公平锁、可中断锁、多个条件变量等功能
+
+Semaphore
+
+允许多个线程同时访问共享资源，但是限制访问的线程数量。可以用于控制并发访问的线程数量避免系统资源被过度占用。
+
+CountDownLatch
+
+允许一个或多个线程等待其他线程执行完毕之后再执行，可以用于线程之间的协调和通信
+
+CyclicBarrier
+
+允许多个线程在一个栅栏处等待，直到所有线程都到达栅栏位置之后，才会继续执行。
+
+Phaser
+
+与CyclicBarrier类似，也是一种多线程同步工具，但是支持更灵活的栅栏操作，可以动态地注册和注销参与者，并可以控制各个参与者的到达和离开。
+
+
+
+### ThreadLocal介绍
+
+ThreadLocal又叫做线程本地变量，全称thread local variable，它的使用场合主要是为了解决多线程中因为数据并发产生不一致的问题。ThreadLocal为每一个线程都提供了变量的副本，使得每一个线程在某一时间访问到的并不是同一个对象，这样就隔离了多个线程对数据的数据共享，这样的结果无非是耗费了内存，也大大减少了线程同步所带来的性能消耗，也减少了线程并发控制的复杂度。
+
+ThreadLocal的主要使用场景是：每个线程都需要存取一些变量，这些变量彼此独立、互不干扰、key重名，但值不相同。
+
+#### 和Synchonized的区别
+
+使用Synchronized就是为了解决并发访问共享变量问题的。Synchronized是利用锁的机制，使得变量或者是代码块在某一时刻里只能被一个线程来进行访问。并且一旦某个线程改了变量的值，其他线程读到的修改之后的值。
+
+而ThreadLocal为每一个线程都提供了一个变量的副本，这样就是的每一个线程在某一时刻里访问到的不是同一个对象，这样就不会存在多线程访问共享变量的问题了。
+
+ThreadLocal不可以使用原子类型，只能使用Object类型
+
+#### 如何使用
+
+https://juejin.cn/post/7251786209340407868
+
+声明一个 `ThreadLocal` 类型的变量：
+
+```java
+private static ThreadLocal<T> threadLocal = new ThreadLocal<>();
+```
+
+其中 `T` 是存储在 `ThreadLocal` 中的值的类型。
+
+使用 `ThreadLocal` 类的 `set()` 方法设置值：
+
+```java
+threadLocal.set(value);
+```
+
+这将把 `value` 存储在当前线程的 `ThreadLocal` 实例中。
+
+使用 `ThreadLocal` 类的 `get()` 方法获取值：
+
+```java
+T value = threadLocal.get();
+```
+
+这将返回当前线程的 `ThreadLocal` 实例中存储的值。
+
+使用 `ThreadLocal` 类的 `remove()` 方法清除值（可选）：
+
+```java
+threadLocal.remove();
+```
+
+这将从当前线程的 `ThreadLocal` 实例中移除值。
+
+最后，在不再需要 `ThreadLocal` 对象时，应调用 `remove()` 方法来清理资源：
+
+这样可以避免潜在的内存泄漏问题。
+
+需要注意的是，`ThreadLocal` 的 `set()` 和 `get()` 方法都是针对当前线程的操作。因此，在使用 `ThreadLocal` 时，应确保在同一线程范围内使用相同的 `ThreadLocal` 对象。这样才能保证在同一线程中的多个方法或代码段中共享同一个 `ThreadLocal` 实例。
+
+此外，可以为 `ThreadLocal` 提供初始值和默认值。例如，可以使用 `ThreadLocal` 的构造函数或 `initialValue()` 方法来设置初始值：
+
+```java
+private static ThreadLocal<T> threadLocal = new ThreadLocal<T>() {
+    @Override
+    protected T initialValue() {
+        return initialValue;
+    }
+};
+```
+
+或者，可以在声明 `ThreadLocal` 变量时使用 lambada 表达式提供默认值：
+
+```java
+private static ThreadLocal<T> threadLocal = ThreadLocal.withInitial(() -> defaultValue);
+```
+
+以下是一个完整案例：
+
+```java
+public class ThreadLocalTest {
+    public static ThreadLocal<Long> threadLocal = ThreadLocal.withInitial(() -> Thread.currentThread().getId());
+
+    /**
+     * 虽然threadLocal是定义在主线程中的，实际打印出来的值各不相同。
+     * @param args
+     * @throws InterruptedException
+     */
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                System.out.println(threadLocal.get());
+            }).start();
+        }
+        TimeUnit.SECONDS.sleep(5);
+    }
+}
+```
+
+#### 使用场景
+
+1. 保存线程私有数据：`ThreadLocal` 可以用于保存每个线程所需的私有数据。例如，在多线程环境下，如果有一个对象需要在线程之间共享，但又希望每个线程都拥有它的私有拷贝，则可以使用 `ThreadLocal` 来存储这个对象。这样，每个线程都可以独立地读取和修改自己的私有拷贝，而互不干扰。
+2. 提高性能：`ThreadLocal` 可以避免使用线程同步机制（如锁）来保护共享数据，从而提高程序的并发性能。由于每个线程都拥有自己的数据副本，因此不会出现线程间的竞争和冲突，从而避免了锁竞争带来的性能损耗。
+3. 管理线程特定的资源：在某些场景下，我们需要为每个线程分配一些特定的资源，并且在线程结束时进行清理工作。`ThreadLocal` 可以通过在对象中存储和管理线程特定的资源，使得这些资源能够方便地与线程相关联，同时在线程结束时自动清理。
+4. 解决上下文切换问题：在一些需要维护上下文关系的场景中，例如数据库连接、会话管理等，使用 `ThreadLocal` 可以很好地解决上下文切换的问题。通过将上下文相关的信息存储在 `ThreadLocal` 中，可以在同一线程内共享这些信息，而无需通过参数传递或全局变量访问来维护。比如像用户登录令牌解密后的信息传递、用户权限信息、从用户系统中获取到的用户名
+
+```java
+    // 用户微服务配置token解密信息传递例子
+    public static ThreadLocal<LoginUser> threadLocal = new ThreadLocal<>();
+
+    public void methodA(){
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(id);
+        loginUser.setName(name);
+        loginUser.setMail(mail);
+        loginUser.setHeadImg(headImg);
+        threadLocal.set(loginUser);
+        //后续想直接获取到直接threadLocal.getxxx就可以了
+    }   
+```
+
+
+
+### ThreadLocal实现原理
+
+其实ThreadLocal本身并不存储数据，它更像是一个工具类，提供一些方法将数据存取在每个线程中。
+
+ThreadLocal中用于保存每个线程独立变量的数据结构是一个内部类：ThreadLocalMap，也是K-V结构。
+
+在Thread类中有一个ThreadLocalMap成员变量，这个就是数据真正存储的地方。
+
+```java
+public class Thread implements Runnable {
+
+    /* ThreadLocal values pertaining to this thread. This map is maintained
+     * by the ThreadLocal class. */
+    ThreadLocal.ThreadLocalMap threadLocals = null;
+   
+}
+```
+
+因为一个线程可以有多个ThreadLocal变量，对应到ThreadLocalMap内部的Entry[] table数组，再基于ThreadLocal对象本身作为key，对value进行存取
+
+```java
+public class ThreadLocal<T> {
+    private final int threadLocalHashCode = nextHashCode();
+    
+    static class ThreadLocalMap {
+        static class Entry extends WeakReference<ThreadLocal<?>> {
+            /** The value associated with this ThreadLocal. */
+            Object value;
+
+            Entry(ThreadLocal<?> k, Object v) {
+                super(k);
+                value = v;
+            }
+        }
+        private static final int INITIAL_CAPACITY = 16;
+
+        /**
+         * 对应一个线程中的多个ThreadLocal变量
+         */
+        private Entry[] table;
+        
+        private Entry getEntry(ThreadLocal<?> key) {
+            int i = key.threadLocalHashCode & (table.length - 1);
+            Entry e = table[i];
+            if (e != null && e.get() == key)
+                return e;
+            else
+                return getEntryAfterMiss(key, i, e);
+        }
+    }
+    
+    public T get() {
+        Thread t = Thread.currentThread();
+        //根据当前线程取到线程自己的map对象
+        ThreadLocalMap map = getMap(t);
+        if (map != null) {
+            //根据ThreadLocal对象获取Entry。
+            ThreadLocalMap.Entry e = map.getEntry(this);
+            if (e != null) {
+                //不为空则返回其中的value
+                @SuppressWarnings("unchecked")
+                T result = (T)e.value;
+                return result;
+            }
+        }
+        return setInitialValue();
+    }
+}
+```
+
+结构图：
+
+```mermaid
+flowchart LR
+subgraph stack[栈空间]
+t1[线程引用]
+tl1[ThreadLocal引用1]
+tl2[ThreadLocal引用2]
+end
+
+subgraph heap[堆空间]
+tli1["ThreadLocal对象1"]
+tli2["ThreadLocal对象2"]
+ti1["线程对象"]-->Map
+Map-->data
+	subgraph data["Map.Entry[]"]
+        key1-->value1
+        key2-->value2
+	end
+key1-.->tli1
+key2-.->tli2
+end
+
+t1-->ti1
+tl1-->tli1
+tl2-->tli2
+```
+
+ThreadLocalMap的key是一个弱引用，弱引用的特点是，即便有弱引用存在，在GC时弱引用的对象也会被回收。
+
+
+
+### ThreadLocal内存泄漏
+
+#### 泄漏原因
+
+ThreadLocal.ThreadLocalMap.Entry中的key是弱引用的，ThreadLocal对象一般会有2个引用指向它。一个是栈中对ThreadLocal强引用，另一个就是Map.Entry中key的弱引用。
+
+一般情况下，ThreadLocal会作为静态变量，强引用一直存在。但还是存在定义成非静态变量的可能，那一边的强引用就可能会消失。此时弱引用的ThreadLocal对象就会被GC回收。此时如果value还有其他强引用时，内存中的value就会无法回收，同时也无法被获取到，这样就可能出现内存泄露情况。
+
+如果不设计成弱引用而是强引用：那当一边的强引用消失后，ThreadLocal对象由于另一边还存在强引用而导致无法被回收，从而也可能导致内存泄漏问题。
+
+#### 泄漏解决方案
+
+在最新的ThreadLocal中已经做出了修改，即在调用set、get、remove方法时，会清除key为null的Entry。
+
+但如果不调用这些方法，仍然还是会出现内存泄漏 。所以要养成用完ThreadLocal对象之后及时remove的习惯。
+
+
+
+### ThreadLocal的局限性
+
+ThreadLocal只能在同一个线程内部或者父子线程之间进行值传递，不能在线程间的进行值传递。
+
+
+
+### ThreadLocal共享父线程的变量
+
+https://blog.csdn.net/hewenbo111/article/details/80487252
 
 
 
@@ -598,9 +1099,7 @@ public ThreadPoolExecutor(int corePoolSize,
 - threadFactory: 创建线程的工厂，在这个地方可以统一处理创建线程的属性。
 - handler: 当提交的任务超过了最大线程数量时的拒绝策略。默认是不处理，抛出异常告诉任务提交者，我这忙不过来了
 
-#### 线程池实现原理
-
-流程图：
+#### 流程图
 
 ```mermaid
 flowchart LR
@@ -617,6 +1116,170 @@ if3-->|否|add2[创建非核心线程执行任务]
 
 
 线程池源码分析：https://zhuanlan.zhihu.com/p/350067478
+
+
+
+### 线程池执行原理
+
+无论是哪种类型的线程池最终都会创建一个ThreadPoolExecutor（线程池执行器），只是不同的线程池传入的参数不一样。
+
+每一个线程执行execute方法的过程
+
+如果在运行的线程小于核心线程数，则通过addWorker方法将线程添加为核心线程。
+
+​	添加成功直接返回继续处理下一个执行下一个线程。直到工作线程数大于等于核心线程数量。
+
+​	如果添加失败则获取线程池的最新状态。
+
+如果线程池正在执行，则尝试将当前线程加入到工作队列。加入成功后，再次获取线程池状态。
+
+​	如果线程池没有正在运行。则将任务从阻塞队列移除。成功则执行拒绝策略。
+
+​	如果线程数等于0，则添加一个空的工作线程。这段不知道什么场景会进来。
+
+如果前面加入工作队列失败，则以非核心线程身份包装任务（false标志）
+
+​	失败则执行拒绝策略
+
+```java
+public void execute(Runnable command) {
+    if (command == null)
+        throw new NullPointerException();
+    //获取线程池状态及当前线程数记录，高3位记录状态，低29位记录线程数
+    int c = ctl.get();   
+    //如果线程数小于核心线程阈值
+    if (workerCountOf(c) < corePoolSize) {
+        //直接包装成Worker运行（true表示将任务以核心线程身份包装）
+        if (addWorker(command, true))   
+            return;
+        c = ctl.get();   //如果上一步失败，则获取最新的状态
+    }
+    //如果线程池还在运行，则尝试将任务加入阻塞队列
+    if (isRunning(c) && workQueue.offer(command)) {
+        int recheck = ctl.get();   //加入成功后再检查线程池状态
+        //如果加入后线程池没有在运行，将任务从队列中移除
+        if (! isRunning(recheck) && remove(command))  
+            //成功则执行拒绝策略
+            reject(command);
+        //如果当前线程数为0
+        else if (workerCountOf(recheck) == 0)
+            //则添加一个空的工作线程。这段不知道什么场景会进来。
+            addWorker(null, false);
+    }
+    //如果前面加入工作队列失败，则以非核心线程身份包装任务（false标志）
+    else if (!addWorker(command, false))
+        //如果添加失败，则执行拒绝策略
+        reject(command);  
+}
+```
+
+addWorker添加工作线程的过程：
+
+通过自旋做一些基础校验和当前线程数量，如果超出阈值则直接返回false
+
+如果没有超出则使用CAS将工作线程数+1
+
+然后将当前线程封装成Worker对象。
+
+执行lock方法锁定，防止并发
+
+将Worder对象加入到一个工作线程的Set里面
+
+然后解锁。
+
+如果成功添加则调用线程的start方法启动线程
+
+Worker本身实现了Ruunable接口有一个run方法，Worker对象持有提交来的task和一个线程对象，这个线程对象根据Worker对象生成所以运行的是Worker的run方法，而Worker的run方法里又是调用了task的run方法。
+
+```java
+private boolean addWorker(Runnable firstTask, boolean core) {
+    /**
+        此处省略一段代码，大致工作是通过自旋检查当前线程数量是否小于阈值（否就返回false），
+        CAS的检查线程池状态和CAS的将线程数+1。
+    */
+    boolean workerStarted = false;
+    boolean workerAdded = false;
+    Worker w = null;
+    try {
+        //根据任务包装Worker，Worker对象有一个线程对象也在此时根据Worker对象生成，Worker实现了Runnable接口
+        w = new Worker(firstTask);   
+        //获取Worker里生成的线程对象
+        final Thread t = w.thread;   
+        if (t != null) {
+            final ReentrantLock mainLock = this.mainLock;
+            mainLock.lock();
+            try {
+                //获取线程状态
+                int rs = runStateOf(ctl.get());
+                //检查线程池状态的合法性
+                if (rs < SHUTDOWN ||(rs == SHUTDOWN && firstTask == null)) {
+                    if (t.isAlive()) // 如果此刻线程就已经活跃，那么就是出错了
+                        throw new IllegalThreadStateException();
+                    workers.add(w);      //将生成的Worker对象放到Set集合
+                    int s = workers.size();
+                    if (s > largestPoolSize)
+                        largestPoolSize = s;
+                    workerAdded = true;  //记录Worker已经成功添加到集合
+                }
+            } finally {
+                mainLock.unlock();
+            }
+            if (workerAdded) {
+                t.start();     //如果Worker对象已经成功添加，则启动这个对象的线程
+                workerStarted = true;  //记录任务已经开始执行
+            }
+        }
+    } finally {
+        if (! workerStarted)
+            addWorkerFailed(w);   //如果最终发现任务没有标志为开始，则调用响应处理方法
+    }
+    return workerStarted;
+}
+```
+
+在worker的run方法里预留了2个钩子方法，在before和after的时候可以执行自定义的业务
+
+```java
+final void runWorker(Worker w) {
+        Thread wt = Thread.currentThread();
+        Runnable task = w.firstTask;  //首先拿到提交的那个task
+        w.firstTask = null;
+        w.unlock(); // allow interrupts
+        boolean completedAbruptly = true;
+        try {
+            //核心操作就是循环的getTask()，从阻塞队列里拿task来执行
+            while (task != null || (task = getTask()) != null) {
+                w.lock();
+                //检查线程池状态
+                if ((runStateAtLeast(ctl.get(), STOP) ||(Thread.interrupted() &&
+                      runStateAtLeast(ctl.get(), STOP))) &&!wt.isInterrupted())
+                    wt.interrupt();  //不合法就中断执行此任务的线程
+                try {
+                    beforeExecute(wt, task);
+                    Throwable thrown = null;
+                    try {
+                        task.run();    //执行真实角色的run方法
+                    } catch (RuntimeException x) {
+                        thrown = x; throw x;
+                    } catch (Error x) {
+                        thrown = x; throw x;
+                    } catch (Throwable x) {
+                        thrown = x; throw new Error(x);
+                    } finally {
+                        afterExecute(task, thrown);
+                    }
+                } finally {
+                    task = null;
+                    w.completedTasks++;
+                    w.unlock();
+                }
+            }
+            completedAbruptly = false;
+        } finally {
+            processWorkerExit(w, completedAbruptly);
+        }
+    }
+```
 
 
 
@@ -842,361 +1505,6 @@ ThreadPoolExecutor 中线程的创建和销毁是静态的，线程池创建后�
 ExecutorService 适用于处理较小的、相对独立的任务，任务之间存在一定的依赖关系。例如，处理网络请求、读取文件、执行数据库操作等任务。
 
 https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
-
-
-
-### ThreadLocal是什么
-
-ThreadLocal是java.lang下面的一个类，是用来解决java多线程程序中并发问题的一种途径，通过为每一个线程建一份共享变量的副本来保证各个线程之间的变量的访问和修改互相不影响。
-
-ThreadLocal存放的值是线程内共享的，线程间与斥的，主要用于线程内共享一些数据，避免通过参数来传递，这样处理后，能够优雅的解决一些实际问题。
-
-比如一次用户的页面操作请求，我们可以在最开始的filter中，把用户的信息保存在ThreadLocal中，在同一次请求中，在使用到用户信息，就可以直接到ThreadLocal中获取就可以了。
-
-ThreadLocal有四个方法，分别为:
-
-- initialValue
-  - 返回此线程局部变量的初始值
-- get
-  - 返回此线程局部变量的当前线程副本中的值。如果这是线程第一次调用该方法，则创建并初始化此副本。
-- set
-  - 将此线程局部变量的当前线程副本中的值设置为指定值。许多应用程序不需要这项功能，它们只依赖于initialValue()方法来设置线程局部变量的值
-- remove
-  - 移除此线程局部变量的值
-
-
-
-### ThreadLocal实现原理
-
-ThreadLocal中用于保存线程独有变量的数据结构是一个内部类：ThreadLocalMap，也是k-v结构。
-
-key就是当前的ThreadLocal对象，而V就是我们想要保存的值
-
-
-
-### ThreadLocal内存泄漏问题
-
-
-
-
-
-### 讲一下JMM
-
-#### 硬件层面原因
-
-由于CPU和内存之间几个量级的速度差异。引入了告诉缓存，但由于CPU每个核心的高速缓存互相之间的不可见性。出现缓存一致性问题。解决缓存一致性问题有2个方案：总线锁和MESI协议。
-
-总线锁虽然能解决可行性问题但是会带来性能问题。因为一个cpu在操作共享变量时其他cpu都是阻塞的。
-
-MESI协议，当CPU0修改变量时如果发现当前变量是共享状态（S），会通知其他cpu先将这个共享变量置为失效状态I，等到其他cpu修改完毕并且回复CPU0时，CPU0才会将共享变量改成E独占状态。修改完成之后改成M状态。然后数据写入缓存行中。
-
-这样做性能虽然比总线锁提高了。但是有个缺点是CPU需要在等待所有的Invalid ack之后才会进行下面的操作。这会让CPU产生一定的阻塞，无法充分利用CPU。这个时候就出来了写缓冲器和无效队列化。
-
-虽然写缓冲器虽然进一步优化了性能，但还是会带来可见性问题。这就需要借助内存屏障来配合解决可见性问题。
-
-#### JMM介绍
-
-由于存在上述硬件层面问题。JMM规定了JVM和计算机内存的协同工作方式。例如：一个线程何时和如何看到另一个线程的修改过的共享变量的值。如何的同步的访问共享变量。JMM屏蔽了各种硬件和操作系统对系统内存的访问方式。让Java可以跨平台的实现多线程并发操作的一致性。
-
-Volatile的解决可见性问题。当共享变量在修改时会使用写屏障，确保共享变量的值从高速缓存写入主存。当读取共享变量的时候会生成读屏障确保从主存中读取最新的值。
-
-调用栈和本地变量存放在线程栈上，对象存放在堆上。
-
-一个本地变量可能是原始类型，在这种情况下，它总是“呆在”线程栈上。
-
-一个本地变量也可能是指向一个对象的一个引用。在这种情况下，引用（这个本地变量）存放在线程栈上，但是对象本身存放在堆上。
-
-一个对象可能包含方法，这些方法可能包含本地变量。这些本地变量仍然存放在线程栈上，即使这些方法所属的对象存放在堆上。
-
-一个对象的成员变量可能随着这个对象自身存放在堆上。不管这个成员变量是原始类型还是引用类型。
-
-静态成员变量跟随着类定义一起也存放在堆上。
-
-
-
-### 并发
-
-### 什么是线程安全
-
-当多个线程访问某一个类（对象或方法）时，对象对应的公共数据区始终都能表现正确，那么这个类（对象或方法）就是线程安全的。
-
-### 对volatile的理解
-
-### 新建t1, t2, t3三个线程, 如何保证他们按顺序执行?
-
-### Synchronized加锁的范围有哪些?
-
-
-
-### synchronized和重入锁实现原理以及区别？
-
-
-
-### Synchronized在JDK1.6之后的优化
-
-
-
-### 多线程中wait()和sleep(), part()的区别
-
-sleep是会设置超时时间的。超时自动进入就绪状态
-
-park和sleep不会释放锁，wait会释放
-
-
-
-### sleep，join，yield的区别。
-
-sleep：睡眠指定时间，睡眠期间不会释放锁，超时后让出CPU时间片；
-
-yield，和sleep(0)作用类似，让出当前线程的时间片
-
-join：让调用该方法的线程的执行结果对主线程可见，内部基于wait notify实现；
-
-
-
-### Java中的++操作是线程安全的么？
-
-不是。原子性，可见性，有序性。++操作不符合原子性。
-
-### java如何实现多线程之间通讯和协作
-
-### 死锁的4个必要条件
-
-### 写个死锁
-
-### 怎么样唤醒一个阻塞的线程?
-
-### 是否能创建volatile数组？
-
-可以，但volatile仅针对引用可见，数组中的数组不可见。
-
-### happens-Before介绍
-
-### ThreadLocal是什么?原理?
-
-线程隔离机制，用于保证在多线程环境下对于共享变量的访问的安全性。
-
-提供线程本地变量，如果创建一个ThreadLocal变量，那么访问这个变量的每个线程都会有这个变量的一个副本，在实际多线程操作的时候，操作的是自己本地内存中的变量，从而规避了线程安全问题
-
-从实现上讲：每个线程内部都维护了一个map，而这个map的key就是threadLocal，而值就是我们set的那个值，每次线程在get的时候，都从自己的变量中取值，既然从自己的变量中取值，那就解决了线程安全问题，总体来讲，ThreadLocal这个变量的状态根本没有发生变化，他仅仅是充当一个key的角色，另外提供给每一个线程一个初始值。如果允许的话，我们自己就能实现一个这样的功能，只不过恰好JDK就已经帮我们做了这个事情。这个map的key是弱引用，而value是强引用。
-
-
-
-### ThreadLocal怎么共享父线程的变量
-
-https://blog.csdn.net/hewenbo111/article/details/80487252
-
-
-
-### JUC
-
-### ConcurrentHashMap实现原理
-
-
-
-### 线程池
-
-### 线程池的Submit()和execute() 区别
-
-### 
-
-### 
-
-### 谈下ThreadLocal的内存泄漏问题, 怎么解决?
-
-### 线程池执行任务的过程原理
-
-无论是哪种类型的线程池最终都会创建一个ThreadPoolExecutor（线程池执行器），只是不同的线程池传入的参数不一样。
-
-每一个线程执行execute方法的过程
-
-如果在运行的线程小于核心线程数，则通过addWorker方法将线程添加为核心线程。
-
-​	添加成功直接返回继续处理下一个执行下一个线程。直到工作线程数大于等于核心线程数量。
-
-​	如果添加失败则获取线程池的最新状态。
-
-如果线程池正在执行，则尝试将当前线程加入到工作队列。加入成功后，再次获取线程池状态。
-
-​	如果线程池没有正在运行。则将任务从阻塞队列移除。成功则执行拒绝策略。
-
-​	如果线程数等于0，则添加一个空的工作线程。这段不知道什么场景会进来。
-
-如果前面加入工作队列失败，则以非核心线程身份包装任务（false标志）
-
-​	失败则执行拒绝策略
-
-```java
-public void execute(Runnable command) {
-    if (command == null)
-        throw new NullPointerException();
-    //获取线程池状态及当前线程数记录，高3位记录状态，低29位记录线程数
-    int c = ctl.get();   
-    //如果线程数小于核心线程阈值
-    if (workerCountOf(c) < corePoolSize) {
-        //直接包装成Worker运行（true表示将任务以核心线程身份包装）
-        if (addWorker(command, true))   
-            return;
-        c = ctl.get();   //如果上一步失败，则获取最新的状态
-    }
-    //如果线程池还在运行，则尝试将任务加入阻塞队列
-    if (isRunning(c) && workQueue.offer(command)) {
-        int recheck = ctl.get();   //加入成功后再检查线程池状态
-        //如果加入后线程池没有在运行，将任务从队列中移除
-        if (! isRunning(recheck) && remove(command))  
-            //成功则执行拒绝策略
-            reject(command);
-        //如果当前线程数为0
-        else if (workerCountOf(recheck) == 0)
-            //则添加一个空的工作线程。这段不知道什么场景会进来。
-            addWorker(null, false);
-    }
-    //如果前面加入工作队列失败，则以非核心线程身份包装任务（false标志）
-    else if (!addWorker(command, false))
-        //如果添加失败，则执行拒绝策略
-        reject(command);  
-}
-```
-
-addWorker添加工作线程的过程：
-
-通过自旋做一些基础校验和当前线程数量，如果超出阈值则直接返回false
-
-如果没有超出则使用CAS将工作线程数+1
-
-然后将当前线程封装成Worker对象。
-
-执行lock方法锁定，防止并发
-
-将Worder对象加入到一个工作线程的Set里面
-
-然后解锁。
-
-如果成功添加则调用线程的start方法启动线程
-
-Worker本身实现了Ruunable接口有一个run方法，Worker对象持有提交来的task和一个线程对象，这个线程对象根据Worker对象生成所以运行的是Worker的run方法，而Worker的run方法里又是调用了task的run方法。
-
-```java
-private boolean addWorker(Runnable firstTask, boolean core) {
-    /**
-        此处省略一段代码，大致工作是通过自旋检查当前线程数量是否小于阈值（否就返回false），
-        CAS的检查线程池状态和CAS的将线程数+1。
-    */
-    boolean workerStarted = false;
-    boolean workerAdded = false;
-    Worker w = null;
-    try {
-        //根据任务包装Worker，Worker对象有一个线程对象也在此时根据Worker对象生成，Worker实现了Runnable接口
-        w = new Worker(firstTask);   
-        //获取Worker里生成的线程对象
-        final Thread t = w.thread;   
-        if (t != null) {
-            final ReentrantLock mainLock = this.mainLock;
-            mainLock.lock();
-            try {
-                //获取线程状态
-                int rs = runStateOf(ctl.get());
-                //检查线程池状态的合法性
-                if (rs < SHUTDOWN ||(rs == SHUTDOWN && firstTask == null)) {
-                    if (t.isAlive()) // 如果此刻线程就已经活跃，那么就是出错了
-                        throw new IllegalThreadStateException();
-                    workers.add(w);      //将生成的Worker对象放到Set集合
-                    int s = workers.size();
-                    if (s > largestPoolSize)
-                        largestPoolSize = s;
-                    workerAdded = true;  //记录Worker已经成功添加到集合
-                }
-            } finally {
-                mainLock.unlock();
-            }
-            if (workerAdded) {
-                t.start();     //如果Worker对象已经成功添加，则启动这个对象的线程
-                workerStarted = true;  //记录任务已经开始执行
-            }
-        }
-    } finally {
-        if (! workerStarted)
-            addWorkerFailed(w);   //如果最终发现任务没有标志为开始，则调用响应处理方法
-    }
-    return workerStarted;
-}
-```
-
-在worker的run方法里预留了2个钩子方法，在before和after的时候可以执行自定义的业务
-
-```java
-final void runWorker(Worker w) {
-        Thread wt = Thread.currentThread();
-        Runnable task = w.firstTask;  //首先拿到提交的那个task
-        w.firstTask = null;
-        w.unlock(); // allow interrupts
-        boolean completedAbruptly = true;
-        try {
-            //核心操作就是循环的getTask()，从阻塞队列里拿task来执行
-            while (task != null || (task = getTask()) != null) {
-                w.lock();
-                //检查线程池状态
-                if ((runStateAtLeast(ctl.get(), STOP) ||(Thread.interrupted() &&
-                      runStateAtLeast(ctl.get(), STOP))) &&!wt.isInterrupted())
-                    wt.interrupt();  //不合法就中断执行此任务的线程
-                try {
-                    beforeExecute(wt, task);
-                    Throwable thrown = null;
-                    try {
-                        task.run();    //执行真实角色的run方法
-                    } catch (RuntimeException x) {
-                        thrown = x; throw x;
-                    } catch (Error x) {
-                        thrown = x; throw x;
-                    } catch (Throwable x) {
-                        thrown = x; throw new Error(x);
-                    } finally {
-                        afterExecute(task, thrown);
-                    }
-                } finally {
-                    task = null;
-                    w.completedTasks++;
-                    w.unlock();
-                }
-            }
-            completedAbruptly = false;
-        } finally {
-            processWorkerExit(w, completedAbruptly);
-        }
-    }
-```
-
-
-
-### 什么是ReentrantLock?底层怎么实现锁的?
-
-### 什么是公平锁和非公平锁? 怎么体现? Synchronize属于公平还是非公平锁?
-
-### cas是什么, 会有什么问题? 如何解决?
-
-### Java中你
-
-### Semaphore的作用是什么?
-
-### 什么是线程池, 有哪些创建线程池的方式, 说说有哪些参数?
-
-### 线程池的作用，如何设置线程池大小。
-
-### 项目中的线程池怎么设置？
-
-### ConcurrentHashmap和JDK1.7和1.8的区别?
-
-### 线程间进行数据传递，有时候可以直接用对象进行传值，有时候要ThreadLocal，为什么不直接用ThreadLocal？
-
-      ThreadLocal只能在同一个线程内部或者父子线程之间进行值传递，一开始就用它会有局限性。
-
-
-
-### 多线程环境下，如何保证2个线程不重复处理相同的数据。
-
-1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
-2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
-3. 给每个任务分配一个唯一ID，将所有待处理的任务加载到一个Map里面，key存任务ID，value存任务状态。当有线程处理任务时直接修改这个map的状态。如果处理成功则将key移除。
 
 
 
@@ -1592,10 +1900,10 @@ CPU占用率高/线程死锁，可用jstack命令查看线程堆栈信息，找�
 
 ### 请说下JDK的引用分类
 
-+ 强引用，只要gcroot可达，就不会被回收，会导致泄漏。
-+ 软引用，内存不足时，会回收软引用对象
++ 强引用，默认引用，只要gcroot可达，就不会被回收，会导致泄漏。
++ 软引用，只要发生GC且内存不足时，就会回收软引用对象
 + 弱引用，无论内存是否足够，只要 JVM 开始进行垃圾回收，那些被弱引用关联的对象都会被回收
-+ 虚引用
++ 虚引用，一般很少使用。
 
 
 
@@ -9494,6 +9802,18 @@ https://www.yuque.com/hollis666/vzy8n3/ru6eaoolefdo0lor
 
 
 
+### MySQL死锁排查
+
+https://www.yuque.com/hollis666/vzy8n3/yywypm
+
+
+
+### MySQL死锁解决
+
+https://www.yuque.com/hollis666/vzy8n3/ut71vg
+
+
+
 ### OnlineDDL是什么
 
 https://www.yuque.com/hollis666/vzy8n3/lwxtmggon7ir4zzz
@@ -9893,10 +10213,6 @@ SELECT * FROM tableA WHERE b = 'value2' AND a ='value1';
 因为有查询优化器的存在，字段的先后顺序并不重要，不信的话可以explain看一下上面两个SQL的执行计划，都是可以命中(a,b)的联合索引的。
 
 
-
-### MySQL死锁解决
-
-https://www.yuque.com/hollis666/vzy8n3/ut71vg
 
 
 
