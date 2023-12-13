@@ -495,18 +495,6 @@ graph LR
 
 
 
-### Synchronized和lock区别？
-
-- Lock是显式锁，需要手动开启和关闭。synchronized是隐式锁，可以自动释放锁。
-- Lock是一个接口，是JDK实现的。synchronized是一个关键字，是依赖JVM实现的。
-- Lock是可中断锁，synchronized是不可中断锁，需要线程执行完才能释放锁。
-- 发生异常时，Lock不会主动释放占有的锁，必须通过unlock进行手动释放，因此可能引发死锁。synchronized在发生异常时会自动释放占有的锁，不会出现死锁的情况。
-- Lock可以判断锁的状态，synchronized不可以判断锁的状态。
-- Lock实现锁的类型是可重入锁、公平锁。synchronized实现锁的类型是可重入锁，非公平锁。
-- Lock适用于大量同步代码块的场景，synchronized适用于少量同步代码块的场景。
-
-
-
 ### Synchronized锁优化
 
 高效并发是从JDK 1.5 到 JDK 1.6的一个重要改进，HotSpot虚拟机开发团队在这个版本中花费了很大的精力去对Java中的锁进行优化，如**适应性自旋、锁消除、锁粗化、轻量级锁和偏向锁**等。这些技术都是为了在线程之间更高效的共享数据，以及解决竞争问题。
@@ -536,7 +524,66 @@ volatile主要用于保证JMM的可见性和有序性。只能用于修饰变量
 
 ### volatile如何保证可见性和有序性
 
+#### volatile保证可见性
 
+对于volatile修饰的变量，当对变量进行写操作的时候，JVM会向处理器发送一条lock前缀的指令，将这个缓存中的变量回写到系统主存中
+
+所以volatile所修饰的变量，在每次数据变化之后，其值都会被强制刷入主存。而其他处理器的缓存由于遵守了[缓存一致性协议](https://www.yuque.com/hollis666/vzy8n3/gg2n5fqckk442ouf)，也会把这个变量的值从主存加载到自己的缓存中。这就保证了一个volatile的变量在并发编程中，其值在多个处理器缓存中是可见的。
+
+#### volatile保证有序性
+
+volatile除了可以保证数据的可见性之外，还有一个强大的功能，那就是他可以禁止指令重排优化等.
+
+普通的变量仅仅会保证在该方法的执行过程中所依赖的赋值结果的地方都能获得正确的结果，而不能保证变量的赋值操作的顺序与程序代码中的执行顺序一致。
+
+volatile是通过在生成的字节码中加入内存屏障来禁止指令重排的，这就保证了代码的执行顺序会严格按照代码的先后顺序执行。这就保证了有序性。被volatile修饰的变量的操作，会严格按照代码顺序执行，load->add->save 的执行顺序就是：load、add、save。
+
+如经典的双重校验锁单例模式必须加volatile的问题，就是因为volatile加了内存屏障
+
+Java中的内存屏障是一种CPU指令，它可以防止CPU对指令序列进行重排序，从而保证在代码执行过程中，对内存的读写操作按照程序员的意愿来进行。volatile变量的内存屏障是通过一组指令来实现的，包括LoadLoad、LoadStore、StoreStore和StoreLoad。这些指令用于保证在volatile变量的读取和写入操作中，相邻指令之间的顺序不会被改变。
+
+1.LoadLoad：确保在读取一个volatile变量前，前面的所有读操作都已经完成
+2.LoadStore：确保在读取一个volatile变量后，后面的所有写操作都还没有开始
+3.StoreStore：确保在写入一个volatile变量前，前面的所有写操作都已经完成
+4.StoreLoad：确保在写入一个volatile变量后，后面的所有读操作都还没有开始。
+
+当一个线程执行一个读取volatile变量的操作时，Java会插入LoadLoad和LoadStore屏障。LoadLoad屏障会防止该读取操作和前面的任何读取操作被重排序，LoadStore屏障则会防止该读取操作和后续的写入操作被重排序.
+
+当一个线程执行一个写入volatile变量的操作时，Java会插入StoreStore和StoreLoad屏障StoreStore屏障会上该写入操作和前面的任何写入操作被重排序，StoreLoad屏障则会防止该写入操作和后续的读取操作被重排席
+
+```java
+public class VolatileExample {
+    private volatile int value = 0;
+	public void setValue(int newValue) {
+        value = newValue; // store操作
+    }
+    public int getvalue() {
+        return value; // Lad操作
+    }
+}
+```
+
+在上面的例子中，当使用volatile关键字修饰value字段时，编译器和JVM会在编译和执行过程中插入内存屏障.
+
+当执行setValue()方法时，编译器会插入StoreStore屏障，确保在value被修改之前，所有的写操作都已经完成.
+
+然后，编译器会插入StoreLoad屏障，确保在value被修改之后，所有的读操作都还没有开始。
+
+当执行getValue()方法时，编译器会插入LoadLoad屏障，确保在读取value之前，前面的所有读操作都已经完成。然后，编译器会插入LoadStore屏障，确保在读取value之后，后面的所有写操作都还没有开始。
+
+通过插入这些内存屏障，Java确保了volatile变量的可见性和禁止重排序，从而使得多线程访问volatile变量时能够正确地同步数据
+
+
+
+### 有了Synchronized为什么还要volatile
+
+synchronized其实是一种加锁机制，那么既然是锁，天然就具备以下几个缺点
+
+1、有性能损耗: 虽然在JDK 1.6中对synchronized做了很多优化，如适应性自旋、锁消除、锁粗化、轻量级锁和偏向铁等。但是他毕竟还是一种锁。所以，无论是使用同步方法还是同步代码块，在同步操作之前还是要进行加锁，同步操作之后需要进行解锁，这个加锁、解锁的过程是要有性能损耗的。
+
+2、产生阻塞: 无论是同步方法还是同步代码块，无论是ACC SYNCHRONIZED还是monitorenter、monitorexit都是基于Monitor实现的。基于Monitor对象，当多个线程同时访问一段同步代码时，首先会进入Entry Set，当有一个线程获取到对象的锁之后，才能进行The Owner区域，其他线程还会继续在Entry Set等待。并目当某个线程调用了wait方法后，会释放锁并进入Wait Set等待。所以，synchronize实现的锁本质上是一种阻塞锁。
+
+除了前面我们提到的volatile比synchronized性能好以外，volatile其实还有一个很好的附加功能，那就是禁止指令重排。因为volatile借助了内存屏障来帮助其解决可见性和有序性问题，而内存屏障的使用还为其带来了一个禁止指令重排的附加功能，所以在有些场景中是可以避免发生指令重排的问题的。
 
 
 
@@ -681,6 +728,88 @@ public class TestThread {
     }
 }
 ```
+
+
+
+### 对AQS的理解
+
+https://www.cnblogs.com/zyrblog/p/9866140.html
+
+
+
+### CAS是什么？常见问题
+
+CAS是Compare And Swap的简称，它是一项乐观锁技术，顾名思义就是先比较再替换。
+
+CAS操作包含三个操作数内存位置(V)、预期原值(A) 和新值(B)。在进行并发修改的时候，会先比较A和V的值是否相等，如果相等，则会把值替换成B，否则就不做任何操作。
+
+当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。
+
+在JDK1.5 中新增java.util.concurrent(J.U.C)就是建立在CAS之上的。相对于synchronized这种阻塞算法，CAS是非阻塞算法的一种常见实现。所以J.U.C在性能上有了很大的提升
+
+CAS的主要应用就是实现乐观锁和锁自旋
+
+#### ABA问题
+
+CAS算法实现一个重要前提需要取出内存中某时刻的数据，而在下时刻比较并替换，那么在这个时间差类会导致数据的变化。
+
+比如说一个线程1从内存位置V中取出A，这时候另一个线程2也从内存中取出A，并2进行了一些操作变成了B然后2又将V位置的数据变成A，这时候线程1进行CAS操作发现内存中仍然是A，然后1操作成功。尽管线程1的CAS操作成功，但是不代表这个过程就是没有问题的。
+举个例子，线程1和线程2同时通过CAS尝试修改用户A余额，线程1和线程2同时查询当前余额为100元，然后线程2因为用户A要把钱借给用户B，先把余额从100改成50。然后又有用户C还给用户A 50元，线程2则又把50改成了100。这是线程1继续修改，把余额从100改成200。
+
+虽然过程上金额都没问题，都改成功了，但是对于用户余额来说，丢失了两次修改的过程，在修改前用户C欠用户A 50元，但是修改后，用户C不欠钱了，而用户B欠用户A 50元了。而这个过程数据是很重要的。
+
+部分乐观锁的实现是通过版本号(version)的方式来解决ABA问题，乐观锁每次在执行数据的修改操作时，都会带上一个版本号，一旦版本号和数据的版本号一致就可以执行修改操作并对版本号执行+1操作，否则就执行失败。因为每次操作的版本号都会随之增加，所以不会出现ABA问题，因为版本号只会增加不会减少。
+
+#### 忙等待
+
+因为CAS基本都是要自旋的，这种情况下，如果并发冲突比较大的话，就会导致CAS一直在不断地重复执行，就会进入忙等待
+
+忙等待定义：一种进程执行状态。进程执行到一段循环程序的时候，由于循环判断条件不能满足而导致处理器反复循环，处于繁忙状态，该进程虽然繁忙但无法前进
+
+所以，一旦CAS进入忙等待状态一直执行不成功的话，会对CPU造成较大的执行开销.
+
+
+
+### CAS一定有自旋么
+
+通常情况下，CAS 操作都会采用自旋的方式，当 CAS 失败时，会重新尝试执行 CAS 操作，直到操作成功或达到最大重试次数为止。
+
+因为，CAS 操作一般都是在多线程并发访问时使用，如果直接阻塞线程，会导致性能下降，而采用自旋的方式可以让 CPU 空转一段时间，等待锁被释放，从而避免线程切换和阻塞的开销。
+
+但是，如果自旋时间过长或者线程数过多，就会占用过多的 CPU 资源，导致系统性能下降，因此在使用 CAS 操作时，需要根据实际情况进行适当的调整.
+
+
+
+### CAS如何在底层保证原子性
+
+CAS是一种基本的原子操作，用于解决并发问题。在操作系统层面，CAS 操作的原理是基于硬件提供的原子操作指令。在x86架构的CPU中，CAS 操作通常使用 cmpxchg 指令实现。
+
+为啥cmpxchg指令可以保证原子性呢? 主要由以下几个方面的保障
+
+1.cmpxchg 指令是一条原子指令。在 CPU 执行 cpxchg 指令时，处理器会自动锁定总线，防止其他 CPU访问共享变量，然后执行比较和交换操作，最后释放总线。
+
+2.cmpxchg 指令在执行期间，CPU 会自动禁止中断。这样可以确保 CAS 操作的原子性，避免中断或其他干扰对操作的影响。
+
+3.cmpxchg 指令是硬件实现的，可以保证其原子性和正确性。CPU 中的硬件电路确保了 cmpxchg 指令的正确执行，以及对共享变量的访问是原子的。
+
+
+
+### Unsafe是什么
+
+Unsafe是CAS的核心类。因为Java无法直接访问底层操作系统，而是通过本地(native) 方法来访问。不过尽管如此，JVM还是开了一个后门，JDK中有一个类Unsafe，它提供了硬件级别的原子操作。
+
+Unsafe是Java中一个底层类，包含了很多基础的操作，比如数组操作、对象操作、内存操作、CAS操作、线程(park)操作、栅栏(Fence) 操作，JUC包、一些第三方框架都使用Unsafe类来保证并发安全。
+
+Unsafe类在JDK源码的多个类中用到，这个类的提供了一些绕开JVM的更底层功能，基于它的实现可以提高效率。但是，它是一把双刃剑：正如它的名字所预示的那样，它是Unsafe的，它所分配的内存需要手动free (不被GC回收)。Unsafe类，提供了JNI某些功能的简单替代：确保高效性的同时，使事情变得更简单.
+
+Unsafe类提供了硬件级别的原子操作，主要提供了以下功能:
+
+1. 通过Unsafe类可以分配内存，可以释放内存:
+2. 可以定位对象某字段的内存位置，也可以修改对象的字段值，即使它是私有的:
+3. 将线程进行挂起与恢复
+4. CAS操作
+
+
 
 
 
@@ -1018,15 +1147,327 @@ class DeadLock implements Runnable {
 
 
 
-### 什么是ReentrantLock?底层怎么实现锁的?
+### 实现线程同步的方式
 
-### 什么是公平锁和非公平锁? 怎么体现? Synchronize属于公平还是非公平锁?
+线程同步指的就是让多个线程之间按照顺序访问同一个共享资源，避免因为并发冲突导致的问题，主要有以下几种方式:
+
+#### synchronized
+
+Java中最基本的线程同步机制，可以修饰代码块或方法，保证同一时间只有一个线程访问该代码块或方法，其他线程需要等待锁的释放
+
+
+
+#### ReentrantLock
+
+与synchronied关键字类似，也可以保证同一时间只有一个线程访问共享资源，但是更灵活支持公平锁、可中断锁、多个条件变量等功能
+
+
+
+#### Semaphore
+
+参考链接：https://zhuanlan.zhihu.com/p/98593407
+
+**功能介绍**
+
+Semaphore通常被称为信号量， 可以用来控制同时访问特定资源的线程数量，通过协调各个线程，以保证合理的使用资源。
+
+可以把它简单的理解成我们停车场入口立着的那个显示屏，每有一辆车进入停车场显示屏就会显示剩余车位减1，每有一辆车从停车场出去，显示屏上显示的剩余车辆就会加1，当显示屏上的剩余车位为0时，停车场入口的栏杆就不会再打开，车辆就无法进入停车场了，直到有一辆车从停车场出去为止。
+
+**使用场景**
+
+通常用于那些资源有明确访问数量限制的场景，常用于限流 。
+
+比如：数据库连接池，同时进行连接的线程有数量限制，连接不能超过一定的数量，当连接达到了限制数量后，后面的线程只能排队等前面的线程释放了数据库连接才能获得数据库连接。
+
+比如：停车场场景，车位数量有限，同时只能容纳多少台车，车位满了之后只有等里面的车离开停车场外面的车才可以进入。
+
+**使用步骤**
+
+1. 初始化Semaphore，并设置最大值
+2. 判断信号剩余量是否足够。
+3. 足够则获得新的信号量。不够的话可以进行异常处理。
+4. 业务做完，释放信号量。
+
+案例代码
+
+1、停车场容纳总停车量10。
+
+2、当一辆车进入停车场后，显示牌的剩余车位数响应的减1.
+
+3、每有一辆车驶出停车场后，显示牌的剩余车位数响应的加1。
+
+4、停车场剩余车位不足时，车辆只能在外面等待。
+
+```java
+public class SemaphoreCar {
+    /** 停车场允许最多容纳的车辆数：10 */
+    private static Semaphore semaphore = new Semaphore(10);
+
+    public static void main(String[] args) {
+        //模拟100辆车进入停车场
+        for (int i = 0; i < 100; i++) {
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        System.out.println("====" + Thread.currentThread().getName() + "来到停车场");
+                        if (semaphore.availablePermits() == 0) {
+                            System.out.println("停车位不足，请耐心等待");
+                        }
+                        //获取信号量-进入停车场
+                        semaphore.acquire();
+						//模拟车辆在停车场停留的时间
+                        System.out.println(Thread.currentThread().getName() + "成功进入停车场");
+                        Thread.sleep(new Random().nextInt(10 * 1000));
+                        System.out.println(Thread.currentThread().getName() + "驶出停车场");
+                        //释放令牌，腾出停车场车位
+                        semaphore.release();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, i + "号车");
+            thread.start();
+        }
+        //程序会等到所有的车进入停车场并离开之后才会退出
+    }
+}
+```
+
+
+
+#### CountDownLatch
+
+参考链接：https://www.cnblogs.com/Lee_xy_z/p/10470181.html
+
+**介绍**
+
+CountDownLatch是java.util.concurrent包中的一个线程同步工具类，他主要用来协调多个线程之间的同步或者说起到线程之间的通信（而不是用作互斥的作用）。他可以让一个或多个线程在运行过程中的某个时间点能停下来等待其他的一些线程完成某些任务后再继续运行。
+
+CountDownLatch使用一个计数器进行实现。计数器初始值为线程的数量。每当一个线程完成自己任务后，计数器的值就会减1。当计数器的值为0时，表示所有的线程都已经完成了他们的任务，然后在CountDownLatch上等待的线程就可以恢复执行接下来的任务。
+
+类似的效果也可以使用线程的join()方法实现：在等待时间点调用其他线程的join()方法，当前线程就会等待join线程执行完之后才继续执行，但CountDownLatch实现更加简单，并且比join的功能更多。
+
+**不足**
+
+CountDownLatch是一次性的，计算器的值只能在构造方法中初始化一次，之后没有任何机制再次对其设置值，当CountDownLatch使用完毕后，它不能再次被使用。
+
+**使用步骤**
+
+1. 初始化CountDownLatch，并设置计数器大小。
+2. 让符合条件之后要执行的线程等待，计数器归零之后。会自动执行。
+3. 当条件线程执行完之后，让计数器减一。
+
+案例代码：
+
+```java
+/**
+ * CountDownLatch案例<br>
+ * 主线程会等待子线程执行完毕之后才开始执行<br>
+ * @author namelessmyth
+ * @version 1.0
+ * @date 2023/12/13
+ */
+public class CountDownLatchDemo1 {
+    public static void main(String[] args) {
+        ExecutorService service = Executors.newFixedThreadPool(3);
+        //计数器为3
+        final CountDownLatch latch = new CountDownLatch(3);
+        for (int i = 0; i < 3; i++) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("子线程" + Thread.currentThread().getName() + "开始执行");
+                       TimeUnit.SECONDS.sleep(new Random().nextInt(10));
+                        System.out.println("子线程" + Thread.currentThread().getName() + "执行完成");
+                        //执行完毕，计数器-1
+                        latch.countDown();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            service.execute(runnable);
+        }
+
+        try {
+            System.out.println("主线程" + Thread.currentThread().getName() + "等待子线程执行完成...");
+            //主线程等待直到计数器的值为0才会开始执行
+            latch.await();
+            System.out.println("主线程" + Thread.currentThread().getName() + "执行完毕");
+            service.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+
+
+#### CyclicBarrier
+
+https://zhuanlan.zhihu.com/p/363411257
+
+**介绍**
+
+CyclicBarrier是java.util.concurrent包中的一个线程同步工具类，中文为“循环栅栏”，他作用是让一组线程相互等待，当达到一个共同点时，所有之前等待的线程再继续执行，且 CyclicBarrier 功能可重复使用。
+
+举个例子，比如张三，李四，王五，赵六几人相约一起聚餐，然而他们每个人到达约会地点的耗时都不一样，有的人会早到，有的人会晚到，但是他们要都到齐了以后才可以决定点那些菜。这个案例里，人可以看成是线程，而到达餐厅就是CyclicBarrier的栅栏。
+
+CyclicBarrier可以使一定数量的线程反复地在栅栏位置处汇集。当线程到达栅栏位置时将调用await方法，这个方法将阻塞直到所有线程都到达栅栏位置。如果所有线程都到达栅栏位置，那么栅栏将打开，此时所有的线程都将被释放，而栅栏将被重置以便下次使用。
+
+CyclicBarrier字面意思是“可重复使用的栅栏”，CyclicBarrier 和 CountDownLatch 很像，只是 CyclicBarrier 可以有不止一个栅栏，因为它的栅栏（Barrier）可以重复使用（Cyclic）。
+
+![](https://pic2.zhimg.com/80/v2-84b191a0e79d8d2c57ab5a6e2988db29_1440w.webp)
+
+**使用场景**
+
+例如：所有玩家到齐之后开始匹配玩家，然后下一次到齐开始选择角色，再次到齐开始游戏加载。
+
+![123123](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8092d28ad1544a6eaf27a291a8e092db~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+
+例如：我们坐大巴回老家，营运公司为了收益最大化，一般会等人满之后再发车。像这种等人坐满就发一班车的场景，就是 CyclicBarrier 所擅长的，因为它可以重复使用。 
+
+**和CountDownLatch的区别**
+
+- CountDownLatch的计数器只能使用一次，而CyclicBarrier的计数器可以使用reset()方法重置，可以使用多次，所以CyclicBarrier能够处理更为复杂的场景；
+- CyclicBarrier还提供了一些其他有用的方法，比如getNumberWaiting()方法可以获得CyclicBarrier阻塞的线程数量，isBroken()方法用来了解阻塞的线程是否被中断；
+- CountDownLatch允许一个或多个线程等待一组事件的产生，而CyclicBarrier用于等待其他线程运行到栅栏位置。
+
+**案例代码**
+
+```java
+public class CyclicBarrierDemo1 {
+    public static void main(String[] args) {
+        // 创建大巴车，人数到达2就发车
+        final CyclicBarrier cyclicBarrier = new CyclicBarrier(2, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("人满了，准备发车：" + new Date());
+            }
+        });
+
+        // 创建线程池
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 10; i++) {
+            threadPool.submit(() -> {
+                // 进入任务
+                try {
+                    // 模拟不同的人不同时间上车
+                    TimeUnit.SECONDS.sleep(new Random().nextInt(10));
+                    // 任务执行
+                    System.out.println(String.format("线程：%s 上车，到达时间：%s",
+                            Thread.currentThread().getName(), new Date()));
+                    // 到达后在栅栏处等待。
+                    cyclicBarrier.await();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        // 等待所有任务执行完终止线程池
+        threadPool.shutdown();
+    }
+}
+```
+
+
+
+#### Phaser
+
+https://www.cnblogs.com/54chensongxia/p/12884523.html
+
+**简介**
+
+Phaser是JDK1.7开始引入的一个同步工具类，适用于一些需要分阶段的任务的处理。它的功能与 **CyclicBarrier**和**CountDownLatch**有些类似，类似于一个多阶段的栅栏，并且功能更强大。可以在初始时设定参与线程数，也可以中途注册/注销参与者，当到达的参与者数量满足栅栏设定的数量后，会进行阶段升级（advance）
+
+**使用案例**
+
+当所有注册线程到齐之后，每个线程才会继续执行。
+
+```java
+public class PhaserDemo1 {
+    public static void main(String[] args) {
+        Phaser phaser = new Phaser();
+        for (int i = 0; i < 3; i++) {
+            // 注册每个线程，所有注册的线程到齐之后才会继续。
+            phaser.register();
+            new Thread(new Task(phaser), "Thread-" + i).start();
+        }
+        System.out.println(Thread.currentThread().getName() + ": 主线程执行，时间 =" + new Date());
+    }
+}
+
+class Task implements Runnable {
+    private final Phaser phaser;
+
+    Task(Phaser phaser) {
+        this.phaser = phaser;
+    }
+
+    @Override
+    public void run() {
+        try {
+            TimeUnit.SECONDS.sleep(new Random().nextInt(10));
+            System.out.println(Thread.currentThread().getName() + ": 已到达，时间 =" + new Date());
+            // 等待其它参与者线程到达
+            int i = phaser.arriveAndAwaitAdvance();
+            // do something
+            System.out.println(Thread.currentThread().getName() + ": 已到齐继续，时间 =" + new Date());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+//打印结果
+main: 主线程执行，时间 =Wed Dec 13 21:15:51 CST 2023
+Thread-0: 已到达，时间 =Wed Dec 13 21:15:54 CST 2023
+Thread-2: 已到达，时间 =Wed Dec 13 21:15:57 CST 2023
+Thread-1: 已到达，时间 =Wed Dec 13 21:16:00 CST 2023
+Thread-1: 已到齐继续，时间 =Wed Dec 13 21:16:00 CST 2023
+Thread-0: 已到齐继续，时间 =Wed Dec 13 21:16:00 CST 2023
+Thread-2: 已到齐继续，时间 =Wed Dec 13 21:16:00 CST 2023
+
+Process finished with exit code 0
+```
+
+
+
+
+
+### ReentrantLock是什么?底层怎么实现锁的?
+
+
+
+### ReentrantLock和synchronized的区别
+
+ReentrantLock和synchronized都是用于线程的同步控制，但它们在功能上来说差别比较大的。ReentrantLock的功能要丰富的多
+
+相同点：都是可重入锁。不同点如下：
+
+- Lock是一个接口底下有很多实现类，是JDK实现的。synchronized是一个关键字，是依赖JVM实现的。
+- Lock是显式锁，需要手动开启和关闭。synchronized是隐式锁，可以自动释放锁。
+- Lock是可中断锁，synchronized是不可中断锁，需要线程执行完才能释放锁。
+- 发生异常时，Lock不会主动释放占有的锁，必须通过unlock进行手动释放，因此可能引发死锁。synchronized在发生异常时会自动释放占有的锁，不会出现死锁的情况。
+- Lock可以判断锁的状态，synchronized不可以判断锁的状态。
+- Lock实现锁的类型是可重入锁、公平锁、非公平锁。synchronized实现锁的类型是可重入锁，非公平锁。
+- Lock适用于大量同步代码块的场景，synchronized适用于少量同步代码块的场景。
+
+
+
+### 公平锁和非公平锁
+
+多个线程共同争夺锁资源，只有一个能获取到锁，其他锁会进入阻塞队列。但锁被释放后，如果是按阻塞队列的顺序去获得锁，那就是公平锁。如果不按队列顺序，每个线程都有可能获取到锁那就是非公平锁。
+
+两种锁分别适合不同的场景中，存在着各自的优缺点，对于公平锁来说，他的优点是所有的线程都能得到资源，不会饿死在队列中。但是他存在着吞吐量会下降很多，队列里面除了第一个线程，其他的线程都会阻塞，cpu唤醒阻塞线程的开销会很大的缺点。
+
+而对于非公平锁来说，他可以减少CPU唤醒线程的开销，整体的吞吐效率会高点，CPU也不必去唤醒所有线程会减少唤起线程的数量。但是他可能会导致队列中排队的线程一直获取不到锁或者长时间获取不到锁，一直等待的情况。
+
+
 
 ### cas是什么, 会有什么问题? 如何解决?
-
-### Semaphore的作用是什么?
-
-### ConcurrentHashmap和JDK1.7和1.8的区别?  
 
 
 
@@ -1035,36 +1476,6 @@ class DeadLock implements Runnable {
 1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
 2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
 3. 给每个任务分配一个唯一ID，将所有待处理的任务加载到一个Map里面，key存任务ID，value存任务状态。当有线程处理任务时直接修改这个map的状态。如果处理成功则将key移除。
-
-
-
-### 实现线程同步的方式
-
-线程同步指的就是让多个线程之间按照顺序访问同一个共享资源，避免因为并发冲突导致的问题，主要有以下几种方式:
-
-synchronized
-
-Java中最基本的线程同步机制，可以修饰代码块或方法，保证同一时间只有一个线程访问该代码块或方法，其他线程需要等待锁的释放
-
-ReentrantLock
-
-与synchronied关键字类似，也可以保证同一时间只有一个线程访问共享资源，但是更灵活支持公平锁、可中断锁、多个条件变量等功能
-
-Semaphore
-
-允许多个线程同时访问共享资源，但是限制访问的线程数量。可以用于控制并发访问的线程数量避免系统资源被过度占用。
-
-CountDownLatch
-
-允许一个或多个线程等待其他线程执行完毕之后再执行，可以用于线程之间的协调和通信
-
-CyclicBarrier
-
-允许多个线程在一个栅栏处等待，直到所有线程都到达栅栏位置之后，才会继续执行。
-
-Phaser
-
-与CyclicBarrier类似，也是一种多线程同步工具，但是支持更灵活的栅栏操作，可以动态地注册和注销参与者，并可以控制各个参与者的到达和离开。
 
 
 
