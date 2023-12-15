@@ -308,6 +308,28 @@ synchronized保证同一时刻只允许一个线程能够操作。一个线程lo
 
 
 
+### 总线嗅探和总线风暴
+
+在JMM（Java内存模型）中，总线嗅探和总线风暴问题与CPU缓存一致性有关
+
+在多线程编程中，如果多个线程共享同一个变量，且变量存储在主存中，则每个线程都有可能在自己的缓存中缓存该变量。如果一个线程修改了该变量的值，那么其他线程可能无法立即看到这个修改，因为它们缓存的是旧值。
+
+为了保证缓存一致性，CPU 会使用**总线嗅探**机制来检测是否有其他处理器修改了该变量，如果有，则会将缓存中的旧值更新为新值。但是，如果多个线程频繁地读写共享变量，就会导致大量的总线通信，从而引发**总线风暴**的问题，降低系统的性能
+
+总线嗅探是多处理器系统中的一种通信机制，用于处理多个处理器共享的数据。在这种机制下，每个处理器都可以监视系统总线上的数据传输，以便了解数据是否与自己相关。如果数据与某个处理器相关，则该处理器将接管该数据，进行相应的操作。总线嗅探机制能够提高系统的性能，因为它能够减少数据冲突和锁竞争等问题，提高系统的并行性和效率
+
+总线嗅探也会引发总线风暴的问题。当多个处理器同时竞争总线上的资源时，就会产生大量的总线通信，从而导致总线风暴。总线风暴会降低系统的性能，并可能导致系统崩溃。
+
+为了解决缓存一致性和总线风暴问题，Java内存模型提供了一系列同步机制，如synchronized、ReentrantLock等。这些机制能够保证线程之间的可见性和原子性，并通过锁竞争等方式减少总线通信，提高系统的性能和并发度
+
+
+
+### MESI缓存一致性协议
+
+https://www.yuque.com/hollis666/vzy8n3/gg2n5fqckk442ouf
+
+
+
 ### Synchronized是什么
 
 Synchronized是一个java关键字，可以用在方法上和代码块上，主要用于保证在多线程的环境下多个线程同时访问共享资源时的线程同步的。简单来说就是synchronized可以使操作同一个共享资源的多个线程依次排队操作。
@@ -1013,16 +1035,6 @@ start是用来启动线程的。线程获得CPU时间片后执行的是run方法
 
 ### interrupt, interrupted, isInterrupted()区别
 
-### 如何让多个线程按顺序执行
-
-例如：有t1、t2、t3三个线程，怎么让他的顺序是t1, t2 , t3。
-
-#### join()
-
-#### future
-
-可以通过join()或者callable+future来得到返回值。
-
 
 
 ### sleep，join，yield的区别。
@@ -1241,7 +1253,7 @@ public class SemaphoreCar {
 
 **介绍**
 
-CountDownLatch是java.util.concurrent包中的一个线程同步工具类，他主要用来协调多个线程之间的同步或者说起到线程之间的通信（而不是用作互斥的作用）。他可以让一个或多个线程在运行过程中的某个时间点能停下来等待其他的一些线程完成某些任务后再继续运行。
+CountDownLatch是java.util.concurrent包中的一个线程同步工具类，他主要用来协调多个线程之间的同步或者起到线程之间的通信（而不是用作互斥的作用）。他可以让一个或多个线程在运行过程中的某个时间点能停下来等待其他的一些线程完成某些任务后再继续运行。
 
 CountDownLatch使用一个计数器进行实现。计数器初始值为线程的数量。每当一个线程完成自己任务后，计数器的值就会减1。当计数器的值为0时，表示所有的线程都已经完成了他们的任务，然后在CountDownLatch上等待的线程就可以恢复执行接下来的任务。
 
@@ -1323,11 +1335,11 @@ CyclicBarrier字面意思是“可重复使用的栅栏”，CyclicBarrier 和 C
 
 **使用场景**
 
-例如：所有玩家到齐之后开始匹配玩家，然后下一次到齐开始选择角色，再次到齐开始游戏加载。
+场景1：所有玩家到齐之后开始匹配玩家，然后下一次到齐开始选择角色，再次到齐开始游戏加载。
 
 ![123123](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8092d28ad1544a6eaf27a291a8e092db~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
 
-例如：我们坐大巴回老家，营运公司为了收益最大化，一般会等人满之后再发车。像这种等人坐满就发一班车的场景，就是 CyclicBarrier 所擅长的，因为它可以重复使用。 
+场景2：我们坐大巴回老家，营运公司为了收益最大化，一般会等人满之后再发车。像这种等人坐满就发一班车的场景，就是 CyclicBarrier 所擅长的，因为它可以重复使用。 
 
 **和CountDownLatch的区别**
 
@@ -1382,6 +1394,11 @@ https://www.cnblogs.com/54chensongxia/p/12884523.html
 
 Phaser是JDK1.7开始引入的一个同步工具类，适用于一些需要分阶段的任务的处理。它的功能与 **CyclicBarrier**和**CountDownLatch**有些类似，类似于一个多阶段的栅栏，并且功能更强大。可以在初始时设定参与线程数，也可以中途注册/注销参与者，当到达的参与者数量满足栅栏设定的数量后，会进行阶段升级（advance）
 
+**使用场景**
+
+1. 一种任务可以分为多个阶段，现希望多个线程去处理该批任务，对于每个阶段，多个线程可以并发进行，但是希望保证只有前面一个阶段的任务完成之后才能开始后面的任务。这种场景可以使用多个CyclicBarrier来实现，每个CyclicBarrier负责等待一个阶段的任务全部完成。但是使用CyclicBarrier的缺点在于，需要明确知道总共有多少个阶段，同时并行的任务数需要提前预定义好，且无法动态修改。而Phaser可同时解决这两个问题。
+   - 拿PLM系统举例：一次数据同步可能会出来多个变更，每个变更还包含多个受影响物件。对于每一个变更中的受影响物件可以多线程并发执行，但是变更单之间还是希望按顺序执行。
+
 **使用案例**
 
 当所有注册线程到齐之后，每个线程才会继续执行。
@@ -1435,6 +1452,16 @@ Process finished with exit code 0
 
 
 
+#### 他们的区别是什么
+
+CountDownLatch是一个计数器，它允许一个或多个线程等待其他线程完成操作。它通常用来实现一个线程等待其他多个线程完成操作之后再继续执行的操作。
+
+CyclicBarrier是一个同步屏障，它允许多个线程相互等待，直到到达某个公共屏障点，才能继续执行。它通常用来实现多个线程在同一个屏障处等待，然后再一起继续执行的操作。
+
+Semaphore是一个计数信号量，它允许多个线程同时访问共享资源，并通过计数器来控制访问数量。它通常用来实现一个线程需要等待获取一个许可证才能访问共享资源，或者需要释放一个许可证才能完成操作的操作。
+
+
+
 
 
 ### ReentrantLock是什么?底层怎么实现锁的?
@@ -1465,17 +1492,125 @@ ReentrantLock和synchronized都是用于线程的同步控制，但它们在功�
 
 而对于非公平锁来说，他可以减少CPU唤醒线程的开销，整体的吞吐效率会高点，CPU也不必去唤醒所有线程会减少唤起线程的数量。但是他可能会导致队列中排队的线程一直获取不到锁或者长时间获取不到锁，一直等待的情况。
 
+#### ReentrantLock的2种实现
+
+ReentrantLock2种锁都支持，默认的构造方法是非公平锁，如果想要公平锁可以用`new ReentrantLock(true);`如上所述非公平锁的效率和吞吐量要比公平锁高。
+
+```java
+public ReentrantLock() {
+    sync = new NonfairSync();
+}
+
+public ReentrantLock(boolean fair) {
+    sync = fair ? new FairSync() : new NonfairSync();
+}
+```
 
 
-### cas是什么, 会有什么问题? 如何解决?
+
+### LongAdder是什么
+
+LongAdder是Java 8中推出了一个新的类，主要是为了解决AtomicLong在多线程竞争激烈的情况下性能并不高的问题。它主要是采用分段+CAS的方式来提升原子操作的性能。
+
+相比于AtomicLong，LongAdder有更好的性能，但是LongAdder是典型的以空间换时间的实现方式，所以他所需要用到的空间更大，而且LongAdder可能存在结果不准确的问题，而AtomicLong并不会
+
+#### 适用场景
+
+相比于AtomicLong，LongAdder性能更好，但是有一个小缺点就是有可能返回值没那么准确，但是也只是在并发极高，刚好返回sum时候有其他原子操作在进行累加的时候才会出现。
+
+基于以上的特性，LongAdder比较适合于并发竞争激烈，但是对数据准确度要求并不是百分之百准确的场景，比如微博点赞、文章阅读量的统计等等场景中。
+
+https://www.yuque.com/hollis666/vzy8n3/dhzyrg
 
 
 
-### 如何保证多个线程不重复处理相同的数据。
+### 父子线程如何共享数据
 
-1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
-2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
-3. 给每个任务分配一个唯一ID，将所有待处理的任务加载到一个Map里面，key存任务ID，value存任务状态。当有线程处理任务时直接修改这个map的状态。如果处理成功则将key移除。
+当我们在同一个线程中，想要共享变量的话，是可以直接使用ThreadLocal的，但是如果在父子线程之间，共享变量，ThreadLocal就不行了。
+
+如以下代码，会抛出空指针异常:
+
+```java
+public class ThreadLocalParentChild {
+    public static ThreadLocal<Integer> sharedData = new ThreadLocal<>();
+
+    public static void main(String[] args) throws InterruptedException {
+        sharedData.set(0);
+        MyThread thread = new MyThread();
+        thread.start();
+        sharedData.set(sharedData.get() + 1);
+        System.out.println("sharedData in main thread: " + sharedData.get());
+    }
+
+    static class MyThread extends Thread {
+        @Override
+        public void run() {
+            System.out.println("sharedData in child thread: " + sharedData.get());
+            //子线程这个地方没有初始化过，所以会空指针
+            sharedData.set(sharedData.get() + 1);
+            System.out.println("sharedData in child thread after increment: " + sharedData.get());
+        }
+    }
+}
+```
+
+因为ThreadLocal 变量是为每个线程提供了独立的副本，因此不同线程之间只能访问它们自己的副本。
+
+那么，想要实现数据共享，主要有两个办法，第一个是成员变量直接传递，第二个是借助InheritableThreadLocal
+
+#### 成员变量直接传递
+
+我们可以在子线程中创建一个成员变量，这样在主线程创建子线程的时候，可以给成员变量赋值，这样实现数据共享
+
+#### InheritableThreadLocal
+
+代码和上面的错误案例基本一样，只要把ThreadLocal改成InheritableThreadLocal就可以了。
+
+```java
+public class ParentChildInheritThreadLocal {
+    public static InheritableThreadLocal<Integer> sharedData = new InheritableThreadLocal<>();
+
+    public static void main(String[] args) throws InterruptedException {
+        sharedData.set(0);
+        MyThread thread = new MyThread();
+        thread.start();
+        TimeUnit.SECONDS.sleep(1);
+        sharedData.set(sharedData.get() + 1);
+        System.out.println("sharedData in main thread: " + sharedData.get());
+    }
+
+    static class MyThread extends Thread {
+        @Override
+        public void run() {
+            System.out.println("sharedData in child thread: " + sharedData.get());
+            //子线程这个地方没有初始化过，所以会空指针
+            sharedData.set(sharedData.get() + 1);
+            System.out.println("sharedData in child thread after increment: " + sharedData.get());
+        }
+    }
+}
+
+//控制台输出
+sharedData in child thread: 0
+sharedData in child thread after increment: 1
+sharedData in main thread: 1
+```
+
+实现原理
+
+在创建线程的时候，会调用线程的Thread.init()私有方法，有如下关键代码：
+
+```java
+if (inheritThreadLocals && parent.inheritableThreadLocals != null){
+   this.inheritableThreadLocals = ThreadLocal.createInheritedMap(parent.inheritableThreadLocals); 
+}
+```
+
+如上可知，线程创建的时候会判断父线程的inheritableThreadLocal是否为空，不为空则自动复制到子线程中。
+
+
+
+### CompletableFuture多线程编排
 
 
 
@@ -2211,6 +2346,155 @@ https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
 
 
 ### 实战
+
+### 如何让多个线程按顺序执行
+
+例如：有t1、t2、t3三个线程，怎么让他的顺序是t1, t2 , t3。大体思路是要让这三个线程可以互相通信或者可以排队。方法如下：
+
+#### join()
+
+创建3个线程之后，依次调用线程的join()方法。
+
+```java
+public class ThreadOrderJoin {
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i <3; i++) {
+            Thread t = new Thread(()->{
+                System.out.println(Thread.currentThread().getName()+new Date());
+            },"thread-"+i);
+            t.start();
+            //去掉下面这行代码，执行结果就是随机的
+            t.join();
+        }
+    }
+}
+```
+
+#### Callable+FutureTask
+
+通过Callable创建线程，然后通过FutureTask等待并得到返回值。
+
+```java
+public class ThreadOrderFuture {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        for (int i = 0; i <3; i++) {
+            FutureTask task = new FutureTask(()->{
+                System.out.println(Thread.currentThread().getName()+new Date());
+                return "执行结束";
+            });
+            new Thread(task,"thread-"+i).start();
+            //去掉下面这行代码，执行结果就是随机的
+            task.get();
+        }
+    }
+}
+```
+
+#### 单线程线程池
+
+使用一个单线程的线程池，由于这种线程池中只有一个线程，相应的，内部的线程会按加入的顺序来执行。
+
+```java
+public class ThreadOrderSinglePool {
+    public static void main(String[] args) throws InterruptedException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        for (int i = 0; i < 3; i++) {
+            executor.submit(new MyTask("thread-" + i));
+        }
+        executor.shutdown();
+    }
+
+    static class MyTask implements Runnable {
+        String name;
+
+        public MyTask(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(this.name + ": " + new Date());
+        }
+    }
+}
+
+//控制台打印
+thread-0: Fri Dec 15 00:34:01 CST 2023
+thread-1: Fri Dec 15 00:34:01 CST 2023
+thread-2: Fri Dec 15 00:34:01 CST 2023
+```
+
+#### CompletableFuture
+
+Java 8引入了CompletableFuture， 它是一个用于异步编程的新的强大工具。CompletableFuture提供了一系列的方法，可以用来创建、组合、转换和管理异步任务，并且可以让你实现异步流水线，在多个任务之间轻松传递结果。
+
+```java
+public class ThreadOrderCompletableFuture {
+    public static void main(String[] args) throws Exception {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(new MyTask("T1")).thenRun(new MyTask("T2")).thenRun(new MyTask("T3"));
+        future.get();
+        //下面2种方式也可以
+        get();
+        join();
+    }
+
+    public static void get() throws Exception {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(new MyTask("T1"));
+        future.get();
+
+        future = CompletableFuture.runAsync(new MyTask("T2"));
+        future.get();
+
+        future = CompletableFuture.runAsync(new MyTask("T3"));
+        future.get();
+    }
+
+    public static void join() throws Exception {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(new MyTask("T1"));
+        future.join();
+
+        future = CompletableFuture.runAsync(new MyTask("T2"));
+        future.join();
+
+        future = CompletableFuture.runAsync(new MyTask("T3"));
+        future.join();
+    }
+
+    static class MyTask implements Runnable {
+        String name;
+
+        public MyTask(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(this.name + ": " + new Date());
+        }
+    }
+}
+
+//控制台打印
+T1: Fri Dec 15 00:44:16 CST 2023
+T2: Fri Dec 15 00:44:16 CST 2023
+T3: Fri Dec 15 00:44:16 CST 2023
+T1: Fri Dec 15 00:44:16 CST 2023
+T2: Fri Dec 15 00:44:16 CST 2023
+T3: Fri Dec 15 00:44:16 CST 2023
+T1: Fri Dec 15 00:44:16 CST 2023
+T2: Fri Dec 15 00:44:16 CST 2023
+T3: Fri Dec 15 00:44:16 CST 2023
+```
+
+
+
+### 如何保证多个线程不重复处理相同的数据。
+
+1. 一个线程处理时，可以通过redis的setNx方法，存入业务主键，等到业务完成在通过del key命令删除。如果setNx返回错误代表另一个线程已经在处理了。
+2. 当一个线程开始处理一个条数据，单独一个事务将这条记录改成处理中。如果没有修改成功代表已经有其他线程在处理了。等到业务结束，再将记录改成处理成功状态。
+3. 给每个任务分配一个唯一ID，将所有待处理的任务加载到一个Map里面，key存任务ID，value存任务状态。当有线程处理任务时直接修改这个map的状态。如果处理成功则将key移除。
+
+
 
 ### 为什么下面的源码在多个生产者的时候会超？怎么解决？
 
