@@ -201,6 +201,18 @@ public Node getLoopNode(Node head){
 
 
 
+### Java线程异常对进程的影响
+
+Java线程出现异常，如果这里的异常是我们认知中的Exception的话，JVM进程其实是不会退出的。
+
+因为Java本身就是支持多线程的，每个Java线程都是相对独立的执行单元，每个线程是独立的执行上下文，异常只会影响抛出异常的线程。所以当一个线程抛出异常时，只会影响到该线程本身。其他线程将继续执行，不受异常的影响。
+
+而且，在Java中，我们是可以自己主动的通过异常处理机制来捕获和处理异常的。如果在线程的代码中使用try.catch块来捕获异常，并在catch块中处理异常，那么异常不会传播到线程的外部，也不会影响整个进程的执行。
+
+即使有的异常我们并没有捕获，Java也认为这些异常并不是特别严重(因为严重的话就不是异常，而是ERROR了)，所以JVM并不会因为一个线程的异常就直接把JVM进程直接退出。
+
+
+
 ### JMM介绍
 
 #### JMM是什么
@@ -525,6 +537,23 @@ https://www.yuque.com/hollis666/vzy8n3/qewdiv
 
 
 
+### JDK15废弃偏向锁的原因
+
+在过去，Java 应用通常使用的都是 HashTable、 Vector 等比较老的集合库，这类集合库大量使用了synchronized 来保证线程安全。所以偏向锁技术作为synchronized的一种优化手段，可以减少无锁竞争情况下的开销，通过假定一个锁一直由同一线程拥有，从而避免执行比较和交换的原子操作。
+
+但是，偏向锁的局限是当只有一个线程反复进入同步代码块时他才能快速获得，但是当有其他线程尝试获取锁的时侯，就需要等到 safe point 时，再将偏向锁撤销为无锁的状态或者升级为轻量级锁，而这个过程其实是会消耗定的性能的。
+
+在高并发的场景下频繁的撤销偏向锁和重新偏向不仅不能提升性能，还会导致性能下降，特别是在那些锁竞争较为激烈的应用中。
+并目，随着Java应用程序的发展和优化，过去能够从偏向锁中获得的性能提升在当今的应用中不再明显。许多现代应用程序使用了不需要同步的集合类或更高性能的并发数据结构 (如ConcurrentHashMap.CopyOnWriteArrayList等) ，而不再频繁地执行无争用的同步(synchronized)操作。
+
+还有就是官方在文档中提到的，偏向锁的引入导致代码很复杂，给HotSpot虚拟机中锁相关部分与其他组件之间的交互也带来了复杂性。这种复杂性使得理解代码的各个部分变得困难，并且阻碍了在同步子系统内进行重大设计更改。因此，废弃偏向锁有助于减少复杂性，使代码更容易维护和改进
+
+总之，废弃偏向锁是为了减少复杂性、提高代码可维护性，并鼓励开发人员采用更现代的并发编程技术，以适应当今Java应用程序的性能需求。
+
+
+
+
+
 ### volatile的介绍
 
 volatile主要用于保证JMM的可见性和有序性。只能用于修饰变量，被volatile修饰的共享变量具有以下特点。
@@ -765,90 +794,6 @@ as-if-serial语义的意思指：不管怎么重排序（编译器和处理器�
 
 
 
-### 对AQS的理解
-
-https://www.cnblogs.com/zyrblog/p/9866140.html
-
-
-
-### CAS是什么？常见问题
-
-CAS是Compare And Swap的简称，它是一项乐观锁技术，顾名思义就是先比较再替换。
-
-CAS操作包含三个操作数内存位置(V)、预期原值(A) 和新值(B)。在进行并发修改的时候，会先比较A和V的值是否相等，如果相等，则会把值替换成B，否则就不做任何操作。
-
-当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。
-
-在JDK1.5 中新增java.util.concurrent(J.U.C)就是建立在CAS之上的。相对于synchronized这种阻塞算法，CAS是非阻塞算法的一种常见实现。所以J.U.C在性能上有了很大的提升
-
-CAS的主要应用就是实现乐观锁和锁自旋
-
-#### ABA问题
-
-CAS算法实现一个重要前提需要取出内存中某时刻的数据，而在下时刻比较并替换，那么在这个时间差类会导致数据的变化。
-
-比如说一个线程1从内存位置V中取出A，这时候另一个线程2也从内存中取出A，并2进行了一些操作变成了B然后2又将V位置的数据变成A，这时候线程1进行CAS操作发现内存中仍然是A，然后1操作成功。尽管线程1的CAS操作成功，但是不代表这个过程就是没有问题的。
-举个例子，线程1和线程2同时通过CAS尝试修改用户A余额，线程1和线程2同时查询当前余额为100元，然后线程2因为用户A要把钱借给用户B，先把余额从100改成50。然后又有用户C还给用户A 50元，线程2则又把50改成了100。这是线程1继续修改，把余额从100改成200。
-
-虽然过程上金额都没问题，都改成功了，但是对于用户余额来说，丢失了两次修改的过程，在修改前用户C欠用户A 50元，但是修改后，用户C不欠钱了，而用户B欠用户A 50元了。而这个过程数据是很重要的。
-
-部分乐观锁的实现是通过版本号(version)的方式来解决ABA问题，乐观锁每次在执行数据的修改操作时，都会带上一个版本号，一旦版本号和数据的版本号一致就可以执行修改操作并对版本号执行+1操作，否则就执行失败。因为每次操作的版本号都会随之增加，所以不会出现ABA问题，因为版本号只会增加不会减少。
-
-#### 忙等待
-
-因为CAS基本都是要自旋的，这种情况下，如果并发冲突比较大的话，就会导致CAS一直在不断地重复执行，就会进入忙等待
-
-忙等待定义：一种进程执行状态。进程执行到一段循环程序的时候，由于循环判断条件不能满足而导致处理器反复循环，处于繁忙状态，该进程虽然繁忙但无法前进
-
-所以，一旦CAS进入忙等待状态一直执行不成功的话，会对CPU造成较大的执行开销.
-
-
-
-### CAS一定有自旋么
-
-通常情况下，CAS 操作都会采用自旋的方式，当 CAS 失败时，会重新尝试执行 CAS 操作，直到操作成功或达到最大重试次数为止。
-
-因为，CAS 操作一般都是在多线程并发访问时使用，如果直接阻塞线程，会导致性能下降，而采用自旋的方式可以让 CPU 空转一段时间，等待锁被释放，从而避免线程切换和阻塞的开销。
-
-但是，如果自旋时间过长或者线程数过多，就会占用过多的 CPU 资源，导致系统性能下降，因此在使用 CAS 操作时，需要根据实际情况进行适当的调整.
-
-
-
-### CAS如何在底层保证原子性
-
-CAS是一种基本的原子操作，用于解决并发问题。在操作系统层面，CAS 操作的原理是基于硬件提供的原子操作指令。在x86架构的CPU中，CAS 操作通常使用 cmpxchg 指令实现。
-
-为啥cmpxchg指令可以保证原子性呢? 主要由以下几个方面的保障
-
-1.cmpxchg 指令是一条原子指令。在 CPU 执行 cpxchg 指令时，处理器会自动锁定总线，防止其他 CPU访问共享变量，然后执行比较和交换操作，最后释放总线。
-
-2.cmpxchg 指令在执行期间，CPU 会自动禁止中断。这样可以确保 CAS 操作的原子性，避免中断或其他干扰对操作的影响。
-
-3.cmpxchg 指令是硬件实现的，可以保证其原子性和正确性。CPU 中的硬件电路确保了 cmpxchg 指令的正确执行，以及对共享变量的访问是原子的。
-
-
-
-### Unsafe是什么
-
-Unsafe是CAS的核心类。因为Java无法直接访问底层操作系统，而是通过本地(native) 方法来访问。不过尽管如此，JVM还是开了一个后门，JDK中有一个类Unsafe，它提供了硬件级别的原子操作。
-
-Unsafe是Java中一个底层类，包含了很多基础的操作，比如数组操作、对象操作、内存操作、CAS操作、线程(park)操作、栅栏(Fence) 操作，JUC包、一些第三方框架都使用Unsafe类来保证并发安全。
-
-Unsafe类在JDK源码的多个类中用到，这个类的提供了一些绕开JVM的更底层功能，基于它的实现可以提高效率。但是，它是一把双刃剑：正如它的名字所预示的那样，它是Unsafe的，它所分配的内存需要手动free (不被GC回收)。Unsafe类，提供了JNI某些功能的简单替代：确保高效性的同时，使事情变得更简单.
-
-Unsafe类提供了硬件级别的原子操作，主要提供了以下功能:
-
-1. 通过Unsafe类可以分配内存，可以释放内存:
-2. 可以定位对象某字段的内存位置，也可以修改对象的字段值，即使它是私有的:
-3. 将线程进行挂起与恢复
-4. CAS操作
-
-
-
-
-
-
-
 ### 守护线程是什么
 
 在Java中线程分2类：User Thread(用户线程)、Daemon Thread(守护线程)。一般默认创建的就是用户线程，用于执行用户级任务。守护线程也就是“后台线程”，一般用来执行后台任务，守护线程的典型应用是GC(垃圾回收器)。
@@ -953,7 +898,7 @@ java线程对象的所有状态存放在**Thread类的内部类(State)**中：
 4. 等待(WAITING)
    1. 线程暂停运行，等待其他线程唤醒之后再继续执行。
    2. 进入方法，例如：thread.join()，Ojbect.wait()，LockSupport.park()方法
-   3. 唤醒方法，例如：Object.notify()或者Object.notifyAll()
+   3. 唤醒方法，例如：Object.notify()，Object.notifyAll()
 5. 定时等待(TIMED_WAITING)
    1. 该状态不同于WAITING，它可以在指定的时间后自行恢复
    2. 进入方法，例如：Thread.sleep(long)，Object.wait(long)，thread.join(long)，LockSupport.parkNanos，LockSupport.parkUntil
@@ -1059,11 +1004,84 @@ join：让调用该方法的线程的执行结果对主线程可见，内部基�
 
 
 
-### i++是线程安全的么？
+### isAlive方法判断线程存活
 
-不是。原子性，可见性，有序性。++操作不符合原子性。
+通常情况下，只要线程状态不为new和terminated，thread.isAlive()都会返回true
 
-### java如何实现多线程之间通讯和协作
+```java
+public static void main(String[] args) throws InterruptedException {
+
+    Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    System.out.println(thread.getState().name() + " "+thread.isAlive());
+    thread.start();
+    while (true){
+        System.out.println(thread.getState().name() + " "+thread.isAlive());
+    }
+}
+
+//控制台输出
+NEW false
+RUNNABLE true
+RUNNABLE true
+TIMED_WAITING true
+TIMED_WAITING true
+RUNNABLE true
+RUNNABLE true
+RUNNABLE true
+TERMINATED false
+TERMINATED false
+```
+
+极少数情况，如果线程要修改状态的时候被其他线程锁定了，thread.isAlive()还是返回true。
+
+```java
+public class ThreadIsAlive {
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(() -> {
+            System.out.println("t1 begin");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("t1 end");
+            }
+            System.out.println("t1 isAlive1:" + Thread.currentThread().isAlive());
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (t1) {
+                System.out.println("t2 begin");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                }
+                System.out.println("t2 end");
+                System.out.println("t1 isAlive2:" + t1.isAlive());
+            }
+        });
+        t1.start();
+        t2.start();
+        t1.join();
+        System.out.println("t1 isAlive3:" + t1.isAlive());
+    }
+}
+
+//控制台打印
+t1 begin
+t2 begin
+t1 isAlive1:true
+t2 end
+t1 isAlive2:true
+t1 isAlive3:false
+```
 
 
 
@@ -1154,6 +1172,8 @@ class DeadLock implements Runnable {
 所以，要避免死锁就把事务2改为: A -> D->C
 
 
+
+### 可重入锁介绍
 
 
 
@@ -1473,6 +1493,41 @@ CyclicBarrier是一个同步屏障，它允许多个线程相互等待，直到�
 Semaphore是一个计数信号量，它允许多个线程同时访问共享资源，并通过计数器来控制访问数量。它通常用来实现一个线程需要等待获取一个许可证才能访问共享资源，或者需要释放一个许可证才能完成操作的操作。
 
 
+
+### 实现线程安全的方式
+
+在编程中，如果遇到并发安全的情况，有哪些方案可以来实现线程安全呢? 以下是几个常见的方案
+
+1、单线程
+
+想要实现线程安全，最简单的方式就是干脆不支持多线程，只用单线程来执行，那么就可以从根本上杜绝线程安全的问题了。比如Redis，就是这种思想，在命令执行时，只依赖单线程进行.
+
+2、互斥锁
+
+如果一定要用多线程，比较有效的方式就是排队，那么加锁是一种比较常见的排队方式，无论是synchronized、ReentrantLock这种单机锁，还是Redis实现的分布式锁，还是数据库中的乐观锁、悲观锁，本地思想都是通过加互斥锁的方式让多个并发请求排队执行。
+
+3、读写分
+
+除了加锁以外，还有一种做法，那就是读写分离，比如Java并发包中有一种COW机制，即写时复制，主要就是读和写作分离的思想，因为读操作并发是没什么影响的，而写操作的话，只需要让他不发生并发就行了
+比如，CopyOnWriteArrayList使用了一种叫写时复制的方法，当有新元素add到CopyOnWriteArrayList时，先从原有的数组中拷贝一份出来，然后在新的数组做写操作，写完之后，再将原来的数组引用指向到新数组.
+
+4、原子操作
+
+原子操作是不可中断的操作，要么全部执行成功，要么全部失败。在多线程环境中，可以使用原子操作来实现对共享资源的安全访问，例如Java中的AtomicInteger等操作。
+
+原子操作底层一般都是依赖的操作系统的CAS指令，思想也就是Compare And Swap
+
+5、不可变模式
+
+并发问题之所以发生，有个重要原因就是因为多个线程间需要操作共享变量，试想一下，如果只有读的情况，那么永远也不会出现线程安全的问题，因为多线程读永远是线程安全的，但是多线程读写一定会存在线程安全的问题。
+
+那既然这么说是不是通过只读就能解决并发问题呢? 其实最简单的办法就是让共享变量只有读操作，而没有写操作。这个办法如此重要，以至于被上升到了一种解决并发问题的设计模式: 不变性(mmutability) 模式
+
+Java中的String就是不变模式的一种体现，他的好处是不会出现线程安全问题。
+
+6、数据不共享
+
+如果没有共享数据，那么就不会有线程安全问题了，除了不可变模式，还有一种我们常用的手段来避免并发问题。那就是用ThreadLocal来让每个线程的数据隔离。
 
 
 
@@ -2363,7 +2418,162 @@ https://blog.csdn.net/hewenbo111/article/details/80487252
 
 
 
-### 介绍一下线程池
+### TransmittableThreadLocal介绍
+
+已经有InheritableThreadLocal了，TransmittableThreadLocal是做什么的？
+
+InheritableThreadLocal是用于主子线程之间参数传递的，但是这种方式有一个问题，那就是必须要是在主线程中手动创建的子线程才可以，而现在池化技术非常普遍了，很多时候线程都是通过线程池进行创建和复用的，这时候InheritableThreadLocal就不行了。
+
+TransmittableThreadLocal是阿里开源的一个方案 (开源地址: https://github.com/alibaba/transmittable-thread-local )，这个类继承并加强InheritableThreadLocal类。用来实现线程之间的参数传递，一经常被用在以下场景中:
+
+1. 分布式跟踪系统或全链路压测 (即链路打标)
+
+2. 日志收集记录系统上下文
+3. Session级Cache
+4. 应用容器或上层框架跨应用代码给下层SDK传递信息
+
+
+
+### 主线程如何处理子线程的异常
+
+有如下方案可以实现
+
+#### Future
+
+如果想要在主线程能够捕获子线程的异常，可以考虑使用Callable和Future，它们允许主线程获取子线程的执行结果和异常。这样，主线程可以检查子线程是否抛出了异常，并在必要时处理它。
+
+#### UncaughtExceptionHandler
+
+UncaughtExceptionHandler 是Java中的一个接口，用于处理未捕获异常，即那些没有被 try-catch 块捕获的异常。它允许定义自定义异常处理器，以便在线程出现未捕获异常时采取特定的操作。
+
+有了它，我们就可以为线程设置一个自定义的末捕获异常处理器，当线程抛出未捕获异常时，该处理器会被调用我们可以在其中记录异常信息、执行清理操作等。
+
+```java
+public class UncaughtExceptionHandlerTest implements Thread.UncaughtExceptionHandler{
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        System.out.println(String.format("线程：%s，异常：%s", t.getName(), e));
+    }
+
+    public static void main(String[] args) {
+        Thread t = new Thread(()->{
+            throw new RuntimeException("线程异常");
+        });
+        t.setUncaughtExceptionHandler(new UncaughtExceptionHandlerTest());
+        t.start();
+    }
+}
+```
+
+#### CompletableFuture
+
+CompletableFuture有很多方法可以处理子线程的异常。例如：handle()，exceptionally()等等。具体可参考[CompletableFuture多线程编排](#CompletableFuture多线程编排)
+
+
+
+
+
+### CAS是什么？常见问题
+
+CAS是Compare And Swap的简称，它是一项乐观锁技术，顾名思义就是先比较再替换。
+
+CAS操作包含三个操作数内存位置(V)、预期原值(A) 和新值(B)。在进行并发修改的时候，会先比较A和V的值是否相等，如果相等，则会把值替换成B，否则就不做任何操作。
+
+当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。
+
+在JDK1.5 中新增java.util.concurrent(J.U.C)就是建立在CAS之上的。相对于synchronized这种阻塞算法，CAS是非阻塞算法的一种常见实现。所以J.U.C在性能上有了很大的提升
+
+CAS的主要应用就是实现乐观锁和锁自旋
+
+#### ABA问题
+
+CAS算法实现一个重要前提需要取出内存中某时刻的数据，而在下时刻比较并替换，那么在这个时间差类会导致数据的变化。
+
+比如说一个线程1从内存位置V中取出A，这时候另一个线程2也从内存中取出A，并2进行了一些操作变成了B然后2又将V位置的数据变成A，这时候线程1进行CAS操作发现内存中仍然是A，然后1操作成功。尽管线程1的CAS操作成功，但是不代表这个过程就是没有问题的。
+举个例子，线程1和线程2同时通过CAS尝试修改用户A余额，线程1和线程2同时查询当前余额为100元，然后线程2因为用户A要把钱借给用户B，先把余额从100改成50。然后又有用户C还给用户A 50元，线程2则又把50改成了100。这是线程1继续修改，把余额从100改成200。
+
+虽然过程上金额都没问题，都改成功了，但是对于用户余额来说，丢失了两次修改的过程，在修改前用户C欠用户A 50元，但是修改后，用户C不欠钱了，而用户B欠用户A 50元了。而这个过程数据是很重要的。
+
+部分乐观锁的实现是通过版本号(version)的方式来解决ABA问题，乐观锁每次在执行数据的修改操作时，都会带上一个版本号，一旦版本号和数据的版本号一致就可以执行修改操作并对版本号执行+1操作，否则就执行失败。因为每次操作的版本号都会随之增加，所以不会出现ABA问题，因为版本号只会增加不会减少。
+
+#### 忙等待
+
+因为CAS基本都是要自旋的，这种情况下，如果并发冲突比较大的话，就会导致CAS一直在不断地重复执行，就会进入忙等待
+
+忙等待定义：一种进程执行状态。进程执行到一段循环程序的时候，由于循环判断条件不能满足而导致处理器反复循环，处于繁忙状态，该进程虽然繁忙但无法前进
+
+所以，一旦CAS进入忙等待状态一直执行不成功的话，会对CPU造成较大的执行开销.
+
+
+
+### CAS一定有自旋么
+
+通常情况下，CAS 操作都会采用自旋的方式，当 CAS 失败时，会重新尝试执行 CAS 操作，直到操作成功或达到最大重试次数为止。
+
+因为，CAS 操作一般都是在多线程并发访问时使用，如果直接阻塞线程，会导致性能下降，而采用自旋的方式可以让 CPU 空转一段时间，等待锁被释放，从而避免线程切换和阻塞的开销。
+
+但是，如果自旋时间过长或者线程数过多，就会占用过多的 CPU 资源，导致系统性能下降，因此在使用 CAS 操作时，需要根据实际情况进行适当的调整.
+
+
+
+### CAS如何在底层保证原子性
+
+CAS是一种基本的原子操作，用于解决并发问题。在操作系统层面，CAS 操作的原理是基于硬件提供的原子操作指令。在x86架构的CPU中，CAS 操作通常使用 cmpxchg 指令实现。
+
+为啥cmpxchg指令可以保证原子性呢? 主要由以下几个方面的保障
+
+1.cmpxchg 指令是一条原子指令。在 CPU 执行 cpxchg 指令时，处理器会自动锁定总线，防止其他 CPU访问共享变量，然后执行比较和交换操作，最后释放总线。
+
+2.cmpxchg 指令在执行期间，CPU 会自动禁止中断。这样可以确保 CAS 操作的原子性，避免中断或其他干扰对操作的影响。
+
+3.cmpxchg 指令是硬件实现的，可以保证其原子性和正确性。CPU 中的硬件电路确保了 cmpxchg 指令的正确执行，以及对共享变量的访问是原子的。
+
+
+
+### Unsafe是什么
+
+Unsafe是CAS的核心类。因为Java无法直接访问底层操作系统，而是通过本地(native) 方法来访问。不过尽管如此，JVM还是开了一个后门，JDK中有一个类Unsafe，它提供了硬件级别的原子操作。
+
+Unsafe是Java中一个底层类，包含了很多基础的操作，比如数组操作、对象操作、内存操作、CAS操作、线程(park)操作、栅栏(Fence) 操作，JUC包、一些第三方框架都使用Unsafe类来保证并发安全。
+
+Unsafe类在JDK源码的多个类中用到，这个类的提供了一些绕开JVM的更底层功能，基于它的实现可以提高效率。但是，它是一把双刃剑：正如它的名字所预示的那样，它是Unsafe的，它所分配的内存需要手动free (不被GC回收)。Unsafe类，提供了JNI某些功能的简单替代：确保高效性的同时，使事情变得更简单.
+
+Unsafe类提供了硬件级别的原子操作，主要提供了以下功能:
+
+1. 通过Unsafe类可以分配内存，可以释放内存:
+2. 可以定位对象某字段的内存位置，也可以修改对象的字段值，即使它是私有的:
+3. 将线程进行挂起与恢复
+4. CAS操作
+
+
+
+### AQS介绍
+
+https://www.cnblogs.com/zyrblog/p/9866140.html
+
+
+
+### AQS如何实现线程等待和唤醒
+
+AOS (AbstractQueuedSynchronizer)是Java中实现锁和同步器的基础类，通过FIFO双向队列来管理等待线程和阻塞线程，实现线程之间的协作。
+
+AQS中线程等待和唤醒主要依赖park和unpark实现的。
+
+当一个线程尝试获取锁或者同步器时，如果获取失败，AQS会将该线程封装成一个Node并添加到等待队列中，然后通过LockSupport.park()将该线程阻塞。
+
+当一个线程释放锁或者同步器时，AQS会通过LockSupport.unpark()方法将等待队列中的第一个线程唤醒，并让其重新尝试获取锁或者同步器。
+
+除了基本的等待和唤醒机制，AQS还提供了条件变量(Condition)的实现，用于在某些条件不满足时让线程等待，并在条件满足时唤醒线程。具体实现是通过创建一个等待队列，将等待的线程封装成Node并添加到队列中然后将这些线程从同步队列中移除，并在条件满足时将等待队列中的所有线程唤醒。
+
+
+
+### Locksupport功能与使用
+
+
+
+
+
+### 线程池介绍
 
 线程池是一种线程的使用模式，他是一种池化技术的典型实现，线程池就是提前创建好一定数量的线程，然后维护在线程池中。当有任务需要执行的时候，从线程池中选一个线程来执行任务。
 
@@ -2811,19 +3021,22 @@ https://www.cnblogs.com/jxxblogs/p/11882381.html
 
 ### 线程池的拒绝策略
 
-AbortPolicy - 这是默认的拒绝策略，当线程池无法接受新任务时，会抛出RejectedExecutionException异常。这意味着新任务会被立即拒绝，不会加入到任务队列中，也不会执行。通常情况下都是使用这种拒绝策
+- AbortPolicy - 这是默认的拒绝策略，当线程池无法接受新任务时，会抛出RejectedExecutionException异常。这意味着新任务会被立即拒绝，不会加入到任务队列中，也不会执行。通常情况下都是使用这种拒绝策
 
-DiscardPolicy - 这个策略在任务队列已满时，会丢弃新的任务而且不会抛出异常。新任务提交后会被默默地丢弃，不会有任何提示或执行。这个策略一般用于日志记录、统计等不是非常关键的任务。
+- DiscardPolicy - 这个策略在任务队列已满时，会丢弃新的任务而且不会抛出异常。新任务提交后会被默默地丢弃，不会有任何提示或执行。这个策略一般用于日志记录、统计等不是非常关键的任务。
 
-DiscardOldestPolicy - 这个策略也会丢弃新的任务，但它会先尝试将任务队列中最早的任务删除，然后再尝试提交新任务。如果任务队列已满，且线程池中的线程都在工作，可能会导致一些任务被丢弃。这个策略对于些实时性要求较高的场景比较合适。
+- DiscardOldestPolicy - 这个策略也会丢弃新的任务，但它会先尝试将任务队列中最早的任务删除，然后再尝试提交新任务。如果任务队列已满，且线程池中的线程都在工作，可能会导致一些任务被丢弃。这个策略对于些实时性要求较高的场景比较合适。
 
-CallerRunsPolicy - 这个策略将任务回退给调用线程，而不会抛出异常。调用线程会尝试执行任务。这个策略可以降低任务提交速度，适用于任务提交者能够承受任务执行的压力，但希望有一种缓冲机制的情况。
+- CallerRunsPolicy - 这个策略将任务回退给调用线程，而不会抛出异常。调用线程会尝试执行任务。这个策略可以降低任务提交速度，适用于任务提交者能够承受任务执行的压力，但希望有一种缓冲机制的情况。
+
+一般来说，默认的拒绝策略还是比较常用的，因为大多数情况下我们不太会让任务多到线程池中放不下，要不然就提升执行速度，要不然就提升队列长度了
+需要拒绝的情况一般是特殊情况比较多，所以在实际工作中基本就是拒绝并抛异常的方式比较多
 
 
 
 ### ForkJoinPool和其他线程池的区别
 
-ForkJoinPool和ExecutorService都是Java中常用的线程池的实现，他们主要在实现方式上有一定的区别，所以也就会同时带来的适用场景上面的区别。
+ForkJoinPool和ExecutorService都是Java中常用的线程池的实现，他们主要在实现方式和适用场景上有区别。
 
 首先在实现方式上，ForkJoinPool 是基于工作窃取 (Work-Stealing) 算法实现的线程池，ForkJoinPool 中每个线程都有自己的工作队列，用于存储待执行的任务。当一个线程执行完自己的任务之后，会从其他线程的工作队列中窃取任务执行，以此来实现任务的动态均衡和线程的利用率最大化
 
@@ -2844,6 +3057,63 @@ https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
 
 
 ### 实战
+
+### i++是线程安全的么？
+
+不是。虽然是一行代码，但是编译成的字节码指令其实有多个。所以++操作不符合原子性。
+
+
+
+### 如何使i++线程安全
+
+想要保证多线程情况下，i++的正确性，需要考虑可见性、原子性及有序性
+
+可以考虑使用synchronized，reentrantLock，AtomicInteger等。
+
+参考代码：
+
+```java
+public class ThreadSafeIPlusPlus {
+    public static void main(String[] args) throws Exception {
+        //使用AtomicInteger
+        AtomicInteger i = new AtomicInteger(0);
+        //i++
+        i.getAndIncrement();
+        //++i
+        i.incrementAndGet();
+        System.out.println(i);
+
+        //使用synchronized
+        int i1 = 0;
+        synchronized (ThreadSafeIPlusPlus.class) {
+            i1++;
+        }
+
+        //使用lock
+        ReentrantLock lock = new ReentrantLock(true);
+        lock.lock();
+        try {
+            i1++;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+
+
+
+### sleep(0)的作用
+
+Thread的sleep方法会让线程暂时释放CPU资源，然后进入到TIMED_WAITING状态，等到指定时间之后会再尝试获取CPU时间片。
+
+sleep方法需要指定一个时间，表示sleep的毫秒数，但有时候我们会见到Thread.sleep(0)
+
+这种用法其实就是让当前线程释放一下CPU时间片，然后重新开始争抢。
+
+这种用法一般比较少见，很多时候在一些底层框架中，可以用来做线程调度，比如某个线程长时间占用CPU资源，这时候通过sleep(0)让线程主动释放CPU时间片，让其他线程可以进行一次公平的争抢。
+
+
 
 ### 如何让多个线程按顺序执行
 
@@ -12669,6 +12939,16 @@ LRU，LFU，RANDOM，TTL。
 ### 单例模式的介绍
 
 ### 写一个线程安全的单例模式
+
+### String的设计模式
+
+https://www.yuque.com/hollis666/vzy8n3/bxa45gl8rgg9slqw
+
+
+
+### 不变模式介绍
+
+https://www.yuque.com/hollis666/vzy8n3/qlohhe
 
 
 
