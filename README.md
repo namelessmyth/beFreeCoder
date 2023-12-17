@@ -5,9 +5,13 @@
 <a href="https://zhuanlan.zhihu.com/p/474433404" target="_blank">
 <img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用">
 </a>
-<a href="https://github.com/itwanger/toBeBetterJavaer" target="_blank"><img alt="Java程序员进阶之路" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
+<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
 </a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Java程序员进阶之路" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg">
+<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square">
+</a>
+<a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg">
+</a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg">
 </a>
 <a href="https://gitee.com/namelessmyth/document" target="_blank">
   <img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
@@ -41,7 +45,8 @@
 flowchart LR
 
 root[程序员]
-root-->dev[初级]-->高级开发-->开发经理-->开发总监-->CTO
+root-->dev[初级]-->sdev[高级开发]-->架构师-->高级架构师-->top["研究员/科学家"]
+sdev-->开发经理-->开发总监-->CTO
 dev-->运维-->高级运维-->运维经理-->运维总监
 dev-->业务顾问-->高级业务顾问-->业务总监
 dev-->项目经理-->项目总监-->企业高管
@@ -57,7 +62,7 @@ dev-->创业-->老板
 ```mermaid
 flowchart TB
 
-root[顶尖程序员进阶之路]
+root[程序员进阶之路]
 
 root-->Java["Java"]
 Java-->面试题
