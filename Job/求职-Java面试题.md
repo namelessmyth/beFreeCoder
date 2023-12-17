@@ -120,7 +120,9 @@ public Node getLoopNode(Node head){
 
 
 
-## 多线程并发
+# 多线程并发
+
+## 基础概念
 
 ### 并发和并行
 
@@ -341,6 +343,305 @@ synchronized保证同一时刻只允许一个线程能够操作。一个线程lo
 https://www.yuque.com/hollis666/vzy8n3/gg2n5fqckk442ouf
 
 
+
+### JDK21中的虚拟线程
+
+JDK21中的虚拟线程其实这就是协程。是在JDK19中引入，在JDK21中成为正式功能。
+
+在以前的JDK中，Java的线程模型比较简单，在大多数操作系统中，主要采用的是基于轻量级进程实现的一对的线程模型，简单来说就是每一个Java线程对应一个操作系统中的轻量级进程，这种线程模型中的线程创建、析构及同步等动作，都需要进行系统调用。而系统调用则需要在用户态 (User Mode) 和内核态(Kernel Mode)中来回切换，所以性能开销还是很大的。
+
+而新引入的虚拟线程，是JDK实现的轻量级线程，他可以避免上下文切换带来的的额外耗费。他的实现原理其实是JDK不再是每一个线程都一对一的对应一个操作系统的线程了，而是会将多个虚拟线程映射到少量操作系统线程中，通过有效的调度来避免那些上下文切换
+
+在JDK21中，创建协程的方法，如下
+
+Thread.startVirtualThread()
+
+Executors.newVirtualThreadPerTaskExecutor()
+
+性能对比：有人测试过，相同的代码逻辑从线程改成携程后，执行时间从100秒降为1.6秒。
+
+原文链接：https://www.yuque.com/hollis666/vzy8n3/ac1a0q
+
+
+
+
+
+## 线程基础
+
+### 线程的生命周期
+
+#### 前言
+
+线程的生命周期指的是线程从创建出来到最终消亡的整个过程，以及过程中的状态变化。
+
+#### 线程状态图
+
+以下图用mermaid语法绘制：
+
+```mermaid
+stateDiagram
+    [*] --> new
+    new --> RUNNABLE : start()
+    RUNNABLE --> BLOCKED : 竞争synchronized锁
+    RUNNABLE --> WAITING : Ojbect.wait()
+    WAITING --> RUNNABLE : Ojbect.notify()
+    RUNNABLE --> TIMED_WAITING : thread.join(long)
+    TIMED_WAITING --> RUNNABLE : 等待时间到
+    RUNNABLE --> TERMINATED : 执行结束
+    TERMINATED --> [*]
+```
+
+#### 状态变化说明
+
+java线程对象的所有状态存放在**Thread类的内部类(State)**中：
+
+1. 初始(NEW)
+   1. 新创建了一个线程对象，但还没有调用start()方法
+2. 运行(RUNNABLE)
+   1. Java线程中将就绪(READY) 和运行中(RUNNING) 两种状笼统的称为“可运行"
+   2. 就绪(READY)
+      1. 线程对象创建后，其他线程(比如main线程调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中并分配cpu使用权
+   3. 运行中 (RUNNING)
+      1. 就绪(READY)的线程获得了cpu 时间片，开始执行程序代码
+3. 阻塞(BLOCKED)
+   1. 表示线程被锁阻塞时的状态。例如：多个线程竞争synchronized锁，有1个线程得到了锁，其他线程就是阻塞状态
+4. 等待(WAITING)
+   1. 线程暂停运行，等待其他线程唤醒之后再继续执行。
+   2. 进入方法，例如：thread.join()，Ojbect.wait()，LockSupport.park()方法
+   3. 唤醒方法，例如：Object.notify()，Object.notifyAll()
+5. 定时等待(TIMED_WAITING)
+   1. 该状态不同于WAITING，它可以在指定的时间后自行恢复
+   2. 进入方法，例如：Thread.sleep(long)，Object.wait(long)，thread.join(long)，LockSupport.parkNanos，LockSupport.parkUntil
+6. 终止(TERMINATED)
+   1. 表示该线程已经执行结束或者异常中断；
+   2. 线程一旦终止,就不能再重启启动,否则报错(IllegalThreadStateException)
+
+#### 补充说明
+
+在Thread类中过时的方法(因为存在线程安全问题,所以弃用了
+
+-  void suspend()：暂停当前线程
+-  void resume()：恢复当前线程
+-  void stop()：结束当前线程
+
+
+
+
+
+
+
+### 线程的创建方式
+
+在Java中，有如下方式可以创建线程
+
+1. 继承Thread类创建线程
+2. 实现Runnable接口创建线程
+3. 通过Callable和FutureTask创建线程
+4. 通过线程池创建
+
+
+
+### Callable和Runnable的区别
+
+Runnable接口和Callable接口都可以用来创建新线程，他们有如下不同：
+
+1. 实现Runnable接口，需要实现run方法；实现Callable接口的话，需要实现call方法。
+2. Runnable的run方法无返回值，Callable的call方法有返回值，类型为Obiect
+3. Callable中可以抛出checked exception，Runnable不可以。
+4. Callable和Runnable都可以应用于executors。而Thread类只支持Runnable。
+
+
+
+### run和start的区别
+
+start是用来启动线程的。线程获得CPU时间片后执行的是run方法中的代码。
+
+
+
+### sleep和wait的区别
+
+1. sleep是线程的静态方法，wait是Object对象方法。
+2. sleep()方法可以在任何地方使用；而wait()方法则只能在同步方法或同步块中使用
+3. wait()方法会释放对象锁，但sleep()方法不会；
+4. wait后线程会进入到WAITING状态，直到被唤醒；sleep后进入到TIMED_WAITING状态。
+
+
+
+### notify和notifyAll的区别
+
+相同点
+
+- 这2个方法都是用于唤醒waiting状态的线程，
+- 唤醒的这些线程只是进入争夺队列，并不表示立即就可以获得CPU开始执行，因为wait方法被调用的时候线程已经释放了对象锁。
+- notify和notifyAll因为也是操作对象的，所以把他们定义在Object类中。
+
+区别是：
+
+- 使用notifyAll可以唤醒所有处于waiting状态的线程，使其重新进入锁的争夺队列中，而notify只能唤醒一个。
+- notifyAll可以把所有线程都唤醒，让他们都可以竞争锁，但是最终也只有一个可以获得锁并执行。
+
+
+
+### 线程什么时候抛出InterruptedException
+
+调用interrupt方法时。
+抛出InterruptedException应该怎么处理
+抛出异常后会默认复位。必须做出明确的处理。不能仅仅打印日志
+
+
+
+### interrupt()的作用？线程复位及其方式
+
+ interrupt()的作用是中断线程。将线程变量interrupt标记为true，
+
+线程的复位就是将变量interrupt改为false，并且唤醒线程；
+
+线程复位的方式有：抛出InterruptException异常，通过Thread.interrupted();
+
+
+
+### interrupt, interrupted, isInterrupted()区别
+
+
+
+### sleep，join，yield的区别。
+
+sleep：睡眠指定时间，睡眠期间不会释放锁，超时后让出CPU时间片；
+
+yield，和sleep(0)作用类似，让出当前线程的时间片
+
+join：让调用该方法的线程的执行结果对主线程可见，内部基于wait notify实现；
+
+
+
+### isAlive方法判断线程存活
+
+通常情况下，只要线程状态不为new和terminated，thread.isAlive()都会返回true
+
+```java
+public static void main(String[] args) throws InterruptedException {
+
+    Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    System.out.println(thread.getState().name() + " "+thread.isAlive());
+    thread.start();
+    while (true){
+        System.out.println(thread.getState().name() + " "+thread.isAlive());
+    }
+}
+
+//控制台输出
+NEW false
+RUNNABLE true
+RUNNABLE true
+TIMED_WAITING true
+TIMED_WAITING true
+RUNNABLE true
+RUNNABLE true
+RUNNABLE true
+TERMINATED false
+TERMINATED false
+```
+
+极少数情况，如果线程要修改状态的时候被其他线程锁定了，thread.isAlive()还是返回true。
+
+```java
+public class ThreadIsAlive {
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(() -> {
+            System.out.println("t1 begin");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("t1 end");
+            }
+            System.out.println("t1 isAlive1:" + Thread.currentThread().isAlive());
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (t1) {
+                System.out.println("t2 begin");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                }
+                System.out.println("t2 end");
+                System.out.println("t1 isAlive2:" + t1.isAlive());
+            }
+        });
+        t1.start();
+        t2.start();
+        t1.join();
+        System.out.println("t1 isAlive3:" + t1.isAlive());
+    }
+}
+
+//控制台打印
+t1 begin
+t2 begin
+t1 isAlive1:true
+t2 end
+t1 isAlive2:true
+t1 isAlive3:false
+```
+
+
+
+### 守护线程是什么
+
+在Java中线程分2类：User Thread(用户线程)、Daemon Thread(守护线程)。一般默认创建的就是用户线程，用于执行用户级任务。守护线程也就是“后台线程”，一般用来执行后台任务，守护线程的典型应用是GC(垃圾回收器)。
+
+这两种线程唯一的区别是，Java虚拟机退出时会等待所有<用户线程>都结束而不会等<守护线程>执行完。
+
+**守护线程创建**
+
+可以通过使用setDaemon(true)方法，使线程成为一个守护线程。我们需要在启动线程之前调用一个线程的setDaemon(true)方法。否则，就会抛出一个java.lang.lllegalThreadStateException。可以使用isDaemon()方法来检查线程是否是守护线程。
+
+```java
+public class DeamonExit {
+    /**
+     * 此方法只会打印一遍守护线程中的内容就会退出。因为jvm不会等守护线程执行完毕才退出。
+     * 但如果把 childThread.setDaemon(true);注释就会一直执行
+     * @param args
+     */
+    public static void main(String[] args) {
+        Thread childThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 1000; i++) {
+                        System.out.println("I'm a Deamon thread:" + i);
+                        TimeUnit.SECONDS.sleep(1);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        childThread.setDaemon(true);
+        childThread.start();
+        System.out.println("I'm a main thread...");
+    }
+}
+```
+
+
+
+### 线程如何被调度
+
+https://www.yuque.com/hollis666/vzy8n3/kru3wibs8b590cl1
+
+
+
+## 锁与并发
 
 ### Synchronized是什么
 
@@ -794,297 +1095,6 @@ as-if-serial语义的意思指：不管怎么重排序（编译器和处理器�
 
 
 
-### 守护线程是什么
-
-在Java中线程分2类：User Thread(用户线程)、Daemon Thread(守护线程)。一般默认创建的就是用户线程，用于执行用户级任务。守护线程也就是“后台线程”，一般用来执行后台任务，守护线程的典型应用是GC(垃圾回收器)。
-
-这两种线程唯一的区别是，Java虚拟机退出时会等待所有<用户线程>都结束而不会等<守护线程>执行完。
-
-**守护线程创建**
-
-可以通过使用setDaemon(true)方法，使线程成为一个守护线程。我们需要在启动线程之前调用一个线程的setDaemon(true)方法。否则，就会抛出一个java.lang.lllegalThreadStateException。可以使用isDaemon()方法来检查线程是否是守护线程。
-
-```java
-public class DeamonExit {
-    /**
-     * 此方法只会打印一遍守护线程中的内容就会退出。因为jvm不会等守护线程执行完毕才退出。
-     * 但如果把 childThread.setDaemon(true);注释就会一直执行
-     * @param args
-     */
-    public static void main(String[] args) {
-        Thread childThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i = 0; i < 1000; i++) {
-                        System.out.println("I'm a Deamon thread:" + i);
-                        TimeUnit.SECONDS.sleep(1);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        childThread.setDaemon(true);
-        childThread.start();
-        System.out.println("I'm a main thread...");
-    }
-}
-```
-
-
-
-
-
-
-
-### JDK21中的虚拟线程
-
-JDK21中的虚拟线程其实这就是协程。是在JDK19中引入，在JDK21中成为正式功能。
-
-在以前的JDK中，Java的线程模型比较简单，在大多数操作系统中，主要采用的是基于轻量级进程实现的一对的线程模型，简单来说就是每一个Java线程对应一个操作系统中的轻量级进程，这种线程模型中的线程创建、析构及同步等动作，都需要进行系统调用。而系统调用则需要在用户态 (User Mode) 和内核态(Kernel Mode)中来回切换，所以性能开销还是很大的。
-
-而新引入的虚拟线程，是JDK实现的轻量级线程，他可以避免上下文切换带来的的额外耗费。他的实现原理其实是JDK不再是每一个线程都一对一的对应一个操作系统的线程了，而是会将多个虚拟线程映射到少量操作系统线程中，通过有效的调度来避免那些上下文切换
-
-在JDK21中，创建协程的方法，如下
-
-Thread.startVirtualThread()
-
-Executors.newVirtualThreadPerTaskExecutor()
-
-性能对比：有人测试过，相同的代码逻辑从线程改成携程后，执行时间从100秒降为1.6秒。
-
-原文链接：https://www.yuque.com/hollis666/vzy8n3/ac1a0q
-
-
-
-### 线程的生命周期
-
-#### 前言
-
-线程的生命周期指的是线程从创建出来到最终消亡的整个过程，以及过程中的状态变化。
-
-#### 线程状态图
-
-以下图用mermaid语法绘制：
-
-```mermaid
-stateDiagram
-    [*] --> new
-    new --> RUNNABLE : start()
-    RUNNABLE --> BLOCKED : 竞争synchronized锁
-    RUNNABLE --> WAITING : Ojbect.wait()
-    WAITING --> RUNNABLE : Ojbect.notify()
-    RUNNABLE --> TIMED_WAITING : thread.join(long)
-    TIMED_WAITING --> RUNNABLE : 等待时间到
-    RUNNABLE --> TERMINATED : 执行结束
-    TERMINATED --> [*]
-```
-
-#### 状态变化说明
-
-java线程对象的所有状态存放在**Thread类的内部类(State)**中：
-
-1. 初始(NEW)
-   1. 新创建了一个线程对象，但还没有调用start()方法
-2. 运行(RUNNABLE)
-   1. Java线程中将就绪(READY) 和运行中(RUNNING) 两种状笼统的称为“可运行"
-   2. 就绪(READY)
-      1. 线程对象创建后，其他线程(比如main线程调用了该对象的start()方法。该状态的线程位于可运行线程池中，等待被线程调度选中并分配cpu使用权
-   3. 运行中 (RUNNING)
-      1. 就绪(READY)的线程获得了cpu 时间片，开始执行程序代码
-3. 阻塞(BLOCKED)
-   1. 表示线程被锁阻塞时的状态。例如：多个线程竞争synchronized锁，有1个线程得到了锁，其他线程就是阻塞状态
-4. 等待(WAITING)
-   1. 线程暂停运行，等待其他线程唤醒之后再继续执行。
-   2. 进入方法，例如：thread.join()，Ojbect.wait()，LockSupport.park()方法
-   3. 唤醒方法，例如：Object.notify()，Object.notifyAll()
-5. 定时等待(TIMED_WAITING)
-   1. 该状态不同于WAITING，它可以在指定的时间后自行恢复
-   2. 进入方法，例如：Thread.sleep(long)，Object.wait(long)，thread.join(long)，LockSupport.parkNanos，LockSupport.parkUntil
-6. 终止(TERMINATED)
-   1. 表示该线程已经执行结束或者异常中断；
-   2. 线程一旦终止,就不能再重启启动,否则报错(IllegalThreadStateException)
-
-#### 补充说明
-
-在Thread类中过时的方法(因为存在线程安全问题,所以弃用了
-
--  void suspend()：暂停当前线程
--  void resume()：恢复当前线程
--  void stop()：结束当前线程
-
-
-
-
-
-
-
-### 线程的创建方式
-
-在Java中，有如下方式可以创建线程
-
-1. 继承Thread类创建线程
-2. 实现Runnable接口创建线程
-3. 通过Callable和FutureTask创建线程
-4. 通过线程池创建
-
-
-
-### Callable和Runnable的区别
-
-Runnable接口和Callable接口都可以用来创建新线程，他们有如下不同：
-
-1. 实现Runnable接口，需要实现run方法；实现Callable接口的话，需要实现call方法。
-2. Runnable的run方法无返回值，Callable的call方法有返回值，类型为Obiect
-3. Callable中可以抛出checked exception，Runnable不可以。
-4. Callable和Runnable都可以应用于executors。而Thread类只支持Runnable。
-
-
-
-### run和start的区别
-
-start是用来启动线程的。线程获得CPU时间片后执行的是run方法中的代码。
-
-
-
-### sleep和wait的区别
-
-1. sleep是线程的静态方法，wait是Object对象方法。
-2. sleep()方法可以在任何地方使用；而wait()方法则只能在同步方法或同步块中使用
-3. wait()方法会释放对象锁，但sleep()方法不会；
-4. wait后线程会进入到WAITING状态，直到被唤醒；sleep后进入到TIMED_WAITING状态。
-
-
-
-### notify和notifyAll的区别
-
-相同点
-
-- 这2个方法都是用于唤醒waiting状态的线程，
-- 唤醒的这些线程只是进入争夺队列，并不表示立即就可以获得CPU开始执行，因为wait方法被调用的时候线程已经释放了对象锁。
-- notify和notifyAll因为也是操作对象的，所以把他们定义在Object类中。
-
-区别是：
-
-- 使用notifyAll可以唤醒所有处于waiting状态的线程，使其重新进入锁的争夺队列中，而notify只能唤醒一个。
-- notifyAll可以把所有线程都唤醒，让他们都可以竞争锁，但是最终也只有一个可以获得锁并执行。
-
-
-
-### 线程什么时候抛出InterruptedException
-
-调用interrupt方法时。
-抛出InterruptedException应该怎么处理
-抛出异常后会默认复位。必须做出明确的处理。不能仅仅打印日志
-
-
-
-### interrupt()的作用？线程复位及其方式
-
- interrupt()的作用是中断线程。将线程变量interrupt标记为true，
-
-线程的复位就是将变量interrupt改为false，并且唤醒线程；
-
-线程复位的方式有：抛出InterruptException异常，通过Thread.interrupted();
-
-
-
-### interrupt, interrupted, isInterrupted()区别
-
-
-
-### sleep，join，yield的区别。
-
-sleep：睡眠指定时间，睡眠期间不会释放锁，超时后让出CPU时间片；
-
-yield，和sleep(0)作用类似，让出当前线程的时间片
-
-join：让调用该方法的线程的执行结果对主线程可见，内部基于wait notify实现；
-
-
-
-### isAlive方法判断线程存活
-
-通常情况下，只要线程状态不为new和terminated，thread.isAlive()都会返回true
-
-```java
-public static void main(String[] args) throws InterruptedException {
-
-    Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-    System.out.println(thread.getState().name() + " "+thread.isAlive());
-    thread.start();
-    while (true){
-        System.out.println(thread.getState().name() + " "+thread.isAlive());
-    }
-}
-
-//控制台输出
-NEW false
-RUNNABLE true
-RUNNABLE true
-TIMED_WAITING true
-TIMED_WAITING true
-RUNNABLE true
-RUNNABLE true
-RUNNABLE true
-TERMINATED false
-TERMINATED false
-```
-
-极少数情况，如果线程要修改状态的时候被其他线程锁定了，thread.isAlive()还是返回true。
-
-```java
-public class ThreadIsAlive {
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Thread(() -> {
-            System.out.println("t1 begin");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.out.println("t1 end");
-            }
-            System.out.println("t1 isAlive1:" + Thread.currentThread().isAlive());
-        });
-
-        Thread t2 = new Thread(() -> {
-            synchronized (t1) {
-                System.out.println("t2 begin");
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                }
-                System.out.println("t2 end");
-                System.out.println("t1 isAlive2:" + t1.isAlive());
-            }
-        });
-        t1.start();
-        t2.start();
-        t1.join();
-        System.out.println("t1 isAlive3:" + t1.isAlive());
-    }
-}
-
-//控制台打印
-t1 begin
-t2 begin
-t1 isAlive1:true
-t2 end
-t1 isAlive2:true
-t1 isAlive3:false
-```
-
-
-
 ### 死锁
 
 #### 死锁介绍
@@ -1173,7 +1183,35 @@ class DeadLock implements Runnable {
 
 
 
-### 可重入锁介绍
+### 可重入锁介绍与实现
+
+可重入锁是一种多线程同步机制，允许同一线程多次获取同一个锁而不会导致死锁。同一个线程可以在持有锁的情况下再次请求并获得相同的锁，而不会被自己阻塞。可重入锁有助于避免死锁和提高代码的可维护性，因为它允许在一个线程中嵌套地调用锁定的方法。
+
+我们常用的synchronized和ReentrantLock都是比较典型的可重入锁。也就是说，在一个线程调用synchronized方法的同时，可以在其方法体内部调用该对象另一个synchronized方法，也就是说一个线程得到个对象锁后可以再次请求该对象锁。
+
+```java
+public class ReEntryTest {
+    public static void main(String[] args) {
+        ReEntryTest reentrantLockTest = new ReEntryTest();
+        reentrantLockTest.method1();
+    }
+
+    public synchronized void method1() {
+        method2();
+        System.out.println("invoke method1");
+    }
+
+    public synchronized void method2() {
+        System.out.println("invoke method2");
+    }
+}
+```
+
+在可重入锁的实现上，一般是先要记录下来当前锁是归属于哪个线程的，然后再记录当前锁被重入了多少次。这样在加锁的时候判断是不是当前线程持有的锁，如果是则重入次数+1，否则重入失败。
+
+在解锁时也同理，锁是当前线程加的，那就重入次数-1，直到等于0的时候，直接解锁。
+
+reentrantLock也是同理
 
 
 
@@ -1185,11 +1223,11 @@ class DeadLock implements Runnable {
 
 
 
-### JUC
-
-### ConcurrentHashMap实现原理
+### Locksupport功能与使用
 
 
+
+## JUC
 
 ### 实现线程同步的方式
 
@@ -2434,45 +2472,6 @@ TransmittableThreadLocal是阿里开源的一个方案 (开源地址: https://gi
 
 
 
-### 主线程如何处理子线程的异常
-
-有如下方案可以实现
-
-#### Future
-
-如果想要在主线程能够捕获子线程的异常，可以考虑使用Callable和Future，它们允许主线程获取子线程的执行结果和异常。这样，主线程可以检查子线程是否抛出了异常，并在必要时处理它。
-
-#### UncaughtExceptionHandler
-
-UncaughtExceptionHandler 是Java中的一个接口，用于处理未捕获异常，即那些没有被 try-catch 块捕获的异常。它允许定义自定义异常处理器，以便在线程出现未捕获异常时采取特定的操作。
-
-有了它，我们就可以为线程设置一个自定义的末捕获异常处理器，当线程抛出未捕获异常时，该处理器会被调用我们可以在其中记录异常信息、执行清理操作等。
-
-```java
-public class UncaughtExceptionHandlerTest implements Thread.UncaughtExceptionHandler{
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        System.out.println(String.format("线程：%s，异常：%s", t.getName(), e));
-    }
-
-    public static void main(String[] args) {
-        Thread t = new Thread(()->{
-            throw new RuntimeException("线程异常");
-        });
-        t.setUncaughtExceptionHandler(new UncaughtExceptionHandlerTest());
-        t.start();
-    }
-}
-```
-
-#### CompletableFuture
-
-CompletableFuture有很多方法可以处理子线程的异常。例如：handle()，exceptionally()等等。具体可参考[CompletableFuture多线程编排](#CompletableFuture多线程编排)
-
-
-
-
-
 ### CAS是什么？常见问题
 
 CAS是Compare And Swap的简称，它是一项乐观锁技术，顾名思义就是先比较再替换。
@@ -2567,11 +2566,11 @@ AQS中线程等待和唤醒主要依赖park和unpark实现的。
 
 
 
-### Locksupport功能与使用
+### ConcurrentHashMap实现原理
 
 
 
-
+## 线程池
 
 ### 线程池介绍
 
@@ -3056,7 +3055,7 @@ https://www.yuque.com/hollis666/vzy8n3/wl8s1swvh7g841be
 
 
 
-### 实战
+## 实战
 
 ### i++是线程安全的么？
 
@@ -3347,6 +3346,45 @@ public class ThreadRotation1 {
 
 
 
+### 主线程如何处理子线程的异常
+
+有如下方案可以实现
+
+#### Future
+
+如果想要在主线程能够捕获子线程的异常，可以考虑使用Callable和Future，它们允许主线程获取子线程的执行结果和异常。这样，主线程可以检查子线程是否抛出了异常，并在必要时处理它。
+
+#### UncaughtExceptionHandler
+
+UncaughtExceptionHandler 是Java中的一个接口，用于处理未捕获异常，即那些没有被 try-catch 块捕获的异常。它允许定义自定义异常处理器，以便在线程出现未捕获异常时采取特定的操作。
+
+有了它，我们就可以为线程设置一个自定义的末捕获异常处理器，当线程抛出未捕获异常时，该处理器会被调用我们可以在其中记录异常信息、执行清理操作等。
+
+```java
+public class UncaughtExceptionHandlerTest implements Thread.UncaughtExceptionHandler{
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        System.out.println(String.format("线程：%s，异常：%s", t.getName(), e));
+    }
+
+    public static void main(String[] args) {
+        Thread t = new Thread(()->{
+            throw new RuntimeException("线程异常");
+        });
+        t.setUncaughtExceptionHandler(new UncaughtExceptionHandlerTest());
+        t.start();
+    }
+}
+```
+
+#### CompletableFuture
+
+CompletableFuture有很多方法可以处理子线程的异常。例如：handle()，exceptionally()等等。具体可参考[CompletableFuture多线程编排](#CompletableFuture多线程编排)
+
+
+
+
+
 ### 为什么下面的源码在多个生产者的时候会超？怎么解决？
 
 有多个生产者时，当达到生产上限时，调用notify方法唤醒的可能不是消费者，而是其他生产者。
@@ -3437,7 +3475,7 @@ public void run() {
 
 
 
-## JVM
+# JVM
 
 ### 内存溢出，内存泄漏遇到过吗？什么场景产生的，怎么解决的？
 
