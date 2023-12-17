@@ -1,35 +1,83 @@
-# Git-Doc
+<p align="left">
+<a href="https://blog.csdn.net/namelessmyth" target="_blank">
+<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge">
+</a>
+<a href="https://zhuanlan.zhihu.com/p/474433404" target="_blank">
+<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用">
+</a>
+<a href="https://github.com/itwanger/toBeBetterJavaer" target="_blank"><img alt="Java程序员进阶之路" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
+</a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Java程序员进阶之路" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg">
+</a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank">
+  <img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
+</a>
+</p>
 
-## 介绍
-此项目主要用于分享：英语学习资料，Java学习资料，求职面试资料等内容。详细内容可参考[目录说明](#目录说明)。
 
-文件格式主要以文档格式为主，例如：markdown，docx，xlsx等。markdown格式可以在线预览，其他格式需要下载后查看。
+# 为什么会有这个知识库？
 
-项目所有内容大家可随意下载、转发、评论。如果您觉得有用，欢迎收藏和加星哦（O(∩_∩)O。
+作为程序员的这一路上，一直有这样的困惑，不知道大家是否有同感？
+
+- 觉得自己会的很多，想要向领导或者同事展现自己的水平，又不能清晰完整的说出。只有零散的知识点
+- 写了很多年代码，但始终觉得自己知识不成体系，和架构师还有距离。
+- 曾经写了很多文档或博客，但是四散各处，时间长了自己都忘了放哪里了。遇到难题还是依赖百度。
+
+于是就有了知识库，这个知识库聚集了从业编程以来所有的原创文章、学习资料、经验总结等，分享给各位小伙伴。
+
+分享的内容包括但不仅限于： Java基础、多线程并发、JVM、数据库，面试资料等等，详见[知识库地图](#知识库地图)。
+
+知识库取名 **toBeTopCoder **，即 **to Be Top Coder **，意为「成为一名顶尖程序员」。希望每一名程序员都能达成这个目标。
+
+赠人玫瑰手有余香。知识库会**持续保持更新，欢迎收藏或加星**！O(∩_∩)O😄。
+
+部分内容转载了他人的作品，转载的部分会注明出处。如涉及侵权请联系我删除。
 
 
 
-## 目录说明
+# 进阶之路
 
 ```mermaid
 flowchart LR
 
-root-->English["English：英语学习资料"]
+root[程序员]
+root-->dev[初级]-->高级开发-->开发经理-->开发总监-->CTO
+dev-->运维-->高级运维-->运维经理-->运维总监
+dev-->业务顾问-->高级业务顾问-->业务总监
+dev-->项目经理-->项目总监-->企业高管
+dev-->创业-->老板
+```
+
+
+
+
+
+# 知识库地图
+
+```mermaid
+flowchart TB
+
+root[顶尖程序员进阶之路]
 
 root-->Java["Java"]
-Java-->mashibing[马士兵学习笔记]
-Java-->gupao[咕泡学习笔记]
+Java-->面试题
+Java-->mashibing[马士兵]
+Java-->gupao[咕泡]
 
-root-->Job["Job：面试求职资料"]
-root-->Script["Script：脚本（sh，bat）"]
+root-->English["英语"]
 
-root-->Template["Template：文件模板"]
+root-->Job["求职资料"]
+root-->Script["脚本"]
+Script-->sh
+Script-->bat
+
+root-->Template["文件模板"]
 Template-->日报
 Template-->周报
 Template-->绩效考核
 
-root-->Report["Report：报告"]
-root-->os["OS：操作系统使用文档"]
+root-->Report["报告"]
+root-->os["OS使用"]
 
 
 ```
@@ -38,39 +86,18 @@ root-->os["OS：操作系统使用文档"]
 
 
 
-## 使用说明
+# 快速链接
 
-1.  由于Git空间有限。本项目文件格式以文档格式为准。尽量避免上传大文件，例如：视频，安装文件等。
-2.  使用Git管理文档的原因：
-
-    - 博客网站并不能永久保存文档记录。如果仅通过博客网记录，博客网站也是有可能关停的。
-    - 多设备文件同步。家里有多台电脑的，或者在公司编辑完后，在家里继续编辑。
-    - Git能自动记录每个文件的提交历史。能够知道每次提交了什么。如果误删还能还原。
-    - 总有一些内容是不能分享给所有人的。git可以管理权限，可以设置公开或者私有。文件在本地也有备份。
-3.  **Markdown**格式介绍
-    1.  大部分md文档可以使用浏览器直接预览，不需要额外装插件。其他格式需要下载才能浏览。
-        1.  部分文档不能预览是因为被git服务器拦截，可能包含敏感词。
-    2.  markdown格式更关注文档内容而不是文档格式。Word功能虽然更强大，但强大的代价是作者需要花时间在内容之外的地方。
-    3.  代码语法着色功能强大，对技术人员更加友好。
-    4.  自带mermaid语法，可以直接用文本，编写流程图，脑图，类图等。不需要用到第三方工具。
-        1.  上面的章节（[目录说明](#目录说明)）就是用mermaid语法写的。
-    5.  很多博客网站支持markdown语法，写好后更容易转发成博客。例如：CSDN。
-    6.  [更多Markdown格式介绍](https://zhuanlan.zhihu.com/p/128106307)
-
-
-
-
-## 参与贡献
-
-1.  文档创建者：namelessmyth（Gem）
-
-
-
-## 友情链接
-
-下面是我的博客和其他内容分享主页，如果您觉得这些内容对你有用，欢迎（点赞+关注+收藏）哦，O(∩_∩)O
-
-1.  CSDN博客：https://blog.csdn.net/namelessmyth
-1.  Gitee主页：https://gitee.com/namelessmyth
-1.  GitHub主页：https://github.com/namelessmyth
-
+- Java
+  - 面试题
+    - J2SE
+    - JVM
+    - 多线程并发
+    - MQ
+    - 数据库
+  - 马士兵
+- 英语
+  - 通用
+    - [通用学习总结-md](docs\English\英语学习-美剧-Gem.md)
+  - 美剧
+    - [海贼王真人版-学习总结-md](docs\English\英语学习-美剧-Gem.md)
