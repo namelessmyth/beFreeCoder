@@ -105,11 +105,11 @@ db-->MongoDB
 
 - Java
   - 面试题
-    - [J2SE](java/job/求职-面试题-J2SE.md)
-    - [JVM](java/job/求职-面试题-JVM.md)
-    - [多线程并发](java/job/求职-面试题-多线程并发.md)
-    - [MQ](java/job/求职-面试题-MQ.md)
-    - [数据库](java/job/求职-面试题-数据库.md)
+    - [J2SE](Java/Job/求职-面试题-J2SE.md)
+    - [JVM](Java/Job/求职-面试题-JVM.md)
+    - [多线程并发](Java/Job/求职-面试题-多线程并发.md)
+    - [MQ](Java/Job/求职-面试题-MQ.md)
+    - [数据库](Java/Job/求职-面试题-数据库.md)
 - 数据库
   - MySQL
   - Oracle
