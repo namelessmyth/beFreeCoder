@@ -65,52 +65,67 @@ flowchart TB
 root[程序员进阶之路]
 
 root-->Java["Java"]
+Java-->J2SE
+Java-->JVM
+Java-->t["多线程并发"]
+Java-->Spring
 Java-->面试题
-Java-->mashibing[马士兵]
-Java-->gupao[咕泡]
+Java-->MQ
+Java-->cloud["微服务"]
 
-root-->db["数据库"]
+root-->net["网络"]
+
 root-->English["英语"]
 
 root-->Script["脚本"]
-Script-->sh
-Script-->bat
 
 root-->front["前端"]
+front-->Vue
+front-->JQuery
+front-->html["HTML/CSS"]
+
+root-->sf[算法]
+
 root-->os["OS"]
 
 root-->Template["文件模板"]
-Template-->日报
-Template-->周报
-Template-->绩效考核
+
+root-->db["数据库"]
+db-->MySQL
+db-->Oracle
+db-->PostgreSQL
+db-->MongoDB
 ```
-
-
 
 
 
 # 快速链接
 
+点击下方标题中的链接，可快速打开关联文档
+
 - Java
   - 面试题
-    - J2SE
-    - JVM
-    - 多线程并发
-    - MQ
-    - 数据库
-  - 马士兵
+    - [J2SE](java/job/求职-面试题-J2SE.md)
+    - [JVM](java/job/求职-面试题-JVM.md)
+    - [多线程并发](java/job/求职-面试题-多线程并发.md)
+    - [MQ](java/job/求职-面试题-MQ.md)
+    - [数据库](java/job/求职-面试题-数据库.md)
 - 数据库
   - MySQL
   - Oracle
   - PostgreSQL
   - MongoDB
   - SQL Server
+- 前端
+  - VUE
+  - Html/Css
+  - JQuery
+  - EasyUI
 - 英语
   - 通用
     - [通用学习总结-md](docs/English/英语学习-通用-Gem.md)
   - 美剧
-    - [海贼王真人版-学习总结-md](docs/English/英语学习-美剧-Gem.md)
-- 前端
+    - [海贼王真人版-md](docs/English/英语学习-美剧-海贼王.md)
 - 模版
 - 脚本
 - OS
