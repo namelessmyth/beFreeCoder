@@ -1043,7 +1043,7 @@ npm install --save redux
 
 
 
-# VUE
+# Vue2
 
 ## 介绍
 
@@ -1080,6 +1080,699 @@ const tAst = parse(tokens) // 生成ast
 const jsAst = transform(tAst) // 将ast转化为jsAst
 const renderCode = generate(jsAst) // 将jsAst转化为render函数
 ```
+
+
+
+## 概念特性
+
+### 入门案例
+
+首先参考如下步骤，创建一个简单的入门案例，然后从这个案例中学习Vue的基本概念。
+
+在本地创建一个项目根目录：vue-one，在根目录下再创建src源代码目录，并在其中创建如下文件。
+
+**vue.js**
+
+可以从下面地址直接引入vue.js文件（本文版本：v2.7.15），也可以下载到本地之后引入。下文采取的是本地引入。
+
+开发环境：`<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>`
+
+生产环境：`<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>`
+
+**hello-world.html**
+
+注意：如果引入本地vue.js文件，请将下载的vue.js文件放到引入地址对应的目录下。
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+        <!-- 根对象 --><!-- {{ message }}是模版 -->
+		<div id="app">{{ message }}</div>
+		<script src="vue.dev.js"></script>
+		<script>
+            //数据对象绑定，谁用了我，我改变了要通知谁
+			var vm = new Vue({
+				el:"#app",
+				data:{
+					message:"hello world"
+				},
+			})
+
+            //加入下面这段，显示的就是：hello world2
+			//vm.message = "hello world2";
+		</script>
+	</body>
+</html>
+```
+
+使用浏览器打开demo.html，会看到页面显示：hello world。
+
+
+
+### VUE2-生命周期
+
+#### 什么是生命周期
+
+VUE的组件从创建到销毁的整个过程就是生命周期。其作用就是在特定的时间点执行特定的操作。
+
+例如：组件创建完毕后，可以在created 生命周期函数中发起Ajax 请求，从而初始化 data 数据
+
+
+
+#### 生命周期图解
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/695886110ed7476781fa021829dcc513~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+
+#### 分类解析
+
+**4大阶段**
+
+- 初始化
+- 挂载
+- 更新
+- 销毁
+
+**8个方法**
+
+| **钩子函数**   | **触发的行为**                                               | **在此阶段可以做的事情**                            |
+| -------------- | ------------------------------------------------------------ | --------------------------------------------------- |
+| beforeCreadted | vue实例的挂载元素$el和数据对象data都为undefined，还未初始化。 | 加loading事件                                       |
+| created        | vue实例的数据对象data有了，$el还没有                         | 结束loading、请求数据为mounted渲染做准备            |
+| beforeMount    | vue实例的$el和data都初始化了，但还是虚拟的dom节点，具体的data.filter还未替换。 |                                                     |
+| mounted        | vue实例挂载完成，data.filter成功渲染                         | 配合路由钩子使用                                    |
+| beforeUpdate   | data更新时触发                                               |                                                     |
+| updated        | data更新时触发                                               | 数据更新时，做一些处理（此处也可以用watch进行观测） |
+| beforeDestroy  | 组件销毁时触发                                               |                                                     |
+| destroyed      | 组件销毁时触发，vue实例解除了事件监听以及和dom的绑定（无响应了），但DOM节点依旧存在 | 组件销毁时进行提示                                  |
+
+
+
+#### 测试代码
+
+在src目录中创建lifecycle.html，内容如下：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+<!-- 根对象 --><!-- {{ message }}是模版 -->
+<div id="app">{{ message }}</div>
+<script src="vue.dev.js"></script>
+<script>
+	//数据对象绑定，谁用了我，我改变了要通知谁
+	var vm = new Vue({
+		el:"#app",
+		data:{
+			message:"lifecycle test"
+		},beforeCreate: function() {
+			console.group('------beforeCreate创建前状态------');
+			console.log("%c%s", "color:red" , "el     : " + this.$el); //undefined
+			console.log("%c%s", "color:red","data   : " + this.$data); //undefined
+			console.log("%c%s", "color:red","message: " + this.message)
+		},
+		created: function() {
+			console.group('------created创建完毕状态------');
+			console.log("%c%s", "color:red","el     : " + this.$el); //undefined
+			console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
+			console.log("%c%s", "color:red","message: " + this.message); //已被初始化
+		},
+		beforeMount: function() {
+			console.group('------beforeMount挂载前状态------');
+			console.log("%c%s", "color:red","el     : " + (this.$el)); //已被初始化
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
+			console.log("%c%s", "color:red","message: " + this.message); //已被初始化
+		},
+		mounted: function() {
+			console.group('------mounted 挂载结束状态------');
+			console.log("%c%s", "color:red","el     : " + this.$el); //已被初始化
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data); //已被初始化
+			console.log("%c%s", "color:red","message: " + this.message); //已被初始化
+		},
+		beforeUpdate: function () {
+			console.group('beforeUpdate 更新前状态===============》');
+			console.log("%c%s", "color:red","el     : " + this.$el);
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data);
+			console.log("%c%s", "color:red","message: " + this.message);
+		},
+		updated: function () {
+			console.group('updated 更新完成状态===============》');
+			console.log("%c%s", "color:red","el     : " + this.$el);
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data);
+			console.log("%c%s", "color:red","message: " + this.message);
+		},
+		beforeDestroy: function () {
+			console.group('beforeDestroy 销毁前状态===============》');
+			console.log("%c%s", "color:red","el     : " + this.$el);
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data);
+			console.log("%c%s", "color:red","message: " + this.message);
+		},
+		destroyed: function () {
+			console.group('destroyed 销毁完成状态===============》');
+			console.log("%c%s", "color:red","el     : " + this.$el);
+			console.log(this.$el);
+			console.log("%c%s", "color:red","data   : " + this.$data);
+			console.log("%c%s", "color:red","message: " + this.message)
+		}
+	})
+</script>
+</body>
+</html>
+```
+
+使用浏览器打开lifecycle.html，会看到页面显示：lifecycle test。按f12，打开控制台，观察日志打印。
+
+上文参考链接：https://juejin.cn/post/7024074527420203044
+
+
+
+# Vue3
+
+Vue3 在2022年9月份发布了稳定的正式版本,围绕它的设计一直都是很有热点的话题。趁此机会我们就系统性的来学习下Vue3，关于它的优劣我们学完之后自然就知道怎么去衡量了。
+
+
+
+## 新特性
+
+### Vue3缺点
+
+1. vue3将不再支持IE11，Vue 在 2.X 版本仍然支持 IE11，如果你想使用类似 Vue 3 的新特性，可以等等 Vue 2.7 版本。这次的 RFC 宣布，将会对 2.7 版本做向后兼容，移植 3.x 的部分新功能，以保证两个版本之间相似的开发体验。
+2. 对于习惯了Vue2.0开发模式的开发者来说，增加了心智负担，对开发者代码组织能力有体验
+
+
+
+## 性能提升
+
+### 更快
+
+与 Vue2 相比 Vue3 进一步压榨运行时性能。
+
+* Object.definePropery  vs Proxy
+* Virtual DOM 重构
+* 更多编译时优化
+
+首要的细节Vue3.0 把数据对象侦测的API 从Object.defineProperty去劫持 getter and setter 换成 proxy，那从这里就能观测到初始性能有实际性的提升。
+
+因为 Object.defineProperty 在转化数据对象属性为getter、sette其实是一个相当昂贵的操作，因为JavaScript引擎它喜欢你对象的结构越稳定越好，你把对象的结构不停的在改变的话对它而言可优化性就变低了。proxy的优点是对你的原始对象做了一个真正的proxy   是真正的在对象层面做了proxy不会去改变对象的结构。
+
+**Virtual DOM 重构**
+
+整个Virtual DOM 用typescript重写了，初始性能和组件的启动性能比之前快了将近一倍。
+
+**更多编译时优化**
+
+Slot 默认编译为函数 这样就使得父子组件不存在更新的强耦合，然后生成Vnode 的函数尽量让他参数一致化。
+
+在编译时给每一个VNode 带着关于他类型跟children类型的信息。这些都可以帮助 run time 变得更快。
+
+但这些优化还不够！还可以做得更好，Virtual DOM这个东西没学过的同学可能有误解以为它是为了操作更快而产生的，其实不是，Virtual DOM是一个抽象层。他的作用是能让你用纯JavaScript去描述你的界面 你的UI是什么样子。 他的核心价值在于给你更加强大灵活性 以及表达力。
+
+#### 传统vdom的性能瓶颈
+
+反过来它付出的代价是，每次数据更新 Virtual DOM 理论上是要重新创建  Virtual DOM 树状的数据结构，然后算法需要从头到尾把旧的 tree  和新的 tree 进行一次彻底的遍历比对。
+
+虽然Vue 通过数据侦测能在组件层面最小化你要更新的点，但是组件这个粒度还是相对比较粗的 ，虽然Vue能够保证触发更新组件最小化，但在单个组件内部仍需要遍历改组件的整个vdom tree树。
+
+#### 传统vdom的性能瓶颈：二
+
+举个例子:
+
+比如说有这样一个模板，左边是一个模板，右边是在每次数据更新的时候我们的算法要实际进行的操作。这个过程中就是从上到下 先要去diff  div 看下他的新的VNode 跟旧的 Vnode 是不是同一个div，如果是同一个我们要去看它的id 有没有变。 然后在去看它的children 它的这些子节点有没有变，这些子节点顺序有没有发生改变。 顺序改变之后还要去看这个元素的节点发生改变没有，这个节点的class 发生改变没有 text 发生改变没有。
+
+实际上你可以看到在我们模板中只有message是动态会改变的。但每次都需要去遍历整个vdom tree 来进行比对。
+
+这个算法 react 推出来的时候大家都在质疑，这样更新渲染会不会很慢。 但现在的JavaScript引擎够快，当然这个够快是相对而言，就是说在大多数情况下你可能在16毫秒内完成你的更新。但是在你的应用足够大的情况下 16ms 不是总是够的。
+
+#### 传统vdom的性能瓶颈：三
+
+那么传统的 vdom 为什么要使用这种不效率的算法呢？
+
+究其原因是因为最初的 vdom 不是从模板编译而来，比如 react 它的 vdom 是从jsx编译过来。jsx 只是JavaScript的一个语法延伸，它具备JavaScript的一切动态性。
+
+比如上面的 render function 如果你想光分析这段JavaScript，其实唯一可以变的就是在 i == 2 的时候 message 的值会发生改变。你是很难很难做到这一点的，没有一个很稳妥的办法可以分析出这个信息。
+
+那么react 对于这个问题的优化解决方案是什么？
+
+就是时间分片，就是说我承认了我的这个框架在使用的时候会消耗大量的JavaScript的CPU时间，它的策略是我会把这些CPU的时间切分到一帧一帧。从而不会去影响我用户的操作
+
+#### Vue3为什么不抛弃Virtual DOM?
+
+Virtual DOM有这么多的问题那在Vue3里面会不会抛弃呢？
+
+答案是不会因为几个原因：
+
+* 高级场景下手写 render function获得更强的表达力
+* 生成代码更简洁
+* 兼容Vue2.x （现有的生态都依赖于Virtual DOM）
+
+#### Vue3 会做什么改进？
+
+你要知道Vue特有的东西底层是Virtual DOM，上层是包含大量有价值的静态信息模板。 这点跟react 完全不一样。 同样一个组件你一眼就能看出除了这个message 其他所有的节点都是不会变的。 这就是一个包含可以推测的优化信息量的不同。
+
+所以Vue3 的目的是要找到一个运行时的算法 既可以兼容render function，又可以最大化利用静态模板信息。
+
+Vue2.x选择的方式是首先兼容 render function 的写法，然后再 VDOM tree 设置规则把永远不会变化的node 标注为静态节点 Vnode 存储在内存中。 两个新旧 tree 在比对的时候静态节点就会直接复用内存中的Vnode。
+
+在Vue3里面找到了一种比Vue2更加压榨性能的思路。
+
+#### 最简单的情况
+
+我们先把整个模板看成静态 Vnode 的。 然后去分析他里面那些东西会动，最简单的情况在做个模板中一眼就能看出来，只有这一个插值 message 会变，除了这插值之外其他的节点结构是完全不会改变的。 而在Virtual DOM中最耗时的操作就是两个children 数组的比对。 这个操作在这种情况下完全没有必要。 所以理想的算是只要check 下这个message 值改变没有。
+
+而在Vue 中能改变模板节点结构的还有两个结构性指令 v-if  v-for。
+
+#### 结构性指令 v-if
+
+如果你在模板中使用v-if 那就说明模板可能会有节点结构变化， 节点结构变化是vdom的算法核心。
+
+但是我们把它切分下，理想的情况下我们只要check 下这个v-if的值变了没有，然后在check 下里面的这message的值变了没有。我们把它切分成内外两个部分。
+
+#### 结构性指令 v-if: 二
+
+现在这种做法的颗粒度增强 不再是以节点作为最小单元。  而是外层部分把内层部分当成一个子节点。外层是一个block  内层也是一个block 这个时候我们发现外部的节点结构是不会发生改变的，内部的节点结构也是不会发生改变的。
+
+换言之我们把整个模板切分成了两块，这两块各自的节点结构是完全不会变的，那么v-for 也是同样的道理。
+
+#### 结构性指令 v-for
+
+我们把它切分下变成两块，外层是一个节点结构不会变化的block，内层的block 我们把它当成fragment。 而在每一个fragment 内部他的节点结构又是固定的。 所以我们就发现了其实动态的节点结构发生变化只可能是在使用了v-if、 v-for 这样的所谓的结构性指令的情况下才会出现。
+
+所以我们一结构性指令为边界。把模块切分成一个一个的静态的块，英文名字叫block tree 。
+
+#### block tree
+
+大体的意思就是说，一个动态的模板我们会把它切分成相对内部是静态的块，那这样的话每一个静态的块内部只需要以一个Array的数组去追踪它内部的动态内容。这样就能极大程度上的减少无谓的遍历比对操作。
+
+我们把Vue2 vs Vue3 前后模板模式对比来看下。
+
+#### Before
+
+在之前当message 的值发生改变，我们需要拿到新旧的vom 进行非常耗时的遍历比对操作。
+
+#### After
+
+优化之后用block 的方式， 分析之后这个模板就只有一个单独的block ，这个block内部唯一的动态节点就是message，所以我们的更新操作实际上只要去check message 的值改变没有。
+
+这样的策略就把我们更新的性能由模板的整体大小相关，彻底转变成了你有多少动态内容相关。 之前在同样一个复杂业务场景下做个策略，Vue3的更新性能比Vue2 快了将近6倍。
+
+好了性能优化我们就讲到这接下来我们去看看Vue3.0 Compiler 优化细节。
+
+> Vue3模板编译之后的Render Function
+>
+> 网页地址：[https://vue-next-template-explorer.netlify.app/](https://vue-next-template-explorer.netlify.app/)
+
+示例：
+
+```html
+<div>
+   <span>static</span>
+   <span>{{message}}</span>
+</div>
+```
+
+两个节点一个span中文本内容是静态的，一个span中的内容是动态绑定的。
+
+**生成的渲染函数:**
+
+```js
+import { createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
+export function render(_ctx, _cache) {
+  return (_openBlock(), _createBlock("div", null, [
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, _toDisplayString(_ctx.message), 1 /* TEXT */)
+  ]))
+}
+```
+
+这是一个默认生成的渲染函数，可以看到这个根节点 div 它是被做成了一个block。
+
+```js
+ _createVNode("span", null, "static")
+```
+
+然后这个是一个普通的完全静态的span。
+
+```js
+ _createVNode("span", null, _toDisplayString(_ctx.message), 1 /* TEXT */)
+```
+
+这边是一个带有动态绑定的span，它的内容是动态绑定到组件的message这个属性上面。 这里有个数字，这个叫 PatchFlags  **，** 这个flag就是编译时生成的一个标记。
+
+我们的项目在运行时运行的时候首先会知道这个div 是一个 block，这个block 中只有带 patchFlag 的node 才会被真正的追踪。
+
+也就是说当我们后续要更新的时候，Vue就是知道了，这个div 静态的 span 不用管。  直接跳到动态有flag 标记的node 节点上去，通过flag的信息我们知道在整个节点上面我们唯一要做的就是比较 text 里面文字内容的变动。 我们不用管他们可能存在的任何属性或者其他绑定的变化。
+
+举一些更具体的例子：如果我们加上大量的静态的内容
+
+```html
+<div>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <span>{{message}}</span>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+</div>
+```
+
+生成的渲染函数：
+
+```js
+import { createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
+export function render(_ctx, _cache) {
+  return (_openBlock(), _createBlock("div", null, [
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, _toDisplayString(_ctx.message), 1 /* TEXT */),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static")
+  ]))
+}
+```
+
+那在一个之前的Virtual DOM的算法下，需要把所有的 span 全部都过一遍，而且所有的 span 都需要去看它旧的props 和新的 props 有没有变。 虽然 JavaScript 做这些事情很快，但是当你的应用越来越大的时候，不可避免的会占用你更多的更新时间。
+
+在新版本的优化下，看到这边是一个block 就直接看它里面有没有任何带这些动态的东西。然后就只要把这些动态的节点过一遍就行。那这样就节省了很多更新时所消耗的性能时间。
+
+甚至是在一个block里面不管你嵌套的多深我们是不需要遍历这个 div 只需要去寻找到这个动态的节点 span 的。
+
+```html
+<div>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <div>
+    <span>{{message}}</span>
+  </div>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+</div>
+```
+
+因为所有 block 中的动态节点都是跟根节点的 block 绑定起来的。 在数据更新的时候我们只要走到根节点 div 的 block 就可以跳转到动态的节点上。 根本不需要把其他不会变的节点在遍历一遍。
+
+这样 Virtual DOM 中最最耗时的最最浪费性能的一部分就被我们解决掉了。
+
+那另外一个优化就比如说我们这边有个静态的 id 绑定，我们可以看到这个 id 是完全静态不会变的，所以patchFlag也没有变化，也就是说对于run time 来说这个 id 在与不在都没区别，我们只有会在创建的时候创建一次后面的更新就不用去管它了。
+
+```html
+<span id="foo">{{message}}</span>
+```
+
+那如果我们把它做成一个动态的绑定。
+
+```html
+<div>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+  <span :id="foo" class = "count">{{message}}</span>
+  <span>static</span>
+  <span>static</span>
+  <span>static</span>
+</div>
+```
+
+生成的渲染函数
+
+```js
+import { createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
+export function render(_ctx, _cache) {
+  return (_openBlock(), _createBlock("div", null, [
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", {
+      id: _ctx.foo,
+      class: "count"
+    }, _toDisplayString(_ctx.message), 9 /* TEXT, PROPS */, ["id"]),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static"),
+    _createVNode("span", null, "static")
+  ]))
+}
+```
+
+做成动态绑定之后就可以看到这边的 patchFlag 变了，这个 patchFlag 就已经告诉我们说，这个节点不光有文字的变化，还有 props 的变化。那哪个 props 会变呢？ id 。
+
+那这意味这我们在加另外一个静态的class绑定，这个class 绑定是没有包含在动态 props 的清单里面的。换言之 当我们在 diff 的时候会看这个 id 变了没有， 根本不用管这个 class。
+
+所以这就保证了我们在通过编译时的分析，我们在动态更新的时候永远只会关注那些真正会变的东西。这样就既跳出了 Virtual DOM 更新时的性能瓶颈， 又依然保留了可以手写render function的灵活性。
+
+这样就等于说我们既拥有react的灵活性，又保留了基于模板的性能保证。
+
+大家肯定很好奇我们讲了这么多 block 的好处，那他具体是怎么实现的呢？ 怎么能快速找到要更新的动态清单？
+
+**查看 hoisteStatic 模式**
+
+```js
+import { createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock } from "vue"
+
+const _hoisted_1 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_2 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_3 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_4 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_5 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_6 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+const _hoisted_7 = /*#__PURE__*/_createVNode("span", null, "static", -1 /* HOISTED */)
+
+export function render(_ctx, _cache) {
+  return (_openBlock(), _createBlock("div", null, [
+    _hoisted_1,
+    _hoisted_2,
+    _hoisted_3,
+    _hoisted_4,
+    _createVNode("span", {
+      id: _ctx.foo,
+      class: "count"
+    }, _toDisplayString(_ctx.message), 9 /* TEXT, PROPS */, ["id"]),
+    _hoisted_5,
+    _hoisted_6,
+    _hoisted_7
+  ]))
+}
+```
+
+它内部使用是一个叫 hoistStatic 机制， 听名字就知道就是把静态不变的节点提升出去。 大家可以看到这里所有静态不会变的span 都被拿到了 render function体之外，也就是说他们会在你应用启动的时候创建一次。
+
+然后这些虚拟节点在每次被创建的时候被不停的复用，那在不停复用的情况下也就表达另外一个信息他们就不需要被不停的创建新的节点在遍历比对了，这样做是毫无意义的。 那这在大型项目中优化运行时的内存占用是很明显的。
+
+### 更好的逻辑组合方式
+
+如果你用过 Vue2 刚开始一定会被它 options API 简洁的代码组织方式所吸引，但是当组件复杂度提升原有的"简洁性"又会成为负担。接下来我们看下Vue3 做了什么改变。
+
+Vue3 compostion API 示例：
+
+```js
+const app = {
+    setup() {
+      //data
+     const count = ref(0);
+     //computed
+     const plusOne = computed(() => count.value + 1);
+     //method
+     const increname = () => count.value++;
+     //watch
+     watch(() => count.value * 2, v => console.log(v));
+     //lifecycle
+     onMounted(() => console.log('onmounted'));
+     //暴露给模板或渲染函数
+     return {
+	count
+     };
+  }
+}
+
+```
+
+这个示例代码中有一些新的函数API, 这个ref  会创建一个值，这个值会包含这个数字 0 。这个值其实就是一个wrapper 包装对象，然后你要取到这个值就通过count.value 来取。 那这个好处是什么？就是即使你这个count 包含是一个原始类型的值你也可以把它在函数之间传来传去，传来传去的同时每当你用这个 .value 来取它值的时候，还还会被追踪依赖。 然后你在去改这个 .value 的值它又会触发更新。
+
+然后你可以直接创建一个计算属性，计算属性返回的也是值的包装。
+
+然后方法也很简单就是一个函数，你把值一改这就是你的方法。
+
+然后你可以watch ，watch 你去计算一个表达式的值，当这个值变化就触发回调。
+
+这些都跟Vue2 Options 选项一一对应的，这个就是data 、这个就是computed 、这个就是method、这个就是watch、然后lifecycle也是 mounted 直接这样注入。
+
+最后你可以选择暴露哪些东西给你的模板，这个就跟你在data 里面返回一个对象是一样的。 你可以能会觉得这个不就是把Vue2的选项API换成了函数吗？ 到底有什么好处。
+
+总结几点：
+
+1.**更好的TypeScript 类型推断支持**
+
+为什么？ 因为TS 不是以你给我一个对象我根据你对象里面的一些属性来推导它另一些属性的值。它不是以这样一个前提去设计的，但是如果你是一些这样的代码，TS 对于函数的参数和返回值的支持是非常非常好的。也是说在源码内部这个函数接口的类型声明都已经帮你做好了，所以你在写代码的时候这个即是JavaScript代码 也是TypeScript 代码。  你用TypeScript 去写这个跟你用JavaScript去写这个是一模一样的你不需要任何的手动类型声明。而且他给你完美的类型推导完美的自动补全。
+
+2.**更灵活的逻辑复用能力**
+
+我们想要让同一套逻辑要在多个组件之间复用，Vue2.0 里面有几种不同的方案。
+
+minxin 侦听鼠标位置：
+
+```js
+const mousePositionMixin = {
+     data() {
+      return {
+	 x: 0,
+	 y: 0
+	}
+     },
+     mounted() {
+        window.addEventListener('mousemove', this.updata);
+     },
+     destroyed() {
+	window.addEventListener('mousemove', this.update);
+     },
+    methods: {
+       updata(e) {
+	 this.x = e.pageX;
+	 this.y = e.pageY;
+       }
+    }
+}
+
+```
+
+mixin 很简单跟你单独写个组件没什么区别，你需要有data 需要在组件挂载的时候绑定事件，需要在组件销毁的时候移除事件，需要有个update方法更新数据。  虽然说mixin 很简单很直观但是你会发现当你mixin用太多的时候，很显而易见的问题。 首先命名空间冲突，你怎么保证多个mixin 不会恰好占用同一个属性。  然后模板数据来源不清晰。
+
+比如说当你单独用着一个mixin的时候你会知道，x 是从它这来，y 是从他这来。但是你mixin 一多的话你是不会声明那个属性是从哪个mixin注入的。 那你mixin 一多就会造成数据来源不清晰的问题。
+
+还有一种复用的方案高阶组件(Higher-order Component)
+
+```js
+const listen = WithMousePosition({
+    props:['x','y'],
+    template:`<div>Mouse Position:x {{ x }} / y: {{ y }}</div>`
+})
+```
+
+这个我们应该在Vue里面用的比较少，在react中用的比较多。 高阶组件就是说用一个父组件去承载这个逻辑的这个内容。然后让这个父组件把这个最终得出的数据以props的形式传递给里面的子组件。  等于说你每次要用到这个逻辑的时候就用外面这个高阶组件把你真正要写的组件包一下。 那你真正要写的组件就以props的形式接收外面传进来的数据，在Vue2里面引入高阶组件是作为mixin的一个替代品的。
+
+但是实际上他比mixin更糟糕当你多个高阶组件一起用的时候 props 命名空间依然会有冲突，props 来源不清晰我并不知道props 是哪个高阶组件传进来的。最后高阶组件嵌的越多额外的组件实例消耗也就越多，这就是一个无谓的性能消耗。
+
+还有一个逻辑复用的办法(Renderless Components) 作用域插槽
+
+```html
+<mouse v-slot="{x,y}">
+  Mouse Position: x {{ x }} / y {{ y }}
+</mouse>
+```
+
+这个跟react 的Render Props是等同的概念，作用域插槽还是用一个组件去承载逻辑，但是它把数据传回给调用者的方式是通过以作用域插槽的方式传回来。 所以我们可以写一个mouse 的组件，组件里面包含了mouse 的逻辑，然后它会去渲染一个default slot  然后把 x，y 以参数的形式传递给这个default slot。
+
+作用域插槽是一个很好的逻辑复用方式，因为他没有命名空间的冲突，数据来源也清晰，是从哪个组件来的，怎么注入进来到你的模板里的都很清晰。 唯一的缺点就是有额外的组件实例性能消耗，因为你依然用的是以组件为承载逻辑的单元。
+
+如果用composition API来写会怎么样呢？
+
+```javascript
+function useMousePosition(){
+  const x = ref(0);
+  const y = ref(0);
+
+  const updata = e =>{
+	x.value = e.pageX;
+	y.value = e.pageY;
+  }
+ 
+ onMounted(() => { 
+    window.addEventListener('mousemove', updata);
+  })
+
+ onUnmounted(() => {
+    window.removeEventListener('mousemove', updata);
+  })
+ 
+  return {x, y}
+}
+```
+
+我们怎么样把这个逻辑抽出来，我们首先会定义两个值x，y。 然后定义一个method 方法 update 把它数据更新下， 然后注入 onMounted、onUnMounted的钩子，最后我们把要暴露给组件的数据当做返回值给它返回出去。这样我们所有的逻辑都很干净的抽在了一个函数里面。
+
+使用的时候也很简单：
+
+```javascript
+new Vue({
+   template:`
+     <div>
+       Mouse Position: x {{ x }} / y {{ y }}
+     </div>
+	`
+  setup(){
+   const { x, y }  = useMousePosition();
+      return{
+	 x,
+	 y,
+      }
+   }
+});
+```
+
+我们调用useMousePosition的时候就会获得x，y ，然后直接给它返回出去在模板中使用。 我们可以看到这样没有命名空间的问题，你完全可以在解构出来的时候给它重命名，也很清楚你的x，y 是从哪个函数中来的。 而且也没有额外的组件性能消耗。 如果单从逻辑复用的角度来讲它解决了我们刚刚所有方案的问题。
+
+这是Composition API 基于函数进行逻辑上的复用。
+
+**3. tree shaking 更友好**
+
+在 Vue 3 中，全局和内部 API 都经过了重构因此，全局 API 包括（reative、ref、computed、watch、nextTick...）在实例开发中作为 ES 模块通过 export 单独引入，这使得它们对 tree-shaking 非常友好。没有被使用的 API 的相关代码可以在最终打包时被移除。这样Vue本身的尺寸就是动态的了，你使用的功能越少打包出来的 bundler size 也就越小。
+
+同时，基于函数 API 所写的代码也有更好的压缩效率，因为所有的函数名和 setup 函数体内部的变量名都可以被压缩，但对象和 class 的属性/方法名却不可以。
+
+#### Vue3新特性
+
+> 详细文档 https://vue3js.cn/docs/zh/
+
+composition API 包含
+
+* ref & reactive
+* 新的生命周期函数
+* computed 和 watch
+* Hooks
+
+其他
+
+* Tleport 新内置组件
+* Suspense 新内置组件
+
+#### script-setup 与 ref-sugar   提案
+
+> ref : RFC中文
+>
+> [https://www.yuque.com/docs/share/33cc8c75-6a61-4187-ad1a-6c13ed8cd85c#lUBuB](https://www.yuque.com/docs/share/33cc8c75-6a61-4187-ad1a-6c13ed8cd85c#lUBuB)
+>
+> ref : RFC英文
+>
+> [https://github.com/vuejs/rfcs/blob/script-setup/active-rfcs/0000-script-setup.md](https://github.com/vuejs/rfcs/blob/script-setup/active-rfcs/0000-script-setup.md)
+>
+> Ref-sugar 提案的批评观点
+>
+> [https://zhuanlan.zhihu.com/p/287842109](https://zhuanlan.zhihu.com/p/287842109)
+
+
 
 
 
