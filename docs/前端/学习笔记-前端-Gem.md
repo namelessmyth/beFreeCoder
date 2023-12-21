@@ -1385,9 +1385,375 @@ VUE的组件从创建到销毁的整个过程就是生命周期。其作用就�
 
 ## 基本使用
 
-### 
+### 指令
+
+指令的英文：directive，vue指令的作用是通过带有v-的特殊属性，实现对dom的响应式加载
+
+#### v-if
+
+v-if的作用是通过一个布尔表达式进行对dom的上树和下树的渲染
+
+基本使用：如下2个p元素，只有true的那个会显示：
+
+```html
+<p v-if="false">我是第一行dom元素</p>
+<p v-if="true">我是第二行dom元素</p>
+```
+
+![image-20231221223100101](学习笔记-前端-Gem.assets/image-20231221223100101.png)
+
+实际工作中，不会直接使用布尔值进行判断，通常会是一个变量。可以通过后台请求返回。
+
+```html
+<body>
+    <div id="app">
+        <p v-if="boo">我是第一行dom元素</p>
+        <p v-if="!boo">我是第二行dom元素</p>
+    </div>
+    <script src="js/vue.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                boo: false
+            }
+        })
+    </script>
+</body>
+
+```
+
+第二种情况是通过使用表达式进行逻辑判断
+
+```html
+<body>
+<div id="app">
+    	//当boo的值等于100的时候再显示
+        <p v-if="boo == 100">我是第一行dom元素</p>
+        <button @click="add">按我加1</button>
+    </div>
+    <script src="js/vue.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                boo: 95
+            },
+            methods:{
+                add(){
+                    this.boo++
+                }
+            }
+        })
+    </script>
+</body>
+
+```
+
+v-if的显示根本原理一个是通过对值的隐式转换，一个就是通过对表达式的判断得出的布尔值得来的
+
+将案例进行深入演变：
+
+```html
+<body>
+    <div id="app">
+        <h2>{{boo}}</h2>
+        <p v-if='boo >= 0 && boo <= 5'>我是5</p>
+        <p v-if='boo >= 6 && boo <= 10'>我是10</p>
+        <p v-if='boo >= 11 && boo <= 15'>我是15</p>
+        <p v-if='boo >= 16 && boo <= 20'>我是20</p>
+        <p v-if="boo > 20">我是大于20</p>
+        <button @click="add">按我加1</button>
+    </div>
+    <script src="js/vue.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                boo: 0
+            },
+            methods:{
+                add(){
+                    this.boo++
+                }
+            }
+        })
+    </script>
+</body>
+```
+
+上面的代码还可以通过v-else-if和v-else进行分支判断：
+
+```html
+<p v-if='boo >= 0 && boo <= 5'>我是5</p>
+<p v-else-if='boo >= 6 && boo <= 10'>我是10</p>
+<p v-else-if='boo >= 11 && boo <= 15'>我是15</p>
+<p v-else-if='boo >= 16 && boo <= 20'>我是20</p>
+<p v-else="boo > 20">我是大于20</p>
+```
+
+需要注意的是v-else的使用前提是必须先有v-if并且中间不允许有任何的元素间隔，下面的案例就是错误的。
+
+```html
+<p v-if='boo >= 0 && boo <= 5'>我是5</p>
+<div></div>
+<p v-else="boo > 20">我是大于20</p>
+```
+
+上面的代码写法是错误的，因为div不能再v-if和v-else之间进行拆分，正确的写法：
+
+```html
+<p v-if='boo >= 0 && boo <= 5'>我是5</p>
+<p v-else="boo > 20">我是大于20</p>
+```
+
+#### v-show
+
+v-show和v-if的显示情况类似，但是原理不一样，v-show是通过控制元素的display属性，对元素的显示和隐藏进行逻辑判断，但元素本身还是在Dom树中的。
+
+```html
+<body>
+    <div id="app">
+        <p v-show='boo >= 5'>我是5</p>
+        <button @click="add">按我加1</button>
+    </div>
+    <script src="js/vue.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                boo: 0
+            },
+            methods:{
+                add(){
+                    this.boo++
+                }
+            }
+        })
+    </script>
+</body>
+```
+
+实际效果：
+
+![image-20231221224319519](学习笔记-前端-Gem.assets/image-20231221224319519.png)
+
+使用场景
+
+v-show和v-if的使用场景区分是如果页面切换的特别频繁使用v-show，如果页面的涉及范围特别大并且不是特别频繁的切换使用v-if，因为主要区分是涉及到页面的加载性能。
 
 
+
+#### v-for
+
+##### v-for遍历数组
+
+v-for是vue的循环指令，作用是遍历数组（对象）的每一个值。
+
+v-for还有index和key属性
+
+`<li v-for="(item,index) in arr" :key="index">{{index}}-{{item}}</li>`
+
+item指的是被遍历的数组（对象）的每一个值，item的命名不是规定的，可以自定义命名
+
+index指的是每一项被遍历的值的下标索引值
+
+key是用来给每一项值加元素标识，作用是为了区分元素，为了实现最小量的更新
+
+使用案例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="(item,index) in arr" :key="index">{{index}}-{{item}}</li>
+        </ul>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                arr: [
+                    '苹果',
+                    '橘子',
+                    '香蕉',
+                    '草莓'
+                ]
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+显示效果：
+
+![image-20231221225205480](学习笔记-前端-Gem.assets/image-20231221225205480.png)
+
+##### v-for遍历对象
+
+`<li v-for="(item,key,index) in obj" :key="index">{{index}}-{{key}}:{{item}}</li>`
+
+上面的v-for一共有三个参数
+
+item表示对象的内容，
+
+key表示的是对象key键值名称
+
+index表示的是当前obj的下标索引值
+
+案例代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="(item,key,index) in obj" :key="index">{{index}}-{{key}}:{{item}}</li>
+        </ul>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                obj:{
+                    name: '小明',
+                    age: '17岁',
+                    height: '175cm',
+                    sex: '男',
+                    hobby: '打篮球'
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+![image-20231221225926389](学习笔记-前端-Gem.assets/image-20231221225926389.png)
+
+##### v-for遍历数组对象
+
+实际工作中我们更多的是用v-for遍历Json数组，数组中每个元素都是对象
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,td,th{
+            border: 1px solid #111;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>性别</th>
+                <th>身高</th>
+            </tr>
+            <tr v-for="(item,index) in arr">
+                <!-- JOSN中的姓名 -->
+                <td>{{item.name}}</td>
+                <!-- JOSN中的年龄 -->
+                <td>{{item.age}}</td>
+                <!-- JOSN中的性别 -->
+                <td>{{item.sex}}</td>
+                <!-- JOSN中的身高 -->
+                <td>{{item.height}}</td>
+            </tr>
+        </table>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                arr: [
+                    {name:'小明',age: '17',sex:'男',height: '168'},
+                    {name:'小红',age: '18',sex:'女',height: '165'},
+                    {name:'小周',age: '19',sex:'男',height: '178'},
+                    {name:'小刚',age: '20',sex:'男',height: '167'}
+                ]
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+显示效果：
+
+![image-20231221230139841](学习笔记-前端-Gem.assets/image-20231221230139841.png)
+
+##### v-for嵌套遍历
+
+v-for还可以进行嵌套遍历，就是多层for循环
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,td,th{
+            border: 1px solid #111;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr v-for="i in number" :key="i">
+                <td v-for="j in i" :key="j">{{i}}X{{j}}={{i*j}}</td>
+            </tr>
+        </table>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                number:[1,2,3,4,5,6,7,8,9]
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+显示效果：
+
+![image-20231221230335371](学习笔记-前端-Gem.assets/image-20231221230335371.png)
+
+
+
+##### v-html, v-text
 
 
 
