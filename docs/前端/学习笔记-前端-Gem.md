@@ -965,7 +965,7 @@ K extends keyof any 约束K必须为联合类型, 每个属性([P in K]),都转�
 
 ### 声明文件
 
-当我们在使用第三方库的时候，很多第三方库不是用TS 写的， 它们是通过原生的JavaScript或者是浏览器 / 或者是node 提供的 run time 对象。  如果我们直接使用TS 肯定就会报错编译不通过。  假设一个场景我们要使用第三方的工具库jQuery。
+当我们在使用第三方库的时候，很多第三方库不是用TS 写的， 它们是通过原生的JavaScript或者是浏览器 / 或者是node 提供的 run time 对象。  如果我们直接使用TS 肯定就会报错编译不通过。假设一个场景我们要使用第三方的工具库jQuery。
 
 之前的方式是在html 中通过script 标签引入jQuery。 这样就能全局使用jQuery，我们通常会通过jQuery(".app") 去获取对应的DOM对象。
 
@@ -1047,39 +1047,15 @@ npm install --save redux
 
 ## 介绍
 
-### 如何快速了解
+Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
 
-从官网了解最直接最权威。地址：https://cn.vuejs.org/，可以从快速上手开始。
+如果想要快速了解Vue，不需要先了解他的实现原理，首先先从这个框架是如何在工作中使用的开始。
 
-目前主流：Vue3，Vue2将于 2023 年 12 月 31 日停止维护
+Vue是MVVM框架
 
-核心原理：template（组件），数据（响应式），虚拟DOM（编译器）。
+![](https://pic4.zhimg.com/80/edd0080fb145315fbc96164c219fee7e_hd.jpg)
 
-不需要知道实现原理，首先先从这个框架是如何配合工作使用的。
-
-
-
-### DSL
-
-DSL是领域特定语言的缩写，与JavaScript这种通用语言编译器相对，它只针对某一个特殊应用场景工作
-
-类似中英翻译，它将源代码翻译为目标代码，其转换的标准流程过程包括：词法分析、语法分析、语义分析、中间代码生成、优化、目标代码生成等，此外，前述流程并非是严格必须的
-
-#### vue中的DSL
-
-- 词法+语法+语义分析
-- 生成token流
-- 生成模板ast
-- 将ast转化为js ast
-- 将ast转化为render函数
-
-```js
-const code = ``
-const tokens = tokenize(code) // 词法+语法+语义分析，生成token流
-const tAst = parse(tokens) // 生成ast
-const jsAst = transform(tAst) // 将ast转化为jsAst
-const renderCode = generate(jsAst) // 将jsAst转化为render函数
-```
+它对初学者更加友好（相对于react），它是初创公司的首选框架，它是轻量级的，有很多根据Vue拓展的独立的功能或库
 
 
 
@@ -1134,7 +1110,155 @@ const renderCode = generate(jsAst) // 将jsAst转化为render函数
 
 
 
-### VUE2-生命周期
+### JS对比案例
+
+都说Vue是一个渐进式框架，对初学者友好。那这一点体现在哪里呢？下面将分别用js和Vue实现同一个功能，并从中对比出来Vue的优势。
+
+我开发一个页面，默认显示0，按加按钮使数字加1，按减按钮将数字减1。
+
+JS实现：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>
+        0
+    </h1>
+    <button>按我加1</button>
+    <button id="btn">按我减1</button>
+    <script>
+       var elH1 = document.getElementsByTagName("h1")[0];
+       var elBtn = document.getElementsByTagName("button")[0];
+       var elBtn2 = document.getElementById("btn");
+       var num = 0;
+       elBtn.onclick = function() {
+        num ++;
+        elH1.innerHTML = num;
+       }
+
+       elBtn2.onclick = function() {
+        num--;
+        elH1.innerHTML = num;
+        console.log(num)
+       }
+    </script>
+</body>
+</html>
+```
+
+可以看到，js需要通过方法读取到元素的值，当按钮点击后，需要修改变量的值，同时还要写到元素中去。接下来是Vue的实现：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h1>{{a}}</h1>
+        <button @click="add">按我加1</button>
+        <button @click="minus">按我减1</button>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        new Vue({
+            // 挂载点
+            el:'#app',
+            // 数据
+            data:{
+                a: 0
+            },
+            // 方法
+            methods: {
+                add() {
+                    this.a++
+                },
+                minus() {
+                    this.a--
+                }
+            },
+        })
+    </script>
+</body>
+</html>
+```
+
+基于MVVM，Vue只需要将元素和变量进行绑定，变量的值改变之后元素的显示会自动改变，明显减少了代码量和复杂度。这就是为什么他对初学者比较友好的原因。同时目前介绍的这种使用方式是基于传统html和js的，老项目如果使用Vue，不需要做大量改动，所以是渐进式的。
+
+
+
+### Vue对象
+
+#### 检查vue是否引用成功
+
+在第一行代码中直接alert(Vue)，如果弹出来一个function就代表引入成功。反之就需要检查地址是否书写正确。
+
+```html
+<body>
+    <script src="../js/vue.js"></script>
+    <script>
+        alert(Vue)
+    </script>
+</body>
+```
+
+#### 入参说明
+
+```html
+<body>
+    <div id="app">
+        {{a}}
+    </div>
+    <script src="js/vue.js"></script>
+    <script>
+        var vue = new Vue({
+            // 挂载点，所有的Vue的方法和属性都必须在对应的挂载根标签内部使用
+            el: '#app',
+            // 数据管理中心，所有的Vue的数据都在data对象中
+            data:{
+                a: 100
+            },
+            // 方法，对应的Vue事件方法清单
+            methods:{
+
+            },
+            // 下面这个是Vue对象中不存在的会报错。
+            content:{
+                b: 200
+            }
+        })
+    </script>
+</body>
+```
+
+#### 插值语法
+
+插值语法是通过一对{{ }}进行书写，内部是对data数据管理中心的属性进行渲染，也可以是表达式
+
+moustache（胡子）是双大括号的学名，也叫（胡子语法）
+
+内部也可以存放表达式
+
+`{{a >= 100 ? 20 : 10}}`
+
+注意，表达式支持简单，比如简单判断，比如三元表达式，不可以使用if等等复杂判断
+
+~~{{if(a>200){a=100}else{a=300}}}~~
+
+上面的写法是错误的，因为不支持使用复杂判断
+
+
+
+### 生命周期
 
 #### 什么是生命周期
 
@@ -1256,6 +1380,16 @@ VUE的组件从创建到销毁的整个过程就是生命周期。其作用就�
 使用浏览器打开lifecycle.html，会看到页面显示：lifecycle test。按f12，打开控制台，观察日志打印。
 
 上文参考链接：https://juejin.cn/post/7024074527420203044
+
+
+
+## 基本使用
+
+### 
+
+
+
+
 
 
 

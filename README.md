@@ -1,13 +1,20 @@
 <p align="left">
 <a href="https://blog.csdn.net/namelessmyth" target="_blank">
-<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge"></a>
+<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge">
+</a>
 <a href="https://zhuanlan.zhihu.com/p/474433404" target="_blank">
-<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用"></a>
-<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square"></a>
-<a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg"></a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg"></a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark"></a>
-<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge"></a>
+<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用">
+</a>
+<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square">
+</a>
+<a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg">
+</a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg">
+</a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
+</a>
+<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
+</a>
 </p>
 
 
@@ -59,6 +66,7 @@ Java-->J2SE
 Java-->t["并发"]
 Java-->JVM
 Java-->Spring
+Java-->面试题
 Java-->MQ
 Java-->cloud["微服务"]
 
@@ -120,6 +128,9 @@ root-->admin["管理"]
   - PostgreSQL
   - MongoDB
   - SQL Server
+- MQ
+  - RocketMQ
+      - [✅RocketMQ, Dashboard, 控制台安装](https://blog.csdn.net/namelessmyth/article/details/131961549)
 - 云原生
   - docker
     - [✅Docker-安装(Windows, Linux)](https://blog.csdn.net/namelessmyth/article/details/132657994?spm=1001.2014.3001.5501)
@@ -127,9 +138,9 @@ root-->admin["管理"]
 - 前端
   - [🙌学习笔记-前端-md](docs/前端/学习笔记-前端-Gem.md)
   - TypeScript
-  - VUE，[↗️官方文档](https://cn.vuejs.org/guide/quick-start.html)
+  - VUE，[官网文档](https://cn.vuejs.org/guide/quick-start.html)
   - JQuery，[↗️菜鸟教程](https://www.runoob.com/jquery/jquery-tutorial.html)
-  - EasyUI，[↗️官网文档](https://www.jeasyui.cn/document/index/index.html)
+  - EasyUI，[官网文档](https://www.jeasyui.cn/document/index/index.html)
 - 英语
   - 通用
     - [✅英语学习-语法-16种时态](https://blog.csdn.net/namelessmyth/article/details/134161822?spm=1001.2014.3001.5501)
@@ -165,6 +176,7 @@ root-->admin["管理"]
   - bat
     - [✅使用bat脚本启动多个java应用](https://blog.csdn.net/namelessmyth/article/details/130229190?spm=1001.2014.3001.5501)
   - sh
+      - [✅一键启动脚本-RocketMQ-Karfka](https://blog.csdn.net/namelessmyth/article/details/135131612)
 - OS
   - Windows
     - 使用
