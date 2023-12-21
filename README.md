@@ -1,20 +1,13 @@
 <p align="left">
 <a href="https://blog.csdn.net/namelessmyth" target="_blank">
-<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge">
-</a>
+<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge"></a>
 <a href="https://zhuanlan.zhihu.com/p/474433404" target="_blank">
-<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用">
-</a>
-<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square">
-</a>
-<a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg">
-</a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg">
-</a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
-</a>
-<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
-</a>
+<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用"></a>
+<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square"></a>
+<a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg"></a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.0-brightgreen.svg"></a>
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark"></a>
+<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge"></a>
 </p>
 
 
@@ -66,7 +59,6 @@ Java-->J2SE
 Java-->t["并发"]
 Java-->JVM
 Java-->Spring
-Java-->面试题
 Java-->MQ
 Java-->cloud["微服务"]
 
