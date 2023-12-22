@@ -1,14 +1,12 @@
 # JVM
 
-以下笔记内容来源视频地址：https://www.mashibing.com/study?courseNo=245&sectionNo=53557
-
-
-
 # 参考文档
 
 如果在网上看文章遇到分歧，建议大家看最权威文档：[The Java Virtual Machine Specification（Java虚拟机规范）](https://docs.oracle.com/javase/specs/jvms/se8/jvms8.pdf)
 
 上面的是JDK8的，不同版本的可以在这里找：[Oracle官方所有版本Java规范文档](https://docs.oracle.com/javase/specs/)。
+
+以下笔记内容参考的视频地址：https://www.mashibing.com/study?courseNo=245&sectionNo=53557
 
 
 
@@ -872,13 +870,13 @@ JVM级别如何规范（JSR133）
 > StoreStore屏障：
 >
 > 	对于这样的语句Store1; StoreStore; Store2，
-> 																															
+> 																																
 > 	在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 >
 > LoadStore屏障：
 >
 > 	对于这样的语句Load1; LoadStore; Store2，
-> 																															
+> 																																
 > 	在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 >
 > StoreLoad屏障：
