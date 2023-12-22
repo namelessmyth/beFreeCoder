@@ -130,21 +130,19 @@ root-->admin["管理"]
 
 ## 数据库
 
-- MySQL
+- 综合
+    - [↗️各种类型数据库权威排名](https://db-engines.com/en/ranking)
 
+    - [🙌数据库-面试题-md](Java/Job/求职-面试题-数据库.md)
+
+- MySQL
 - Oracle
   - [✅listagg函数值超过4000的解决方案](https://blog.csdn.net/namelessmyth/article/details/123763750?spm=1001.2014.3001.5501)
   - [✅Oracle In 不能超过1000的解决方案](https://blog.csdn.net/namelessmyth/article/details/121065339?spm=1001.2014.3001.5501)
   - [✅Oracle最大连接数修改](https://blog.csdn.net/namelessmyth/article/details/120942025?spm=1001.2014.3001.5501)
-
 - PostgreSQL
-
 - MongoDB
-
 - SQL Server
-
-- 面试题
-  - [🙌数据库-面试题-md](Java/Job/求职-面试题-数据库.md)
 
 
 
@@ -161,6 +159,14 @@ root-->admin["管理"]
 - docker，[官网](https://hub.docker.com/)
   - [✅Docker-安装(Windows, Linux)](https://blog.csdn.net/namelessmyth/article/details/132657994?spm=1001.2014.3001.5501)
   - [✅Docker-基本命令使用](https://blog.csdn.net/namelessmyth/article/details/132674435?spm=1001.2014.3001.5501)
+
+
+
+## 编程基础
+
+- 算法
+    - [↗️算法数据结构-可视化](https://www.cs.usfca.edu/~galles/visualization/about.html)
+- 网络
 
 
 

@@ -1753,7 +1753,397 @@ v-for还可以进行嵌套遍历，就是多层for循环
 
 
 
-##### v-html, v-text
+#### v-html, v-text
+
+v-html和v-text都是渲染文本的指令，只是使用场景有所不同
+
+v-text和双大括号插值：{{}}类似，都是将数据以文本的方式输出（即使里面包含html语法）他两的区别是
+
+- 使用{{}}，页面会有一个很短暂的时间输出解析之前的值。但是v-text不会。
+- 使用{{}}，如果他周围还有其他其他值也会一起输出，例如`---{{a}}---`。v-text则只会输出变量的值。
+
+v-html就和上面的不同点是：他将作为innerHTML属性输出，如果包含html语法则输出html元素。
+
+v-html和v-text类似的是v-html也不允许在元素中间随意插值。
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p>-----------{{a}}------------</p>
+        <p v-text="a">--------------------</p>
+        <p v-html='a'>--------------</p>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a:'<h1>我是要插值的内容</h1>'
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+显示效果：
+
+![image-20231222174232899](学习笔记-前端-Gem.assets/image-20231222174232899.png)
+
+#### v-cloak
+
+可以使用 v-cloak 指令设置样式，这些样式会在 Vue 实例编译结束时，从绑定的 HTML 元素上被移除。
+
+当网络较慢，网页还在加载 Vue.js ，而导致 Vue 来不及渲染，这时页面就会显示出 Vue 源代码。我们可以使用 v-cloak 指令配合CSS来解决这一问题。
+
+在简单项目中，使用  v-cloak 指令是解决屏幕闪动的好方法。但在大型、工程化的项目中（webpack、vue-router）只有一个空的 div 元素，元素中的内容是通过路由挂载来实现的，这时我们就不需要用到 v-cloak 指令。
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        [v-clock]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        {{a}}
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a:'我是渲染的指令-v-cloak'
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-once
+
+v-once的作用是只会渲染对应元素一次，数据更新不会引起视图的更新，目的是为了优化页面的性能
+
+案例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 v-once>{{a}}</h2>
+        <button @click="add">按我加1</button>
+        <button @click="minus">按我减1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            },
+            // 事件方法
+            methods:{
+                add() {
+                    this.a ++
+                    console.log(this.a)
+                },
+                minus() {
+                    this.a --
+                    console.log(this.a)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+页面打开后会发现，点击按钮并不会导致页面显示值的变化，但是变量的值还是在变化。
+
+使用场景通常是没有动态的元素内容，比如一些文章，一些固定标题
+
+
+
+#### v-pre
+
+v-pre属性的作用是跳过该元素编译过程，直接显示元素内部的文本，特点就是跳过大量的没有指令的节点。目的就是优化页面的加载性能。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 v-pre>{{a}}</h2>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-on
+
+v-on的作用是给元素添加事件监听，可以简写为@。
+
+JavaScript的元素的事件监听都可以在vue中使用。例如：
+
+| 事件名称 | 方法         |
+| -------- | ------------ |
+| 点击     | onclick      |
+| 双击     | ondblclick   |
+| 鼠标移上 | onmouseenter |
+| 鼠标离开 | onmouseleave |
+| 鼠标滑过 | onmousemove  |
+| 鼠标移除 | onmouseout   |
+| 失去焦点 | onblur       |
+| 聚焦     | onfocus      |
+| 键盘事件 | onkeydown    |
+
+在vue中的使用是一律去除前面on，然后加v-on：或者@。
+
+例如：单击是`@click`或`v-on:click`
+
+需要注意的是：
+
+- 所有事件调用的方法都必须写在vue的methods中，不允许写在其他地方。
+- 不允许使用JavaScript的事件方法调用Vue的方法。例如：`onclick="add"`
+- 如果method中存在多个重名方法，那最下面的会覆盖上面的。
+- 方法是支持传入参数的。例如：add(5)。如果不定义参数，默认的入参是event
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 >{{a}}</h2>
+        <button @click="add">点击加1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            },
+            methods:{
+                add(event) {
+                    console.log(event)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-bind
+
+v-bind属性的作用是将普通的html属性变为动态属性，让属性具有动态能力。
+
+例如：`<img src="'images/'+url+'.jpg'" alt="">`这段代码的意图是将url当成一个变量是的图片可以动态显示。但实际不会。需要改成这样才行：`<img v-bind:src="'images/'+url+'.jpg'" alt="">`。此时vue会编译带有v-bind的属性，然后返回编译后结果。
+
+可以将v-bind:简写为：也就是：`<img :src="'images/'+url+'.jpg'" alt="">`。
+
+需要注意的是动态的class必须要使用{}去包裹，值可以有多个，值的参数是一个布尔值
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            width: 200px;
+            height: 200px;
+            background: blue;
+        }
+        .red{
+            background:red;
+        }
+        .pink{
+            background: pink;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <div>
+            <p :style="{width:b+'px'}">
+                {{a}}
+            </p>
+        </div>
+        <button @click="add">点击加1</button>
+        <button @click="minus">点击减1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 0,
+                b: 100
+            },
+            methods:{
+                add(event) {
+                    this.b ++
+                },
+                minus(){
+                    this.a --
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-model
+
+v-model属性是使用在表单元素中的，作用是实现表单和数据的双向绑定。
+
+vue是mvvm框架，其核心之一就是双向数据绑定。当html元素和变量进行绑定时，当变量改变html元素的值也会自动改变，而v-model的作用就是实现另一半，即当html元素值改变时自动修改变量的值。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+
+    <div id="app" v-clock>
+        <h2>问卷调查</h2>
+        <p>
+            姓名：<input type="text" v-model="name">
+        </p>
+        <p>
+            性别：
+            <input type="radio" name="sex" value="男" v-model="sex">男
+            <input type="radio" name="sex" value="女" v-model="sex">女
+        </p>
+        <p>
+            爱好：
+            <input type="checkbox" name="hobby" value="打篮球" v-model="hobby">打篮球
+            <input type="checkbox" name="hobby" value="跳舞" v-model="hobby">跳舞
+            <input type="checkbox" name="hobby" value="读书" v-model="hobby">读书
+        </p>
+        <p>
+            籍贯：
+            <select name="native" id="" v-model="native">
+                <option value="河北">河北</option>
+                <option value="河南">河南</option>
+                <option value="山东">山东</option>
+                <option value="山西">山西</option>
+                <option value="湖南">湖南</option>
+                <option value="湖北">湖北</option>
+            </select>
+        </p>
+        <p>
+            您填写的表单内容为：姓名：{{name}}，性别：{{sex}}，爱好：{{hobby}}，籍贯：{{native}}        
+        </p>
+        <button @click="submit">提交</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                name: '',
+                sex: '男',
+                hobby: [],
+                native: '河北'
+            },
+            methods:{
+                submit() {
+                    //汇总信息提交到后端
+                    let obj = {
+                        name: this.name,
+                        sex: this.sex,
+                        hobboy: this.hobby,
+                        native: this.native
+                    }
+                    console.log(obj)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+![image-20231222184152109](学习笔记-前端-Gem.assets/image-20231222184152109.png)
+
+页面打开后会发现，当姓名，性别，爱好这些界面元素的值发生变化时，变量的值也自动变了。
 
 
 
