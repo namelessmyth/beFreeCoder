@@ -125,6 +125,95 @@ node 版本管理工具 nvm
 
 
 
+## 键盘事件
+
+### 键盘事件值清单
+
+下表显示了所有的键和对应的 `event.which`，`event.key` 和 `event.code` 值。
+
+| Key Name                  | `event.which` | `event.key`        | `event.code`    | Notes                                                        |
+| ------------------------- | ------------- | ------------------ | --------------- | ------------------------------------------------------------ |
+| backspace                 | 8             | Backspace          | Backspace       |                                                              |
+| tab                       | 9             | Tab                | Tab             |                                                              |
+| enter                     | 13            | Enter              | Enter           |                                                              |
+| shift(left)               | 16            | Shift              | ShiftLeft       | `event.shiftKey` 为 `true`                                   |
+| shift(right)              | 16            | Shift              | ShiftRight      | `event.shiftKey` 为 `true`                                   |
+| ctrl(left)                | 17            | Control            | ControlLeft     | `event.ctrlKey` 为 `true`                                    |
+| ctrl(right)               | 17            | Control            | ControlRight    | `event.ctrlKey` 为 `true`                                    |
+| alt(left)                 | 18            | Alt                | AltLeft         | `event.altKey` 为 `true`                                     |
+| alt(right)                | 18            | Alt                | AltRight        | `event.altKey` 为 `true`                                     |
+| pause/break               | 19            | Pause              | Pause           |                                                              |
+| caps lock                 | 20            | CapsLock           | CapsLock        |                                                              |
+| escape                    | 27            | Escape             | Escape          |                                                              |
+| space                     | 32            |                    | Space           | `event.key` 的值是一个空格                                   |
+| page up                   | 33            | PageUp             | PageUp          |                                                              |
+| page down                 | 34            | PageDown           | PageDown        |                                                              |
+| end                       | 35            | End                | End             |                                                              |
+| home                      | 36            | Home               | Home            |                                                              |
+| left arrow                | 37            | ArrowLeft          | ArrowLeft       |                                                              |
+| up arrow                  | 38            | ArrowUp            | ArrowUp         |                                                              |
+| right arrow               | 39            | ArrowRight         | ArrowRight      |                                                              |
+| down arrow                | 40            | ArrowDown          | ArrowDown       |                                                              |
+| print screen              | 44            | PrintScreen        | PrintScreen     |                                                              |
+| insert                    | 45            | Insert             | Insert          |                                                              |
+| delete                    | 46            | Delete             | Delete          |                                                              |
+| 0-9                       | 48-57         | 0-9                | Digit0-Digit9   |                                                              |
+| a-z                       | 65-90         | a-z                | KeyA-KeyZ       |                                                              |
+| left window key           | 91            | Meta               | MetaLeft        | `event.metaKey` 为 `true`                                    |
+| right window key          | 92            | Meta               | MetaRight       | `event.metaKey` 为 `true`                                    |
+| select key (Context Menu) | 93            | ContextMenu        | ContextMenu     |                                                              |
+| numpad 0-9                | 96-105        | 0-9                | Numpad0-Numpad9 |                                                              |
+| multiply                  | 106           | *                  | NumpadMultiply  |                                                              |
+| add                       | 107           | +                  | NumpadAdd       |                                                              |
+| subtract                  | 109           | -                  | NumpadSubtract  |                                                              |
+| decimal point             | 110           | .                  | NumpadDecimal   |                                                              |
+| divide                    | 111           | /                  | NumpadDivide    |                                                              |
+| f1-f12                    | 112-123       | F1-F12             | F1-F12          |                                                              |
+| num lock                  | 144           | NumLock            | NumLock         |                                                              |
+| scroll lock               | 145           | ScrollLock         | ScrollLock      |                                                              |
+| audio volume mute         | 173           | AudioVolumeMute    |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 181，`event.code` 的值是 `VolumeMute` |
+| audio volume down         | 174           | AudioVolumeDown    |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 182，`event.code` 的值是  `VolumeDown` |
+| audio volume up           | 175           | AudioVolumeUp      |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 183，`event.code` 的值是  `VolumeUp` |
+| media player              | 181           | LaunchMediaPlayer  |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 0（无值），`event.code` 的值是 `MediaSelect` |
+| launch application 1      | 182           | LaunchApplication1 |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 0（无值），`event.code` 的值是 `LaunchApp1` |
+| launch application 2      | 183           | LaunchApplication2 |                 | ⚠️ 在 Firefox 中，`event.which` 的值是 0（无值），`event.code` 的值是 `LaunchApp2` |
+| semi-colon                | 186           | ;                  | Semicolon       | ⚠️ `event.which` 的值在 Firefox 中是 59                       |
+| equal sign                | 187           | =                  | Equal           | ⚠️ `event.which` 的值在 Firefox 中是 61                       |
+| comma                     | 188           | ,                  | Comma           |                                                              |
+| dash                      | 189           | -                  | Minus           | ⚠️ `event.which` 的值在 Firefox 中是 173                      |
+| period                    | 190           | .                  | Period          |                                                              |
+| forward slash             | 191           | /                  | Slash           |                                                              |
+| Backquote/Grave accent    | 192           | `                  | Backquote       |                                                              |
+| open bracket              | 219           | [                  | BracketLeft     |                                                              |
+| back slash                | 220           | \                  | Backslash       |                                                              |
+| close bracket             | 221           | ]                  | BracketRight    |                                                              |
+| single quote              | 222           | '                  | Quote           |                                                              |
+
+请注意：
+
+- `event.which` 已被弃用（或者说已经过时了）。
+- 小写字母（a）和大写字母（A）的 `event.code` 值相同，但 `event.key` 值表示的是实际输入的字母。
+- 等号（`=`），分号（`;`）和减号（`-`）的 `event.which` 值在 Firefox 和其他浏览器是不同的。
+
+### 虚拟键盘的事件
+
+那么虚拟键盘呢，比如手机、平板电脑或任何其他输入设备？
+
+[规范上说](https://link.juejin.cn?target=https%3A%2F%2Fw3c.github.io%2Fuievents%2F%23code-virtual-keyboards)，如果虚拟键盘的布局和功能与标准键盘相似，则它必然会返回恰当的 `code` 属性。否则，它将不会返回正确的值。
+
+### 总结
+
+- 你可以使用 `KeyboardEvent` 来捕获用户和键盘之间的交互；
+- 主要有三种键盘事件：`keydown`，`keypress` 和 `keyup`；
+- 我们应该尽可能多地使用 `keydown` 事件因为他能满足绝大多数的用例；
+- `keypress` 事件类型已被弃用；
+- `event.which`属性已被弃用，尽可能使用 `event.key`；
+- 如果你必须支持较旧的浏览器，请使用适当的属性替代；
+- 我们可以组合多个键并执行操作；
+- 只要布局和功能与标准键盘相似，以上所有事件在虚拟键盘上是支持的。
+
+
+
 # TypeScript
 
 开始之前请先自行安装好nodejs（[下载地址](https://nodejs.org/en/download/)）。IDE任选：HBuilder，Vscode，IDEA都可以
@@ -1753,7 +1842,1379 @@ v-for还可以进行嵌套遍历，就是多层for循环
 
 
 
-##### v-html, v-text
+#### v-html, v-text
+
+v-html和v-text都是渲染文本的指令，只是使用场景有所不同
+
+v-text和双大括号插值：{{}}类似，都是将数据以文本的方式输出（即使里面包含html语法）他两的区别是
+
+- 使用{{}}，页面会有一个很短暂的时间输出解析之前的值。但是v-text不会。
+- 使用{{}}，如果他周围还有其他其他值也会一起输出，例如`---{{a}}---`。v-text则只会输出变量的值。
+
+v-html就和上面的不同点是：他将作为innerHTML属性输出，如果包含html语法则输出html元素。
+
+v-html和v-text类似的是v-html也不允许在元素中间随意插值。
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p>-----------{{a}}------------</p>
+        <p v-text="a">--------------------</p>
+        <p v-html='a'>--------------</p>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a:'<h1>我是要插值的内容</h1>'
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+显示效果：
+
+![image-20231222174232899](学习笔记-前端-Gem.assets/image-20231222174232899.png)
+
+#### v-cloak
+
+可以使用 v-cloak 指令设置样式，这些样式会在 Vue 实例编译结束时，从绑定的 HTML 元素上被移除。
+
+当网络较慢，网页还在加载 Vue.js ，而导致 Vue 来不及渲染，这时页面就会显示出 Vue 源代码。我们可以使用 v-cloak 指令配合CSS来解决这一问题。
+
+在简单项目中，使用  v-cloak 指令是解决屏幕闪动的好方法。但在大型、工程化的项目中（webpack、vue-router）只有一个空的 div 元素，元素中的内容是通过路由挂载来实现的，这时我们就不需要用到 v-cloak 指令。
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        [v-clock]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        {{a}}
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a:'我是渲染的指令-v-cloak'
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-once
+
+v-once的作用是只会渲染对应元素一次，数据更新不会引起视图的更新，目的是为了优化页面的性能
+
+案例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 v-once>{{a}}</h2>
+        <button @click="add">按我加1</button>
+        <button @click="minus">按我减1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            },
+            // 事件方法
+            methods:{
+                add() {
+                    this.a ++
+                    console.log(this.a)
+                },
+                minus() {
+                    this.a --
+                    console.log(this.a)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+页面打开后会发现，点击按钮并不会导致页面显示值的变化，但是变量的值还是在变化。
+
+使用场景通常是没有动态的元素内容，比如一些文章，一些固定标题
+
+
+
+#### v-pre
+
+v-pre属性的作用是跳过该元素编译过程，直接显示元素内部的文本，特点就是跳过大量的没有指令的节点。目的就是优化页面的加载性能。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 v-pre>{{a}}</h2>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-on
+
+v-on的作用是给元素添加事件监听，可以简写为@。
+
+JavaScript的元素的事件监听都可以在vue中使用。例如：
+
+| 事件名称 | 方法         |
+| -------- | ------------ |
+| 点击     | onclick      |
+| 双击     | ondblclick   |
+| 鼠标移上 | onmouseenter |
+| 鼠标离开 | onmouseleave |
+| 鼠标滑过 | onmousemove  |
+| 鼠标移除 | onmouseout   |
+| 失去焦点 | onblur       |
+| 聚焦     | onfocus      |
+| 键盘事件 | onkeydown    |
+
+在vue中的使用是一律去除前面on，然后加v-on：或者@。
+
+例如：单击是`@click`或`v-on:click`
+
+需要注意的是：
+
+- 所有事件调用的方法都必须写在vue的methods中，不允许写在其他地方。
+- 不允许使用JavaScript的事件方法调用Vue的方法。例如：`onclick="add"`
+- 如果method中存在多个重名方法，那最下面的会覆盖上面的。
+- 方法是支持传入参数的。例如：add(5)。如果不定义参数，默认的入参是event
+
+参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <h2 >{{a}}</h2>
+        <button @click="add">点击加1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 100
+            },
+            methods:{
+                add(event) {
+                    console.log(event)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-bind
+
+v-bind属性的作用是将普通的html属性变为动态属性，让属性具有动态能力。
+
+例如：`<img src="'images/'+url+'.jpg'" alt="">`这段代码的意图是将url当成一个变量是的图片可以动态显示。但实际不会。需要改成这样才行：`<img v-bind:src="'images/'+url+'.jpg'" alt="">`。此时vue会编译带有v-bind的属性，然后返回编译后结果。
+
+可以将v-bind:简写为：也就是：`<img :src="'images/'+url+'.jpg'" alt="">`。
+
+需要注意的是动态的class必须要使用{}去包裹，值可以有多个，值的参数是一个布尔值
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            width: 200px;
+            height: 200px;
+            background: blue;
+        }
+        .red{
+            background:red;
+        }
+        .pink{
+            background: pink;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-clock>
+        <div>
+            <p :style="{width:b+'px'}">
+                {{a}}
+            </p>
+        </div>
+        <button @click="add">点击加1</button>
+        <button @click="minus">点击减1</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                a: 0,
+                b: 100
+            },
+            methods:{
+                add(event) {
+                    this.b ++
+                },
+                minus(){
+                    this.a --
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### v-model
+
+v-model属性是使用在表单元素中的，作用是实现表单和数据的双向绑定。
+
+vue是mvvm框架，其核心之一就是双向数据绑定。当html元素和变量进行绑定时，当变量改变html元素的值也会自动改变，而v-model的作用就是实现另一半，即当html元素值改变时自动修改变量的值。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+
+    <div id="app" v-clock>
+        <h2>问卷调查</h2>
+        <p>
+            姓名：<input type="text" v-model="name">
+        </p>
+        <p>
+            性别：
+            <input type="radio" name="sex" value="男" v-model="sex">男
+            <input type="radio" name="sex" value="女" v-model="sex">女
+        </p>
+        <p>
+            爱好：
+            <input type="checkbox" name="hobby" value="打篮球" v-model="hobby">打篮球
+            <input type="checkbox" name="hobby" value="跳舞" v-model="hobby">跳舞
+            <input type="checkbox" name="hobby" value="读书" v-model="hobby">读书
+        </p>
+        <p>
+            籍贯：
+            <select name="native" id="" v-model="native">
+                <option value="河北">河北</option>
+                <option value="河南">河南</option>
+                <option value="山东">山东</option>
+                <option value="山西">山西</option>
+                <option value="湖南">湖南</option>
+                <option value="湖北">湖北</option>
+            </select>
+        </p>
+        <p>
+            您填写的表单内容为：姓名：{{name}}，性别：{{sex}}，爱好：{{hobby}}，籍贯：{{native}}        
+        </p>
+        <button @click="submit">提交</button>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                name: '',
+                sex: '男',
+                hobby: [],
+                native: '河北'
+            },
+            methods:{
+                submit() {
+                    //汇总信息提交到后端
+                    let obj = {
+                        name: this.name,
+                        sex: this.sex,
+                        hobboy: this.hobby,
+                        native: this.native
+                    }
+                    console.log(obj)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+![image-20231222184152109](学习笔记-前端-Gem.assets/image-20231222184152109.png)
+
+页面打开后会发现，当姓名，性别，爱好这些界面元素的值发生变化时，变量的值也自动变了。
+
+
+
+### 指令案例
+
+#### 选项卡
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            width: 302px;
+            margin: 100px auto;
+            border: 1px solid #ddd;
+        }
+        .box .header{
+            height: 35px;
+            line-height: 35px;
+        }
+        .box .header span{
+            float: left;
+            width: 100px;
+            border-right:1px solid #fff;
+            background: #ddd;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+        }
+        .box .header span:last-child{
+            border-right: none;
+        }
+        .box .header .cur{
+            background: #fff;
+            color: #ddd;
+        }
+        .box .content{
+            line-height: 30px;
+            font-size: 14px;
+            padding: 5px;
+        }
+        .box .content p{
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+        <div class="box" id="app">
+            <div class="header">
+                <!-- cur的显示状态是根据curState的状态进行显示的，如果curState和index相等了当前css属性cur就生效了 -->
+                <!-- displayState事件的作用是将当前span的index传出去 -->
+                <span :class="{cur: curState == index}" v-for="(item,index) in hTitle" @mouseenter="displayState(index)">{{item}}</span>
+            </div>
+            <div class="content" v-show="curState == 0">
+                <p>首页首页首页首页首页首页首页首页首页</p>
+                <p>首页首页首页首页首页首页首页首页首页</p>
+                <p>首页首页首页首页首页首页首页首页首页</p>
+                <p>首页首页首页首页首页首页首页首页首页</p>
+                <p>首页首页首页首页首页首页首页首页首页</p>
+                <p>首页首页首页首页首页首页首页首页首页</p>
+
+            </div>
+            <div class="content"  v-show="curState == 2">
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+                <p>娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐娱乐</p>
+
+            </div>
+            <div class="content"  v-show="curState == 1">
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+                <p>新闻新闻新闻新闻新闻新闻新闻新闻新闻</p>
+            </div>
+        </div>
+        <script src="../js/vue.dev.js"></script>
+        <script>
+            var vue = new Vue({
+                el:"#app",
+                data:{
+                    hTitle:['首页','新闻','娱乐'],
+                    showContent: true,
+                    // 显示状态，curState和谁相等了，谁显示
+                    curState: 0 
+                },
+                methods: {
+                    // 接受span的index值从而实现统一
+                    displayState(index) {
+                        this.curState = index;
+                    }
+                },
+            })
+        </script>
+</body>
+</html>
+```
+
+实现说明：
+
+循环一个数组变量生成3个选项卡，默认第一个为当前打开的页签。
+
+当鼠标移入某个选项卡时触发Vue的一个方法，将当前的选项卡索引传给一个变量。例如：当前选中第0个选项卡，这个变量就等于0。
+
+在选项卡的属性里面，使用v-show判断当前选项卡是否等于自己，是的话就显示，不是的话就隐藏
+
+
+
+#### 调色板
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p.pickers{
+            width: 200px;
+            height: 200px;
+            background: blue;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" v-clock>
+    <p class="pickers" :style="{background:'rgb('+r+','+g+','+b+')'}"></p>
+        <p>
+            <!-- html5新特性，范围选择，数字输入，将其和同一个变量双向绑定 -->
+            r:<input max="255" min="0" type="range" v-model="r"/><input max="255" min="0" v-model="r" type="number">
+        </p>
+        <p>
+            g:<input  max="255" min="0" type="range" v-model="g"/><input max="255" min="0" v-model="g" type="number">
+        </p>
+        <p>
+            b:<input  max="255" min="0" type="range" v-model="b"/><input max="255" min="0" v-model="b" type="number">
+        </p>
+    </div>
+    <script src = "../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                r: 100,
+                g: 200,
+                b: 123
+            },
+            methods:{
+                
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### 微博发布框
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .warn{
+            color:red;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <textarea v-model='content' cols="30" rows="10" placeholder="请发表你今天的心情。。。。"></textarea>
+        <!-- warn生效机制：当内容的数量大于100的时候，渲染文字为红色 -->
+        <p :class="{warn: content.length > 100}">{{content.length}}/100</p>
+        <p>
+            <!-- disabled生效机制：当内容的数量大于100的时候，不能点击 -->
+            <button :disabled="content.length > 100">发布</button>
+            <!-- disabled生效机制：当内容的小于等于0的时候，不能点击 -->
+            <button @click="clear" :disabled="content.length <= 0">清空</button>
+        </p>
+    </div>
+    <script src='../js/vue.dev.js'></script>
+    <script>
+        var vue = new Vue({
+            el:'#app',
+            data:{
+                content:""
+            },
+            methods:{
+                // 清空textarea文本输入框的内容
+                clear() {
+                    this.content = ''
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+### 修饰符
+
+修饰符是vue功能的拓展，是对vue事件或者系统操作等等进行功能的补充
+
+#### 事件修饰符
+
+首先来看下面这个案例，这3个div是3个同心圆
+
+```html
+<div class="outer" @click="outer">
+    <div class="center" @click="center">
+        <div class="inner" @click="inner"></div>
+    </div>
+</div>
+```
+
+正常情况下，如果点击了inner，其实就相当于点击了center和outer，此时如果都绑定了事件监听，就势必都会被触发。因为他们是同心圆或者说这是一种事件冒泡机制。那有没有办法阻止这种事件冒泡呢？有2种办法
+
+##### stop修饰符
+
+使用stop修饰符，其作用类似原生JavaScript的event.stopPropagation()方法
+
+```html
+<div class="outer" @click="outer">
+    <div class="center" @click="center">
+        <div class="inner" @click.stop="inner"></div>
+    </div>
+</div>
+```
+
+##### self修饰符
+
+self修饰符的作用是只有点击元素本身的时候才能触发事件，不接受冒泡上来的事件，同时也不能阻止事件的冒泡。
+
+.self修饰实际不是阻止事件向上冒泡，而是要当前元素不被外部冒泡事件影响。
+
+```html
+<div class="outer" @click.self="outer">
+    <div class="center" @click.self="center">
+        <div class="inner" @click.self="inner"></div>
+    </div>
+</div>
+```
+
+完整参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .outer{
+            width: 180px;
+            height: 180px;
+            background:gold;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 50%;
+        }
+        .outer .center{
+            width: 130px;
+            height: 130px;
+            padding: 30px;
+            background:pink;
+            border-radius: 50%;
+        }
+        .outer .center .inner{
+            width: 130px;
+            height: 130px;
+            background:cyan;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="outer" @click.self="outer">
+            <div class="center" @click="center">
+                <div class="inner" @click.self="inner"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            methods:{
+                outer() {
+                    console.log("外层")
+                },
+                center() {
+                    console.log("中间")
+                },
+                inner(event) {
+                    console.log("内层")
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+##### prevent修饰符
+
+如果一个超级链接，既有链接，又有事件，此时点击超级链接后会发生什么？例如：
+
+```html
+<a href="http://www.baidu.com" @click.prevent="alertDialog">点击跳转到百度</a>
+```
+
+答案是先会执行事件的内容，然后会执行a默认的跳转事件。此时如果不需要a标签跳转到百度，执行完事件监听后就停止，就可以通过.prevent修饰符阻止。其作用类似event.preventDefault();
+
+```html
+<a href="http://www.baidu.com" @click.prevent="alertDialog">点击跳转到百度</a>
+```
+
+##### capture修饰符
+
+capture修饰符是对事件捕获的监听，vue的事件监听默认都是获取冒泡阶段的，也就是从内到外。使用capture将会从外到内。
+
+如下案例：将会先触发outer，然后center，最后inner
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .outer{
+            width: 180px;
+            height: 180px;
+            background:gold;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 50%;
+        }
+        .outer .center{
+            width: 130px;
+            height: 130px;
+            padding: 30px;
+            background:pink;
+            border-radius: 50%;
+        }
+        .outer .center .inner{
+            width: 130px;
+            height: 130px;
+            background:cyan;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="outer" @click.capture="outer">
+            <div class="center" @click.capture="center">
+                <div class="inner" @click="inner"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            methods:{
+                outer() {
+                    console.log("外层")
+                },
+                center() {
+                    console.log("中间")
+                },
+                inner(event) {
+                    console.log("内层")
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+##### once修饰符
+
+once修饰符的作用就是使事件只触发一次。如下案例：只有第一次点按钮会进入add方法，后面就不会进入了。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p >{{a}}</p>
+        <button @click.once="add">按我加1</button>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            data:{
+                a: 100
+            },
+            methods:{
+                add(event) {
+                    this.a++
+                    console.log(this.a)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+
+
+#### 按键修饰符
+
+在JavaScript的课程中接触过onkeydown和onkeyup，这两个是键盘的事件监听，在vue中有对应的事件修饰符。
+
+基本使用方法
+
+空格松开：`<input type="text" @keyup.space='add'>`
+
+其中space是vue封装的keyCode别名，也可以使用下面的键盘代码，效果相同。
+
+`<input type="text" @keyup.32='add'>`
+
+[键盘按键码参考](#键盘事件值清单)
+
+
+
+#### 系统修饰符
+
+系统修饰符指的是通过一些指定的按键配合鼠标点击或者键盘事件进行事件监听。
+
+例如.ctrl系统修饰符的使用。下面的案例需要按住键盘ctrl键然后鼠标点击才能实现add加1
+
+核心代码`<button @click.ctrl='add'>按我加1 </button>`，全部参考代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p >{{a}}</p>
+        <!-- exact代表精确匹配 -->
+        <button  @click.ctrl.exact='add'>按我加1 </button>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            data:{
+                a: 100
+            },
+            methods:{
+                add() {
+                    this.a ++
+                    console.log(this.a)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+```
+
+常用的系统修饰符
+
+| 修饰符名称 | 对应的键盘键名称                                       |
+| ---------- | ------------------------------------------------------ |
+| .ctrl      | ctrl                                                   |
+| .alt       | alt                                                    |
+| .shfit     | shift                                                  |
+| .meta      | windows系统代表的是徽标键，IOS系统，代表的是common键   |
+| .exact     | 精确匹配，不设置的话，只要按的键包含指定的键就会触发。 |
+
+#####  exact修饰符
+
+代表精确匹配。设置之后，只有当单个键被按下后才会触发。
+
+如果设置的话。只要按的包含指定的键就会触发，例如：设置的是ctrl，实际按ctrl+alt也会触发。
+
+
+
+#### 鼠标按键修饰符
+
+鼠标按键修饰符修饰的是鼠标的左、滚轮（中键）、右键。
+
+例如：如果我们需要鼠标右击触发某个事件时，可以这么写：`<button @click.right='add'>按我加1 </button>`
+
+上面的写法存在的问题是，鼠标右键还会触发右键菜单，如果想要屏蔽掉可以使用prevent
+
+`<button @click.right.prevent='add'>按我加1 </button>`
+
+以下是鼠标中键（滚轮）按下的时候触发案例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p >{{a}}</p>
+        <button  @click.middle='add'>按我加1 </button>
+    </div>
+    <script src="../js/vue.dev.js"></script>
+    <script>
+        var vue = new Vue({
+            el:"#app",
+            data:{
+                a: 100
+            },
+            methods:{
+                add() {
+                    this.a ++
+                    console.log(this.a)
+                }
+            }
+        })
+        console.log(vue)
+    </script>
+</body>
+</html>
+```
+
+
+
+#### 表单修饰符
+
+表单修饰符一共有三个，分别是.lazy，.number，.trim。主要是用来修饰v-model属性的。
+
+##### lazy修饰符
+
+v-model默认是当数据输入时就会自动更新变量值。lazy修饰符是将绑定数据的实时更新状态的事件改成了Change事件。
+
+例如：如下案例中，只有当鼠标移开时，触发文本框的change事件，变量的值才会改变
+
+```html
+<div id="app">
+    <input type="text" v-model.lazy='a'>
+    <p>{{a}}</p>
+</div>
+```
+
+##### number修饰符
+
+number修饰符的作用是将输入内容自动转化为数字类型。且用户输入非数字类型内容的时候，会自动去除掉。
+
+例如：`<input type="text" v-model.number='a' @input='add'>`
+
+如果没有使用number修饰符，得到的输入框的数字都是string类型。
+
+
+
+##### trim修饰符
+
+.trim修饰符的作用是自动过滤用户输入的首尾空格，类似Java的trim方法。
+
+注意：数据中间的空格不会被自动过滤。
+
+
+
+### 脚手架
+
+请注意目前官方声明：Vue CLI 现已处于维护模式！现在官方推荐使用 [create-vue](https://github.com/vuejs/create-vue) 来创建基于 [Vite](https://vitejs.dev/) 的新项目。另外请参考 [Vue 3 工具链指南](https://cn.vuejs.org/guide/scaling-up/tooling.html) 以了解最新的工具推荐。
+
+vue-cli是vue的脚手架工具，帮我们快速生成了vue的起步项目，内置一些必备的工具。例如：打包工具，配置文件等等。
+
+地址：https://cli.vuejs.org/zh/
+
+#### 项目创建
+
+首先，如果你的电脑当前没有安装vue-cli，那需要在控制台中执行下面的命令安装：
+
+```bat
+npm install -g @vue/cli
+# OR
+yarn global add @vue/cli
+```
+
+安装完成之后，可以通过：`vue --version`来确认版本。
+
+```powershell
+C:\Users\Administrator\Desktop> vue --version
+@vue/cli 5.0.8
+```
+
+选择一个本地目录，创建第一个vue-cli项目。
+
+```powershell
+C:\Users\Administrator\Desktop> cd -d D:\Workspace\nodejs
+D:\Workspace\nodejs> vue create vue-cli-project
+# 出现下面的选项时，用键盘上下键选择Default [Vue 2]即可。
+Vue CLI v5.0.8
+? Please pick a preset:
+  Default ([Vue 3] babel, eslint)
+> Default ([Vue 2] babel, eslint)
+  Manually select features
+  
+# 接着安装开始
+Vue CLI v5.0.8
+✨  Creating project in D:\Workspace\nodejs\vue-cli-project.
+🗃  Initializing git repository...
+⚙️  Installing CLI plugins. This might take a while...
+[#####.............] | idealTree:webpack-dev-server: sill placeDep ROOT schema-utils@2.7.1 OK for: babel-loader@8.3.0
+
+# 出现下面的提示代表创建成功
+🎉  Successfully created project vue-cli-project.
+👉  Get started with the following commands:
+
+ $ cd vue-cli-project
+ $ npm run serve
+
+PS D:\Workspace\nodejs>
+```
+
+此时，可以使用IDE打开这个项目。例如：vscode，webstorm，idea等。
+
+使用vsCode 的同学，推荐安装一些常用vue插件，例如：Vue 2 Snippets、Vue Theme、Vue VS Code Extension Pack、Vue VSCode Snippets、Vuter。
+
+#### 启动服务
+
+打开终端，在项目的根目录下执行命令：npm run serve。此命令的执行细节下文会有讲解。
+
+服务启动成功后，会打印出服务地址，此时用浏览器访问可以看到默认的Vue首页。
+
+```cmd
+D:\Workspace\nodejs\vue-cli-project> npm run serve 
+
+> vue-cli-project@0.1.0 serve
+> vue-cli-service serve
+
+ INFO  Starting development server...
+
+
+ DONE  Compiled successfully in 2910ms                                                                                                                                                                20:33:42
+
+
+  App running at:
+  - Local:   http://localhost:8080/
+  - Network: http://192.168.3.129:8080/
+
+  Note that the development build is not optimized.
+  To create a production build, run npm run build.
+```
+
+
+
+#### Cli目录结构
+
+通过vue-cli创建好的项目目录中会有如下文件，下面会对每个文件进行说明。
+
+> 📁node_modules
+> 📁public
+> 📂src
+> 	📁asstet
+> 	📁components
+> 	📁views
+> 	App.vue
+> 	main.js
+> .gitignore
+> babel.config.js
+> jsconfig.json
+> package-lock.json
+> package.json
+> README.md
+> vue.config.js
+
+- node_modules：项目的依赖中心
+
+- public：静态资源文件夹，和assets不同的是public不会被webpack进行打包，使用路径的时候要使用绝对路径
+
+- src：项目的核心区域，所有的开发文件的核心内容区域，包括组件，静态资源等等
+  - asstet：静态资源文件夹，和public不同的是assets文件夹会被webpack打包，所以要使用相对路径
+
+  - components：Vue功能组件的存放位置，内部存放的是公用的组件
+
+  - views：公共文件，主要以各个独立页面为主
+  - APP.vue：整个vue的根组件，所有的vue组件都是从这个组件中拓展的，App根组件最后通过编译后将内容渲染到.html文件中
+  
+  - main.js：vue的入口文件，vue文件初始化位置
+  
+- .gitignore：GitHub相关配置文件，作用是git再提交代码的时候指定相关忽略格式文件
+
+- babel.config.js：babel的配置文件
+
+- package.json：配置（记录了）项目的相关模块，项目相关配置信息等等
+
+- package-lock.json：作用是记录的当前项目安装的相关依赖版本，并且记住了当前所有依赖的关联关系，如果下次vue进行编译的时候会按照这个文件进行编译
+
+- README.md：文件的作用是项目相关的使用方法，和使用说明
+
+
+
+#### npm run执行过程
+
+启动服务命令是npm run serve，具体这个命令干了一些什么，为什么可以执行相关的编译程序？ 
+
+首先npm run 后面执行是一个命令或者是一个文件内容，他配置在package.json的scripts属性中：
+
+```json
+{
+  "name": "vue-cli-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  ...   
+}
+```
+
+我们可以尝试在scripts增加一个test，然后执行npm run test看一下执行效果
+
+```json
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test": "你好，这是一个npm run的测试！"
+  },
+
+PS D:\Workspace\nodejs\vue-cli-project> npm run test
+
+> vue-cli-project@0.1.0 test
+> 你好，这是一个npm run的测试！
+
+'你好，这是一个npm' 不是内部或外部命令，也不是可运行的程序
+或批处理文件。
+```
+
+scripts是npm执行目录，在scripts这个对象中的key就是npm run的命令值
+
+vue-cli提供了三个命令
+
+- serve：这个是我们开发使用的命令，执行编译和热更新（ctrl+s的时候浏览器会实时更新）
+- build：工作中如果我们本地调试完后需要部署代码前，进行打包的命令
+- lint：命令的作用是检验文件代码的合格性（对eslint的校验）
+
+##### npm run serve 
+
+以npm run serve为例，解析他的执行过程：
+
+第一步，命令会找到node_modules文件夹中.bin文件夹内部的vue-cli-service文件
+
+![img](学习笔记-前端-Gem.assets/clip_image002.jpg)
+
+然后我们根据路径查找到了相关文件：node_modules/@vue/cli-service/bin/vue-cli-service.js
+
+![img](学习笔记-前端-Gem.assets/clip_image004.jpg)
+
+核心代码路径
+
+![img](学习笔记-前端-Gem.assets/clip_image006.jpg)
+
+node_modules/@vue/cli-service/lib/Service.js文件是整个编译过程的核心文件
+
+![img](学习笔记-前端-Gem.assets/clip_image008.jpg)
+
+
+
+#### cli启动文件
+
+##### main.js文件
+
+```js
+import Vue from 'vue'
+// 相对路径引入的App.vue文件
+import App from './App.vue'
+
+// 这行命令的作用是给生产环境配置的提示消息，如果为true或者默认不配置，会有相关提示语
+Vue.config.productionTip = false
+
+new Vue({
+  // 渲染节点
+  render: h => h(App),
+  // 挂载函数，内部#app是vue的根节点
+}).$mount('#app')
+```
+
+
+
+##### public > index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title></title>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
+
+```
+
+noscript标签的作用是当script标签加载不出来或者抛出错误的时候替换内容，目的是在浏览器中提供友好提示
+
+`<div id="app"></div>`是整个vue项目的根标签，vue需要挂载的标签
+
+ 
+
+##### App.vue文件
+
+App.vue文件是整个项目的根组件，项目中所有的页面切换页面显示都是在这个组件基础上渲染的
+
+我们将整个App.vue文件清空后发现
+
+```vue
+<template>
+  <div id="app">
+
+  </div>
+</template>
+
+<script>
+
+export default {
+  components: {
+    
+  }
+}
+</script>
+
+<style>
+
+```
+
+
+上面的结构是.vue文件的基础结构
+
+- `<template>`元素的作用是搭建vue文件的视图结构
+
+- `<script>`元素的作用是对当前文件逻辑进行交互
+
+- `<style>`元素的作用是对当前文件的样式进行修饰
+
+我们之前开发中.js文件只有逻辑.css文件只有样式.html文件只有结构，但是.vue的组建就是将视图和逻辑进行了一个整合
+
+ 
+
+### 组件
+
+#### 组件结构
+
+所有的vue组件都是以.vue格式结尾的文件。
+
+vue-cli中的App.vue文件就是整个vue的根组件。
+
+一个vue文件就是一个类，以下是一个组件的基本结构
+
+```vue
+<template>
+  <div>
+
+  </div>
+</template>
+
+<script>
+
+export default {
+  data(){
+   
+  }
+}
+</script>
+
+<style>
+
+```
+
+有以下需要注意：
+
+最外层必须有默认暴露。
+
+后面写的所有的vue的对象清单都必须在export default里面去罗列
+
+是用js+html方式的时候，data是一个对象，但在组件中必须是一个函数。
+
+data是个函数，返回的是一个对象，目的是为了让每个组件数据隔离。基于JavaScript的原理
+
+
+
+#### 自定义组件
+
+自定义组件可以在vue的其他组件中复用，并且数据是隔离的。
+
+首先在components文件夹内创建一个新的vue文件。可以参考其他vue文件。
+
+```vue
+<template>
+  <div class="hello">
+    <h1>hello gem: {{ a }}</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'GemTest',
+  props: {
+    msg: String
+  },
+  data() {
+    return {
+      a: 1001
+    }
+  }
+}
+</script>
+<style scoped>
+</style>
+```
+
+在App.vue中先导入这个新组件。`import gem from './components/gem.vue'`
+
+在components中注册新组件。`components: { HelloWorld, gem },`
+
+在`<template>`中使用新组件。`<gem></gem>`
+
+此时打开浏览器页面就可以看到新组件了。npm会自动编译，不需要重启服务器。
+
+
+
+#### 父子组件
 
 
 
