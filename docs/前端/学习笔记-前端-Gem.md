@@ -5,9 +5,9 @@
 | 文档名称     | 学习笔记-前端 |
 | ------------ | ------------- |
 | 文档分类     | 学习笔记-Java |
-| 版本号       | 1.1           |
+| 版本号       | 1.2           |
 | 最后更新人   | Gem Shen      |
-| 最后更新日期 | 2023-12-19    |
+| 最后更新日期 | 2023-12-24    |
 | 编制人       | Gem Shen      |
 | 编制日期     | 2023-02-18    |
 
@@ -20,10 +20,7 @@
 | ---- | ----------- | ---------- | ---------------------------- |
 | 1.0  | Gem Shen    | 2023-02-18 | 初稿                         |
 | 1.1  | Gem Shen    | 2023-12-19 | 加入TypeScript相关内容       |
-|      |             |            |                              |
-|      |             |            |                              |
-|      |             |            |                              |
-|      |             |            |                              |
+| 1.2  | Gem Shen    | 2023-12-24 | 加入Vue2相关内容             |
 |      |             |            |                              |
 
 
@@ -2929,7 +2926,7 @@ D:\Workspace\nodejs\vue-cli-project> npm run serve
 
 
 
-#### Cli目录结构
+#### cli目录结构
 
 通过vue-cli创建好的项目目录中会有如下文件，下面会对每个文件进行说明。
 
@@ -3214,7 +3211,233 @@ export default {
 
 
 
-#### 父子组件
+#### 父给子组件传值
+
+结合上述案例，当App.vue引入自定义组件gem时，此时App就是父组件，gem则是子组件。那父组件如何给子组件传值呢？
+
+##### 子组件props
+
+vue提供了一个props的入口，也是父子组件之间唯一的传值方式，父组件通过v-bind自定义属性传入值，子组件通过props接受对应的参数。公共v-bind自定义属性传值，注意由于vue的属性对大小写不敏感，所以如果需要写驼峰命名，需要使用`-`隔开。下面代码中的child-value代表的是childValue
+
+父组件，关键代码
+
+```vue
+<template>
+  <div>
+    <gem :child-value="a"></gem>
+  </div>
+</template>
+
+<script>
+export default {
+    data(){
+      return {
+        a: 100
+      }
+    }
+}
+</script>
+```
+
+子组件，关键代码
+
+```vue
+<template>
+  <div>
+    <h1>接收到父组件的值是：{{childValue}}</h1>
+  </div>
+</template>
+<script>
+export default {
+  // 罗列父组件传进的属性值
+  props:['childValue'],
+  data() {
+    return {
+      a: 100
+    }
+  },
+  methods:{
+    add() {
+      this.a ++
+    }
+  }
+}
+</script>
+```
+
+props罗列父组件的传值，接收的参数可以有多个，可以是数组，也可以是对象。
+
+**多个参数案例**
+
+父组件多个参数的案例关键代码
+
+```vue
+<div>
+    <gem :child-value="a" :value-b="b" :value-c="c"></gem>
+</div>
+```
+
+子组件接收案例关键代码
+
+```vue
+<template>
+  <div>
+    <h1>接收到父组件的值是：{{childValue}}，{{valueB}}，{{valueC}}</h1>
+  </div>
+</template>
+<script>
+export default {
+  // 罗列父组件传进的属性值
+  props:['childValue', 'valueB', 'valueC'],
+  data() {
+    return {
+      a: 100
+    }
+  }
+}
+</script>
+```
+
+**传对象案例**
+
+紧接着上面的例子，将数组改成对象传值，props里面写明参数的类型，如果类型和实际值不一致会报错。
+
+子组件接收案例关键代码：
+
+```vue
+props:{
+  childValue: Number,
+  valueB: Number,
+  valueC: Number
+}
+```
+
+**对象参数配置**
+
+例如：配置参数必填项
+
+```vue
+props:{
+  childValue: {
+    type: Number,
+    required: true,
+	default: 500
+  },
+  valueB: Number,
+  valueC: Number
+},
+```
+
+如上，type代表值类型，required为ture代表是必填项，如果不填，则会抛出错误。default代表的是，如果不传时的默认值。
+
+如果default的值是Object或者Array，需要使用函数return
+
+```vue
+childValue: {
+  type: Object,
+  default: ()=>{
+    return {a:100}
+  }
+}
+```
+
+validator可用于配置数据的校验器，函数返回值为boolean，如果为false时会报错。
+
+```vue
+childValue: {
+  type: Number,
+  // 数据的校验
+  validator: function(value) {
+    return value > 10
+  }
+}
+```
+
+#### 子修改父组件参数
+
+注意：子组件不可以直接修改父组件的值，只能传出一个自定义事件，父组件通过调用这个自定义事件后，然后在外部修改值。
+
+子组件代码
+
+```vue
+<template>
+  <div>
+    <h1>接收到父组件的值是：{{childValue}}，{{valueB}}，{{valueC}}</h1>
+    <button @click="add">按我加1</button>
+  </div>
+</template>
+<script>
+export default {
+  // 罗列父组件传进的属性值
+  props:{
+    childValue: Number,
+    valueB: Number,
+    valueC: Number
+  },
+  data() {
+   return {
+   }
+  },
+  methods:{
+    add() {
+      this.$emit("add");
+    }
+  }
+}
+</script>
+<style>
+  
+</style>
+```
+
+上例中的关键代码：`this.$emit("add")`)，其中$emit方法是vue封装的，用来向父组件返回对应的自定义事件，父组件可以在调用子组件的时候设置自定义事件的响应方法。父组件参考代码如下：
+
+```vue
+<template>
+  <div>
+    <gem @add="childAdd" :child-value='a' :value-b="b" :value-c="c"></gem>
+  </div>
+</template>
+
+<script>
+// 引入组件
+import gem from './components/gem.vue'
+
+export default {
+  // 注册组件
+  components:{
+    gem
+  },
+  data(){
+    return {
+      a: 100,
+      b: 200,
+      c: 300
+    }
+  },
+  methods: {
+      childAdd(){
+        this.a++
+      }
+  }
+}
+</script>
+
+<style>
+</style>
+```
+
+流程图：
+
+```mermaid
+flowchart TB
+child[子组件]
+-->|"通过$emit传出自定义事件"|parent[父组件]
+-->|"接收自定义事件设置处理方法修改数据"|admin[父组件数据管理中心]
+admin-->|"将更新之后的数据通过props传给子组件"|child
+```
+
+### 组件案例
 
 
 
