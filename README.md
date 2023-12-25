@@ -91,7 +91,42 @@ root-->admin["管理"]
 
 点击下方标题中的链接，可快速打开关联文档。标注md的为markdown格式，支持在线预览。
 
-**符号说明**：✅代表已整理结束；🙌代表整理中；↗️代表转载的他人作品
+**符号说明**：✅代表已发布；🙌代表整理中；↗️代表转载的他人作品
+
+
+
+## 求职
+
+- 公司
+  - 华为：[华为社招](https://career.huawei.com/reccampportal/portal5/social-recruitment.html)
+  - 微软：[微软全球招聘网站](https://jobs.careers.microsoft.com/global/en/search)
+  - 阿里：[集团招聘](https://talent.alibaba.com/?lang=zh)，[阿里巴巴社招](https://talent-holding.alibaba.com/off-campus/home?lang=zh)
+  - 字节：[社招岗位](https://jobs.bytedance.com/experienced/position)
+  - 腾讯：[社招岗位](https://careers.tencent.com/jobopportunity.html)
+
+- 公司岗位
+  - [↗️聊聊银行的信息科技岗（含各大银行薪资）](https://mp.weixin.qq.com/s/s_G9EYsW9FzzXL-5nsOOXQ)
+- 面试题
+  - [✅面试题-多线程并发-md](Java/Job/求职-面试题-多线程并发.md)
+  - [🙌面试题-MQ-md](Java/Job/求职-面试题-MQ.md)
+  - [🙌面试题-JVM-md](Java/Job/求职-面试题-JVM.md)
+  - [🙌面试题-Spring-md](Java/Job/求职-面试题-Spring.md)
+  - [🙌面试题-数据库-md](Java/Job/求职-面试题-数据库.md)
+
+
+
+## 架构设计
+
+- 综合
+  - [🙌学习笔记-Java-架构设计-md](docs/Architecture/学习笔记-架构设计.md)
+- 设计模式
+  - [🙌学习笔记-Java-设计模式-md](Java/mashibing/学习笔记-Java-设计模式.md)
+
+  - [✅单例模式-博客](https://blog.csdn.net/namelessmyth/article/details/129819921?spm=1001.2014.3001.5501)
+
+  - [✅代理模式-博客](https://blog.csdn.net/namelessmyth/article/details/129817251?spm=1001.2014.3001.5501)
+
+  - [✅桥接模式-博客](https://blog.csdn.net/namelessmyth/article/details/129847300?spm=1001.2014.3001.5501)
 
 
 
@@ -111,24 +146,16 @@ root-->admin["管理"]
 - Mybatis
   - [✅源码分析-Mybatis查询机制与工作原理](https://blog.csdn.net/namelessmyth/article/details/134017723?spm=1001.2014.3001.5501)
   - [✅Mybatis一对多关联查询，返回值Map，字段动态映射](https://blog.csdn.net/namelessmyth/article/details/126338505?spm=1001.2014.3001.5501)
+- Netty
+  - [🙌学习笔记-Java-坦克大战-Netty-md](docs/Java/学习笔记-Java-坦克大战-Netty.md)
 
-
-
-## 架构设计
-
-- 设计模式
-  - [✅单例模式](https://blog.csdn.net/namelessmyth/article/details/129819921?spm=1001.2014.3001.5501)
-
-  - [✅代理模式](https://blog.csdn.net/namelessmyth/article/details/129817251?spm=1001.2014.3001.5501)
-
-  - [✅桥接模式](https://blog.csdn.net/namelessmyth/article/details/129847300?spm=1001.2014.3001.5501)
 
 
 
 ## 数据库
 
 - 综合
-    - [↗️数据库权威排名(各种类型)](https://db-engines.com/en/ranking)
+    - [↗️数据库权威排名(国外网站，打开可能有点慢)](https://db-engines.com/en/ranking)
 - MySQL
 - Oracle
   - [✅listagg函数值超过4000的解决方案](https://blog.csdn.net/namelessmyth/article/details/123763750?spm=1001.2014.3001.5501)
@@ -142,6 +169,9 @@ root-->admin["管理"]
 
 ## MQ
 
+- 综合
+  - [🙌学习笔记-MQ-md](Java/mashibing/学习笔记-mq-Gem.md)
+
 - RocketMQ
   - [✅RocketMQ-Dashboard-控制台-安装](https://blog.csdn.net/namelessmyth/article/details/131961549)
 
@@ -152,6 +182,9 @@ root-->admin["管理"]
 - docker，[官网](https://hub.docker.com/)
   - [✅Docker-安装(Windows, Linux)](https://blog.csdn.net/namelessmyth/article/details/132657994?spm=1001.2014.3001.5501)
   - [✅Docker-基本命令使用](https://blog.csdn.net/namelessmyth/article/details/132674435?spm=1001.2014.3001.5501)
+- 微服务
+  - [🙌学习笔记-微服务-md](Java/mashibing/学习笔记-微服务-Gem.md)
+
 
 
 
@@ -163,30 +196,9 @@ root-->admin["管理"]
 
 
 
-## 求职
-
-- 公司
-  - 华为：[华为社招](https://career.huawei.com/reccampportal/portal5/social-recruitment.html)
-  - 微软：[微软全球招聘网站](https://jobs.careers.microsoft.com/global/en/search)
-  - 阿里：[集团招聘](https://talent.alibaba.com/?lang=zh)，[阿里巴巴社会招聘](https://talent-holding.alibaba.com/off-campus/home?lang=zh)
-  - 字节：[社招岗位](https://jobs.bytedance.com/experienced/position)
-  - 腾讯：[社招岗位](https://careers.tencent.com/jobopportunity.html)
-
-- 公司岗位
-  - [↗️聊聊银行的信息科技岗（含各大银行薪资）](https://mp.weixin.qq.com/s/s_G9EYsW9FzzXL-5nsOOXQ)
-- 面试题
-  - [✅面试题-多线程并发-md](Java/Job/求职-面试题-多线程并发.md)
-  - [🙌面试题-MQ-md](Java/Job/求职-面试题-MQ.md)
-  - [🙌面试题-JVM-md](Java/Job/求职-面试题-JVM.md)
-  - [🙌面试题-Spring-md](Java/Job/求职-面试题-Spring.md)
-  - [🙌面试题-数据库-md](Java/Job/求职-面试题-数据库.md)
-
-
-
 ## 前端
 
 - [🙌学习笔记-前端-md](docs/前端/学习笔记-前端-Gem.md)
-- TypeScript
 - VUE，[官方文档](https://cn.vuejs.org/guide/quick-start.html)
 - JQuery，[↗️菜鸟教程](https://www.runoob.com/jquery/jquery-tutorial.html)
 - EasyUI，[官方文档](https://www.jeasyui.cn/document/index/index.html)
