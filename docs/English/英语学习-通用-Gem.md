@@ -700,11 +700,31 @@ flowchart LR
 
 
 
-
-
 ## 音标
 
+音标就是记录音素的符号，是音素的标写符号，它的制定原则是:一个音素只用一个音标表示，一个音标只表示一个音素。
+
+音素的定义其实不难理解，在英文当中叫phone。它是语音中最小的单位，依据音节里的发音动作来分配
+
+英文与汉语不同的是，英语是拼音文字，字母本身就表达语音。有的单词看到就能把他读出来，这就是我们常说的自然拼读法则。
+
+然而，英语有40多个发音，却仅有26个字母。为了能准确标识发音，引入了语音符号，这些语音符号称作音标(Phonetic symbol)
+
+小知识：意大利语，德语就不需要学音标，因为他们的一个字母只会有一个发音。
+
 音标总共48个，分元音和辅音2种。以下章节会分别讲解。
+
+### 音标种类
+
+国际音标(IPA，International Phonetic Alphabet)，是1888年国际语音协会的语言学家制定出的一套可国际通用的语音符号叫国际音标符号，希望以一个符号代表一音，避免各人使用一套自己的符号所产生的不便。
+
+除了IPA之外，比较常用的还有英式的DJ音标，以及美式的K.K.音标，它们分别也都是国际音标的一种。
+
+DJ音标就是通常我们说的英式发音音标，由英国语音学家DanielJones研究出，由他的姓名首字母缩写DJ表示。
+
+K.K.音标，是《美式英语发音辞典》 (A Pronouncing Dictionary of American English)所使用的音标。由于两位作者John Samuel Kenyon及Thomas A.Knott的姓皆以K为开头，所以此辞典俗称为K.K.。K.K.音标的主要用途之一是教导母语非英语者学会美式英语的发音。
+
+不管是哪一种音标，最终的目的都是辅助我们语音的学习，所以多认识一些种类才能更好的运用世界各大词典和理解语言书籍中的单词发音。
 
 <table>
     <caption>音标汇总表</caption>
@@ -746,8 +766,6 @@ flowchart LR
         </tr>
     </tbody>
 </table>
-
-
 
 
 ### 元音
@@ -956,13 +974,15 @@ can you drive the large car to that bar
 
 ##### [ɒ]
 
-o
+[ɒ]是[ɔ:]的短音。
+
+**o**
 
 body
 
 nod
 
-a 在w后
+a在w后时
 
 want
 
@@ -970,9 +990,7 @@ wash
 
 wallet
 
-美音 /a:/
-
-练习
+英音[ɒ]美音/a:/
 
 a hot dog
 
@@ -3894,17 +3912,21 @@ Tha<u>t i</u>s actually↗️ the dream↘️. 闪音t
 
 ## 名句记忆
 
-| 中文                                                   | 忘记 | 记忆 | 英文                                                         |
-| ------------------------------------------------------ | ---- | ---- | ------------------------------------------------------------ |
-| 黑夜和困难永远也战胜不了日出和希望。                   |      | 1    | There was never a night or a problem that could defeat sunrise or hope. |
-| 无论你现在是谁曾经做过什么，你都可以成为你想成为的人。 |      |      | Regardless of who you are or what you have been, you can be what you want to be. |
-| 没有什么比温柔更有力量，也没有什么比真正的力量更温柔   |      |      | Nothing is so strong as gentleness, nothing so gentle as real strength. |
-|                                                        |      |      |                                                              |
-|                                                        |      |      |                                                              |
-|                                                        |      |      |                                                              |
-|                                                        |      |      |                                                              |
-|                                                        |      |      |                                                              |
-|                                                        |      |      |                                                              |
+There was never a night or a problem that could defeat sunrise or hope.
+
+黑夜和困难永远也战胜不了日出和希望。
+
+
+
+Regardless of who you are or what you have been, you can be what you want to be.
+
+无论你现在是谁曾经做过什么，你都可以成为你想成为的人。
+
+
+
+Nothing is so strong as gentleness, nothing so gentle as real strength.
+
+没有什么比温柔更有力量，也没有什么比真正的力量更温柔。
 
 
 
