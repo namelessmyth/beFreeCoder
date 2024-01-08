@@ -1,11 +1,11 @@
 <p align="left">
 <a href="https://blog.csdn.net/namelessmyth" target="_blank">
-<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=for-the-badge">
+<img src="https://img.shields.io/badge/博客-在线阅读-green.svg?style=flat">
 </a>
 <a href="https://zhuanlan.zhihu.com/p/474433404" target="_blank">
-<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=for-the-badge" alt="亲测可用">
+<img src="https://img.shields.io/badge/Java电子书集合-史上最全-yellow.svg?style=flat" alt="亲测可用">
 </a>
-<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/elemefe/vue-amap.svg?style=flat-square">
+<a href="#" target="_blank"><img alt="Github" src="https://img.shields.io/github/license/namelessmyth/git-doc.svg?style=flat-square">
 </a>
 <a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg">
 </a>
@@ -13,7 +13,7 @@
 </a>
 <a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
 </a>
-<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=for-the-badge">
+<a href="https://github.com/namelessmyth" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/namelessmyth/git-doc?style=social" />
 </a>
 </p>
 
@@ -132,7 +132,9 @@ root-->admin["管理"]
 
 
 
-## 架构设计🏢
+## 技术
+
+### 架构设计🏢
 
 - 综合
   - [🙌Java-架构设计-亿级流量-多级缓存-md](docs/Architecture/学习笔记-架构设计.md)
@@ -147,7 +149,7 @@ root-->admin["管理"]
 
 
 
-## Java☕
+### Java☕
 
 - J2SE
 - 多线程并发
@@ -169,7 +171,7 @@ root-->admin["管理"]
 
 
 
-## 数据库
+### 数据库
 
 - 综合
     - [↗️数据库权威排名(国外网站，打开可能有点慢)](https://db-engines.com/en/ranking)
@@ -184,7 +186,7 @@ root-->admin["管理"]
 
 
 
-## MQ
+### MQ
 
 - 综合
   - [🙌学习笔记-MQ-md](Java/mashibing/学习笔记-mq-Gem.md)
@@ -194,18 +196,19 @@ root-->admin["管理"]
 
 
 
-## 云原生
+### 云原生
 
 - docker，[官网](https://hub.docker.com/)
   - [✅Docker-安装(Windows, Linux)](https://blog.csdn.net/namelessmyth/article/details/132657994?spm=1001.2014.3001.5501)
   - [✅Docker-基本命令使用](https://blog.csdn.net/namelessmyth/article/details/132674435?spm=1001.2014.3001.5501)
+  - [↗️开源容器管理工具-Portainer](https://zhuanlan.zhihu.com/p/403285855)
 - 微服务
   - [🙌学习笔记-微服务-md](Java/mashibing/学习笔记-微服务-Gem.md)
 
 
 
 
-## 编程基础
+### 编程基础
 
 - 算法
     - [↗️算法数据结构-可视化](https://www.cs.usfca.edu/~galles/visualization/about.html)
@@ -213,7 +216,7 @@ root-->admin["管理"]
 
 
 
-## 前端
+### 前端
 
 - [🙌学习笔记-前端-md](docs/前端/学习笔记-前端-Gem.md)
 - VUE，[官方文档](https://cn.vuejs.org/guide/quick-start.html)
@@ -222,45 +225,16 @@ root-->admin["管理"]
 
 
 
-## 英语
+### 脚本
 
-- 通用
-  - [✅英语学习-语法-16种时态](https://blog.csdn.net/namelessmyth/article/details/134161822?spm=1001.2014.3001.5501)
-  - [✅英语学习-通用总结-md](docs/English/英语学习-通用-Gem.md)
-- 美剧
-  - [🙌英语学习-海贼王真人版-md](docs/English/英语学习-美剧-海贼王.md)
-- 托福
-    - [🙌英语学习-原力英语-艾力-md](docs/English/英语学习-原力-艾力.md)
+- bat
+  - [✅使用bat脚本启动多个java应用](https://blog.csdn.net/namelessmyth/article/details/130229190?spm=1001.2014.3001.5501)
+- sh
+  - [✅一键启动脚本-RocketMQ-Karfka](https://blog.csdn.net/namelessmyth/article/details/135131612)
 
 
 
-
-## 管理
-
-- 文件模版
-  - [✅团队绩效考核模版](docs/Management/template/团队绩效考核-模版.xlsx)
-  - 团队周报模版-开发
-  - 人才招聘模版-开发
-  - 个人周报模版
-  - 概要设计模版
-- 管理工具
-  - PingCode，25人以下免费，[官网](https://pingcode.com/)
-  - Worktile，10人以下免费，[官网](https://worktile.com/)
-  - 禅道，免费版存在功能限制，[官网](https://www.zentao.net/)
-  - Trello，基础版免费，付费版按项目数收费，推荐个人使用。
-  - Redmine，开源免费，功能全面，但版本较老
-- 工程工具
-  - Git
-    - [↗️Git中clone, branch, fork的区别](#https://zhuanlan.zhihu.com/p/510797009)
-    - [↗️Git中merge和rebase的区别](#https://juejin.cn/post/7026724793047220254)
-
-  - GitLab
-    - [↗️使用Docker安装GitLab](https://blog.csdn.net/BThinker/article/details/124097795)
-
-
-
-
-##  企业管理系统
+###  企业管理系统
 
 - PLM
   - [Oracle Agile PLM](https://blog.csdn.net/namelessmyth/category_11361929.html?spm=1001.2014.3001.5482)
@@ -279,21 +253,64 @@ root-->admin["管理"]
 
 
 
-## 脚本
+### 软件使用
 
-- bat
-  - [✅使用bat脚本启动多个java应用](https://blog.csdn.net/namelessmyth/article/details/130229190?spm=1001.2014.3001.5501)
-- sh
-    - [✅一键启动脚本-RocketMQ-Karfka](https://blog.csdn.net/namelessmyth/article/details/135131612)
-
-
-
-## 操作系统
-
-- Linux
-  - 使用
+- 操作系统
+  - Linux
     - [✅Linux宝塔安装使用笔记](https://blog.csdn.net/namelessmyth/article/details/123979428?spm=1001.2014.3001.5501)
-- Windows
-  - 使用
+  - Windows
     - [✅Windows11重装与优化](https://blog.csdn.net/namelessmyth/article/details/132520445?spm=1001.2014.3001.5501)
     - [✅WindowsC盘减肥与瘦身](https://blog.csdn.net/namelessmyth/article/details/132600752?spm=1001.2014.3001.5501)
+- 工程工具
+  - Git
+    - [↗️Git中clone, branch, fork的区别](#https://zhuanlan.zhihu.com/p/510797009)
+    - [↗️Git中merge和rebase的区别](#https://juejin.cn/post/7026724793047220254)
+
+  - GitLab
+    - [↗️使用Docker安装GitLab](https://blog.csdn.net/BThinker/article/details/124097795)
+
+
+
+
+## 管理
+
+- 文件模版
+  - [✅团队绩效考核模版](docs/Management/template/团队绩效考核-模版.xlsx)
+  - 团队周报模版-开发
+  - 人才招聘模版-开发
+  - 个人周报模版
+  - 概要设计模版
+- 管理工具
+  - PingCode，25人以下免费，[官网](https://pingcode.com/)
+  - Worktile，10人以下免费，[官网](https://worktile.com/)
+  - 禅道，免费版存在功能限制，[官网](https://www.zentao.net/)
+  - Trello，基础版免费，付费版按项目数收费，推荐个人使用。
+  - Redmine，开源免费，功能全面，但版本较老
+
+
+
+## 英语
+
+- 通用
+  - [✅英语学习-语法-16种时态](https://blog.csdn.net/namelessmyth/article/details/134161822?spm=1001.2014.3001.5501)
+  - [✅英语学习-通用总结-md](docs/English/英语学习-通用-Gem.md)
+- 美剧
+  - [🙌英语学习-海贼王真人版-md](docs/English/英语学习-美剧-海贼王.md)
+- 托福
+    - [🙌英语学习-原力英语-艾力-md](docs/English/英语学习-原力-艾力.md)
+
+
+
+# 好资源分享
+
+## GitHub
+
+[JavaGuide](https://gitee.com/SnailClimb/JavaGuide)，<a href="https://github.com/Snailclimb/JavaGuide" target="_blank"><img alt="Github" src="https://img.shields.io/github/stars/Snailclimb/JavaGuide?style=social" /></a>
+
+JavaGuide提供一个比较详细的学习路径，目录清晰，让你对于 Java 整体的知识体系有一个清晰认识。对于非 Java 初学者来说： 本文档更适合回顾知识，准备面试，让你搞清面试应该把重心放在哪些问题上。
+
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=Snailclimb&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />
+
+[Awesome-CTO](https://github.com/kuchin/awesome-cto)，<img alt="Github" src="https://img.shields.io/github/stars/kuchin/awesome-cto?style=social" />
+
+你想成为CTO么？或者你想知道你们公司的CTO称职么？这个项目主要分享的是要成为CTO的相关能力和知识。维护者是一个国外公司的CTO。
