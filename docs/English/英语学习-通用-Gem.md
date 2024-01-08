@@ -2093,9 +2093,9 @@ international，/ˌ<u>ɪ</u>nt<u>ə</u>rˈn<u>æ</u>ʃ<u>ə</u>n<u>ə</u>l/，�
 
 **规则**
 
-- 当单词以清辅音结尾+ed，读/t/
+- 当单词以清辅音结尾+ed，读/t/，清清
   - helped，/helpt/
-- 当单词以浊辅音或者元音结尾+ed，读/d/
+- 当单词以浊辅音或者元音结尾+ed，读/d/，浊浊
   - cleaned，/kliːnd/
 - 当单词以/d/或者/t/结尾+ed，读 /id/
   - wanted，/ˈwɑːntɪd/
@@ -2145,20 +2145,6 @@ the有2个发音，/ðə; ði/
 
 
 ### 分类
-
-#### 失音
-
-
-
-#### 失去爆破
-
-由于失去爆破是失音的一种现象，摩擦音也会被失去，所以统称为失音。
-
-注意：爆破音并不是完全失去，仍然形成阻碍，把气流堵在里面，但不爆破，直接发出相邻的辅音。
-
-参考[爆破音+辅音](#爆破音+辅音)
-
-
 
 #### 同化
 
@@ -2238,7 +2224,7 @@ little
 
 
 
-### [s]清辅音浊化
+### [k,t,p]浊化
 
 /s/后面的[清辅音](https://www.baidu.com/s?ie=utf-8&wd=%E6%B8%85%E8%BE%85%E9%9F%B3&cl=3)要浊化。
 
@@ -2257,6 +2243,34 @@ little
   - expression
 
 在美音中，当/t/出现在两个元音之间并且处于非重读位置的时候，/t/需要浊化近似于/d/的音。参考[[t]闪音(浊化)](#[t]闪音(浊化))
+
+
+
+### 失去爆破
+
+当前一个单词以爆破音结尾（/p/ /b/ /t/ /d/ /k/ /g/） 后一个单词以辅音开头并且这两个单词在同一个意群中
+
+前面的爆破音，只做口型，不发声
+
+tips: 读出空间感，此规则不仅存在于单词与单词中也存在于单词内部
+
+**案例**
+
+breakfast，/bre~~k~~fəst/，只发f
+
+postcard，/ˈpoʊs~~t~~kɑːrd/，只发k
+
+help me，/hel~~p~~ mi:/
+
+good morning，/ɡʊ<u>d m</u>ɔːrnɪŋ/
+
+The firs<u>t l</u>esson is qui<u>te d</u>ifficult. 第一节课很难
+
+The ol~~d~~ doctor has a ca~~t~~, too. 这位老医生也有只猫
+
+What time. /wʌt ~~t~~aɪm/ [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_646836a8e4b0b2d1c418dc20?product_id=term_63e60228b5d8d_d1vpxz)
+
+bus stop. /bʌs ~~s~~tɑːp/
 
 
 
@@ -2332,6 +2346,8 @@ shor<u>ten</u> the cur<u>tain</u>，缩短窗帘
 
 She has eaten the rotten food. 他吃了腐坏的食物。
 
+
+
 ### 辅元连读
 
 连读规则：
@@ -2358,6 +2374,12 @@ home is best，home is 可以连读成 /hoʊmis/ best
 stand up，/stæn<u>d ʌ</u>(p)/，p可以不发音，[视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_6485da9ee4b0b0bc2bf22ea3?product_id=term_63e60228b5d8d_d1vpxz)
 
 give up，/ɡɪ<u>v ʌ</u>(p)/
+
+in an hour /ɪn æn aʊər/ 可以发音成：/ɪn næn naʊər/
+
+all of a sudden 可以发音成：/ɔːləvə sʌd(ə)n/
+
+take a look at it 可以发音成：/teɪkə lʊkætɪt/
 
 
 
@@ -2510,34 +2532,6 @@ There's something wrong wi<u>th th</u>e computer. 电脑出了问题
 
 
 
-### 爆破音+辅音
-
-当前一个单词以爆破音结尾（/p/ /b/ /t/ /d/ /k/ /g/） 后一个单词以辅音开头并且这两个单词在同一个意群中
-
-前面的爆破音，只做口型，不发声
-
-tips: 读出空间感，此规则不仅存在于单词与单词中也存在于单词内部
-
-**案例**
-
-breakfast，/bre~~k~~fəst/，只发f
-
-postcard，/ˈpoʊs~~t~~kɑːrd/，只发k
-
-help me，/hel~~p~~ mi:/
-
-good morning，/ɡʊ<u>d m</u>ɔːrnɪŋ/
-
-The firs<u>t l</u>esson is qui<u>te d</u>ifficult. 第一节课很难
-
-The ol~~d~~ doctor has a ca~~t~~, too. 这位老医生也有只猫
-
-What time. /wʌt ~~t~~aɪm/ [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_646836a8e4b0b2d1c418dc20?product_id=term_63e60228b5d8d_d1vpxz)
-
-bus stop. /bʌs ~~s~~tɑːp/
-
-
-
 ### [j]同化
 
 [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffd3e4b0fc5d122faaf0?product_id=term_63e60228b5d8d_d1vpxz)
@@ -2626,7 +2620,7 @@ Ha(s he) done it before?
 - like her. /laik ~~h~~ər/ [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_64644560e4b0b0bc2be65e37?product_id=term_63e60228b5d8d_d1vpxz)
 - sound like ~~h~~er or ac~~t~~ like ~~h~~er. 
 - tell her. /tel ~~h~~ər/ [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_646836a6e4b0b2d1c418dc1e?product_id=term_63e60228b5d8d_d1vpxz)
-- I miss her./mis ~~h~~er/
+- Tell her I miss her./mis ~~h~~er/
 - can he. /kæni:/，[视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_64a38c71e4b064a8136d5c42?product_id=term_63e60228b5d8d_d1vpxz)
   - /kæni:/ sing.
   - /kæni:/ drive.
@@ -2637,7 +2631,7 @@ Ha(s he) done it before?
 
 
 
-### th击穿
+### [th]击穿
 
 th 的击穿现象，一般发生在单词 them 上。当我们的语流足够快时，就可以将 them 的 th 省略不读，直接发后面的/əm/。
 
@@ -2673,11 +2667,9 @@ th被击穿，blood的d和 rough 连读，发音/druː/
 
 #### 实词
 
-在句子中携带了较为重要的信息如：名词，实意动词，形容词，副词，数词等
+实词是指在句子中携带了较为重要的信息的词，如：名词，实意动词，形容词，副词，数词，否定助动词等
 
-#### 功能词
-
-不含重要信息，通常在句中不重读如：连词，代词，be动词，助动词，情态动词，介词，冠词等
+否定助动词：aren't, can't, don't
 
 #### 重读规则
 
@@ -2686,6 +2678,10 @@ th被击穿，blood的d和 rough 连读，发音/druː/
 2) 逻辑重读：根据个人感情的侧重点不同，重音落在你想强调的单词上
 
 #### **案例**
+
+It's a **piece** of **cake**.
+
+what do you **do** in your **spare time**.
 
 a **sunny day**.
 
@@ -2707,7 +2703,11 @@ I want to **go**. 我要**走**
 
 [视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffd9e4b07b055833806c?product_id=term_63e60228b5d8d_d1vpxz)
 
-我们在看音标时会发现，某些单词有2个读音，后面那个发音就是弱读音。例如：
+我们在看音标时会发现，某些单词有2个读音，后面那个发音就是弱读音。
+
+代词，介词，冠词，连词，助动词一般会弱读。
+
+例如：
 
 - for /fɔːr; fər/
 - to /tuː; tə/
@@ -3043,7 +3043,7 @@ I don't like them cuz they're unfriendly. 我不喜欢他们因为他们不友�
 
 # 口语
 
-## 说话腔调
+## 句子发音
 
 ### 断句
 
@@ -3073,9 +3073,13 @@ She is a talented/ and hardworking/ musician.
 
 ### 语调
 
+英语的语调和中文不同，中文的每个字都有4个调，需要把每个字的调都念准确。英语的每个单词是没有语调的。但英语的句子是必须带语调的。要么升调要么降调。
+
+祈使句可以升调也可以降调。用升调的表达的是鼓励或不直接的建议。
+
 #### 降调
 
-[视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffdee4b0fc5d122faafc?product_id=term_63e60228b5d8d_d1vpxz)
+[小E视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffdee4b0fc5d122faafc?product_id=term_63e60228b5d8d_d1vpxz)
 
 语调，即说话的腔调，是一句话里声调高低、扣扬轻重的变化。
 
@@ -3108,11 +3112,9 @@ How ho<u>t</u> the day is ↘️! t符合[失爆](#爆破音+辅音)规则，day
 
 #### 升调
 
-[视频链接](https://apppiagjo5r6056.h5.xiaoeknow.com/p/course/video/v_63e5ffdee4b0fc5d122faafc?product_id=term_63e60228b5d8d_d1vpxz)
-
 常见于:
 
-一般疑问句，
+一般疑问句，通常用升调，在句子最后一实词处上升其他保持平调。
 
 祈使句（表鼓励、态度亲切或客气）
 
@@ -3122,7 +3124,9 @@ How ho<u>t</u> the day is ↘️! t符合[失爆](#爆破音+辅音)规则，day
 
 **案例**
 
-一般疑问句，答案一般是和否。
+一般疑问句
+
+答案一般是和否。
 
 is  this your pen ?
 
@@ -3130,7 +3134,17 @@ Are you happy today ?
 
 Could you do me a favor ?
 
-祈使句（表鼓励、态度亲切或客气）
+Are you Chandler Bing?  你是钱德勒·宾吗?
+
+Do you understanda? 你们明白吗?
+
+Could you help me? 能帮帮我吗?
+
+
+
+祈使句
+
+（表鼓励、态度亲切或客气）
 
 Help yourself, please↗️. 请自便。
 
@@ -4546,6 +4560,34 @@ https://zhuanlan.zhihu.com/p/52542110
 
 ## 英语句型
 
+### 疑问句
+
+#### 一般疑问句
+
+能够用**点头yes**或者**摇头no**，得到答案的问句，称为【**一般疑问句**】
+
+例如：
+
+他吃了早餐吗？
+
+你爱我吗？ 
+
+
+
+#### 特殊疑问句
+
+不能用点头或者摇头得到答案的问句，必须回答特定的答案的叫【**特殊疑问句**】 
+
+例如：
+
+你早餐吃的什么？
+
+你爱我什么？
+
+
+
+### 陈述句
+
 基本句型一： Ｓ +Ｖ（主+谓）
 
 基本句型二： Ｓ +link-Ｖ +Ｐ（主+系+表）
@@ -4556,7 +4598,7 @@ https://zhuanlan.zhihu.com/p/52542110
 
 基本句型五： Ｓ +Ｖ +Ｏ +Ｃ（主+谓+宾+宾补）
 
-### 主+谓(S+V)
+#### 主+谓(S+V)
 
 此句型的句子有一个共同特点，即句子的谓语动词都能表达完整的意思。这类动词叫做不及物动词，后面可以跟副词、介词短语、状语从句等。例如：
 
@@ -4573,7 +4615,7 @@ https://zhuanlan.zhihu.com/p/52542110
 9. He is playing
 10. They have gone
 
-### 主+系+表(S+link-V+P)
+#### 主+系+表(S+link-V+P)
 
  此句型句子谓语动词不能独立表达完整的意思，必须加上一个表明主语身份或状态的表语构成复合谓语，才能表达完整的意思。这类动词叫做连系动词。系动词分两类：
 
@@ -4592,7 +4634,7 @@ https://zhuanlan.zhihu.com/p/52542110
 
 
 
-### 主+谓+宾(S+V+O)
+#### 主+谓+宾(S+V+O)
 
  此句型句子的共同特点是：谓语动词都具有实义，都是主语产生的动作，但不能表达完整的意思，必须跟有一个宾语，即动作的承受者，才能使意思完整。这类动词叫做及物动词。
 
@@ -4605,7 +4647,7 @@ https://zhuanlan.zhihu.com/p/52542110
 7. I want to have a cup of tea.   
 8. He said Good morning. 
 
-### 主+谓+间宾+直宾(S+V+IO+O)
+#### 主+谓+间宾+直宾(S+V+IO+O)
 
  此句型的句子有一个共同特点：谓语动词必须跟有两个宾语才能表达完整的意思。这两个宾语一个是动作的直接承受者，另一个是动作的间接承受者。通常这一间接承受者用一个介词来连接，当动作的间接承受者在动作的直接承受者之前时，这一介词往往被省略。
 
@@ -4618,7 +4660,7 @@ https://zhuanlan.zhihu.com/p/52542110
 7. I told me how to run the machine.   
 8. He showed me that the bus was late. 
 
-### 主+谓+宾+宾补(S+V+O+C）
+#### 主+谓+宾+宾补(S+V+O+C）
 
  此句型的句子的共同特点是：动词虽然是及物动词，但是只跟一个宾语还不能表达完整的意思，必须加上个补充成分来补足宾语，才能使意思完整。
 
@@ -4631,11 +4673,11 @@ https://zhuanlan.zhihu.com/p/52542110
 7. He asked me to come back soon.    
 8. I saw them getting on the bus. 
 
-### 主语+谓语+宾语+状语
+#### 主语+谓语+宾语+状语
 
 He put the coffee on the table. I Iooked at him in panic.
 
-### 主语+谓语+状语
+#### 主语+谓语+状语
 
 在很多情形中，作谓语的不及物动词后面跟上状语意思才完整
 
@@ -4643,7 +4685,7 @@ He put the coffee on the table. I Iooked at him in panic.
 2. The sun rises in the east. 
 3. The accident happened yesterday.
 
-### there be 句型
+#### there be 句型
 
 There are many customers in the shop.
 
@@ -4655,7 +4697,7 @@ There were **two birds** sat on a stone. （*Two Birds*）
 
 
 
-### 定语+谓语+状语
+#### 定语+谓语+状语
 
 这种句型口语中会出现，说话时一般都会有说话对象，可以省略主语
 
@@ -4663,9 +4705,9 @@ Better work faster. 最好干快点。
 
 
 
-### 表+主+系
+#### 表+主+系
 
-there you are，你在这里。
+there you are，你在这里
 
 
 
