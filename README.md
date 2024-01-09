@@ -174,7 +174,12 @@ root-->admin["管理"]
 ### 数据库
 
 - 综合
-    - [↗️数据库权威排名(国外网站，打开可能有点慢)](https://db-engines.com/en/ranking)
+    - [✅数据库-综合学习笔记-md](Java/mashibing/学习笔记-数据库-Gem.md)
+    - [↗️数据库权威排名(外网，打开可能有点慢)](https://db-engines.com/en/ranking)
+- 工具
+    - SQL审核
+        - [↗️开源SQL审核平台对比 Yearning vs Archery](https://zhuanlan.zhihu.com/p/666561369)
+
 - MySQL
 - Oracle
   - [✅listagg函数值超过4000的解决方案](https://blog.csdn.net/namelessmyth/article/details/123763750?spm=1001.2014.3001.5501)
@@ -183,6 +188,8 @@ root-->admin["管理"]
 - PostgreSQL
 - MongoDB
 - SQL Server
+    - [↗️SQL SERVER 递归查询](https://www.cnblogs.com/willingtolove/p/10162587.html)
+
 
 
 
