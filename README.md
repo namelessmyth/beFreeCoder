@@ -18,6 +18,7 @@
 </p>
 
 
+
 # 为什么会有这个知识库？🧐
 
 知识库名为：toBeTopCoder，即：**to be Top Coder**，意为：**「成为一名顶尖程序员」**。希望每一名程序员都能达成自己的目标。🤩
@@ -57,54 +58,21 @@ dev-->创业-->老板-->财富自由
 
 # 更新记录
 
-Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，所以这里仅记录比较大的版本更新内容。
+Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里仅记录比较重要的版本更新内容。
 
 | 版本 | 修改人   | 修改日期   | 备注（原因、进一步的说明等）                                 |
 | ---- | -------- | ---------- | ------------------------------------------------------------ |
 | 1.0  | Gem Shen | 2023-08-01 | 在git上建立知识库，并提交自己已整理好的文档                  |
 | 1.1  | Gem Shen | 2023-09-19 | 加入英语学习笔记，并持续更新                                 |
-| 1.2  | Gem Shen | 2023-09-30 | 加入Spring面试题整理                                         |
-| 1.3  | Gem Shen | 2023-10-23 | 加入Mybatis面试题整理                                        |
-| 1.4  | Gem Shen | 2023-11-21 | 提交Oracle学习笔记                                           |
-| 1.5  | Gem Shen | 2023-12-01 | 重写readme.md文件，建立知识库地图，方便搜索，参考[高手知识库](https://gitee.com/SnailClimb/JavaGuide) |
-| 1.6  | Gem Shen | 2023-12-25 | 加入架构设计笔记。                                           |
+| 1.2  | Gem Shen | 2023-10-23 | 加入Spring，Mybatis面试题整理                                |
+| 1.3  | Gem Shen | 2023-11-21 | 提交Oracle学习笔记                                           |
+| 1.4  | Gem Shen | 2023-12-01 | 重写readme.md文件，建立知识库地图，方便搜索，参考[高手知识库](https://gitee.com/SnailClimb/JavaGuide) |
+| 1.5  | Gem Shen | 2023-12-25 | 加入架构设计笔记。                                           |
+| 1.6  | Gem Shen | 2024-01-10 | 加入[好资源分享](#好资源分享)分享一些GitHub上面的好项目。重新给知识库分类。 |
 
 
 
 # 知识库地图
-
-```mermaid
-flowchart TB
-
-root[程序员进阶之路]
-
-root-->Java["Java"]
-Java-->J2SE
-Java-->t["并发"]
-Java-->JVM
-Java-->Spring
-Java-->MQ
-Java-->cloud["微服务"]
-
-root-->sf[算法]
-root-->net["网络"]
-root-->Script["脚本"]
-
-root-->front["前端"]
-front-->Vue
-front-->JQuery
-
-root-->os["OS"]
-root-->English["英语"]
-
-root-->db["数据库"]
-db-->MySQL
-db-->Oracle
-db-->PostgreSQL
-db-->MongoDB
-
-root-->admin["管理"]
-```
 
 点击下方标题中的链接，可快速打开关联文档。标注md的为markdown格式，支持在线预览。
 
@@ -176,10 +144,6 @@ root-->admin["管理"]
 - 综合
     - [✅数据库-综合学习笔记-md](Java/mashibing/学习笔记-数据库-Gem.md)
     - [↗️数据库权威排名(外网，打开可能有点慢)](https://db-engines.com/en/ranking)
-- 工具
-    - SQL审核
-        - [↗️开源SQL审核平台对比 Yearning vs Archery](https://zhuanlan.zhihu.com/p/666561369)
-
 - MySQL
 - Oracle
   - [✅listagg函数值超过4000的解决方案](https://blog.csdn.net/namelessmyth/article/details/123763750?spm=1001.2014.3001.5501)
@@ -260,24 +224,6 @@ root-->admin["管理"]
 
 
 
-### 软件使用
-
-- 操作系统
-  - Linux
-    - [✅Linux宝塔安装使用笔记](https://blog.csdn.net/namelessmyth/article/details/123979428?spm=1001.2014.3001.5501)
-  - Windows
-    - [✅Windows11重装与优化](https://blog.csdn.net/namelessmyth/article/details/132520445?spm=1001.2014.3001.5501)
-    - [✅WindowsC盘减肥与瘦身](https://blog.csdn.net/namelessmyth/article/details/132600752?spm=1001.2014.3001.5501)
-- 工程工具
-  - Git
-    - [↗️Git中clone, branch, fork的区别](#https://zhuanlan.zhihu.com/p/510797009)
-    - [↗️Git中merge和rebase的区别](#https://juejin.cn/post/7026724793047220254)
-
-  - GitLab
-    - [↗️使用Docker安装GitLab](https://blog.csdn.net/BThinker/article/details/124097795)
-
-
-
 
 ## 管理
 
@@ -288,11 +234,45 @@ root-->admin["管理"]
   - 个人周报模版
   - 概要设计模版
 - 管理工具
-  - PingCode，25人以下免费，[官网](https://pingcode.com/)
-  - Worktile，10人以下免费，[官网](https://worktile.com/)
-  - 禅道，免费版存在功能限制，[官网](https://www.zentao.net/)
-  - Trello，基础版免费，付费版按项目数收费，推荐个人使用。
+  - [JIRA](https://www.cnblogs.com/fireblackman/p/16080823.html)，著名的管理工具，但正版很贵。
+  - [TAPD](https://www.tapd.cn/)，腾讯项目管理工具，可集成在企业微信中。
+  - [PingCode](https://pingcode.com/)，25人以下免费。
+  - [Worktile](https://worktile.com/)，10人以下免费。
+  - [禅道](https://www.zentao.net/)，免费版存在功能限制。
   - Redmine，开源免费，功能全面，但版本较老
+
+
+
+## 软件使用
+
+### 开发工具
+
+- IDE
+  - [↗️IDEA所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)
+  - [↗️IntelliJ IDEA免费激活教程和方法](https://blog.idejihuo.com/topics/jetbrains/idea)
+
+### 数据库工具
+
+- 客户端
+  - [↗️Chat2DB集成AIGC，能够将自然语言转换为SQL](https://doc.sqlgpt.cn/zh/)
+- SQL审核
+  - [↗️开源SQL审核平台对比 Yearning vs Archery](https://zhuanlan.zhihu.com/p/666561369)
+
+### 操作系统
+
+- Linux
+  - [✅Linux宝塔安装使用笔记](https://blog.csdn.net/namelessmyth/article/details/123979428?spm=1001.2014.3001.5501)
+- Windows
+  - [✅Windows11重装与优化](https://blog.csdn.net/namelessmyth/article/details/132520445?spm=1001.2014.3001.5501)
+  - [✅WindowsC盘减肥与瘦身](https://blog.csdn.net/namelessmyth/article/details/132600752?spm=1001.2014.3001.5501)
+
+### 工程工具
+
+- Git
+  - [↗️Git中clone, branch, fork的区别](#https://zhuanlan.zhihu.com/p/510797009)
+  - [↗️Git中merge和rebase的区别](#https://juejin.cn/post/7026724793047220254)
+- GitLab
+  - [↗️使用Docker安装GitLab](https://blog.csdn.net/BThinker/article/details/124097795)
 
 
 
@@ -321,3 +301,11 @@ JavaGuide提供一个比较详细的学习路径，目录清晰，让你对于 J
 [Awesome-CTO](https://github.com/kuchin/awesome-cto)，<img alt="Github" src="https://img.shields.io/github/stars/kuchin/awesome-cto?style=social" />
 
 你想成为CTO么？或者你想知道你们公司的CTO称职么？这个项目主要分享的是要成为CTO的相关能力和知识。维护者是一个国外公司的CTO。
+
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=kuchin&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />
+
+[GitHub中文项目排行榜](https://github.com/GrowingGit/GitHub-Chinese-Top-Charts)，<img alt="Github" src="https://img.shields.io/github/stars/GrowingGit/GitHub-Chinese-Top-Charts?style=social" />
+
+GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定位中文好项目。各取所需，高效学习。   
+
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=GrowingGit&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />   
