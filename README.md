@@ -251,12 +251,34 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
   - [↗️IDEA所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)
   - [↗️IntelliJ IDEA免费激活教程和方法](https://blog.idejihuo.com/topics/jetbrains/idea)
 
+
+
 ### 数据库工具
 
 - 客户端
   - [↗️Chat2DB集成AIGC，能够将自然语言转换为SQL](https://doc.sqlgpt.cn/zh/)
 - SQL审核
   - [↗️开源SQL审核平台对比 Yearning vs Archery](https://zhuanlan.zhihu.com/p/666561369)
+
+
+
+### BI&报表
+
+- 开源
+    - [Apache Superset](https://superset.apache.org/)，开源的大数据探索分析、可视化报表平台
+    - [Grafana](https://grafana.com/zh-cn/grafana/)，[入门教程](https://cloud.tencent.com/developer/article/1807679)
+        - 优点：支持多种常用大数据/多种数据源，dashboard 根据 SQL 或其他部件 SQL 生成，较为灵活
+        - 缺点：需要用户掌握一定的数据开发能力，如SQL、Metrics概念等
+    - [阿里-DataV](http://datav.jiaminghi.com/)。
+        - 优势：开箱即用的组件库，开源免费，拥有中文社区文档与活跃作者支持较为方便；
+        - 劣势：大屏需要定制化开发，有一定开发门槛；组件库需前端编码实现数据绑定，若需拖拽式等功能需要额外开发；
+    - [DataEase](https://dataease.io/docs/v2/)，开源的数据可视化分析工具，支持丰富的数据源连接，能够通过拖拉拽方式快速制作图表。
+    - [AJ-Report](https://gitee.com/anji-plus/report)，全开源的一个BI平台，酷炫大屏展示，能随时随地掌控业务动态，让每个决策都有数据支撑
+    - [积木报表-JEECG](http://jimureport.com/)，免费的数据可视化报表，含报表和大屏设计，像搭建积木一样在线设计报表！
+- 商业收费
+    - [FineReport](https://www.finereport.com/)，国产超火的报表工具，功能强大但收费也不便宜。
+
+
 
 ### 操作系统
 
@@ -265,6 +287,8 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 - Windows
   - [✅Windows11重装与优化](https://blog.csdn.net/namelessmyth/article/details/132520445?spm=1001.2014.3001.5501)
   - [✅WindowsC盘减肥与瘦身](https://blog.csdn.net/namelessmyth/article/details/132600752?spm=1001.2014.3001.5501)
+
+
 
 ### 工程工具
 
@@ -281,10 +305,10 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 - 通用
   - [✅英语学习-语法-16种时态](https://blog.csdn.net/namelessmyth/article/details/134161822?spm=1001.2014.3001.5501)
   - [✅英语学习-通用总结-md](docs/English/英语学习-通用-Gem.md)
-- 美剧
-  - [🙌英语学习-海贼王真人版-md](docs/English/英语学习-美剧-海贼王.md)
 - 托福
     - [🙌英语学习-原力英语-艾力-md](docs/English/英语学习-原力-艾力.md)
+- 美剧
+    - [🙌英语学习-海贼王真人版-md](docs/English/英语学习-美剧-海贼王.md)
 
 
 
@@ -296,16 +320,16 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 
 JavaGuide提供一个比较详细的学习路径，目录清晰，让你对于 Java 整体的知识体系有一个清晰认识。对于非 Java 初学者来说： 本文档更适合回顾知识，准备面试，让你搞清面试应该把重心放在哪些问题上。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=Snailclimb&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=Snailclimb&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
 
 [Awesome-CTO](https://github.com/kuchin/awesome-cto)，<img alt="Github" src="https://img.shields.io/github/stars/kuchin/awesome-cto?style=social" />
 
 你想成为CTO么？或者你想知道你们公司的CTO称职么？这个项目主要分享的是要成为CTO的相关能力和知识。维护者是一个国外公司的CTO。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=kuchin&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=kuchin&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
 
 [GitHub中文项目排行榜](https://github.com/GrowingGit/GitHub-Chinese-Top-Charts)，<img alt="Github" src="https://img.shields.io/github/stars/GrowingGit/GitHub-Chinese-Top-Charts?style=social" />
 
-GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定位中文好项目。各取所需，高效学习。   
+GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定位中文好项目。各取所需，高效学习。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=GrowingGit&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" />   
+<img align="left" src="https://github-readme-stats.vercel.app/api?username=GrowingGit&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
