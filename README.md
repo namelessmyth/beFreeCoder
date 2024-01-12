@@ -9,7 +9,7 @@
 </a>
 <a href="https://gitee.com/namelessmyth" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/Author-namelessmyth-brightgreen.svg">
 </a>
-<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.6-brightgreen.svg">
+<a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://img.shields.io/badge/version-v1.7-brightgreen.svg">
 </a>
 <a href="https://gitee.com/namelessmyth/document" target="_blank"><img alt="Gitee" src="https://gitee.com/namelessmyth/document/badge/star.svg?theme=dark">
 </a>
@@ -19,9 +19,10 @@
 
 
 
+
 # 为什么会有这个知识库？🧐
 
-知识库名为：toBeTopCoder，即：**to be Top Coder**，意为：**「成为一名顶尖程序员」**。希望每一名程序员都能达成自己的目标。🤩
+知识库名为：beFreeCoder，即：**be a Free Coder**，意为：**「成为一名自由的程序员」**。自由的去过自己想要的生活，自由的追求自己的目标，实现财务自由。🤩
 
 人为什么要努力？想去的地方很远，想买的东西很贵，喜欢的人很优秀。父母的白发，孩子的期待，朋友的约定，周围人的嘲笑。以及，天生傲骨。😎
 
@@ -31,17 +32,32 @@
 - 写了很多年代码，但始终觉得自己知识不成体系，和架构师还有距离。
 - 曾经写了一些文档或博客，但是四散各处，时间长了自己都忘了放哪里了，遇到难题还是依赖百度。
 
-于是就想整理一个知识库，聚集从事开发以来所有的原创文章、学习资料、经验总结等，分享给各位小伙伴同时自己也能有所沉淀。
+于是就整理了这个知识库，分享的内容包括但不仅限于：架构设计，求职资料，Java技术文档、技术管理、软件使用、英语等等，详见：[知识库地图](#知识库地图)。✅表示原创且已发布的内容，↗️表示非原创内容点击后会链接至原文。如涉及侵权可联系我删除。
 
-分享的内容包括但不仅限于：架构设计，求职资料，Java基础、多线程并发、JVM、数据库等等，详见：[知识库地图](#知识库地图)。
-
-**赠人玫瑰手有余香。知识库会持续保持更新，欢迎收藏或加星**！😀😄😁💖💗💞。[更新记录](#更新记录)
+**赠人玫瑰手有余香。知识库会持续保持更新，欢迎收藏、分享或加星！**😀😄😁💖💗💞。[更新记录](#更新记录)
 
 部分内容转载了他人的作品，转载部分会明确表示并链接至原文。如涉及侵权请联系我删除。
 
 
 
-# 进阶之路😋
+# 版本更新记录
+
+Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里仅记录比较重要的知识库版本更新内容。
+
+| 版本 | 更新人   | 更新日期   | 备注（更新原因、内容等）                                     |
+| ---- | -------- | ---------- | ------------------------------------------------------------ |
+| 1.0  | Gem Shen | 2023-08-01 | 在git上建立知识库，并提交自己已整理好的文档                  |
+| 1.1  | Gem Shen | 2023-09-19 | 加入英语学习笔记，并持续更新                                 |
+| 1.2  | Gem Shen | 2023-10-23 | 加入Spring，Mybatis面试题整理                                |
+| 1.3  | Gem Shen | 2023-11-21 | 提交Oracle学习笔记                                           |
+| 1.4  | Gem Shen | 2023-12-01 | 重构readme.md文件，建立知识库地图，方便搜索，参考[高手知识库](https://gitee.com/SnailClimb/JavaGuide) |
+| 1.5  | Gem Shen | 2023-12-25 | 加入架构设计笔记，程序员进阶之路                             |
+| 1.6  | Gem Shen | 2024-01-10 | 加入[好资源分享](#好资源分享)，持续分享GitHub上面的好项目。重新给知识库分类。 |
+| 1.7  | Gem shen | 2024-01-17 | 知识库改名为beFreeCoder，修改readme.md文件                   |
+
+
+
+# 程序员进阶之路😋
 
 ```mermaid
 flowchart LR
@@ -53,24 +69,8 @@ sdev-->开发经理-->开发总监-->CTO
 dev-->运维-->高级运维-->运维经理-->运维总监
 dev-->业务顾问-->高级业务顾问-->业务总监
 dev-->项目经理-->项目总监-->企业高管
-dev-->创业-->老板-->财富自由
+dev-->创业-->公司上市-->财富自由
 ```
-
-# 更新记录
-
-Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里仅记录比较重要的版本更新内容。
-
-| 版本 | 修改人   | 修改日期   | 备注（原因、进一步的说明等）                                 |
-| ---- | -------- | ---------- | ------------------------------------------------------------ |
-| 1.0  | Gem Shen | 2023-08-01 | 在git上建立知识库，并提交自己已整理好的文档                  |
-| 1.1  | Gem Shen | 2023-09-19 | 加入英语学习笔记，并持续更新                                 |
-| 1.2  | Gem Shen | 2023-10-23 | 加入Spring，Mybatis面试题整理                                |
-| 1.3  | Gem Shen | 2023-11-21 | 提交Oracle学习笔记                                           |
-| 1.4  | Gem Shen | 2023-12-01 | 重写readme.md文件，建立知识库地图，方便搜索，参考[高手知识库](https://gitee.com/SnailClimb/JavaGuide) |
-| 1.5  | Gem Shen | 2023-12-25 | 加入架构设计笔记。                                           |
-| 1.6  | Gem Shen | 2024-01-10 | 加入[好资源分享](#好资源分享)分享一些GitHub上面的好项目。重新给知识库分类。 |
-
-
 
 # 知识库地图
 
@@ -224,22 +224,36 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 
 
 
-
 ## 管理
 
-- 文件模版
+### 管理文件
+
+- 绩效考核
   - [✅团队绩效考核模版](docs/Management/template/团队绩效考核-模版.xlsx)
-  - 团队周报模版-开发
-  - 人才招聘模版-开发
-  - 个人周报模版
-  - 概要设计模版
-- 管理工具
-  - [JIRA](https://www.cnblogs.com/fireblackman/p/16080823.html)，著名的管理工具，但正版很贵。
-  - [TAPD](https://www.tapd.cn/)，腾讯项目管理工具，可集成在企业微信中。
-  - [PingCode](https://pingcode.com/)，25人以下免费。
-  - [Worktile](https://worktile.com/)，10人以下免费。
-  - [禅道](https://www.zentao.net/)，免费版存在功能限制。
-  - Redmine，开源免费，功能全面，但版本较老
+- 人才招聘
+    - 模版-开发
+
+- 技术文档
+    - 概要设计模版
+
+- 报告
+    - 团队周报模版-开发
+    - 个人周报模版
+
+
+
+### 管理工具
+
+- [JIRA](https://www.cnblogs.com/fireblackman/p/16080823.html)，著名的管理工具，但正版很贵。
+- [TAPD](https://www.tapd.cn/)，腾讯项目管理工具，可集成在企业微信中。
+- [PingCode](https://pingcode.com/)，25人以下免费。
+- [Worktile](https://worktile.com/)，10人以下免费。
+- [禅道](https://www.zentao.net/)，免费版存在功能限制。
+- Redmine，开源免费，功能全面，但版本较老
+
+
+
+### 管理心得
 
 
 
@@ -247,9 +261,10 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 
 ### 开发工具
 
-- IDE
+- IDEA
   - [↗️IDEA所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)
   - [↗️IntelliJ IDEA免费激活教程和方法](https://blog.idejihuo.com/topics/jetbrains/idea)
+  - [↗️阿里-通义灵码-AI代码插件，支持代码自动生成](https://help.aliyun.com/document_detail/2590614.html?spm=a2c4g.2593225.0.0.5dd34253sZEdsc)
 
 
 
@@ -280,6 +295,13 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 
 
 
+### 运维工具
+
+- 虚拟环境
+    - [JumpServer](https://docs.jumpserver.org/zh/v3/)，广受欢迎的开源堡垒机
+
+
+
 ### 操作系统
 
 - Linux
@@ -292,7 +314,7 @@ Git本身也有[每次提交的记录](https://gitee.com/namelessmyth)，这里�
 
 ### 工程工具
 
-- Git
+- Git，[官网下载](https://git-scm.com/download/win)
   - [↗️Git中clone, branch, fork的区别](#https://zhuanlan.zhihu.com/p/510797009)
   - [↗️Git中merge和rebase的区别](#https://juejin.cn/post/7026724793047220254)
 - GitLab
@@ -337,3 +359,4 @@ GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定�
 [mall项目电商系统](https://github.com/macrozheng/mall)，<img alt="Github" src="https://img.shields.io/github/stars/macrozheng/mall?style=social" />
 
 mall项目是一套电商系统，包括前台商城系统及后台管理系统，基于SpringBoot+MyBatis实现，采用Docker容器化部署。  前台商城系统包含首页门户、商品推荐、商品搜索、商品展示、购物车、订单流程、会员中心、客户服务、帮助中心等模块。  后台管理系统包含商品管理、订单管理、会员管理、促销管理、运营管理、内容管理、统计报表、财务管理、权限管理、设置等模块。
+
