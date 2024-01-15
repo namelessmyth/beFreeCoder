@@ -170,7 +170,7 @@ dev-->创业-->公司上市-->财富自由
 ### 缓存
 
 - 综合
-  - 学习笔记-缓存-md
+  - [🙌学习笔记-缓存-md](Java/mashibing/学习笔记-缓存-Gem.md)
 - Redis
   - [↗️Redis客户端Jedis、lettuce和Redisson对比](https://www.cnblogs.com/54chensongxia/p/13815761.html)
 
@@ -258,7 +258,7 @@ dev-->创业-->公司上市-->财富自由
 - [PingCode](https://pingcode.com/)，25人以下免费。
 - [Worktile](https://worktile.com/)，10人以下免费。
 - [禅道](https://www.zentao.net/)，免费版存在功能限制。
-- Redmine，开源免费，功能全面，但版本较老
+- [Redmine](https://www.redmine.org/projects/redmine)，开源免费，功能全面，但版本较老。
 
 
 
