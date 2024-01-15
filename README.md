@@ -167,6 +167,15 @@ dev-->创业-->公司上市-->财富自由
 
 
 
+### 缓存
+
+- 综合
+  - 学习笔记-缓存-md
+- Redis
+  - [↗️Redis客户端Jedis、lettuce和Redisson对比](https://www.cnblogs.com/54chensongxia/p/13815761.html)
+
+
+
 ### 云原生
 
 - docker，[官网](https://hub.docker.com/)
