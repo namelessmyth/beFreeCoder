@@ -351,19 +351,20 @@ dev-->创业-->公司上市-->财富自由
 
 JavaGuide提供一个比较详细的学习路径，目录清晰，让你对于 Java 整体的知识体系有一个清晰认识。对于非 Java 初学者来说： 本文档更适合回顾知识，准备面试，让你搞清面试应该把重心放在哪些问题上。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=Snailclimb&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
+
+
 
 [Awesome-CTO](https://github.com/kuchin/awesome-cto)，<img alt="Github" src="https://img.shields.io/github/stars/kuchin/awesome-cto?style=social" />
 
 你想成为CTO么？或者你想知道你们公司的CTO称职么？这个项目主要分享的是要成为CTO的相关能力和知识。维护者是一个国外公司的CTO。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=kuchin&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
+
 
 [GitHub中文项目排行榜](https://github.com/GrowingGit/GitHub-Chinese-Top-Charts)，<img alt="Github" src="https://img.shields.io/github/stars/GrowingGit/GitHub-Chinese-Top-Charts?style=social" />
 
 GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定位中文好项目。各取所需，高效学习。
 
-<img align="left" src="https://github-readme-stats.vercel.app/api?username=GrowingGit&show_icons=true&icon_color=CE1D2D&text_color=718096&bg_color=ffffff&hide_title=true" /><br>
+
 
 [mall项目电商系统](https://github.com/macrozheng/mall)，<img alt="Github" src="https://img.shields.io/github/stars/macrozheng/mall?style=social" />
 
