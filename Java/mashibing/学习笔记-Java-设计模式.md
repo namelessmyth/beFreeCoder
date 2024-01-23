@@ -398,31 +398,28 @@ public class A{
 
 
 
-
-
 ## 3 设计原则(SOLID)
 
 ### 3.1 设计原则概述
 
-> 古人云: 有道无术,术可求.有术无道,止于术. 
+> 古人云: 有道无术，术可求。有术无道，止于术。
 >
 > 而设计模式通常需要遵循一些设计原则，在设计原则的基础之上衍生出了各种各样的设计模式。设计原则是设计要求，设计模式是设计方案，使用设计模式的代码则是具体的实现。
 
-   
-
 设计模式中主要有6大设计原则，简称为SOLID ，是由于各个原则的首字母简称合并的来(两个L算一个,solid 稳定的)，六大设计原则分别如下：
 
-​	**单一职责原则（Single Responsibitity Principle）**
+- 单一职责原则（Single Responsibitity Principle）
 
-​	**开放封闭原则（Open Close Principle）**
+- 开放封闭原则（Open Close Principle）
 
-​	**里氏替换原则（Liskov Substitution Principle）**
+- 里氏替换原则（Liskov Substitution Principle）
 
-​	**接口分离原则（Interface Segregation Principle）**
+- 接口分离原则（Interface Segregation Principle）
 
-​	**依赖倒置原则（Dependence Inversion Principle）**
+- 依赖倒置原则（Dependence Inversion Principle）
 
-​	**迪米特法则（Law Of Demter）**
+- 迪米特法则（Law Of Demter）
+
 
 还有的文章会加入**合成复用原则**，变成7种设计原则。
 
@@ -434,7 +431,7 @@ public class A{
 
 **单一职责原则**，英文缩写SRP，全称 Single Responsibility Principle。
 
-在<<架构整洁之道>>一书中 关于这个原则的英文描述是这样的：A class or module should have a single responsibility 。如果我们把它翻译成中文，那就是**：一个类或者模块只负责完成一个职责（或者功能）**。
+在《架构整洁之道》一书中 关于这个原则的英文描述是这样的：A class or module should have a single responsibility 。如果我们把它翻译成中文，那就是**：一个类或者模块只负责完成一个职责（或者功能）**。
 
 #### 3.2.2 通俗解释
 
