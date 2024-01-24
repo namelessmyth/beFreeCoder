@@ -14094,7 +14094,7 @@ LRU，LFU，RANDOM，TTL，NoEviction。
 
 **volatile-lfu**
 
-当内存不足以容纳新写入数据时，在过期密集的键中，使用LFU算法进行删除key。
+当内存不足以容纳新写入数据时，在设置了过期时间的键空间中，使用LFU算法进行删除key。
 
 **allkeys-lfu**
 
