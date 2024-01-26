@@ -370,3 +370,8 @@ GitHub中文排行榜，各语言分设「软件 | 资料」榜单，精准定�
 
 mall项目是一套电商系统，包括前台商城系统及后台管理系统，基于SpringBoot+MyBatis实现，采用Docker容器化部署。  前台商城系统包含首页门户、商品推荐、商品搜索、商品展示、购物车、订单流程、会员中心、客户服务、帮助中心等模块。  后台管理系统包含商品管理、订单管理、会员管理、促销管理、运营管理、内容管理、统计报表、财务管理、权限管理、设置等模块。
 
+
+
+[Optimizer](https://github.com/hellzerg/optimizer)，![](https://img.shields.io/github/stars/hellzerg/optimizer?style=social)
+
+Optimizer是一个开源的 Windows 10/11系统优化工具，托管在GitHub 上，大小只有3MB。star数目一路上涨。通过简单易用的界面，为用户提供一系列的系统优化、清理和配置功能。软件截图如下。![](https://img.lovestu.com/uploads/2022/09/20220930162002.webp)
