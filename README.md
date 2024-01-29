@@ -271,9 +271,8 @@ dev-->创业-->公司上市-->财富自由
 ### 开发工具
 
 - IDEA
-  - [↗️IDEA所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)
-  - [↗️IntelliJ IDEA免费激活教程和方法](https://blog.idejihuo.com/topics/jetbrains/idea)
-  - [↗️阿里-通义灵码-AI代码插件，支持代码自动生成](https://help.aliyun.com/document_detail/2590614.html?spm=a2c4g.2593225.0.0.5dd34253sZEdsc)
+  - [✅Idea-常用插件推荐-md](docs\Software\IDE\软件使用-Idea-插件推荐.md)
+  - [↗️Idea所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)，[↗️Idea激活教程](https://blog.idejihuo.com/topics/jetbrains/idea)。
 
 
 
