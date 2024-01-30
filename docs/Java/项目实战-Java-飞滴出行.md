@@ -258,7 +258,7 @@ Z轴扩展通常是指基于请求和用户独特的需求，进行系统划分�
 
 常见的分片方式
 
-- 业务数据按时间分表，例如：按照年或月
+- 业务数据按时间分表，例如：按照年月
 - 业务数据按用户user_id的模数或hash进行划分
 
 ```mermaid
@@ -268,4 +268,208 @@ balance-->北京用户-->北京服务
 balance-->杭州用户-->杭州服务
 balance-->广州用户-->广州服务
 ```
+
+## 接口设计
+
+### Restful风格
+
+首先Restful是一种非强制性的系统架构设计风格。REST全称是Representational State Transfer，中文意思是表述层状态转移。
+
+RESTful理念就是使用Web的现有特征和能力， 更好地使用现有Web标准中的一些准则和约束。
+
+表述层指的Web服务中请求，包含URI，请求参数，方法等。在做接口设计时应尽可能使用
+
+#### 要素
+
+##### 协议
+
+http，https。考虑服务到底要在哪个协议下访问。
+
+##### 域名
+
+指的是主机域名，应尽量设计的清晰可以体现应用的工功能。例如：map.baidu.com，image.baidu.com
+
+##### 路径
+
+跟在顶级域名后面的部分，最好和要操作的资源的关联，操作哪个资源就是谁。例如：www.baidu.com/user，www.baidu.com/course
+
+##### 版本
+
+这个因为某些功能会存在多个版本并存的情况，例如v2新版本上线，上线之后的使用/v2/的url
+
+此时老功能也依然可用，继续使用/v1/的链接。直至统计下来v1已经完全没人使用了，再完全停用。
+
+可以是：www.baidu.com/user/v2/，也可以是：www.baidu.com/v2/user/，
+
+##### 动作
+
+新增：post
+
+修改(全量)：put
+
+修改(增量)：patch
+
+查询：get
+
+删除：delete，
+
+
+
+#### 案例
+
+**案例1-查询1号用户的A课程的详细信息**
+
+- ✖A、/api/users/1/courses?course_id=A
+  - 用户id直接就在URL里面，不安全。想看另一个用户直接改URL就行。
+- ✖B、/api/users/me/courses?course_id=A
+  - me加的很不合理
+- ✖C、/api/courses?course_id=A&user_id=1
+  - 同A：不安全。
+- ✔D、/api/courses?course_id=A
+  - 如何获取是哪个用户？当用户登录成功后，浏览器header里面会有token，通过请求头传给服务端，服务端解析token获得用户。
+  - method为get，查询参数可以放在请求参数中。
+- ✖E、/api/schools/A/courses
+  - 设计不合理，想看的是课程，但在前面的是学校school
+
+
+
+**案例2-增删改查一个用户信息**
+
+错误的设计: 
+
+没必要，不用写。create，delete，show
+
+/api/accounts/create
+/api/accounts/delete
+/api/accounts/show
+/api/accounts/update
+
+正确的做法:
+
+post /api/accounts/，新增内容在body体里。
+delete /api/accouts/1/，下面url一样，只是方法不一样。
+get /api/accounts/1/获取1号用户信息
+put /api/accounts/1/，修改1号用户信息
+
+
+
+**案例3-从1号用户，转账500，给2号用户**
+
+错误设计:post /api/accounts/1/transfer/500/to/2
+
+如果不看题目直接看这个url，你会发现很难精确的识别出哪个是用户id，哪个是转账金额。
+
+正确的设计:post /api/transaction?from=1&to=2&money=500,
+
+这个虽然是正确答案，但在这个案例中并不是最优答案，因为用户可以通过这个url猜出含义，并恶意使用。最好还是放在body中。
+
+
+
+**url设计案例**
+
+下面2个关于API的服务，哪个URL设计的更合理。
+
+www.xxx.com/api/courses
+
+api.xxx.com/courses
+
+API是一个系统提供给外部调用的接口。这个主要考虑：未来是否要将api服务独立出来放到一个单独的服务器上。
+
+如果存在这种可能，那就是后面那个设计更好。
+
+
+
+#### 状态码和提示信息
+
+##### http状态码
+
+200：代表成功。
+404：代表请求不存在
+
+##### message
+
+是对状态码的说明。
+
+##### 消息体
+
+具体接口要响应的数据。例如：查询结果。
+
+有的设计会将状态码或者message放在消息体里。客户端需要解析消息体才能知道成功和失败。
+
+
+
+#### 翻页设计
+
+方式一：/api/courses?page=1&pageSize=10
+
+当前页码，每页显示多少条。
+
+缺点：当前在看第一页，这个时候数据库第一页多了一条数据，所以当翻第2页的时候，又会看到第一页的内容。
+
+所以这种设计适用于业务上可以接受这种情况或者数据不会经常变化的场景。
+
+
+
+方式二：/api/courses?max_id=1000
+
+每次查询用数据id来定位，第一次查询id1到100，第二次查询100到200，依次类推。
+
+即使数据存在新增也不会在以后的id范围内。所以不会存在上面的问题。
+
+这种翻页查询一般是配合手机端，用户不断的下滑来查询数据的场景。
+
+每次查询时，可以返回next_id，如果next_id为空或者小于固定的大小。就代表没数据了。
+
+缺点：无法定位页数。也不知道一页多少页。
+
+
+
+
+
+# 乘客中心服务
+
+## 注册登录
+
+### 业务流程
+
+**App**
+
+1. 未注册用户首次登录时需要注册，注册前会弹出一个“服务协议及隐私政策”窗口，用户点“同意”后继续第2步
+2. 弹出授权使用地理位置和手机存储的对话框，用户授权了以后，继续第3步。
+3. 输入用户手机号，点下一步。
+   1. 前端校验手机号的合法性。
+   2. 调用后端接口，发送验证码给手机号。
+   3. ![image-20240130201749915](项目实战-Java-飞滴出行.assets/image-20240130201749915.png)
+4. 等待用户输入验证码。如果超时可以重新发送
+
+
+
+### 时序图
+
+```mermaid
+sequenceDiagram
+    客户端->>api_passenger: 手机号
+    api_passenger->>Service_verifyCode: 生成并验证码
+    Service_verifyCode->>api_passenger: 验证码
+    Note over api_passenger: 验证码<br>存入Redis<br>发送验证
+    api_passenger->>客户端: 成功响应
+```
+
+#### 实现说明
+
+验证码过期时间，可以用redis的ttl功能实现。
+
+生成验证码作为独立服务的好处：
+
+- 验证码是很多模块都可能用到的公共功能，独立出来大家都能调用。
+- 如果后续验证码从数字变成字母，只要改这个模块就可以了。
+- 独立出来之后，可以生成全局唯一的验证码。降低验证码的重复性。
+
+
+
+## 短信发送功能
+
+通过调用阿里，腾讯的短信通服务接口可以实现。
+
+[腾讯短信服务](https://cloud.tencent.com/act/pro/csms?fromSource=gwzcw.5679192.5679192.5679192&utm_medium=cpc&utm_id=gwzcw.5679192.5679192.5679192&bd_vid=10502392365468823329)，[阿里短信服务](https://www.aliyun.com/product/sms?spm=5176.21213303.J_qCOwPWspKEuWcmp8qiZNQ.2.202f2f3dw6a17Z&scm=20140722.S_card@@%E4%BA%A7%E5%93%81@@125575.S_card0.ID_card@@%E4%BA%A7%E5%93%81@@125575-RL_%E7%9F%AD%E4%BF%A1-LOC_search~UND~card~UND~item-OR_ser-V_3-P0_0)
 
