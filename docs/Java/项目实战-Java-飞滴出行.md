@@ -450,26 +450,40 @@ API是一个系统提供给外部调用的接口。这个主要考虑：未来�
 
 Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、测试一体化协作平台。他可以很好的解决前端开发人员，后端开发人员，测试人员，之间的协作问题。提升开发效率。
 
-##### 设计阶段
+
+
+### 父项目公共依赖
+
+父项目的公共依赖请参考根目录：pom.xml
+
+大体有如下依赖包：
+
+- json-lib，主要用于转json
+- lombok
+- java-jwt，生成和解析JWT
+- internal-common
+  - jackson-core，主要用于转json
+  - jackson-databind
+  - jackson-annotations
+- spring-cloud-alibaba-dependencies
+- spring-cloud-dependencies
 
 
 
 ### 开发环境搭建
 
-首先通过Git或者源码zip包的方式获取到项目源代码
-
-使用idea载入online-taxi-public目录
-
-载入后请及时修改Maven的安装目录：File | Settings | Build, Execution, Deployment | Build Tools | Maven
-
-改好之后，idea会自动下载依赖包，请稍等片刻
+1. 首先通过Git或者源码zip包的方式获取到项目源代码
+2. 使用idea载入online-taxi-public目录
+3. 载入后请及时修改Maven的安装目录：File | Settings | Build, Execution, Deployment | Build Tools | Maven
+4. 改好之后，idea会自动下载依赖包，请稍等片刻（不改也会下载但是会下载到C盘）
+5. 项目为微服务项目，启动需要依赖如下公共组件，请确保他们已经启动。
+   1. nacos服务器地址，在子项目的application.yml中配置：`spring.cloud.nacos.discovery.server-addr`
+   2. Redis服务器地址，在子项目的application.yml中配置：`spring.redis.host`
 
 #### 注意事项
 
 - SpringBoot的版本和SpringCloud的版本是有[配套关系](https://spring.io/projects/spring-cloud)的，请勿随意修改大版本。
 - 在“端口管理.md”中记录着所有服务的端口号，如果你要启动项目，请确保端口号没有冲突。
-
-
 
 
 
@@ -493,7 +507,7 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
-### 时序图
+### 模块时序图
 
 ```mermaid
 sequenceDiagram
@@ -516,7 +530,17 @@ sequenceDiagram
 
 
 
-## 短信发送功能
+### 实现方案
+
+新建子项目：api-passenger
+
+在pom文件引入：
+
+
+
+
+
+### 短信发送功能
 
 通过调用阿里，腾讯的短信通服务接口可以实现。
 

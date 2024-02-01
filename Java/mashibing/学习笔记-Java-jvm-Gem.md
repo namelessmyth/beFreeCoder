@@ -870,13 +870,13 @@ JVM级别如何规范（JSR133）
 > StoreStore屏障：
 >
 > 	对于这样的语句Store1; StoreStore; Store2，
-> 																																	
+> 																																		
 > 	在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 >
 > LoadStore屏障：
 >
 > 	对于这样的语句Load1; LoadStore; Store2，
-> 																																	
+> 																																		
 > 	在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 >
 > StoreLoad屏障：
@@ -2177,9 +2177,9 @@ https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html
 
 #### 使用G1垃圾回收
 
-推荐JDK1.8+使用，堆内存大小请根据实际情况调整
+推荐JDK1.8使用，堆内存大小请根据实际情况调整
 
-java -jar -Xms2048m -Xmx2048m -XX:+PrintCommandLineFlags -XX:+UseG1GC xxx.jar
+java -jar -Xms2048m -Xmx2048m -XX:+UseG1GC -XX:+PrintCommandLineFlags xxx.jar
 
 
 
