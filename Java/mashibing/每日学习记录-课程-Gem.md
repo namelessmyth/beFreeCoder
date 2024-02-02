@@ -7289,7 +7289,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76012)》学到视频40。目前验证码功能已经可以完全跑通。Apifox调用返回成功。
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76012)》学到视频41。目前验证码生成功能已经可以完全跑通。Apifox调用返回成功。
 2. 英语：06:30晨读打卡。制作自我介绍视频，复习之前学过的单词。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
@@ -7300,4 +7300,23 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **建议**：
 
-**用时**：12小时左右，06:30~00:10
+**用时**：10小时左右，06:30~00:10
+
+
+
+## 2024-02-02 星期五
+
+**今日所学内容**：
+
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76412)》学到视频57。验证码校验功能业务流程，开发流程梳理结束，但本地还未运行。
+2. 英语：06:30晨读打卡。复习之前学过的单词。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：12小时左右，06:30~00:35

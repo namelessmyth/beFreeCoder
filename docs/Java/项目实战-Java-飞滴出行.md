@@ -95,7 +95,9 @@
 
 
 
-### 网约车国家标准
+### 国家标准
+
+#### 网约车国家标准
 
 具体参考：网络预约出租汽车-总体技术要求.pdf
 
@@ -108,6 +110,12 @@ CompanyId，V32，公司(/平台)标识(部平台统一分配网约车平台公�
 Source，F8，消息来源标识(部平台统一分配消息的数据链路来源标识)
 
 IPCType，业务接口代码,见具体接口定义
+
+
+
+#### 违法收集个人信息
+
+[App违法违规收集使用个人信息行为认定方法](http://www.cac.gov.cn/2019-12/27/c_1578986455686625.htm)
 
 
 
@@ -452,6 +460,39 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
+#### RDM
+
+全名：Redis Desktop Manager，Redis客户端，[下载地址](http://www.downza.cn/soft/351339.html)。
+
+
+
+### 开发环境
+
+#### 代码载入
+
+1. 首先通过Git或者源码zip包的方式获取到项目源代码
+2. 使用idea载入online-taxi-public目录
+3. 载入后请及时修改Maven的安装目录：File | Settings | Build, Execution, Deployment | Build Tools | Maven
+4. 改好之后，idea会自动下载依赖包，请稍等片刻（不改也会下载但是会下载到C盘）
+5. 项目为微服务项目，启动需要依赖如下公共组件，请确保他们已经启动。
+   1. nacos服务器地址，在子项目的application.yml中配置：`spring.cloud.nacos.discovery.server-addr`
+   2. Redis服务器地址，在子项目的application.yml中配置：`spring.redis.host`
+
+#### 注意事项
+
+- SpringBoot的版本和SpringCloud的版本是有[配套关系](https://spring.io/projects/spring-cloud)的，请勿随意修改大版本。
+- 在“端口管理.md”中记录着所有服务的端口号，如果你要启动项目，请确保端口号没有冲突。
+
+
+
+#### Mybatis-Plus
+
+介绍一下Mybatis-Plus的[引入步骤](https://www.mashibing.com/study?courseNo=1537&sectionNo=76305&callbackUrl=/subject/studyline/1?courseId=18870&courseVersionId=2128)。
+
+
+
+
+
 ### 父项目公共依赖
 
 父项目的公共依赖请参考根目录：pom.xml
@@ -470,22 +511,11 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
-### 开发环境搭建
+### 数据库
 
-1. 首先通过Git或者源码zip包的方式获取到项目源代码
-2. 使用idea载入online-taxi-public目录
-3. 载入后请及时修改Maven的安装目录：File | Settings | Build, Execution, Deployment | Build Tools | Maven
-4. 改好之后，idea会自动下载依赖包，请稍等片刻（不改也会下载但是会下载到C盘）
-5. 项目为微服务项目，启动需要依赖如下公共组件，请确保他们已经启动。
-   1. nacos服务器地址，在子项目的application.yml中配置：`spring.cloud.nacos.discovery.server-addr`
-   2. Redis服务器地址，在子项目的application.yml中配置：`spring.redis.host`
+#### MySQL规范
 
-#### 注意事项
-
-- SpringBoot的版本和SpringCloud的版本是有[配套关系](https://spring.io/projects/spring-cloud)的，请勿随意修改大版本。
-- 在“端口管理.md”中记录着所有服务的端口号，如果你要启动项目，请确保端口号没有冲突。
-
-
+详见：[阿里巴巴Java开发手册-1.7.1-黄山版](E:\resource\文档\开发文档\阿里巴巴Java开发手册-1.7.1-黄山版-2022最新版.pdf)，建表规约
 
 
 
@@ -507,7 +537,9 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
-### 模块时序图
+### 验证码生成
+
+#### 功能时序图
 
 ```mermaid
 sequenceDiagram
@@ -518,7 +550,7 @@ sequenceDiagram
     api_passenger->>客户端: 成功响应
 ```
 
-#### 实现说明
+##### 实现说明
 
 验证码过期时间，可以用redis的ttl功能实现。
 
@@ -530,11 +562,53 @@ sequenceDiagram
 
 
 
-### 实现方案
+#### 开发流程
 
-新建子项目：api-passenger
+具体代码请在idea中查看，这里列出实现流程：
 
-在pom文件引入：
+1. 先后启动： [service-verificationcode](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-verificationcode) ， [api-passenger](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\api-passenger)项目。
+   1. 启动后可以去nacos的服务列表中确认，服务是否已正确注册。
+2. 当用户输入完手机号点下一步时，调用后台请求。请求地址：/verification-code（使用ApiFox模拟）
+3. 请求通过URL映射，到达 [api-passenger](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\api-passenger) 项目的 VerificationCodeController.verificationCode() 
+4. 调用Service方法进行处理，verificationCodeService.generatorCode()。
+   1. 使用Feign调用接口生成验证码，ServiceVefificationcodeClient.getNumberCode()。
+      1. 根据服务名去从nacos中找到对应的服务："service-verificationcode"
+      2. 进入 [service-verificationcode](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-verificationcode) 项目的 NumberCodeController.numberCode方法
+      3. 通过Math.random() 计算得到6位验证码。
+   2. 根据用户手机号生成redis的key，RedisPrefixUtils.generatorKeyByPhone();
+      1. key生成规则："verification-code-"+"1"+手机号。
+      2. 第2位是用于区分乘客还是司机的。如果是司机就是"2"。
+   3. 将新的key和验证码存入redis中。stringRedisTemplate.opsForValue().set(...)
+      1. 相比RedisTemplate，StringRedisTemplate做了对String类型做了优化，针对字符类型性能更高
+      2. RedisTemplate在存对象时会额外记录1个@Class属性。同时还需要自定义反序列方式。
+5. 请求处理成功，返回：ResponseResult.success()。
+
+
+
+### 验证码校验
+
+验证码生成成功后，会发消息给用户，用户输入验证码后系统校验是否正确。
+
+校验正确则自动登陆。如果手机号不存在则自动注册。
+
+#### 开发流程
+
+1. 先后启动：[service-verificationcode](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-verificationcode)，[service-passenger-user](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-passenger-user)项目。
+2. 用户输入验证码点下一步，调用后台请求。请求地址：/verification-code-check（使用ApiFox模拟）
+3. 请求通过URL映射，到达[api-passenger](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\api-passenger)项目的VerificationCodeController.checkVerificationCode() 
+4. 调用Service方法进行处理，verificationCodeService.checkCode()。
+   1. 根据用户手机号生成redis的key，`RedisPrefixUtils.generatorKeyByPhone();`
+      1. key生成规则同验证码生成规则。
+   2. 用得到的新key去redis中查询。`stringRedisTemplate.opsForValue().get(key);`
+   3. 如果没有查询到验证码或者查询到的验证码和之前生成的不一致，会报错。
+   4. 验证码校验通过，使用Feign调用接口登录或注册。ServicePassengerUserClient.loginOrRegister()
+      1. 通过Nacos，调用[service-passenger-user](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-passenger-user)项目的UserController.loginOrRegister()方法
+      2. 使用Mybatis-Plus连接MySQL查询Passenger_User表中是否有用户信息。
+      3. 如果没有查询到用户信息，则自动构建用户信息并插入到用户表中。
+   5. 生成Access Token。JwtUtils.generatorToken(..., TokenConstants.ACCESS_TOKEN_TYPE)
+   6. 生成Refresh Token。JwtUtils.generatorToken(..., TokenConstants.REFRESH_TOKEN_TYPE)
+   7. 返回Token给客户端。
+   8. 为什么要生成2个Token？
 
 
 
