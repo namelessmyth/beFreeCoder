@@ -511,11 +511,130 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
+### 公共功能
+
+这里主要介绍每个项目都会考虑的公共功能。
+
+#### 拦截器
+
+拦截器启用步骤：
+
+1. 写一个类实现HandlerInterceptor接口，在preHandle中编写拦截方法业务。
+2. 写一个标注@Configuration的类，实现WebMvcConfigurer接口
+3. 使用Bean注解声明刚刚新增的拦截器类。在addInterceptors方法中注册拦截器实例，并定义拦截的URL。
+
+参考代码
+
+```java
+@Configuration
+public class InterceptorConfig implements WebMvcConfigurer {
+
+    @Bean
+    public JwtInterceptor jwtInterceptor(){
+        return new JwtInterceptor();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtInterceptor())
+                // 拦截的路径
+                .addPathPatterns("/**")
+                // 不拦截的路径
+                .excludePathPatterns("/noauthTest")
+                .excludePathPatterns("/verification-code")
+                .excludePathPatterns("/verification-code-check")
+                .excludePathPatterns("/token-refresh")
+                .excludePathPatterns("/test-real-time-order/**")
+                .excludePathPatterns("/error");
+
+    }
+}
+```
+
+
+
+#### Token校验
+
+适用范围：所有需要处理客户端请求的项目，除了登录注册功能之外，都要校验用户的token是否正确。
+
+实现方式：拦截器
+
+```java
+package com.mashibing.apipassenger.interceptor;
+
+import com.mashibing.internalcommon.constant.TokenConstants;
+import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.dto.TokenResult;
+import com.mashibing.internalcommon.util.JwtUtils;
+import com.mashibing.internalcommon.util.RedisPrefixUtils;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+
+
+public class JwtInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        boolean result = true;
+        String resutltString = "";
+        //从请求头中取出token。
+        String token = request.getHeader("Authorization");
+        // 解析token
+        TokenResult tokenResult = JwtUtils.checkToken(token);
+
+        if (tokenResult == null) {
+            resutltString = "access token invalid";
+            result = false;
+        } else {
+            // 拼接key
+            String phone = tokenResult.getPhone();
+            String identity = tokenResult.getIdentity();
+
+            String tokenKey = RedisPrefixUtils.generatorTokenKey(phone, identity, TokenConstants.ACCESS_TOKEN_TYPE);
+            // 从redis中取出token
+            String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
+            if ((StringUtils.isBlank(tokenRedis)) || (!token.trim().equals(tokenRedis.trim()))) {
+                resutltString = "access token invalid";
+                result = false;
+            }
+        }
+
+        if (!result) {
+            PrintWriter out = response.getWriter();
+            out.print(JSONObject.fromObject(ResponseResult.fail(resutltString)).toString());
+        }
+
+        return result;
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
 ### 数据库
 
 #### MySQL规范
 
 详见：[阿里巴巴Java开发手册-1.7.1-黄山版](E:\resource\文档\开发文档\阿里巴巴Java开发手册-1.7.1-黄山版-2022最新版.pdf)，建表规约
+
+
 
 
 
