@@ -553,31 +553,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
 
 
-#### Token校验
+##### Token校验
 
-适用范围：所有需要处理客户端请求的项目，除了登录注册功能之外，都要校验用户的token是否正确。
+适用范围：出特殊请求外，所有的请求都要校验请求头中的token是否正确。如果不正确需要通知客户端重新登陆。
 
-实现方式：拦截器
+实现方式：实现拦截器接口HandlerInterceptor
 
 ```java
-package com.mashibing.apipassenger.interceptor;
-
-import com.mashibing.internalcommon.constant.TokenConstants;
-import com.mashibing.internalcommon.dto.ResponseResult;
-import com.mashibing.internalcommon.dto.TokenResult;
-import com.mashibing.internalcommon.util.JwtUtils;
-import com.mashibing.internalcommon.util.RedisPrefixUtils;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-
-
 public class JwtInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -587,7 +569,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         boolean result = true;
         String resutltString = "";
-        //从请求头中取出token。
+        //从请求头中取出访问token。
         String token = request.getHeader("Authorization");
         // 解析token
         TokenResult tokenResult = JwtUtils.checkToken(token);
@@ -596,20 +578,22 @@ public class JwtInterceptor implements HandlerInterceptor {
             resutltString = "access token invalid";
             result = false;
         } else {
-            // 拼接key
+            // 如果客户端传入的token有效，则继续查询redis
             String phone = tokenResult.getPhone();
             String identity = tokenResult.getIdentity();
-
+            // 按照相同的规则计算得到key
             String tokenKey = RedisPrefixUtils.generatorTokenKey(phone, identity, TokenConstants.ACCESS_TOKEN_TYPE);
-            // 从redis中取出token
+            // 根据key从redis中取出token
             String tokenRedis = stringRedisTemplate.opsForValue().get(tokenKey);
             if ((StringUtils.isBlank(tokenRedis)) || (!token.trim().equals(tokenRedis.trim()))) {
+                //如果Redis中不存在token或者token不一致则报错
                 resutltString = "access token invalid";
                 result = false;
             }
         }
 
         if (!result) {
+            // 将错误信息返回给客户端
             PrintWriter out = response.getWriter();
             out.print(JSONObject.fromObject(ResponseResult.fail(resutltString)).toString());
         }
@@ -617,12 +601,15 @@ public class JwtInterceptor implements HandlerInterceptor {
         return result;
     }
 }
-
 ```
 
 
 
+#### 短信发送功能
 
+可通过调用阿里，腾讯的短信通服务接口可以实现。
+
+[腾讯短信服务](https://cloud.tencent.com/act/pro/csms?fromSource=gwzcw.5679192.5679192.5679192&utm_medium=cpc&utm_id=gwzcw.5679192.5679192.5679192&bd_vid=10502392365468823329)，[阿里短信服务](https://www.aliyun.com/product/sms?spm=5176.21213303.J_qCOwPWspKEuWcmp8qiZNQ.2.202f2f3dw6a17Z&scm=20140722.S_card@@%E4%BA%A7%E5%93%81@@125575.S_card0.ID_card@@%E4%BA%A7%E5%93%81@@125575-RL_%E7%9F%AD%E4%BF%A1-LOC_search~UND~card~UND~item-OR_ser-V_3-P0_0)
 
 
 
@@ -710,10 +697,12 @@ sequenceDiagram
 
 校验正确则自动登陆。如果手机号不存在则自动注册。
 
-#### 开发流程
 
-1. 先后启动：[service-verificationcode](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-verificationcode)，[service-passenger-user](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-passenger-user)项目。
-2. 用户输入验证码点下一步，调用后台请求。请求地址：/verification-code-check（使用ApiFox模拟）
+
+#### 实现流程
+
+1. 先后启动：[service-verificationcode](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-verificationcode)，[service-passenger-user](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\service-passenger-user)，[api-passenger](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\api-passenger)项目。
+2. 用户输入验证码点下一步，调用后台校验验证码。请求地址：/verification-code-check（使用ApiFox模拟）
 3. 请求通过URL映射，到达[api-passenger](D:\Workspace\idea\mashibing\online-taxi-public-2022\online-taxi-public\api-passenger)项目的VerificationCodeController.checkVerificationCode() 
 4. 调用Service方法进行处理，verificationCodeService.checkCode()。
    1. 根据用户手机号生成redis的key，`RedisPrefixUtils.generatorKeyByPhone();`
@@ -726,16 +715,88 @@ sequenceDiagram
       3. 如果没有查询到用户信息，则自动构建用户信息并插入到用户表中。
    5. 生成Access Token。JwtUtils.generatorToken(..., TokenConstants.ACCESS_TOKEN_TYPE)
    6. 生成Refresh Token。JwtUtils.generatorToken(..., TokenConstants.REFRESH_TOKEN_TYPE)
-   7. 返回Token给客户端。
-   8. 为什么要生成2个Token？
+   7. 将2种token存入redis，并返回Token给客户端。（[为什么要有2个token](#双Token设计)）
+
+
+
+### Token存储
+
+关于token的存储有多种方案，可以存在客户端也可以存在服务端，例如：redis，下面分析一下利弊。
+
+#### 客户端存储token
+
+优势
+
+1. 减轻服务器负担：客户端将token发给服务器后，服务可直接校验有效性，不需要再从其他服务器上获取token。同时降低服务器的空间占用。
+2. 减少网络请求：客户端存储token可以减少对服务器的频繁网络请求，提高系统的性能和响应速度。
+
+劣势：
+
+1. 安全性较低：客户端存储token存在一定的安全风险，因为token可能被窃取或篡改，导致用户信息泄露或身份验证失败。
+2. 需要额外的处理逻辑：客户端存储token需要额外的处理逻辑来管理token的有效性和更新，增加了开发和维护的成本。
+
+#### Redis存储token
+
+优势
+
+1. 提高安全性：将token存储在Redis中可以提高安全性，因为Redis具有较高的安全性和数据保护能力，可以有效防止token被盗取或篡改。
+2. 方便管理和维护：Redis提供了丰富的数据管理和维护功能，可以方便地对token进行有效性验证、更新和删除。
+
+劣势
+
+1. 增加网络请求：将token存储在Redis中会增加对服务器的网络请求，可能影响系统的性能和响应速度。
+2. 需要额外的存储成本：Redis作为一个独立的存储服务，需要额外的存储成本和维护成本，增加了系统的总体成本。
+
+综上所述，客户端和Redis中存储token各有利弊，开发者需要根据具体的业务需求和安全考虑来选择合适的存储方式。本项目采用的是服务端存储。
+
+
+
+#### 双Token设计
+
+**为什么要有双token？**
+
+如果仅是一个token，失效时间为30分钟，那用户就需要每隔30分钟就重新登陆。对用户很不友好
+
+**其他解决方案**
+
+除了双token方案外还有其他解决方案可以解决token失效问题。例如：
+
+通过拦截器，每次只要接收到请求就刷新token。当这个方案的缺陷是会增加刷新token的次数和请求的处理时间。
+
+**双token方案**
+
+1. 当用户第一次登陆成功，给用户生成2个token（访问token，刷新token）。
+2. 其中刷新Token的失效日期要比访问token长。
+3. 当访问token过期后，服务端会返回错误给客户端，客户端可以使用刷新token请求一个专用于刷新token的请求。
+   1. 请求地址：`/token-refresh`
+4. 请求校验刷新token是否有效，如果有效，则重新生成2个新token
+
+
+
+## 用户信息
+
+### 头像存储
+
+头像可以存在用户表中，也可以存在单独的图像表中（例如：头像图，身份证图，驾驶证图）
+
+这里我们采用前者。
+
+### 用户信息查询
+
+#### 时序图
+
+```mermaid
+sequenceDiagram
+    客户端->>api_passenger: access_token
+    api_passenger->>service_passenger_user: 手机号
+    Note over service_passenger_user: 根据手机号<br>查询用户信息
+    service_passenger_user->>api_passenger: 用户信息
+    api_passenger->>客户端: 成功响应
+```
 
 
 
 
 
-### 短信发送功能
 
-通过调用阿里，腾讯的短信通服务接口可以实现。
-
-[腾讯短信服务](https://cloud.tencent.com/act/pro/csms?fromSource=gwzcw.5679192.5679192.5679192&utm_medium=cpc&utm_id=gwzcw.5679192.5679192.5679192&bd_vid=10502392365468823329)，[阿里短信服务](https://www.aliyun.com/product/sms?spm=5176.21213303.J_qCOwPWspKEuWcmp8qiZNQ.2.202f2f3dw6a17Z&scm=20140722.S_card@@%E4%BA%A7%E5%93%81@@125575.S_card0.ID_card@@%E4%BA%A7%E5%93%81@@125575-RL_%E7%9F%AD%E4%BF%A1-LOC_search~UND~card~UND~item-OR_ser-V_3-P0_0)
 

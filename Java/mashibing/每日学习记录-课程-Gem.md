@@ -7347,7 +7347,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76412)》学到视频68。尝试本地运行验证码校验功能
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76581)》学到视频68。验证码校验功能本地运行通过。
 2. 完成本周周报与下周计划。
 3. 英语：06:30晨读打卡。口语学习-购物。
 
@@ -7360,3 +7360,23 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 **建议**：
 
 **用时**：4小时左右，06:30~22:45
+
+
+
+## 2024-02-05 星期一
+
+**今日所学内容**：
+
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76581)》学到视频79。双token设计思想与实现，用户信息查询设计。
+2. leetcode：[67. 二进制求和](https://leetcode.cn/problems/add-binary/)。
+3. 英语：06:30晨读打卡。口语学习-餐饮 14:21。复习之前学过的名词，将生词加入扇贝生词本记忆。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：10小时左右，06:30~22:45
