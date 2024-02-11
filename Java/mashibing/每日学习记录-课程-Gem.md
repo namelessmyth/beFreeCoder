@@ -7445,7 +7445,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76690)》学到视频90。
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76763)》学到视频87。
 2. 英语：06:30晨读打卡。复习之前学过的单词。
 3. 白天出去玩，晚上到了旅馆终于心收回来了，学习了4小时。
 
@@ -7457,4 +7457,4 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **建议**：
 
-**用时**：1小时左右，06:30~23:58
+**用时**：4小时左右，20:00~01:15
