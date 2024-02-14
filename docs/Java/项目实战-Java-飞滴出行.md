@@ -629,7 +629,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 
 
-# 乘客中心服务
+# 乘客中心
 
 ## 注册登录
 
@@ -827,9 +827,91 @@ sequenceDiagram
     api_passenger->>客户端: 响应结果：价格
 ```
 
+#### 地图接口
+
+高德路径规划接口：https://lbs.amap.com/api/webservice/guide/api/direction
 
 
-#### 实现步骤
+
+#### 开发注意事项
+
+##### 金额计算
+
+在Java中进行金额计算时，有一些重要的注意事项：
+
+1. 使用BigDecimal：建议使用BigDecimal类来进行金额计算，而不是使用double或float。因为double和float类型在表示小数时可能会出现精度丢失，导致计算结果不准确。而BigDecimal可以保证精确的小数计算，避免了精度丢失的问题。
+2. 设置精度：在使用BigDecimal进行金额计算时，需要根据实际需求设置合适的精度，以确保计算结果的准确性。
+3. 使用字符串初始化BigDecimal：在创建BigDecimal对象时，建议使用字符串来初始化，而不是直接使用double类型，以避免精度丢失。
+4. 避免使用浮点数比较：在比较金额时，应该避免使用浮点数比较，因为浮点数的精度问题可能导致比较结果不准确。应该使用compareTo方法来比较BigDecimal对象的值。
+5. 使用setScale方法：在需要对金额进行精度调整时，应该使用setScale方法来设置小数位数，而不是直接进行除法运算或四舍五入操作。
 
 
 
+##### BigDecimal使用注意
+
+1. 使用静态final变量：在使用BigDecimal类时，可以将常用的BigDecimal对象定义为静态final变量，以避免重复创建对象，提高性能。
+2. 使用setScale方法：在需要对BigDecimal对象进行精度调整时，可以使用setScale方法而不是直接进行除法运算，这样可以提高性能。
+3. 避免使用BigDecimal的构造方法：避免使用BigDecimal的构造方法，尽量使用valueOf方法来创建BigDecimal对象，因为valueOf方法会使用缓存机制来提高性能。
+4. 使用StringBuilder来拼接字符串：在需要将BigDecimal对象转换为字符串时，可以使用StringBuilder来拼接字符串，而不是直接使用加号操作符，这样可以提高性能。
+5. 使用适当的精度：在进行数值计算时，可以根据实际需求选择合适的精度，避免使用过高的精度，以提高性能。
+6. 避免使用BigDecimal的equals方法：避免使用BigDecimal的equals方法来比较两个BigDecimal对象的值，可以使用compareTo方法来替代，因为compareTo方法比equals方法更高效。
+7. 避免使用BigDecimal的divide方法：在需要进行除法运算时，可以使用multiply方法和setScale方法来代替divide方法，以提高性能。
+
+
+
+# 司机中心
+
+司机中心设计的功能有：
+
+- 司机的增删改查，禁用。出车功能：点了出车才能接单。
+- 车辆的增删改差，禁用。
+- 司机和车辆的绑定和解绑。一个司机解除当前的车辆绑定后才能绑定新的车
+- 字典维护。例如：车辆品牌，车辆类型等
+
+以下将逐一介绍重点功能
+
+
+
+## 司机信息管理
+
+### 系统模块
+
+新增前端：boss客户端。后台管理系统，供管理员使用，进行数据录入，参数配置等。
+
+新增微服务：api-boss，boss客户端的后台。
+
+新增微服务：service-driver-user，用于管理司机用户信息。
+
+新增前端：司机客户端。供司机使用。
+
+新增微服务：api-driver。司机客户端对应的后端。
+
+
+
+### 司机保存
+
+支持录入和编辑司机信息。
+
+#### 时序图
+
+```mermaid
+sequenceDiagram
+    boss客户端->>api_boss: 司机信息
+    api_boss->>service_driver_user: 司机信息
+    
+    Note over service_driver_user: 保存司机信息
+    service_driver_user->>api_boss: 操作结果
+    api_boss->>boss客户端: 响应
+    
+    api_driver->>service_driver_user: 
+    service_driver_user->>api_driver: 
+    司机客户端->>api_driver: 
+    api_driver->>司机客户端: 
+    
+```
+
+#### 字典设计
+
+详细的字典项可以参考"网约车-监管信息交互平台-总体技术要求.pdf"中的40页：驾驶员基本信息请求报文格式。
+
+司机行政区。具体的值可以参考高德行政区查询接口（子集行政区传3）：https://lbs.amap.com/api/webservice/guide/api/district

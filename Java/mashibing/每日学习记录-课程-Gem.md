@@ -7484,7 +7484,10 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=76763)》学到视频91。学习价格模块的时序图、设计思路和实现。
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=77427)》学到视频108。service-price和service-map接口设计，代码编写。
+   1. 学习了金额计算的注意事项。建议使用BigDecimal，而不是double和float
+   2. 使用BigDecimal时的注意事项。
+
 2. 英语：06:30晨读打卡。复习单词+发音。寻找托福真题网站。
    1. 背单词不仅仅要建立了图像和意义的联系。还要建立声音和意义的联系。否则在听力中还是会听不清。
 
@@ -7497,4 +7500,23 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **建议**：
 
-**用时**：4小时左右，06:30~22:50
+**用时**：9小时左右，06:30~02:00
+
+
+
+## 2024-02-14 星期三
+
+**今日所学内容**：
+
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=77427)》学到视频130。学习司机信息录入开发实现步骤。
+2. 英语：06:30晨读打卡。复习单词与发音。做托福语法真题No.1。托福考满分app。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：8小时左右，06:30~02:00
