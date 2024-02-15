@@ -470,6 +470,22 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 
 
 
+#### 墨刀
+
+[官网](https://modao.cc/usergrowth/prototype/v8.html)，相当于中文版的Axure。墨刀是一款在线原型设计与协同工具，借助墨刀，产品经理、设计师、开发、销售、运营及创业者等用户群体，能够搭建为产品原型，演示项目效果。墨刀同时也是协作平台，项目成员可以协作编辑、审阅，不管是产品想法展示，还是向客户收集产品反馈，向投资人进行Demo展示，或是在团队内部协作沟通、项目管理
+
+免费版
+
+支持产品设计、工作流、原型预览、Sketch标注插件、移动端演示，可免费创建3个项目，每个项目20个页面，以及总共50MB素材容量。 
+
+
+
+#### PDManer
+
+一款类似PowerDesigner的国产数据库设计工具。支持根据表结构自动导出不同数据库的建表脚本。支持自动生成Java实体类代码，Mybatis代码，MybatisPlus代码等。支持设置每张表可能都会有的公共字段，例如：创建日期，创建人，修改日期，修改人，租户号等。[下载地址](https://gitee.com/robergroup/pdmaner/releases)。
+
+
+
 ### 开发环境
 
 #### 代码载入
@@ -492,8 +508,6 @@ Apifox = Postman + Swagger + Mock + JMeter，他是一个API 设计、开发、�
 #### Mybatis-Plus
 
 介绍一下Mybatis-Plus的[引入步骤](https://www.mashibing.com/study?courseNo=1537&sectionNo=76305&callbackUrl=/subject/studyline/1?courseId=18870&courseVersionId=2128)。
-
-
 
 
 
@@ -914,4 +928,24 @@ sequenceDiagram
 
 详细的字典项可以参考"网约车-监管信息交互平台-总体技术要求.pdf"中的40页：驾驶员基本信息请求报文格式。
 
-司机行政区。具体的值可以参考高德行政区查询接口（子集行政区传3）：https://lbs.amap.com/api/webservice/guide/api/district
+##### 司机注册地行政区
+
+具体的值可以参考高德行政区查询接口（子集行政区传3）：https://lbs.amap.com/api/webservice/guide/api/district
+
+将高德接口的行政区插入到数据库中的方法：`DicDistrictController.initDicDistrict()`
+
+##### 驾驶员性别
+
+技术方案中写的是：见 JT/T 697.7-2014中 4.1.2.1.3，可以使用软件“建标库”查询。
+
+点国家资源 > 规范图集，搜索关键字 JT/T 697.7
+
+![image-20240214235804944](项目实战-Java-飞滴出行.assets/image-20240214235804944.jpg)
+
+然后使用值域中的GB/T 2261.1 去百度搜索可以搜索到性别的值。
+
+##### 驾驶员民族
+
+可以使用同样的方法在建标库中查询。然后将值写入到字典表中。
+
+TIPS：将数据写入数据库时，可以使用notepad++的列模式或者批量替换行首`^`或行尾`$`，编辑SQL语句。

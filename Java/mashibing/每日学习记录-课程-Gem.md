@@ -7383,8 +7383,6 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 
 
-
-
 ## 2024-02-06 星期二
 
 **今日所学内容**：
@@ -7508,7 +7506,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=77427)》学到视频130。学习司机信息录入开发实现步骤。
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=77427)》学到视频130。学习司机信息录入开发实现步骤。学到了一个新工具：墨刀。
 2. 英语：06:30晨读打卡。复习单词与发音。做托福语法真题No.1。托福考满分app。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
@@ -7520,3 +7518,23 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 **建议**：
 
 **用时**：8小时左右，06:30~02:00
+
+
+
+## 2024-02-15 星期四
+
+**今日所学内容**：
+
+1. 技术：《[飞滴出行网约车项目](https://www.mashibing.com/study?courseNo=1537&sectionNo=77427)》学到视频131。
+2. 工作：更新简历（word，智联，Boss直聘）。
+3. 英语：06:30晨读打卡。学习英语面试课程。复习单词与发音
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：8小时左右，06:30~23:50

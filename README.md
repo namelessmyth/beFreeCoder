@@ -280,6 +280,9 @@ dev-->创业-->公司上市-->财富自由
 
 ### 数据库工具
 
+- 设计工具
+  - [PDManer](https://gitee.com/robergroup/pdmaner/releases)，一款类似PowerDesigner的国产数据库设计工具。支持根据表结构自动导出不同数据库的建表脚本。支持自动生成Java实体类代码，Mybatis代码，MybatisPlus代码等。支持设置每张表可能都会有的公共字段，例如：创建日期，创建人，修改日期，修改人，租户号等。
+
 - 客户端
   - [↗️Chat2DB集成AIGC，能够将自然语言转换为SQL](https://doc.sqlgpt.cn/zh/)
 - SQL审核
