@@ -949,3 +949,54 @@ sequenceDiagram
 可以使用同样的方法在建标库中查询。然后将值写入到字典表中。
 
 TIPS：将数据写入数据库时，可以使用notepad++的列模式或者批量替换行首`^`或行尾`$`，编辑SQL语句。
+
+
+
+## 司机位置管理
+
+当乘客打开app，叫车时，系统需要根据乘客的所在位置自动找到他周围的所有司机，然后将这个订单分配给其中一个。
+
+这里就必须知道司机的位置了，否则系统无法找到乘客附近的司机。
+
+司机的位置可以通过高德地图提供的[猎鹰轨迹服务](https://lbs.amap.com/api/track/lieying-rumen)提供。
+
+### 猎鹰轨迹服务
+
+高德的猎鹰轨迹服务的大体使用步骤如下
+
+- 创建服务。通过Apifox调用高德的创建服务接口：https://tsapi.amap.com/v1/track/service/add
+  - key，需要自己在高德控制台中申请。例如：8d30fb1481b310324acccc7fd36bf5c1
+  - name，填写要使用猎鹰轨迹接口的系统服务名称。例如：飞滴出行Service
+  - 调用成功后，会返回服务ID，下面的步骤会用到。
+- 在已创建的服务下创建终端。通过apifox调用高德的[终端接口创建接口](https://tsapi.amap.com/v1/track/terminal/add)
+  - key，同上。
+  - sid，上面步骤返回的服务id。
+  - name，车辆名称
+  - 调用成功会返回终端id（tid）。这个tid需要记录下来，调用终端其他接口时需要提供。
+- 要显示车辆的运行轨迹，需要首先创建轨迹。调用[创建轨迹接口](https://tsapi.amap.com/v1/track/trace/add)。
+  - 请求参数：上面介绍过的key，sid，tid。还有1个轨迹名称。
+  - 返回值。轨迹id（trid）。
+- 车辆在移动过程中，每隔一段时间需要上传轨迹点。调用[轨迹点上传接口](https://tsapi.amap.com/v1/track/point/upload)。
+  - 请求参数：上面介绍过的key，sid，tid，trid。还有车辆点位信息point。是一个对象
+    - location：经纬度信息。测试时可通过[坐标拾取器](https://lbs.amap.com/tools/picker)获得。
+    - locatetime：点位上传时间点。
+    - 其他字段可参考[官网网页](https://lbs.amap.com/api/track/lieying-kaifa/api/track-sdk)。
+- 车辆轨迹上传成功后，就可以使用高德的[周边搜索接口](https://tsapi.amap.com/v1/track/terminal/aroundsearch)搜到刚刚的终端了。
+  - 请求参数：上面介绍过的key，sid。还有如下center参数，就是乘客的经纬度。
+    - radius，搜索半径（单位：米）。例如：如果是5000就是在乘客半径5000米的圆内搜索司机。
+  - 返回值。在中心附近的所有终端。
+
+
+
+# 性能测试
+
+## 测试工具
+
+### Jmeter
+
+#### 下载安装
+
+1. 打开[官网下载页面](https://jmeter.apache.org/download_jmeter.cgi)，下载Binaries中对应的zip包。本文用的（5.6.3）
+2. 下载完成后解压，找到bin目录中的jmeter.bat，双击。
+3. 双击后，首先会出现一个黑色的命令行窗口，然后会出现软件的操作界面。
+4. 可以在左侧新建一个测试计划。例如：xxx功能测试。
