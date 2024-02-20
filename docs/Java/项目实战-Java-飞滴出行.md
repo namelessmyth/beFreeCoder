@@ -892,9 +892,206 @@ sequenceDiagram
 
 
 
-#### 支付宝沙箱环境
+#### 支付宝合作
 
-https://opendocs.alipay.com/common/02kkv7，沙箱环境是支付宝平台为开发者提供的安全且低门槛的测试环境，比起正式环境少了很多调用条件，可以让调用方在上线前进行联调测试，提前发现并解决问题。
+##### 支付宝合作流程
+
+1. 企业访问支付宝开放平台（https://open.alipay.com/platform/home）并注册。
+2. 提交企业资质、业务资质、技术方案等相关材料。
+3. 支付宝审核企业提交的材料。
+4. 审核通过后，企业与支付宝签订合作协议。
+5. 企业对接支付宝支付接口并完成测试。
+6. 支付宝开通企业账户并进行实名认证。
+
+##### 沙箱环境
+
+https://opendocs.alipay.com/common/02kkv7，沙箱环境是支付宝平台为开发者提供的安全且低门槛的测试环境，比起正式环境少了很多前置条件，可以让调用方在上线前进行联调测试，提前发现并解决问题。
+
+
+
+#### 后端开发流程
+
+开发流程[官方说明](https://opendocs.alipay.com/common/097lz0?pathHash=f0c50f4f)，打开后定位到标题：后端开发过程使用沙箱。
+
+集成支付宝沙箱环境的步骤：
+
+**1. 创建支付宝沙箱账户**
+
+- 访问支付宝沙箱环境网站：https://opendocs.alipay.com/common/02kg69?pathHash=17912ef4
+- 注册并创建沙箱账户
+
+**2. 获取沙箱 App ID**
+
+- 登录沙箱账户后，在控制台页面点击“应用管理”
+- 创建一个新的应用，并获取其 App ID
+
+**3. 添加依赖Java Easy SDK**
+
+- 在Maven中加入如下依赖
+
+  - ```xml
+    <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-easysdk -->
+    <dependency>
+        <groupId>com.alipay.sdk</groupId>
+        <artifactId>alipay-easysdk</artifactId>
+        <version>2.2.3</version>
+    </dependency>
+    ```
+
+**4. 配置 SDK**
+
+- 在项目中创建 `alipay.properties` 文件或者直接添加到yml中，添加以下配置：
+
+```properties
+alipay.gatewayUrl=https://openapi.alipaydev.com/gateway.do
+alipay.appId=<沙箱 App ID>
+alipay.appPrivateKey=<沙箱私钥>
+alipay.publicKey=<沙箱公钥>
+alipay.notifyUrl=<支付宝回调地址>
+```
+
+- yml配置参考
+
+```yaml
+alipay:
+  appId: 2021000121690240
+  appPrivateKey: <沙箱私钥>
+  publicKey: <沙箱公钥>
+  notifyUrl: https://fh63641017.yicp.fun/alipay/notify
+```
+
+- 将沙箱私钥和公钥从沙箱账户中下载并替换 `<沙箱私钥>` 和 `<沙箱公钥>`
+- 回调地址必须在自身的项目中存在且在互联网上可访问，可以使用花生壳软件创建一个。
+
+**5. 创建业务类**
+
+- 创建配置类，初始化配置
+
+- ```java
+  package com.mashibing.pay.config;
+  
+  import com.alipay.easysdk.factory.Factory;
+  import com.alipay.easysdk.kernel.Config;
+  import lombok.Data;
+  import org.springframework.boot.context.properties.ConfigurationProperties;
+  import org.springframework.stereotype.Component;
+  import javax.annotation.PostConstruct;
+  
+  
+  @Component
+  @ConfigurationProperties(prefix = "alipay")
+  @Data
+  public class AlipayConfig {
+  
+      private String appId;
+  
+      private String appPrivateKey;
+  
+      private String publicKey;
+  
+      private String notifyUrl;
+  
+      @PostConstruct
+      public void init(){
+          Config config = new Config();
+          // 基础配置
+          config.protocol = "https";
+          config.gatewayHost = "openapi.alipaydev.com";
+          config.signType = "RSA2";
+  
+          // 业务配置
+          config.appId = this.appId;
+          config.merchantPrivateKey = this.appPrivateKey;
+          config.alipayPublicKey = this.publicKey;
+          config.notifyUrl = this.notifyUrl;
+  
+          Factory.setOptions(config);
+          System.out.println("支付宝配置初始化完成");
+      }
+  }
+  
+  ```
+
+- 在项目中创建业务类，例如 `AlipayController`，用于处理支付宝回调请求
+
+**6. 集成支付宝支付**
+
+- 在 `AlipayController` 中，集成支付宝支付功能，例如：
+
+```java
+package com.mashibing.pay.controller;
+
+import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.payment.page.models.AlipayTradePagePayResponse;
+import com.mashibing.internalcommon.request.OrderRequest;
+import com.mashibing.pay.service.AlipayService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+@RequestMapping("/alipay")
+@Controller
+@ResponseBody
+public class AlipayController {
+    @Autowired
+    AlipayService alipayService;
+
+    @GetMapping("/pay")
+    public String pay(String subject,String outTradeNo, String totalAmount){
+        AlipayTradePagePayResponse response ;
+        try {
+            response = Factory.Payment.Page().pay(subject, outTradeNo, totalAmount,"");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return response.getBody();
+    }
+
+    @PostMapping("/notify")
+    public String notify(HttpServletRequest request) throws Exception {
+        System.out.println("支付宝回调 notify");
+        String tradeStatus = request.getParameter("trade_status");
+
+        if (tradeStatus.trim().equals("TRADE_SUCCESS")){
+            Map<String,String> param = new HashMap<>();
+
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            for (String name: parameterMap.keySet()) {
+                param.put(name,request.getParameter(name));
+            }
+
+            if (Factory.Payment.Common().verifyNotify(param)){
+                System.out.println("通过支付宝的验证");
+
+                String out_trade_no = param.get("out_trade_no");
+                Long orderId = Long.parseLong(out_trade_no);
+
+                alipayService.pay(orderId);
+
+            }else {
+                System.out.println("支付宝验证 不通过！");
+            }
+
+        }
+
+        return "success";
+    }
+}
+```
+
+**7. 测试支付宝支付**
+
+- 运行项目并访问支付宝支付URL：http://localhost:8081/alipay/pay?subject=车费1&outTradeNo=1001&totalAmount=100
+- 跳转到支付宝的付款页面。界面会显示交易主题，交易金额。根据提示完成付款。
+- 请在沙箱账户中查看支付结果。支付成功后调用回调地址`/notify`，验证回调方法是否执行成功。
 
 
 
