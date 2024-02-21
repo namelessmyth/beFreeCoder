@@ -7631,7 +7631,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 技术：根据目前学到的知识，整理面试要点及大纲：
+1. 技术：根据目前学到的知识，整理面试要点及大纲：https://gitee.com/namelessmyth/document/blob/master/docs/Job/%E6%B1%82%E8%81%8C-Java-%E9%9D%A2%E8%AF%95%E8%A6%81%E7%82%B9.md
    1. 继续整理系统架构图：https://www.processon.com/view/link/65d3891418fbfc6b5eefa0f0
 2. 英语：晨读打卡。复习单词，[TPO01-Set6](https://toefl.kmf.com/listening/newdrilling/815wuj)未做完。
    1. 最近重点要放在面试题复习和找工作上了，逐步较少英语学习时间。
@@ -7641,10 +7641,36 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **遇到的问题**：
 
-试要点及大纲是我按之前理解整理的，最近一段时间AI技术飞速发展，不知道目前面试重点是否有变化？希望尽量把时间放在重要的事情上。
+面试要点及大纲是我按之前理解整理的，最近一段时间AI技术飞速发展，不知道目前面试重点是否有变化？希望可以有老师帮忙给些意见。
 
 **是否解决**：暂未
 
 **建议**：
 
 **用时**：8小时左右，11:00~22:56
+
+
+
+## 2024-02-21 星期三
+
+**今日所学内容**：
+
+1. 技术：根据目前学到的知识，整理面试要点及大纲：https://gitee.com/namelessmyth/document/blob/master/docs/Job/%E6%B1%82%E8%81%8C-Java-%E9%9D%A2%E8%AF%95%E8%A6%81%E7%82%B9.md
+2. Leetcode：[19. 删除链表的倒数第 N 个结点（中等）](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+3. 英语：晨读打卡。复习单词，[TPO01-Set6](https://toefl.kmf.com/listening/newdrilling/815wuj)做完。
+   1. 最近重点要放在面试题复习和找工作上了，逐步较少英语学习时间。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+面试要点及大纲是我按之前理解整理的，最近一段时间AI技术飞速发展，不知道目前面试重点是否有变化？希望可以有老师帮忙给些意见。--按照连老师的反馈，已补充多线程，JVM，MQ的面试要点。
+
+**是否解决**：已解决
+
+**建议**：
+
+**用时**：10小时左右，07:00~22:45
+
+
+
