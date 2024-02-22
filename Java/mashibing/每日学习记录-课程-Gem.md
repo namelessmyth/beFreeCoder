@@ -7658,7 +7658,6 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 1. 技术：根据目前学到的知识，整理面试要点及大纲：https://gitee.com/namelessmyth/document/blob/master/docs/Job/%E6%B1%82%E8%81%8C-Java-%E9%9D%A2%E8%AF%95%E8%A6%81%E7%82%B9.md
 2. Leetcode：[19. 删除链表的倒数第 N 个结点（中等）](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
 3. 英语：晨读打卡。复习单词，[TPO01-Set6](https://toefl.kmf.com/listening/newdrilling/815wuj)做完。
-   1. 最近重点要放在面试题复习和找工作上了，逐步较少英语学习时间。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
 
@@ -7674,3 +7673,22 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 
 
+## 2024-02-22 星期四
+
+**今日所学内容**：
+
+1. 技术：面试题复习-Java核心。String，集合，数字。
+   1. 
+
+2. Leetcode：[82. 删除排序链表中的重复元素 II（中等）](https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/)，复习：71
+3. 英语：晨读打卡。[TPO01-Set2](https://toefl.kmf.com/listening/pre?id=c14itj)做完。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：12小时左右，09:00~22:40
