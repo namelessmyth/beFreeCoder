@@ -97,39 +97,186 @@ Map <|-- TreeMap
 Map <|-- ConcurrentHashMap
 ```
 
-#### Set
+**Set**
 
 TreeSet是二叉树实现的，TreeSet中的数据是自动排好序的，不允许放入nul值，底层基于TreeMap。
 
 HashSet是哈希表实现的，HashSet中的数据是无序的，可以放入nul，但只能放入一个null，两者中的值都不能重复，就如数据库中唯一约束;底层基于HashMap
 
-#### Deque
+**Deque**
 
 ArrayDeque：ArrayDeque也实现了Queue接口，是一个基于数组实现的双端队列（double-ended queue）。ArrayDeque在插入和删除元素时的效率比LinkedList更高。适用于栈和队列的应用以及需要高效的插入和删除操作的场景，例如生产者-消费者模式。
 
-PriorityQueue：PriorityQueue是一个基于优先级堆的队列实现，它不是严格意义上的先进先出队列，而是根据元素的优先级进行排序。PriorityQueue可以根据自定义的比较器来确定元素的优先级顺序。适用于需要按照一定优先级顺序处理元素的场景，例如任务调度等。
+PriorityQueue：PriorityQueue是一个基于优先级堆的队列实现，它不是严格意义上的先进先出队列，而是根据元素的优先级进行排序。
+
+PriorityQueue可以根据自定义的比较器来确定元素的优先级顺序。适用于需要按照一定优先级顺序处理元素的场景，例如任务调度等。
 
 
 
 ### 集合的排序方式
 
+1. 调用Collections.sort(list)方法，然后List中的实体类实现实现Comparable接口。
+
+2. 调用Collections.sort(list, Comparator)方法，通过lambda表达式。例如：`Collections.sort(list, (a, b) -> { ... })` 
+
+   1. 这种方式还可以通过Comparator.comparing来构建Comparator。
+
+   2. ```java
+      List<Employee> employees = List.of(
+          new Employee("John", 30),
+          new Employee("Alice", 25),
+          new Employee("Bob", 35),
+          new Employee("John", 28)
+      );
+      
+      Comparator<Employee> comparator = Comparator.comparing(Employee::getName)
+          .thenComparing(Employee::getAge);
+      
+      Collections.sort(employees, comparator);
+      
+      // 输出：
+      // [Employee{name='Alice', age=25}, Employee{name='Bob', age=35}, Employee{name='John', age=28}, Employee{name='John', age=30}]
+      ```
+
+3. list自己也有sort方法。例如： `list.sort((a, b) -> { ... })` 方法。
+
+
+
+### 如何在循环中移除集合元素
+
+**1. 使用迭代器**
+
+使用 `Iterator` 遍历列表，并在需要时使用 `remove()` 方法删除元素。
+
+```java
+List<String> list = new ArrayList<>();
+list.add("apple");
+list.add("banana");
+list.add("cherry");
+
+Iterator<String> iterator = list.iterator();
+while (iterator.hasNext()) {
+    String fruit = iterator.next();
+    if (fruit.equals("banana")) {
+        iterator.remove();
+    }
+}
+
+System.out.println(list); // 输出：[apple, cherry]
+```
+
+
+
+**2. 使用 `removeIf()` 方法 (Java 8+)**
+
+`removeIf()` 方法接受一个 `Predicate`，并删除列表中所有满足该谓词的元素。
+
+```java
+List<String> list = new ArrayList<>();
+list.add("apple");
+list.add("banana");
+list.add("cherry");
+
+list.removeIf(fruit -> fruit.equals("banana"));
+
+System.out.println(list); // 输出：[apple, cherry]
+```
+
+
+
+**3. 使用ConcurrentHashMap或CopyOnWriteArrayList**
+
+```java
+// 使用 ConcurrentHashMap
+ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+map.put("apple",  1);
+map.put("banana", 2);
+map.put("cherry", 3);
+
+map.forEach((key, value) -> {
+    if (key.equals("banana")) {
+        map.remove(key);
+    }
+});
+
+System.out.println(map); // 输出：{apple=1, cherry=3}
+
+// 使用 CopyOnWriteArrayList
+CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+list.add("apple");
+list.add("banana");
+list.add("cherry");
+
+list.forEach(fruit -> {
+    if (fruit.equals("banana")) {
+        list.remove(fruit);
+    }
+});
+
+System.out.println(list); // 输出：[apple, cherry]
+```
+
+
+
+**4. 使用 Stream 删除元素**
+
+可以使用 `Stream` 的 `filter()` 方法删除元素，该方法接受一个 `Predicate`，并返回一个只包含满足该谓词的元素的新流。然后，可以使用 `collect()` 方法将新流收集到一个新的列表中。
+
+```java
+List<String> list = new ArrayList<>();
+list.add("apple");
+list.add("banana");
+list.add("cherry");
+
+List<String> newList = list.stream()
+    .filter(fruit -> !fruit.equals("banana"))
+    .collect(Collectors.toList());
+
+System.out.println(newList); // 输出：[apple, cherry]
+```
+
+**注意事项：**
+
+- `filter()` 方法不会修改原始列表，它会创建一个新的流。
+- `collect()` 方法会创建一个新的列表。
+
 
 
 ### HashMap的底层结构
 
-在Java 1.8中，HashMap的底层结构是数组+链表/红黑树的结合实现。具体来说，Java 1.8中的HashMap在解决哈希冲突时采用了“拉链法”（Separate Chaining）的方式，即在发生哈希冲突时，将具有相同哈希值的元素存储在同一个桶（bucket）中的链表中。
+[HashMap底层最全分析](https://blog.csdn.net/weixin_44141495/article/details/108327490)
 
-在Java 1.8中，HashMap的底层结构主要由以下几个重要部分组成：
+HashMap在不同的Jdk版本的实现原理是不一样的。
 
-1. Entry数组：HashMap内部维护了一个Entry数组，每个Entry实际上是一个键值对（key-value pair），用于存储实际的数据。
-2. 桶（bucket）：每个桶对应HashMap中的一个位置，用于存储具有相同哈希值的元素。当发生哈希冲突时，将元素存储在同一个桶中的链表（或红黑树）中。
-3. 链表/红黑树：在Java 1.8中，当链表长度达到一定阈值（默认为8），会将链表转换为红黑树，以提高查询效率。红黑树的查询、插入和删除操作的时间复杂度为O(log n)，相比链表能够更快地进行操作。
+JDK1.7的时候使用的是数组+ 单链表的数据结构。
 
-通过使用数组+链表/红黑树的结合实现，Java 1.8中的HashMap能够在绝大多数情况下实现快速的插入、删除和查找操作，平均情况下，这些操作的时间复杂度为O(1)。此设计在一定程度上提高了HashMap的性能和效率。	
+![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRlZS5jb20vZGFya25pZ2h0amFrdC9tYXBkZXBvdC9yYXcvbWFzdGVyL2ltZy9jc2RuLzIwMjAwODMxMTkwMDUxLnBuZw?x-oss-process=image/format,png)
+
+在JDK1.8及之后时，使用的是数组+链表+红黑树的数据结构（当链表的深度达到8的时候，也就是默认阈值，就会自动扩容把链表转成红黑树的数据结构来把时间复杂度从O(n)变成O(logN)提高了效率）
+
+![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9naXRlZS5jb20vZGFya25pZ2h0amFrdC9tYXBkZXBvdC9yYXcvbWFzdGVyL2ltZy9jc2RuLzIwMjAwODMxMTkwMDQ4LnBuZw?x-oss-process=image/format,png)
+
+put流程如下：
+
+①.判断键值对数组table[]是否为空或为null，否则执行resize()进行扩容；
+
+②.根据键值key计算hash值得到插入的数组索引i，如果table[i]==null，直接新建节点添加，转向⑥，如果 table[i]不为空，转向③；
+
+③.判断table[i]的首个元素是否和key一样，如果相同直接覆盖value，否则转向④，这里的相同指的是hashCode以及equals；
+
+④.判断table[i] 是否为treeNode，即table[i] 是否是红黑树，如果是红黑树，则直接在树中插入键值对，否则转向⑤；
+
+⑤.遍历table[i]，判断链表长度是否大于8，大于8的话把链表转换为红黑树，在红黑树中执行插入操作，否则进行链表的插入操作；遍历过程中若发现key已经存在直接覆盖value即可；
+
+⑥.插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold，如果超过，进行扩容。
+
+![](https://img-blog.csdnimg.cn/20191214222552803.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70)
 
 ### HashMap1.8与1.7区别
 
-    [参考答案1](https://blog.csdn.net/qq_36520235/article/details/82417949) ，[参考答案2](https://blog.csdn.net/weixin_44141495/article/details/108402128)
+[参考答案](https://blog.csdn.net/weixin_44141495/article/details/108402128)
+
+
 
 ### 只重写equals不重写hashcode会有什么问题？
 
@@ -217,11 +364,42 @@ public Node getLoopNode(Node head){
 
 
 
-# 异常处理
+# 异常
+
+## 对象
 
 ### Throwable,Exception,Error,RuntimeException
 
 
+
+## 处理
+
+### finally中的代码一定执行么？
+
+通常情况下，finally的代码被执行的前提是：
+
+1、对应 try 语句块被执行,
+2、程序正常运行。
+
+如果没有符合这两个条件的话，finally中的代码就无法被执行，如发生以下情况，都会导致finally不会执行
+
+1、System.exit()方法被执行
+2、Runtime.getRuntime().halt()方法被执行
+3、try或者catch中有死循环
+4、操作系统强制杀掉了JM进程，如执行了kil -9
+5、其他原因导致的虚拟机崩溃了
+6、虚拟机所运行的环境挂了，如计算机电源断了
+7、如果一个finally是由守护线程执行的，那么是不保证一定能执行的，如果这时候JM要退出，JM会检查其他非守护线程，如果都执行完了，那么就直接退出了。这时候finally可能就没办法执行完。
+
+
+
+### try、catch、finally中都有return
+
+例如：try中return A，catch中return B， finally中return c，最终返回值是什么?
+
+最终的返回值将会是C!
+
+finally块总是在try和catch块之后执行，无论是否有异常发生。如果finally块中有一个return语句，它将覆盖try块和catch块中的任何return语句。
 
 
 

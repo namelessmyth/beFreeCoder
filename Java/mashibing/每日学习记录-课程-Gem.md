@@ -7678,10 +7678,30 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 **今日所学内容**：
 
 1. 技术：面试题复习-Java核心。String，集合，数字。
-   1. 
-
 2. Leetcode：[82. 删除排序链表中的重复元素 II（中等）](https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/)，复习：71
 3. 英语：晨读打卡。[TPO01-Set2](https://toefl.kmf.com/listening/pre?id=c14itj)做完。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：12小时左右，09:00~22:40
+
+
+
+### 2024-02-23 星期五
+
+**今日所学内容**：
+
+1. 技术：面试题复习-Java核心。集合排序方法，集合循环中删除方法，HashMap底层结构。
+   1. 前端知识：echart，TypeScript。非技术问题整理。
+
+2. Leetcode：[150. 逆波兰表达式求值（中等）](https://leetcode.cn/problems/evaluate-reverse-polish-notation/)，
+3. 英语：晨读打卡。TPO01-Set3做完。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
 
