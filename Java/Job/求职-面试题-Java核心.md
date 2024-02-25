@@ -654,21 +654,185 @@ public class MethodHandleExample {
 
 # IO
 
-### 解释BIO、NIO、AIO
+## 概念与分类
 
-BIO(Blocking l/O)
+### IO的概念及作用是？
 
-同步阻塞l/O，是JDK1.4之前的传统IO模型。 线程发起IO请求后，一直阻塞，直到缓冲区数据就绪后，再进入下一步操作。
+IO是Input/Output的缩写，指的是计算机与外部设备之间的数据传输。在Java中，IO主要用于实现数据的输入和输出操作，包括读取文件、写入文件、网络通信等。
 
-NIO(Non-Blocking l/O)
+举例说明：假设我们需要读取一个文本文件中的内容并输出到控制台上，这就涉及到IO操作。我们可以使用Java的IO库中的FileInputStream来读取文件内容，然后使用System.out.println()方法将内容输出到控制台。这个过程就是一个典型的IO操作，实现了数据的输入和输出。
 
-同步非阻塞IO，线程发起IO请求后，不需要阻塞，立即返回。用户线程不原地等待IO缓冲区，可以先做一些其他操作，只需要定时轮询检查IO缓冲区数据是否就绪即可。
 
-AIO (Asynchronous I/O)
 
-异步非阻塞l/O模型。线程发起IO请求后，不需要阻塞，立即返回，也不需要定时轮询检查结果，异步IO操作之后会回调通知调用方。
+### 阻塞、非阻塞；异步、同步的区别是？
 
-![](https://pics2.baidu.com/feed/95eef01f3a292df52b17c1059eeb0e6c35a87334.jpeg@f_auto?token=9fa51b8435f6c110d8500fbcf55359a8)
+阻塞与非阻塞关注的是程序在等待调用结果（如I/O操作）时的状态。结果没有返回前调用者是否可以去做其他事情。
+
+同步与异步关注的是调用结果的通知方式。是通过回调函数、事件、通知等机制来通知调用者还是要调用者一直等在哪里。
+
+详细说明：
+
+**阻塞与非阻塞**
+
+- **阻塞（Blocking）**：当一个线程执行某个操作（如I/O操作）时，如果该操作需要一段时间才能返回结果，在这段时间内，当前线程会被挂起（即停止执行），直到操作完成并返回结果后，线程才会继续执行。在阻塞期间，线程不能做任何其他事情。
+- **非阻塞（Non-blocking）**：当一个线程执行某个操作时，如果该操作可以立即返回一个状态（成功、失败或者其他状态码），则不管操作是否已经完成，线程都会继续执行下去，不会被挂起。对于未完成的操作，线程可以选择在未来某个时间点再检查操作是否完成，或者继续做其他事情。
+
+**同步与异步**
+
+- **同步（Synchronous）**：在同步操作中，调用者发起一个操作，并且必须等待操作完成后才能继续执行后续的代码。同步操作强调的是顺序性和等待的概念，即调用者主动等待这个调用的完成。
+- **异步（Asynchronous）**：在异步操作中，调用者发起一个操作后，不需要等待操作完成即可继续执行后续的代码。通常，操作完成后，通过回调函数、事件、通知等机制来通知调用者。异步操作强调的是不阻塞调用者线程，允许调用者在等待被调用操作完成的同时，继续执行其他任务。
+
+结合例子
+
+- **阻塞同步**：一个线程调用读文件操作，并等待操作系统从磁盘中读取文件并返回内容，期间该线程被挂起，直到文件读取完成。
+- **非阻塞同步**：一个线程发起读文件操作，操作系统立即返回一个状态表示开始读取文件，线程轮询检查文件是否读取完成，期间线程主动等待并频繁检查，直到文件读取完成。
+- **阻塞异步**：这种组合在实际中不常见，因为如果使用了异步通知的方式调用者就不用一直等待返回结果了。
+- **非阻塞异步**：一个线程发起网络请求操作后，立即继续执行其他任务，当网络请求完成后，通过回调函数或事件机制通知原线程，无需线程主动等待和检查。
+
+
+
+### 同步和异步IO的实现
+
+在Java中，同步IO（Synchronous I/O）和异步IO（Asynchronous I/O）是处理输入输出操作的两种主要方式，它们在数据读写时的行为和性能上有显著差别。
+
+**同步IO**
+
+同步IO模型中，当一个线程发起IO请求时，该线程必须等待IO操作完成才能继续执行。这意味着在IO操作（如文件读写、网络数据传输）执行期间，线程会被阻塞，直到操作完成。
+
+实现方式：
+
+- **传统的阻塞IO模型**，如Java中的`FileInputStream`、`FileOutputStream`、`Socket`等类，都是同步IO的实现。
+
+  **示例**：使用`FileInputStream`读取文件内容。
+
+  ```java
+  try (FileInputStream fis = new FileInputStream("example.txt")) {
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = fis.read(buffer)) != -1) {
+          // 处理读取的数据
+      }
+  } catch (IOException e) {
+      e.printStackTrace();
+  }
+  ```
+
+**异步IO**
+
+异步IO模型允许线程发起IO请求后不必等待IO操作完成，即线程可以继续执行其他任务。当IO操作完成后，会通过某种方式（如回调函数、事件）通知调用者。
+
+实现方式：
+
+- **NIO.2（也称为Java New I/O 2）**，Java在JDK 7中引入了NIO.2，它提供了异步文件和网络IO操作。`java.nio.channels.AsynchronousFileChannel`和`java.nio.channels.AsynchronousSocketChannel`是异步IO的关键类。
+
+  **示例**：使用`AsynchronousFileChannel`读取文件内容。
+
+  ```java
+  ByteBuffer buffer = ByteBuffer.allocate(1024);
+  // 打开一个异步文件通道，读取指定的文件
+  AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(Paths.get("input.txt"), StandardOpenOption.READ);
+  // 使用CompletionHandler接口处理IO操作的结果
+  fileChannel.read(buffer, 0, null, new CompletionHandler<Integer, Object>() {
+      /**
+       * 读取文件成功时调用
+       * @param result 读取的字节数
+       * @param attachment 附件
+       */
+      @Override
+      public void completed(Integer result, Object attachment) {
+          buffer.flip();
+          while (buffer.hasRemaining()) {
+              System.out.print((char) buffer.get());
+          }
+          try {
+              //清空缓冲区并关闭文件通道
+              buffer.clear();
+              fileChannel.close();
+          } catch (Exception e) {
+              System.out.println(e);
+          }
+      }
+  
+      /**
+       * 读取文件失败时调用
+       * @param exc 异常
+       * @param attachment 附件
+       */
+      @Override
+      public void failed(Throwable exc, Object attachment) {
+          System.out.println("Read file failed: " + exc.getMessage());
+      }
+  });
+  ```
+
+**区别总结**
+
+- **性能和资源利用**：异步IO可以更高效地利用系统资源，减少等待时间，特别是在处理大量并发连接时，如高性能服务器。同步IO在IO操作期间会阻塞线程，可能导致资源利用不足。
+- **编程模型复杂度**：异步IO的编程模型通常比同步IO复杂，因为需要处理回调、事件通知等异步编程模式。
+- **适用场景**：同步IO编程模型简单直观，适用于客户端应用和IO操作不是性能瓶颈的场景。异步IO适用于IO密集型和高并发的应用，如服务器和大规模数据处理。
+
+选择同步IO还是异步IO，需要根据应用的具体需求和性能目标来决定。
+
+
+
+### 如何使用流的管道进行IO操作？
+
+流的管道（Piped Streams）是Java中用于在不同线程之间进行通信的一种机制。它包括了两种类型的流：`PipedInputStream`和`PipedOutputStream`。`PipedInputStream`用于从另一个线程读取数据，而`PipedOutputStream`用于向另一个线程发送数据。
+
+通过流的管道，可以实现多线程之间的数据传输，其中一个线程将数据写入`PipedOutputStream`，另一个线程从相应的`PipedInputStream`读取数据。这种方式可以实现线程间的数据传递和通信。
+
+
+
+### 字节流和字符流的区别及适用场景？
+
+在Java中，字节流和字符流是用于处理输入输出的两种基本流类型，它们之间的主要区别在于处理的数据单位不同。
+
+1. 字节流（Byte Stream）：
+   - 字节流以字节为单位进行读写操作，适用于处理二进制数据（如图片、视频、音频文件）或文本文件中的字节数据。
+   - 字节流类通常以`InputStream`和`OutputStream`结尾，例如`FileInputStream`、`FileOutputStream`。
+   - 字节流适用于处理二进制数据或不需要进行字符编码转换的情况，效率较高。
+2. 字符流（Character Stream）：
+   - 字符流以字符为单位进行读写操作，适用于处理文本数据，能够自动处理字符编码和解码。
+   - 字符流类通常以`Reader`和`Writer`结尾，例如`FileReader`、`FileWriter`。
+   - 字符流适用于处理文本数据或需要进行字符编码转换的情况，提供了更方便的字符处理功能。
+
+适用场景：
+
+- 如果需要处理文本数据，推荐使用字符流，因为字符流可以自动处理字符编码和解码，避免出现乱码问题。
+- 如果需要处理二进制数据或不需要进行字符编码转换，可以使用字节流，因为字节流效率较高。
+
+
+
+### 缓冲流的作用及使用方式
+
+缓冲流是一种IO流的装饰器，它可以提高IO操作的效率。缓冲流通过在内存中创建缓冲区来减少实际的IO操作次数，从而减少与底层IO设备（如磁盘、网络）的交互次数，提高读写数据的效率。
+
+缓冲流的主要作用包括以下几点：
+
+1. 减少IO操作次数：缓冲流会在内存中创建一个缓冲区，将数据暂时存储在缓冲区中，然后批量进行IO操作，减少实际的读写操作次数。
+2. 提高IO操作效率：通过批量读写数据，减少与底层IO设备的交互次数，可以提高IO操作的效率。
+3. 提供缓冲功能：缓冲流还提供了缓冲功能，可以一次读取或写入多个字节或字符，减少了频繁的IO操作。
+
+在Java中，可以通过`BufferedInputStream`和`BufferedOutputStream`来创建字节缓冲流，通过`BufferedReader`和`BufferedWriter`来创建字符缓冲流。以下是一个简单的示例，演示了如何使用缓冲流提高IO操作效率：
+
+```Java
+import java.io.*;
+
+public class BufferedStreamExample {
+    public static void main(String[] args) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("input.txt"));
+             BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine(); // 换行
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
 
 
@@ -758,7 +922,7 @@ Jackson库
 
 ```java
 ObjectMapper objectMapper = new ObjectMapper();
-MyClass original = new MyClass("Hello, World!");
+MyClass original = new MyClass("Hello, World!"); 
 MyClass deepCopy = objectMapper.readValue(objectMapper.writeValueAsString(original), MyClass.class);
 ```
 
@@ -778,11 +942,225 @@ MyClass deepCopy = objectMapper.readValue(objectMapper.writeValueAsString(origin
 
 
 
+## 文件操作
+
+### 如何实现文件锁定操作？
+
+在Java中，可以使用`FileChannel`类来实现文件锁定（File Locking）操作。文件锁定可以用于确保在多个线程或进程同时访问同一个文件时的数据一致性和安全性。
+
+**实现文件锁定操作步骤**
+
+1. **获取文件通道（FileChannel）**：首先需要获取要操作的文件的`FileChannel`对象，可以通过`FileInputStream`或`FileOutputStream`的`getChannel()`方法来获取文件通道。
+2. **获取文件锁定**：通过`FileChannel`的`lock()`方法获取文件锁定。`lock()`方法有三种类型的文件锁定：
+   - **排它锁（Exclusive Lock）**：只允许一个线程或进程对文件进行操作，其他线程或进程无法访问。
+   - **共享锁（Shared Lock）**：允许多个线程或进程同时对文件进行读操作，但不允许写操作。
+3. **释放文件锁定**：在完成文件操作后，需要使用`unlock()`方法释放文件锁定，以允许其他线程或进程访问文件。
+
+示例代码：
+
+```java
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class FileLockExample {
+    public static void main(String[] args) {
+        try (RandomAccessFile file = new RandomAccessFile("example.txt", "rw");
+             FileChannel channel = file.getChannel()) {
+
+            // 获取排他锁
+            FileLock lock = channel.lock();
+            // 获取共享锁
+            //lock = channel.lock(0, Long.MAX_VALUE, true);
+
+            // 在锁定期间对文件进行读写操作
+
+            // 释放锁
+            lock.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+在上面的示例中，我们通过`channel.lock()`方法获取了一个排他锁，然后在锁定期间可以对文件进行读写操作，最后通过`lock.release()`释放文件锁定。注意，文件锁定通常在多线程或多进程同时访问文件时使用，以确保数据的一致性和安全性。
+
+FileInputStream的案例
+
+```java
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class FileLockExample {
+    public static void main(String[] args) {
+        try (FileInputStream fis = new FileInputStream("example.txt");
+             FileOutputStream fos = new FileOutputStream("example.txt");
+             FileChannel channel = fis.getChannel();
+             FileLock lock = channel.lock()) {
+
+            // 在锁定期间对文件进行读写操作
+
+            // 释放锁
+            lock.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+
+
+### 如何处理大文件的读写操作？
+
+处理大文件（例如：2GB文件）时，不能简单地一次性将整个文件加载到内存中，因为这将导致`OutOfMemoryError`错误。Java提供了几种方法来高效地处理大文件的读写操作，主要包括使用缓冲区、内存映射文件（Memory-Mapped Files）和流式处理。下面是一些处理超大文件的常用方法：
+
+1. 使用`BufferedReader`和`BufferedWriter`
+
+对于文本文件，可以使用`BufferedReader`和`BufferedWriter`来逐行读写，这样可以减少磁盘IO操作的次数，提高效率。
+
+```Java
+try (BufferedReader reader = new BufferedReader(new FileReader("large_file.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        // 处理每一行
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+
+try (BufferedWriter writer = new BufferedWriter(new FileWriter("output_file.txt"))) {
+    // 写入数据
+    writer.write("some data");
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+2. 使用`FileChannel`和`ByteBuffer`
+
+`FileChannel`与`ByteBuffer`提供了更底层的文件操作方式，能够通过操作系统的文件缓冲区来实现更高效的读写。
+
+```java
+RandomAccessFile file = new RandomAccessFile("large_file.dat", "rw");
+FileChannel channel = file.getChannel();
+ByteBuffer buffer = ByteBuffer.allocateDirect(1024); // 直接缓冲区
+
+while (channel.read(buffer) != -1) {
+    buffer.flip(); // 切换到读模式
+    while (buffer.hasRemaining()) {
+        // 读取数据
+    }
+    buffer.clear(); // 清空缓冲区，准备再次写入
+}
+file.close();
+```
+
+3. 内存映射文件（Memory-Mapped File）
+
+内存映射文件是一种虚拟内存管理的技术，它将文件或者其它设备上的数据映射到进程的地址空间中，通过直接对这些地址空间的操作，可以实现对文件的操作。
+
+```java
+FileChannel channel = new RandomAccessFile("large_file.dat", "rw").getChannel();
+MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, channel.size());
+
+while (buffer.hasRemaining()) {
+    // 读取或写入数据
+}
+channel.close();
+```
+
+注意：内存映射文件虽然看起来是将整个文件映射到内存中，但实际上它依赖于操作系统的虚拟内存机制。操作系统只会将当前访问的文件部分加载到物理内存中，其余部分依然留在磁盘上。这种方式可以非常高效地访问大文件，而不会因为文件大小超过物理内存而导致内存溢出。但是，如果尝试访问映射区域中一个非常大的连续区域，而这个区域的大小超过了可用内存，那么可能会遇到性能问题或者操作系统无法提供足够的虚拟内存空间的问题。
+
+4. 使用流(Streams)
+
+Java 8 引入的流（Streams）API可以与`Files.lines()`方法结合使用，以懒加载的方式逐行读取文件，这对于处理大型文本文件特别有用。
+
+```java
+try (Stream<String> lines = Files.lines(Paths.get("large_file.txt"))) {
+    lines.forEach(line -> {
+        // 处理每一行
+    });
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+注意事项
+
+- 在处理大文件时，始终要注意内存使用情况和性能。
+- 选择正确的方法取决于文件的类型（二进制或文本）、文件大小以及具体的应用场景。
+- 对于极大的文件，考虑使用外部排序、分割文件等技术。
+
+
+
+Java中如何实现文件的追加写入操作？
+
+如何处理文件的删除和重命名操作？
+
+Java中如何获取文件的基本信息（大小、创建时间等）？
+
+Java中如何遍历文件夹及其子文件夹？
+
+如何实现文件的批量操作（复制、移动、删除等）？
+
+Java中如何处理文件路径的操作？
+
+Java中如何实现文件的读取和写入异常处理？
+
+
+
+## 网络编程
+
+### 解释BIO、NIO、AIO
+
+BIO(Blocking l/O)
+
+同步阻塞l/O，是JDK1.4之前的传统IO模型。 线程发起IO请求后，一直阻塞，直到缓冲区数据就绪后，再进入下一步操作。
+
+NIO(Non-Blocking l/O)
+
+同步非阻塞IO，线程发起IO请求后，不需要阻塞，立即返回。用户线程不原地等待IO缓冲区，可以先做一些其他操作，只需要定时轮询检查IO缓冲区数据是否就绪即可。
+
+AIO (Asynchronous I/O)
+
+异步非阻塞l/O模型。线程发起IO请求后，不需要阻塞，立即返回，也不需要定时轮询检查结果，异步IO操作之后会回调通知调用方。
+
+![](https://pics2.baidu.com/feed/95eef01f3a292df52b17c1059eeb0e6c35a87334.jpeg@f_auto?token=9fa51b8435f6c110d8500fbcf55359a8)
+
+
+
+Java中如何实现TCP和UDP协议的网络通信？
+
+Java中如何实现多线程下的网络IO操作？
+
+Java中如何实现服务器端和客户端的通信？
+
+Java中如何实现HTTP协议的网络通信？
+
+Java中如何处理网络编程中的粘包和拆包问题？
+
+Java中如何实现网络通信中的心跳检测机制？
+
+如何实现基于NIO的高性能网络编程？
+
+Java中如何处理网络编程中的安全性和加密通信？
+
+
+
 # 异常
 
 ## 对象
 
 ### Throwable,Exception,Error,RuntimeException
+
+- `Throwable`是Java中所有异常和错误的超类。
+- `Exception`是程序中可以预料到的异常情况，分为检查异常和未检查异常。
+- `Error`是程序无法处理的严重问题。例如内存溢出（OutOfMemoryError）、栈溢出（StackOverflowError）等
+- `RuntimeException`是`Exception`的子类，属于未检查异常，通常是由程序员的错误引起。不用try catch
 
 
 
