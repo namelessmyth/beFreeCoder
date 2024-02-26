@@ -1,7 +1,53 @@
-# Idea常用插件推荐
+# Idea常用配置&插件
+
+## 下载安装
 
 - [↗️IDEA所有版本官网下载](https://www.jetbrains.com/idea/download/other.html)
 - [↗️IDEA免费激活教程和方法](https://blog.idejihuo.com/topics/jetbrains/idea)
+
+
+
+# 配置
+
+## Idea路径
+
+IDEA默认会往C盘写入临时文件以及缓存，大小可以达到1G以上。如果想要把这些数据写入到安装目录下，可以按以下步骤操作。
+
+1. 进入Idea安装目录。例如：D:\ProgramFiles\JetBrains\IntelliJ IDEA 2023\bin
+2. 用记事本或notepad++打开：idea.properties，去掉如下配置项的注释
+   1. idea.config.path，idea配置文件路径
+   2. idea.system.path，idea系统文件路径
+   3. idea.plugins.path，idea插件路径
+   4. idea.log.path，idea日志路径
+3. 按照如下参考文件内容，修改配置。注意：没有列出的不用修改。
+
+```properties
+# Use ${idea.home.path} macro to specify location relative to IDE installation home.
+# Use ${xxx} where xxx is any Java property (including defined in previous lines of this file) to refer to its value.
+# Note for Windows users: please make sure you're using forward slashes: C:/dir1/dir2.
+#---------------------------------------------------------------------
+# Uncomment this option if you want to customize a path to the settings directory.
+#---------------------------------------------------------------------
+idea.config.path=${idea.home.path}/.IntelliJIdea/config
+#---------------------------------------------------------------------
+# Uncomment this option if you want to customize a path to the caches directory.
+#---------------------------------------------------------------------
+idea.system.path=${idea.home.path}/.IntelliJIdea/system
+#---------------------------------------------------------------------
+# Uncomment this option if you want to customize a path to the user-installed plugins directory.
+#---------------------------------------------------------------------
+idea.plugins.path=${idea.config.path}/plugins
+#---------------------------------------------------------------------
+# Uncomment this option if you want to customize a path to the logs directory.
+#---------------------------------------------------------------------
+idea.log.path=${idea.system.path}/log
+```
+
+
+
+## Spring
+
+默认的Spring脚手架地址不支持Jdk8，可以改成阿里云：https://start.aliyun.com/
 
 
 

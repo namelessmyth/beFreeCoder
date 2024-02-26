@@ -7752,3 +7752,24 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 **建议**：
 
 **用时**：5小时左右，09:30~23:50
+
+
+
+### 2024-02-26 星期一
+
+**今日所学内容**：
+
+1. 学习时间：12小时
+2. 技术：整理JVM面试题，整理并提交之前做的招聘模版和周报模版。听金三银四面试直播。
+3. Leetcode：[150. 逆波兰表达式求值（复习）](https://leetcode.cn/problems/evaluate-reverse-polish-notation/)，
+4. 英语：晨读打卡。TPO01-p1。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+**用时**：09:30~23:30
