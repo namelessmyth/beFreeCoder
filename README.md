@@ -238,19 +238,19 @@ dev-->创业-->公司上市-->财富自由
 
 ## 管理
 
-### 管理文件
+### 文件模板
 
 - 绩效考核
   - [✅团队绩效考核模版](docs/Management/template/团队绩效考核-模版.xlsx)
 - 人才招聘
-    - 模版-开发
+    - [✅招聘模版-Java技术](docs/Management/template/招聘模板-Java技术.xlsx)
 
 - 技术文档
     - 概要设计模版
 
-- 报告
-    - 团队周报模版-开发
-    - 个人周报模版
+- 汇报
+    - [✅周报模版-项目开发组](docs/Management/template/周报模版-项目开发组.xlsx)
+    - [🙌个人周报模版](docs/report/周期报告-2023-Gem.xlsx)
 
 
 
