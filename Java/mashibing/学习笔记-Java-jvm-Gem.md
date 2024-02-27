@@ -274,14 +274,13 @@ SourceFile、SourceDebugExtension、LineNumberTable、LocalVariableTable、Local
 ### 类加载流程
 
 ```mermaid
-graph LR
+flowchart LR
 1["Loading<br>装载"]-->2
 subgraph Linking
 2["Verification<br>验证"]-->3
 3["Preparation<br>准备"]-->4["Resolution<br>解析"]
 end
 4-->5["Initialization<br>初始化"]
-5-->6["GC"]
 ```
 
 
@@ -380,17 +379,23 @@ end
    2. 直接引用指的是，这个类对象在JVM内存中的地址。
 2. 常量池中的各种符号引用解析为指针、偏移量等内存地址的直接引用
 
+##### 符合引用和直接引用
+
+符号引用是一种符号化的引用，包含了类名、字段名、方法名等信息；而直接引用是直接指向内存地址的引用，指向实际的类、字段、方法等内存地址。
+
+假设有一个类`Person`，其中定义了一个静态方法`sayHello()`，在另一个类`Main`中调用了`Person.sayHello()`方法。
+
+1. **符号引用**：在编译阶段，编译器会生成符号引用，如`Person.sayHello()`。这个符号引用包含了类名和方法名，但并不包含具体的内存地址。
+2. **直接引用**：在解析阶段，JVM将符号引用解析为直接引用。具体地，JVM会将`Person`类的符号引用解析为指向内存中`Person`类的实际地址，将`sayHello()`方法的符号引用解析为指向内存中该方法的实际地址。
+
+通过解析符号引用为直接引用，JVM可以在运行时准确找到类、字段、方法等的实际内存地址，从而实现对类的动态加载和调用。
+
 
 
 
 #### Initializing
 
-调用类初始化代码 <clinit>，给静态成员变量赋初始值
-
-小总结：
-
-    1. load - 默认值 - 初始值
-    2. new - 申请内存 - 默认值 - 初始值
+执行类的初始化代码，包括静态变量赋值和静态代码块。在初始化阶段，JVM会执行类的静态代码块和静态变量赋值操作，完成类的初始化工作。只有在真正使用类时才会触发初始化操作。并不是JVM启动时就执行初始化的。
 
 **案例**
 
@@ -435,13 +440,9 @@ class T {
 
 
 
-
-
-
-
 ### 类加载器
 
-ClassLoader，负责读取 Java 字节码，并转换成 java.lang.Class 类的一个实例的代码模块。
+ClassLoader，负责读取和加载 Java 字节码，并转换成 java.lang.Class 类的一个实例的代码模块。
 
 类加载器除了用于加载类外，还可用于确定类在Java虚拟机中的唯一性。
 
@@ -451,25 +452,21 @@ ClassLoader，负责读取 Java 字节码，并转换成 java.lang.Class 类的�
 
 #### Bootstrap ClassLoader
 
-负责加载JAVA_HOME中 jre/lib/rt.jar里所有的class或Xbootclasspath选项指定的jar包。由C++实现，不是ClassLoader子类。
+启动类加载器（Bootstrap ClassLoader），负责加载JAVA_HOME中 jre/lib/rt.jar里所有的class或Xbootclasspath选项指定的jar包。由C++实现，不是ClassLoader子类。无法直接在Java代码中获取引用
 
 #### Extension ClassLoader
 
-负责加载java平台中扩展功能的一些jar包，包括​JAVA_HOME中jre/lib/*.jar 或 -Djava.ext.dirs指定目录下的jar包。
+扩展类加载器（Extension ClassLoader），继承自ClassLoader类，负责加载java平台中扩展功能的一些jar包，包括JAVA_HOME中jre/lib/*.jar 或 -Djava.ext.dirs指定目录下的jar包。
 
 #### App ClassLoader
 
-负责加载classpath中指定的jar包及 -Djava.class.path 所指定目录下的类和jar包。
+应用程序类加载器（Application ClassLoader），继承自ClassLoader类，负责加载应用程序的类（即开发者自己编写的类）以及classpath中指定的jar包及-Djava.class.path 所指定目录下的类和jar包。
 
 #### Custom ClassLoader
 
-通过java.lang.ClassLoader的子类自定义加载class，属于应用程序根据自身需要自定义的ClassLoader，例如：
+自定义类加载器，继承自ClassLoader类，开发者可以根据需要自定义类加载器，实现特定的加载逻辑。例如：动态加载、热部署等功能。
 
-使用SPI server provider模式的JDBC JAXP都是破坏了双亲委托模式的，在核心类库rt.jar的加载过程中需要加载第三方厂商的类，直接指定使用线程上下文类加载器也就是应用程序类加载器来加载这些类；
 
-tomcat、jboss中的web容器类加载器也是破坏了双亲委托模式的，自定义的WebApplicationClassLoader除了核心类库外，都是优先加载自己路径下的Class。  
-
-需要注意的是这些加载器虽然说的时候都会说父加载器，但其实他们之间并不是继承关系。而是加载器的加载器。例如：ext加载器就是bootstrap加载器。
 
 #### 类加载器范围
 
@@ -620,7 +617,7 @@ public class ClassLoaderWithEncription extends ClassLoader {
 
 ### 双亲委派
 
-在加载一个类A的时候，会根据类的权限定性名依次在每个加载器的缓存中是否已经有了，如果有了就直接返回，不会重复加载。加载顺序是：custom > app > ext > bootstrap，如果所有的缓存中都没有，再从上往下，根据各自职责范围去找对应的加载器加载。这种加载机制就是双亲委派。如果最终还是没找到，那就会报ClassNotFoundException
+在加载一个类A的时候，会依照这个顺序：custom > app > ext > bootstrap，根据类的全限定性名，在每个加载器的缓存中是否已经有了，如果有了就直接返回，不会重复加载。如果所有的缓存中都没有，再从上往下，根据各自职责范围去找对应的加载器加载。这种加载机制就是双亲委派。如果最终还是没找到，那就会报ClassNotFoundException
 
 ![image-20230530215916105](沈俊杰-马士兵笔记-jvm.assets/image-20230530215916105-1688480395343-2.png)
 
@@ -709,12 +706,6 @@ public class ClassLoaderWithEncription extends ClassLoader {
       ```
 
       
-
-   3. 
-
-
-
-
 
 ## 类执行
 
@@ -870,13 +861,13 @@ JVM级别如何规范（JSR133）
 > StoreStore屏障：
 >
 > 	对于这样的语句Store1; StoreStore; Store2，
-> 																																		
+> 																																			
 > 	在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 >
 > LoadStore屏障：
 >
 > 	对于这样的语句Load1; LoadStore; Store2，
-> 																																		
+> 																																			
 > 	在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 >
 > StoreLoad屏障：
