@@ -28,7 +28,7 @@
 | 1.5  | Gem Shen    | 2023-12-18 | 文档过大，加载变慢，将每个一级标题单独拆分成一份文档 |
 |      |             |            |                                                      |
 
-### 
+
 
 
 
@@ -930,51 +930,17 @@ Configuration：全局配置。映射文件解析的内容都保存在Configurat
 
 https://bs.zhxu.cn/guide/latest/introduction.html
 
-专注高级查询。号称仅需 **一行代码** 便可实现下面的需求！比Mybatis快100倍。
+专注高级查询。号称仅需**一行代码**便可实现下面的需求！比Mybatis快100倍。
 
 ![BeanSearcher](https://bs.zhxu.cn/requirement.png)
 
 
 
-# 中间件
-
-## Tomcat
-
-### tomcat热部署，怎么做到的热加载？
-
-​    
-
-### tomcat类加载机制?
-
-
-
 # 分布式
-
-## 定时调度
-
-### Quarts
-
-### Quartz的核心组件有哪些？有什么作用
-
-### 请简单描述下Quartz的运行时序！
-
-### Elastic-Job
-
-
 
 ### ZooKeeper	
 
 Zk的分布式锁和Redis的分布式锁分别应用于什么场景。
-
-
-
-## 事务
-
-实现分布式事务方式有哪些？
-
-AT、TCC、Saga、XA
-
-seata
 
 
 
@@ -1069,189 +1035,6 @@ https://www.yuque.com/hollis666/vzy8n3/bxa45gl8rgg9slqw
 ### 不变模式介绍
 
 https://www.yuque.com/hollis666/vzy8n3/qlohhe
-
-
-
-# 算法
-
-## 数组
-
-### 两个有序char数组，找出不一致的那一个元素
-
-例如：[a, b, c, d, e, f, g]，[a, b, c, d, f, g]
-
-
-
-10万条数据，基于数组或者链表，如何占用最少内存排序
-
-
-
-## 链表
-
-### 反转一个链表
-
-例如：输入：1，2，3，4，5，输出：5，4，3，2，1
-
-```java
-public class ListNode {
-	int val;
-	ListNode next;
-    
-    public ListNode(int val){
-        this.val = val;
-    }
-}
-
-public class solution {
-    public ListNode reverseList(ListNode head){
-        
-    }
-}
-```
-
-
-
-### 使用链表来实现2数相加
-
-用2个链表来表示2个数字，例如：
-
-输入：2->4->3，5->6->4
-
-输出：7->0->8
-
-原因：342+465=807
-
-```java
-public class ListNode {
-	int val;
-	ListNode next;
-    
-    public ListNode(int val){
-        this.val = val;
-    }
-}
-
-public class solution {
-    public ListNode addTwoNumbers(ListNode head){
-        
-    }
-}
-```
-
-
-
-
-
-## 动态规划
-
-### 高楼扔鸡蛋
-
-https://zhuanlan.zhihu.com/p/92288604
-
-
-
-### LeetCode 45 跳跃游戏 II
-
-https://zhuanlan.zhihu.com/p/82831669
-
-
-
-有一栋100层高的大楼，给你两个完全相同的玻璃球，假设从某一层开始丢下玻璃球会摔碎,怎么利用手中的两个玻璃球，用什么最优策略(最坏情况下最少次数）知道这个临界的层是第几层
-
-
-
-### LRU
-
-Least Recently Used，最近最少使用。判断最近被使用的时间，离目前最远的数据优先被淘汰。
-
-Redis LRU对传统的LRU算法进行了改良，通过随机采样来调整算法的精度。如果淘汰策略是LRU，则根据配置的采样值maxmemory_samples(默认是5个)，随机从数据库中选择m个key，淘汰其中热度最低的 key对应的缓存数据。所以采样参数m配置的数值越大，就越能精确的查找到待淘汰的缓存数据,但是也消耗更多的CPU计算,执行效率降低。
-
-问题：如何找出热度最低的数据?
-Redis 中所有对象结构都有一个lru字段且使用了unsigned的低24位,这个字段用来记录对象的热度。对象被创建时会记录lru值。在被访问的时候也会更新lru的值。但并不是获取系统当前的时间戳，而是设置为全局变量server.Ilruclock的值。
-
-### LFU
-
-Least Frequently Used，最不常用，按照使用频率删除
-
-同样使用lru字段，但是前16位表示多久时间未访问，后8位表示访问次数（默认五次），长时间未访问，则次数会减少，最少为0，类似于心悦等级，长时间不充钱，就会降低，当次数小于5时，每次访问次数都会+1，当访问次数大于5时，随着访问次数越来越多，访问次数+1的概率就越来越小，最多加到255次，就会直接返回；
-
-
-
-lru如何用链表实现
-
-
-
-
-
-### 移除无效的括号
-
-示例 1：
-
-输入：s = “lee(to)de)”
-
-输出：“lee(to)de”
-
-解答：http://t.zoukankan.com/coding-gaga-p-12920164.html
-
-
-
-### LeetCode1135 最低成本联通所有城市
-
-想象一下你是个城市基建规划者，地图上有 N 座城市，它们按以 1 到 N 的次序编号。
-
-给你一些可连接的选项 conections，其中每个选项 conections[i] = [city1, city2, cost] 表示将城市 city1 和城市 city2 连接所要的成本。（连接是双向的，也就是说城市 city1 和城市 city2 相连也同样意味着城市 city2 和城市 city1 相连）。
-
-返回使得每对城市间都存在将它们连接在一起的连通路径（可能长度为 1 的）最小成本。该最小成本应该是所用全部连接代价的综合。如果根据已知条件无法完成该项任务，则请你返回 -1。
-
-示例1：
-输入：N = 3, conections = [[1,2,5],[1,3,6],[2,3,1]]
-输出：6
-解释：
-选出任意 2 条边都可以连接所有城市，我们从中选取成本最小的 2 条
-
-解答：参考[LeetCode1135](https://michael.blog.csdn.net/article/details/107796632)
-
-
-
-### paxos
-
-
-
-### raft
-
-
-
-### zxid
-
-
-
-### myid
-
-
-
-### epoch
-
-
-
-# 开发工具
-
-## Git
-
-### rebase和merge的区别
-
-[全网最通俗易懂的讲解: git rebase和git merge的原理和区别](https://juejin.cn/post/7026724793047220254)
-
-简单记忆：
-
-- 当我们拉取公共分支最新代码到自己分支的时候，建议使用rebase。
-  - 命令为：`git pull -r`或`git pull --rebase`
-  - 缺点就是 rebase 以后我就不知道我的当前分支最早是从哪个分支拉出来的了，因为基底变了。
-  - 如果使用 merge ，多出无意义的一条提交记录。
-- 当我们把自己分支代码提交到公共分支上的时候，建议使用merge。
-  - 如果使用 rebase ，那么其他开发人员想看主分支的历史，就不是原来的历史了，历史已经被你篡改了。
-  - 例如：主分支是master分支，我们自己的分支是dev1分支，我们在 dev1分支上写了很多垃圾代码。这时候我把 dev1分支通过 rebase 命令合并到 master 分支，那对于master分支来说，它之前到提交历史就没了，别的同事突然想看master分支以前的提交历史，其实就看不到了，发现只能看到我 dev1的提交历
-
-
 
 
 
