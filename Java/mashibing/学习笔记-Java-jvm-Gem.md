@@ -1779,7 +1779,7 @@ CMS标记使用的算法是：三色标记算法+Incremental Update
 
 [官方文档](https://www.oracle.com/technical-resources/articles/java/g1gc.html)
 
-G1在JDK1.7出现，1.8成熟，1.9成为默认垃圾回收器。英语：[Garbage First Garbage Collector (G1 GC)](https://www.oracle.com/java/technologies/javase/hotspot-garbage-collection.html) 
+G1在JDK1.7出现，1.8成熟，1.9开始成为默认垃圾回收器。英语：[Garbage First Garbage Collector (G1 GC)](https://www.oracle.com/java/technologies/javase/hotspot-garbage-collection.html) 
 
 G1是一个分代的，增量的，并行与并发的标记-复制垃圾回收器。它的设计目标是为了适应现在不断扩大的内存和不断增加的处理器数量，进一步降低暂停时间（pause time），同时兼顾良好的吞吐量。
 
@@ -2421,7 +2421,7 @@ java -jar -Xms2048m -Xmx2048m -XX:+PrintCommandLineFlags -XX:+UseG1GC -Xloggc:gc
 
 ### 吞吐量
 
-用户代码执行时间/（用户代码执行时间+垃圾收集执行时间），也就是说吞吐量越大，系统花在处理用户请求上的时间就越多。
+吞吐量是指 GC 在单位时间内回收内存的速率。吞吐量越高，GC 就越能有效地回收内存，从而减少应用程序的内存占用。。
 
 ### 响应时间
 
@@ -2442,8 +2442,6 @@ java -jar -Xms2048m -Xmx2048m -XX:+PrintCommandLineFlags -XX:+UseG1GC -Xloggc:gc
 内存溢出指程序申请内存时，没有足够的内存供申请者使用。
 
 https://blog.csdn.net/qq_37933128/article/details/126969220
-
-
 
 
 
@@ -2673,9 +2671,9 @@ java的另一款图形化调优工具，类似jconsole，但要易用性比前�
 
 修改JAVA_HOME/lib/visualvm/etc/visualvm.conf文件中的visualvm_default_options="-J-client -J-Xms24 -J-Xmx256m"，然后重启jvisualVM即可
 
-马士兵视频：https://www.mashibing.com/study?courseNo=245&sectionNo=53582
-
 参考文章：https://www.cnblogs.com/liugh/p/7620336.html 
+
+马士兵视频：https://www.mashibing.com/study?courseNo=245&sectionNo=53582
 
 
 
@@ -2732,9 +2730,7 @@ java的另一款图形化调优工具，类似jconsole，但要易用性比前�
 
 ##### help
 
-查看帮助
-
-help xx 查看具体命令帮助
+查看帮助，help xx 查看具体命令帮助
 
 
 
@@ -2742,27 +2738,25 @@ help xx 查看具体命令帮助
 
 观察系统整体情况。会定时刷新，可以关注内存和cpu的变化。
 
-
+![](https://arthas.aliyun.com/images/dashboard.png)
 
 ##### jvm
 
 相当于jinfo，可以查看当前 JVM 的信息
 
-
-
 ##### thread
 
 [官方介绍](https://arthas.aliyun.com/doc/thread.html#%E6%94%AF%E6%8C%81%E4%B8%80%E9%94%AE%E5%B1%95%E7%A4%BA%E5%BD%93%E5%89%8D%E6%9C%80%E5%BF%99%E7%9A%84%E5%89%8D-n-%E4%B8%AA%E7%BA%BF%E7%A8%8B%E5%B9%B6%E6%89%93%E5%8D%B0%E5%A0%86%E6%A0%88)
 
-显示所有线程信息。thread id，显示某个线程的信息。
+直接执行显示所有线程信息。thread id，显示某个线程的信息。
 
-thread -n 3, 展示当前最忙的前3个线程并打印堆栈
+thread -n 3：展示当前最忙的前3个线程并打印堆栈
 
-thread --all, 显示所有匹配的线程
+thread --all：显示所有匹配的线程
 
-thread id, 显示指定线程id的运行堆栈
+thread id：显示指定线程id的运行堆栈
 
-thread -b, 找出当前阻塞其他线程的线程
+thread -b：✔️找出当前阻塞其他线程的线程
 
 `thread -i 1000` : 统计最近 1000ms 内的线程 CPU 时间
 
@@ -2770,13 +2764,77 @@ thread -b, 找出当前阻塞其他线程的线程
 
 
 
+##### monitor
+
+✔️强烈推荐。主要作用就是监控方法执行，可以监控方法的这些信息。
+
+| 监控项    | 说明                       |
+| --------- | -------------------------- |
+| timestamp | 时间戳                     |
+| class     | Java 类                    |
+| method    | 方法（构造方法、普通方法） |
+| total     | 调用次数                   |
+| success   | 成功次数                   |
+| fail      | 失败次数                   |
+| rt        | 平均 RT                    |
+| fail-rate | 失败率                     |
+
+使用案例：
+
+```bat
+[arthas@14800]$ monitor demo.MathGame primeFactors -c 5
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 72 ms, listenerId: 1
+ timestamp         class             method          total    success   fail     avg-rt(  fail-ra
+                                                                                 ms)      te
+--------------------------------------------------------------------------------------------------
+ 2024-02-29 21:43  demo.MathGame     primeFactors    5        1         4        0.51     80.00%
+ :20
+
+ timestamp         class             method          total    success   fail     avg-rt(  fail-ra
+                                                                                 ms)      te
+--------------------------------------------------------------------------------------------------
+ 2024-02-29 21:43  demo.MathGame     primeFactors    5        3         2        0.20     40.00%
+ :25
+
+ timestamp         class             method          total    success   fail     avg-rt(  fail-ra
+                                                                                 ms)      te
+--------------------------------------------------------------------------------------------------
+ 2024-02-29 21:43  demo.MathGame     primeFactors    4        2         2        0.34     50.00%
+```
+
+
+
 ##### trace
 
-https://blog.csdn.net/Ryan_black/article/details/126542247
+✔️强烈推荐。可以跟踪指定方法调用的耗时（仅一层）。参考结果如下：
+
+![](https://img-blog.csdnimg.cn/cc2f627db76f4819ba4579f526567b10.png)
+
+使用说明
+
+```sh
+# 跟踪指定类的指定方法中的耗时
+trace <全限定性类名> <方法名>
+
+# -n选项指定捕捉结果的次数
+trace -n 5 com.gem.Arthas.TestTrace serviceA
+
+# 跟踪多个方法
+trace -E com.gem.Arthas.TestTrace serviceC|serviceA|serviceB
+
+# 使用正则表达式过滤方法名
+trace -E com.gem.Arthas.TestTrace add2.*
+
+# 默认不会对JDK方法调用进行耗时统计,需要显示开启
+trace --skipJDKMethod false com.gem.Arthas.TestTrace serviceA
+```
 
 
 
-##### monitor
+##### watch
+
+✔️强烈推荐。方法执行数据观测，让你能方便的观察到指定方法的调用情况。能观察到的范围为：返回值、抛出异常、入参，通过编写 OGNL 表达式进行对应变量的查看。[官方说明](https://arthas.aliyun.com/doc/watch.html)。
 
 
 
@@ -2784,40 +2842,98 @@ https://blog.csdn.net/Ryan_black/article/details/126542247
 
 类似jmap -dump，对正式环境影响很大。 结果可以用 jhat分析
 
-jad
+##### jad
 
-反编译
+✔️推荐。[官网说明](https://arthas.aliyun.com/doc/jad.html)，作用：反编译class，查看源代码，使用场景如下：
 
-1. 动态代理生成类的问题定位
+1. 确定环境上的代码是否是最新版本。（节约下载下来反编译的时间）
 2. 第三方的类（观察代码）
-3. 版本问题（确定自己最新提交的版本是不是被使用）
+3. 动态代理生成类的问题定位
 
-redefine 热替换
-目前有些限制条件：只能改方法实现（方法已经运行完成），不能改方法名， 不能改属性
+使用案例
+
+```sh
+# 反编译java.lang.String
+$ jad java.lang.String
+# 只打印源代码, 默认反编译结果里会带有ClassLoader信息
+$ jad --source-only demo.MathGame
+```
+
+
+
+##### redefine
+
+热替换class，目前有些限制条件：只能改方法实现（方法已经运行完成），不能改方法名， 不能改属性
 m() -> mm()
 
-sc
+##### sc
 
-search class
+“Search-Class” 的简写，这个命令能搜索出所有已经加载到 JVM 中的 Class 信息，
 
-watch
+class-pattern 支持全限定名，如 com.taobao.test.AAA，也支持 com/taobao/test/AAA 这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦
 
-watch method
+```sh
+$ sc demo.*
+demo.MathGame
+Affect(row-cnt:1) cost in 55 ms.
 
-profiler
+# 打印类的详细信息
+[arthas@19524]$ sc -d demo.MathGame
+ class-info        demo.MathGame
+ code-source       /D:/ProgramFiles/arthas/math-game.jar
+ name              demo.MathGame
+ isInterface       false
+ isAnnotation      false
+ isEnum            false
+ isAnonymousClass  false
+ isArray           false
+ isLocalClass      false
+ isMemberClass     false
+ isPrimitive       false
+ isSynthetic       false
+ simple-name       MathGame
+ modifier          public
+ annotation
+ interfaces
+ super-class       +-java.lang.Object
+ class-loader      +-sun.misc.Launcher$AppClassLoader@5c647e05
+                     +-sun.misc.Launcher$ExtClassLoader@28d93b30
+ classLoaderHash   5c647e05
+ 
+# 打印类的字段信息
+[arthas@19524]$ sc -d -f demo.MathGame
+```
+
+
+
+##### profiler
 
 https://arthas.aliyun.com/doc/profiler.html
 
 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
+注意：仅支持 Linux/Mac.
+
 ```shell
-profiler start
+# 开始分析
+$ profiler start
+# 查看 profiler 状态
+$ profiler status
+[cpu] profiling is running for 4 seconds
+# 获取已采集的 sample 的数量
+$ profiler 
+
+
 #间隔一段时间后执行
 profiler stop
 #打开浏览器查看报告 http://localhost:3658/arthas-output/
 ```
 
+![](https://arthas.aliyun.com/images/arthas-output.jpg)
 
+![](https://arthas.aliyun.com/images/arthas-output-svg.jpg)
+
+火焰图里，X轴越长,代表使用的越多,Y轴是调用堆栈信息。当前收集的是什么类型的数据，比如cpu 那么x轴长度越大,占用的cpu资源就越多~。
 
 ### dump文件分析
 

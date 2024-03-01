@@ -7817,3 +7817,20 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 
 
+## 2024-02-29 星期四
+
+**今日所学内容**：
+
+1. 学习时间：07:00~22:25，12小时
+2. 技术：整理JVM面试题整理结束。
+3. 求职：目前邓澎波老师指出了简历的很多问题，正在修改中。
+4. Leetcode：[190. 颠倒二进制位](https://leetcode.cn/problems/reverse-bits/)。
+5. 英语：晨读打卡。背单词。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
