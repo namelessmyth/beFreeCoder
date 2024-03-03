@@ -89,9 +89,9 @@ dev-->创业-->公司上市-->财富自由
 - 简历&面试
   - [🙌面试&简历要点-Java](docs/Job/求职-面试要点-Java.md)
 - 面试题
-  - [🙌面试题-Java基础-md](Java/Job/求职-面试题-Java核心.md)
+  - [✅面试题-Java基础-md](Java/Job/求职-面试题-Java核心.md)
   - [✅面试题-多线程并发-md](Java/Job/求职-面试题-多线程并发.md)
-  - [🙌面试题-JVM-md](Java/Job/求职-面试题-JVM.md)
+  - [✅面试题-JVM-md](Java/Job/求职-面试题-JVM.md)
   - [🙌面试题-缓存-md](Java/Job/求职-面试题-缓存.md)
   - [🙌面试题-MQ-md](Java/Job/求职-面试题-MQ.md)
   - [🙌面试题-Spring-md](Java/Job/求职-面试题-Spring.md)
@@ -124,7 +124,7 @@ dev-->创业-->公司上市-->财富自由
   - [✅Java线程生命周期说明](https://blog.csdn.net/namelessmyth/article/details/134794946?spm=1001.2014.3001.5501)
   - [✅CompletableFuture多线程编排利器](https://blog.csdn.net/namelessmyth/article/details/135026527?spm=1001.2014.3001.5501)
 - JVM
-  - [🙌学习笔记-Java-jvm-md](Java/mashibing/学习笔记-Java-jvm-Gem.md)
+  - [✅学习笔记-Java-jvm-md](Java/mashibing/学习笔记-Java-jvm-Gem.md)
 - Spring
   - [✅源码分析-Spring-Bean生命周期](https://blog.csdn.net/namelessmyth/article/details/133139513)
   - [✅源码分析-Spring-循环依赖-三级缓存](https://blog.csdn.net/namelessmyth/article/details/133179360)
@@ -255,16 +255,12 @@ dev-->创业-->公司上市-->财富自由
 
 ### 管理工具
 
-- [JIRA](https://www.cnblogs.com/fireblackman/p/16080823.html)，著名的管理工具，但正版很贵。
-- [TAPD](https://www.tapd.cn/)，腾讯项目管理工具，可集成在企业微信中。
-- [PingCode](https://pingcode.com/)，25人以下免费。
+- [JIRA](https://www.cnblogs.com/fireblackman/p/16080823.html)，比较著名的管理工具，正版较贵，老版本可以破解。
+- [TAPD](https://www.tapd.cn/)，腾讯敏捷项目管理工具，可集成在企业微信中使用。
+- [PingCode](https://pingcode.com/)，25人以下免费。对标JIRA，多次获奖非常火。
 - [Worktile](https://worktile.com/)，10人以下免费。
 - [禅道](https://www.zentao.net/)，免费版存在功能限制。
-- [Redmine](https://www.redmine.org/projects/redmine)，开源免费，功能全面，但版本较老。
-
-
-
-### 管理心得
+- [Redmine](https://www.redmine.org/projects/redmine)，开源免费，功能全面，但版本和界面较老。
 
 
 

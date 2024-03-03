@@ -7824,7 +7824,7 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 1. 学习时间：07:00~22:25，12小时
 2. 技术：整理JVM面试题整理结束。
 3. 求职：邓澎波老师指出了简历的很多问题，正在修改中。
-4. Leetcode：[190. 颠倒二进制位](https://leetcode.cn/problems/reverse-bits/)。
+4. Leetcode：[61. 旋转链表](https://leetcode.cn/problems/rotate-list/)。
 5. 英语：晨读打卡。背单词。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
@@ -7845,6 +7845,44 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 2. 技术：开始整理多线程面试题。
 3. 求职：按照邓澎波老师的意见已初步完成简历修改。待确认。
 4. 英语：晨读打卡。背单词。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+
+
+## 2024-03-02 星期六
+
+**今日所学内容**：
+
+1. 学习时间：07:00~22:55，6小时
+2. 技术：开始整理多线程面试题和架构图
+3. 算法：[61. 旋转链表（中等）](https://leetcode.cn/problems/rotate-list/)。
+4. 英语：晨读打卡。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+
+
+## 2024-03-03 星期日
+
+**今日所学内容**：
+
+1. 学习时间：07:00~22:55，12小时
+2. 技术：多线程面试题复习。JMM，Synchronize, volatile，线程池等
+3. 算法：[61. 旋转链表（复习）](https://leetcode.cn/problems/rotate-list/)。
+4. 英语：晨读打卡。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
 
