@@ -6060,9 +6060,11 @@ public class AppConfiguration {
 
 
 
-### @Async为什么不建议使用？
+### @Async使用注意事项
 
-这个注解使用时存在如下问题：在没有自定义线程池的场景下，默认会采用SimpleAsyncTaskExecutor创建线程，线程池的大小为Integer的MAX_VALUE，相当于调用一次创建一个线程，缺乏线程重用机制。在并发大的场景下可能引发严重性能问题。下面是他的源代码：
+@Async这个注解想必大家都用过，是用来实现异步调用的。一个方法加上这个注解以后，当被调用时会使用新的线程来调用。但其实这里面也有一个坑。
+
+这个注解使用时存在如下问题：@Async如果不指定线程池的名称，则使用Spring默认的线程池SimpleAsyncTaskExecutor创建线程，线程池的最大大小为Integer.MAX_VALUE，相当于调用一次创建一个线程，缺乏线程重用机制。在并发大的场景下可能引发严重性能问题。下面是他的源代码：
 
 ```java
 /**
@@ -6106,6 +6108,8 @@ public class SimpleAsyncTaskExecutor extends CustomizableThreadCreator
 }
 ```
 
+那么如何解决这个问题呢？可以采用下面的方法：
+
 #### 自定义线程池
 
 有如下几种方式可以配置线程池，一种配置默认线程池，让所有@Async自动共享或者配置单独的线程池，使用@Async时指定线程池。
@@ -6115,26 +6119,25 @@ public class SimpleAsyncTaskExecutor extends CustomizableThreadCreator
    1. application.properties参考配置，yml文件同理。
 
    2. ```properties
+      # 线程池创建时的初始化线程数，默认为8
       spring.task.execution.pool.core-size=1
+      # 线程池的最大线程数，默认为int最大值
       spring.task.execution.pool.max-size=1
+      # 用来缓冲执行任务的队列，默认为int最大值
       spring.task.execution.pool.queue-capacity=10
+      # 线程终止前允许保持空闲的时间
       spring.task.execution.pool.keep-alive=60s
+      # 是否允许核心线程超时
       spring.task.execution.pool.allow-core-thread-timeout=true
+      # 是否等待剩余任务完成后才关闭应用
       spring.task.execution.shutdown.await-termination=false
+      # 等待剩余任务完成的最大时间
       spring.task.execution.shutdown.await-termination-period=
+      # 线程名的前缀，设置好了之后可以方便我们在日志中查看处理任务所在的线程池
       spring.task.execution.thread-name-prefix=asynctask-
       ```
-
-   3. 配置解释
-
-   4. > - `spring.task.execution.pool.core-size`：线程池创建时的初始化线程数，默认为8
-      > - `spring.task.execution.pool.max-size`：线程池的最大线程数，默认为int最大值
-      > - `spring.task.execution.pool.queue-capacity`：用来缓冲执行任务的队列，默认为int最大值
-      > - `spring.task.execution.pool.keep-alive`：线程终止前允许保持空闲的时间
-      > - `spring.task.execution.pool.allow-core-thread-timeout`：是否允许核心线程超时
-      > - `spring.task.execution.shutdown.await-termination`：是否等待剩余任务完成后才关闭应用
-      > - `spring.task.execution.shutdown.await-termination-period`：等待剩余任务完成的最大时间
-      > - `spring.task.execution.thread-name-prefix`：线程名的前缀，设置好了之后可以方便我们在日志中查看处理任务所在的线程池
+      
+      
 
 2. 通过实现接口配置默认线程池
 
@@ -6214,9 +6217,7 @@ public class SimpleAsyncTaskExecutor extends CustomizableThreadCreator
       }
       ```
 
-   3. 
-
-下面是测试代码，大家可以用这个代码分别测试上述3种方式。
+   3. 下面是测试代码，大家可以用这个代码分别测试上述3种方式。
 
 ```java
 @RestController
@@ -6242,7 +6243,6 @@ public class AsyncService {
         TimeUnit.SECONDS.sleep(1L);
         log.info("task1 complete");
     }
-
 
     @Async
     public void task2() throws InterruptedException {
@@ -6274,4 +6274,4 @@ https://blog.csdn.net/dyc87112/article/details/120361886
 
 https://www.mashibing.com/course/1834
 
-
+@Async

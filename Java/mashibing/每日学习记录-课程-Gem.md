@@ -7837,6 +7837,8 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 
 
+# 2024-03
+
 ## 2024-03-01 星期五
 
 **今日所学内容**：
@@ -7901,6 +7903,25 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 1. 学习时间：06:30~22:30，8小时
 2. 技术：多线程面试题复习结束。ForkJoinPool等
 3. 算法：[66. 加一](https://leetcode.cn/problems/plus-one/)。修改简历。
+4. 英语：晨读学习，单词复习。
+
+**总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
+
+**遇到的问题**：
+
+**是否解决**：
+
+**建议**：
+
+
+
+## 2024-03-05 星期二
+
+**今日所学内容**：
+
+1. 学习时间：06:50~22:50，12小时
+2. 技术：面试题-设计模式-复习结束。Jeecg环境搭建。
+3. 算法：[66. 加一（复习）](https://leetcode.cn/problems/plus-one/)。修改简历。
 4. 英语：晨读学习，单词复习。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
