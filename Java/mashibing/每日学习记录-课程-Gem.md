@@ -8013,12 +8013,13 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 学习时间：06:30~23:10，6小时。
-2. 技术：面试题-Spring-开始。
+1. 学习时间：06:30~22:50，12小时。
+2. 面试题：Spring。Spring核心组件，IOC原理
    1. 为什么系统设计中高吞吐量和低延迟难两全？
-   2. HashMap如何解决Hash冲突
-
-3. 英语：晨读学习，单词复习50。
+   2. HashMap如何解决Hash冲突.
+   3. DNS解析过程复习
+1. 算法：[198. 打家劫舍（中等-动态规划）](https://leetcode.cn/problems/house-robber/)
+2. 英语：晨读学习，单词复习40。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
 
