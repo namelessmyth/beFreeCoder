@@ -152,6 +152,47 @@ PriorityQueue可以根据自定义的比较器来确定元素的优先级顺序�
 
 
 
+#### Map
+
+##### LinkedHashMap
+
+LinkedHashMap是HashMap的一个子类，它保留了插入顺序或者访问顺序（最近最少使用LRU算法）的特性。具体来说，LinkedHashMap维护了一个双向链表，该链表按照元素的插入顺序或访问顺序来排列元素。
+
+适合用作LRU缓存：通过覆盖removeEldestEntry()方法，可以很容易地实现LRU缓存。案例代码如下：
+
+```java
+public class LinkedHashMapLru {
+    public static void main(String[] args) {
+        LinkedHashMap<String,String> map = new LinkedHashMap<String,String>(5,0.75F,true){
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                //容量达到5就移除元素
+                return this.size() > 4;
+            }
+        };
+
+        map.put("1","aa");
+        map.put("2","bb");
+        map.put("3","cc");
+        map.put("4","dd");
+        System.out.println("原始值："+Objects.toString(map));
+
+        map.get("2");
+        System.out.println("2 读取之后："+Objects.toString(map));
+
+        map.get("3");
+        System.out.println("3 读取之后："+Objects.toString(map));
+
+        map.put("5","ee");
+        System.out.println("5 加入之后："+Objects.toString(map));
+    }
+}
+```
+
+
+
+
+
 ### 集合的排序方式
 
 1. 调用Collections.sort(list)方法，然后List中的实体类实现实现Comparable接口。
@@ -297,11 +338,15 @@ HashMap在不同的Jdk版本的实现原理是不一样的。大体上：
 
 结合HashMap源码讲解：
 
-HashMap内部有一个Node数组`Node<K,V>[] table`代表表数据，Node<K,V>是HashMap的内部类，实现Map.Entry<K,V>接口
+HashMap内部有一个Node数组`Node<K,V>[] table`代表表数据，Node<K,V>是HashMap的静态内部类，实现Map.Entry<K,V>接口
 
-Node<K,V>中维护着：确定位置的hash值，Key，Value，指向链表下一个元素的next指针。
+如果Hashmap内部有10个键值对且不存在hash冲突的情况下，那这个node数组的大小就是10。
 
-当链表中的元素数量超过8后会将链表转换为红黑树，此时该下标的元素将成为TreeNode<K,V>，是Node<K,V>的子类
+如果有2个key存在hash冲突，则node数组大小则为9，有一个key和冲突的key将形成链表结构。
+
+Node<K,V>中维护着：hash值（用于确定数组位置），Key，Value，指向链表下一个元素的next指针。
+
+当链表中的元素数量超过8后会将链表转换为红黑树，此时该下标的元素将成为TreeNode<K,V>，他是Node<K,V>的子类
 
 HashMap有4种构造方法，默认构造方法是懒加载，在第一次添加元素的时候才真正的初始化。
 ```java
@@ -352,13 +397,35 @@ put()方法流程如下：
 
 
 
+### 如何解决Hash冲突
+
+常见的方法:
+
+1. 开放定址法
+   - 开放定址法就是一旦发生了冲突，就去寻找下一个空的散列地址，只要散列表足够大，空的散列地址总能找到，并将记录存入。
+   - 常见的开放寻址技术有线性探测、二次探测和双重散列。
+   - 这种方法的缺点是可能导致“聚集”问题，降低哈希表的性能。
+2. 链地址法
+   - Separate Chaining，也叫拉链法，最常用的解决哈希冲突的方法之一。
+   - 每个哈希桶(bucket)指向一个链表。当发生冲突时，新的元素将被添加到这个链表的末尾。
+   - 在Java中，HashMap就是通过这种方式来解决哈希冲突的。Java 8之前，HashMap使用链表来实现,
+   - 从Java 8开始，当链表长度超过一定阈值时，链表会转换为红黑树，以提高搜索效率。
+3. 再哈希法
+   - 当哈希地址发生冲突用其他的函数计算另一个哈希函数地址，直到冲突不再产生为止。
+   - 这种方法需要额外的计算，但可以有效降低冲突率。
+4. 建立公共溢出区
+   1. 将哈希表分为基本表和溢出表两部分，发生冲突的元素都放入溢出表中。
+5. 一致性hash
+   1. 主要用于分布式式系统中，如：分布式缓存。它通过将数据均匀分布到多个节点上来减少冲突
+
+
+
 ### equals和hashCode方法重写注意事项
 
 在重写equals和hashCode方法时，需要注意以下事项：
 
-1. 一致性：equals方法和hashCode方法的实现必须是一致的。即如果两个对象根据equals方法判断相等，它们的hashCode值必须相等。这是因为在哈希表中，如果两个对象相等（equals返回true），它们的hashCode值必须相等，否则会导致无法正确定位对象。
-2. 相等对象的hashCode值必须相等：如果两个对象根据equals方法判断相等，那么它们的hashCode值必须相等。这是为了保证在哈希表中，相等的对象具有相同的哈希值，从而能够正确地进行查找、插入和删除操作。
-3. hashCode方法应该具有良好的散列性能：hashCode方法的返回值应该尽可能地分布均匀，以减少哈希冲突的发生。这样可以提高HashMap等基于哈希表的数据结构的性能。
+1. 一致性：equals方法和hashCode方法的实现必须是一致的。即如果两个对象根据equals方法判断相等，它们的hashCode值必须相等。这是因为在哈希表中，如果两个对象相等（equals返回true），它们的hashCode值必须相等，是为了能够正确地进行查找、插入和删除操作。
+2. hashCode方法应该具有良好的散列性能：hashCode方法的返回值应该尽可能地分布均匀，以减少哈希冲突的发生。这样可以提高HashMap等基于哈希表的数据结构的性能。
 4. 不需要每个属性都参与hashCode计算：在重写hashCode方法时，不需要每个属性都参与计算哈希值，只需要选择一些重要的属性参与计算即可。这样可以避免不必要的复杂性和性能开销。
 5. 谨慎处理null值：在重写equals方法时，需要谨慎处理null值的情况，避免出现空指针异常。通常可以使用Objects.equals方法来比较对象是否相等，该方法会处理null值的情况。
 
@@ -414,6 +481,31 @@ public int hashCode() {
 ```
 
 以上是一些推荐的实现方式，它们能够简洁、高效地实现重写equals和hashCode方法，并且能够正确地处理各种情况，避免出现问题。
+
+
+
+### 如何将集合变成线程安全的
+
+1. 在调用集合前，使用synchronized或者ReentrantLock对代码加锁(读写都要加锁)
+2. 使用ThreadLocal，将集合放到线程内访问，但是这样集合中的值就不能被其他线程访问了
+3. 使用Collections.synchronizedXXX()方法，可以获得一个线程安全的集合
+4. 使用不可变集合进行封装，当集合是不可变的时候，自然是线程安全的
+
+
+
+### Java有哪些线程安全的集合类
+
+Java1.5并发包(java.util.concurrent)包含线程安全集合类，允许在迭代时修改集合。
+
+Java并发集合类主要包含以下几种:
+
+1. ConcurrentHashMap
+2. CopyOnWriteArrayList
+3. CopyOnWriteArraySet
+4. ConcurrentLinkedDeque
+5. ConcurrentLinkedQueue
+6. ConcurrentSkipListMap
+7. ConcurrentSkipSet
 
 
 
