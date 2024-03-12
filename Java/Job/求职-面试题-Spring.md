@@ -166,7 +166,7 @@ IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化�
 
 Bean的生命周期宏观上可以表达为：
 
-1. Bean工厂初始化（不熟的，这部分可以不提）
+1. Bean工厂初始化（不熟的，这部分也可以不提）
 2. 实例化-Instantiation
 3. 属性赋值-populate
 4. 初始化-Initialization
@@ -387,7 +387,7 @@ public interface BeanFactory {
 
 https://zhuanlan.zhihu.com/p/622803858?utm_id=0
 
-https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=1241
+[马士兵视频讲解](https://www.mashibing.com/study?courseNo=2154&sectionNo=36480&courseVersionId=1241)
 
 
 
