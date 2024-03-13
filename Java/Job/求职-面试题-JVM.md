@@ -342,7 +342,7 @@ flowchart LR
 
    适用于存活对象较少的场景。所以不适用于老年代。
 
-3. 标记-整理
+3. 标记-压缩
 
    第一遍标记过程同标记-清除算法，标记完了之后将存活对象往空间一端移动，然后清理掉端边界之外的内存。
 
@@ -354,9 +354,15 @@ flowchart LR
 
 ### 分代算法有哪些？
 
-标记清除，标记整理，标记复制。并行，并发，串行。
+分代算法就是JVM内存分代模型。与其说它是算法，倒不是说它是一种策略，因为它是把上述几种算法整合在了一起。
 
-![image-20210611180449346](求职-面试题-JVM.assets/image-20210611180449346.jpg)
+这种算法整合了以上所有算法的优点，最大程度避免了它们的缺点。
+
+老的垃圾回收器才分代，新的垃圾回收器很多都不分代。G1是逻辑分代，ZGC不分代。
+
+分代算法将堆分成了新生代和老年代1：2，新生代有分成了Eden，S0，S1区，比例为：8：1：1。
+
+在老年代使用的是标记整理算法；eden，s0，s1都是用的是标记复制算法
 
 
 
@@ -510,210 +516,27 @@ Major GC在很多参考资料中是等价于 Full GC 的。精确的讲：Major 
 
 ## JVM调优
 
-### JVM内置调优工具介绍
-
-#### jps
-
-查看java进程id
-
-#### jstat
-
-用于监控java进程的各种资源和性能，命令行模式。
-
-#### jstack
-
-用于排查线程问题，例如：线程死锁
-
-#### jinfo
-
-查看jvm进程的参数
-
-#### jmap
-
-用来导出dump文件。分析oom问题原因。也可以查看jvm各种状态。
-
-#### jconsole
-
-图形化工具展现JVM运行情况。堆信息，类加载信息
-
-#### jvisualvm
-
-java的另一款图形化调优工具，类似jconsole，但要易用性比前者好很多。
-
-程序打开后，在本地目录下，会默认检测出本地的java进程。
-
-也可以添加远程服务器。有2种方式监控远程服务器，一种是参考文章中介绍的jstatd，还有一种是JMX
-
-```java
--Dcom.sun.management.jmxremote
--Dcom.sun.management.jmxremote.port=9899
--Dcom.sun.management.jmxremote.authenticate=false
--Dcom.sun.management.jmxremote.ssl=false
-```
-
-**Dump文件分析**
-
-首先请先确保JVisualVM的运行内存要大于dump文件大小，载入文件会崩溃。visualvm\etc\visualvm.conf
-
-修改JAVA_HOME/lib/visualvm/etc/visualvm.conf文件中的visualvm_default_options="-J-client -J-Xms24 -J-Xmx256m"，然后重启jvisualVM即可
-
-参考文章：https://www.cnblogs.com/liugh/p/7620336.html 
-
-
-
-### arthas使用
-
-[官网文档](https://arthas.aliyun.com/doc/)，阿里开发的一款在线排查工具，基本在免费的工具里面可以算最好用的了，强烈推荐。
-
-**常用命令**
-
-##### help
-
-查看帮助，help xx 查看具体命令帮助
-
-
-
-##### dashboard
-
-观察系统整体情况。会定时刷新，可以关注内存和cpu的变化。
-
-![](https://arthas.aliyun.com/images/dashboard.png)
-
-##### jvm
-
-相当于jinfo，可以查看当前 JVM 的信息
-
-##### thread
-
-[官方介绍](https://arthas.aliyun.com/doc/thread.html#%E6%94%AF%E6%8C%81%E4%B8%80%E9%94%AE%E5%B1%95%E7%A4%BA%E5%BD%93%E5%89%8D%E6%9C%80%E5%BF%99%E7%9A%84%E5%89%8D-n-%E4%B8%AA%E7%BA%BF%E7%A8%8B%E5%B9%B6%E6%89%93%E5%8D%B0%E5%A0%86%E6%A0%88)
-
-直接执行显示所有线程信息。thread id，显示某个线程的信息。
-
-thread -n 3：展示当前最忙的前3个线程并打印堆栈
-
-thread --all：显示所有匹配的线程
-
-thread id：显示指定线程id的运行堆栈
-
-thread -b：✔️找出当前阻塞其他线程的线程
-
-`thread -i 1000` : 统计最近 1000ms 内的线程 CPU 时间
-
-`thread -n 3 -i 1000` : 列出 1000ms 内最忙的 3 个线程栈
-
-
-
-##### monitor
-
-✔️强烈推荐。主要作用就是监控方法执行，可以监控方法的这些信息。[参考文献](https://blog.csdn.net/zhangchaoyang/article/details/128071284)。
-
-| 监控项    | 说明                       |
-| --------- | -------------------------- |
-| timestamp | 时间戳                     |
-| class     | Java 类                    |
-| method    | 方法（构造方法、普通方法） |
-| total     | 调用次数                   |
-| success   | 成功次数                   |
-| fail      | 失败次数                   |
-| rt        | 平均 RT                    |
-| fail-rate | 失败率                     |
-
-使用案例：
-
-```bat
-[arthas@14800]$ monitor demo.MathGame primeFactors -c 5
-Press Q or Ctrl+C to abort.
-Affect(class count: 1 , method count: 1) cost in 72 ms, listenerId: 1
- timestamp         class             method          total    success   fail     avg-rt(  fail-ra
-                                                                                 ms)      te
---------------------------------------------------------------------------------------------------
- 2024-02-29 21:43  demo.MathGame     primeFactors    5        1         4        0.51     80.00%
- :20
-
- timestamp         class             method          total    success   fail     avg-rt(  fail-ra
-                                                                                 ms)      te
---------------------------------------------------------------------------------------------------
- 2024-02-29 21:43  demo.MathGame     primeFactors    5        3         2        0.20     40.00%
- :25
-
- timestamp         class             method          total    success   fail     avg-rt(  fail-ra
-                                                                                 ms)      te
---------------------------------------------------------------------------------------------------
- 2024-02-29 21:43  demo.MathGame     primeFactors    4        2         2        0.34     50.00%
-```
-
-
-
-##### trace
-
-✔️强烈推荐。可以跟踪指定方法调用的耗时（仅一层）。参考结果如下：
-
-![](https://img-blog.csdnimg.cn/cc2f627db76f4819ba4579f526567b10.png)
-
-使用说明
-
-```sh
-# 跟踪指定类的指定方法中的耗时
-trace <全限定性类名> <方法名>
-
-# -n选项指定捕捉结果的次数
-trace -n 5 com.gem.Arthas.TestTrace serviceA
-
-# 跟踪多个方法
-trace -E com.gem.Arthas.TestTrace serviceC|serviceA|serviceB
-
-# 使用正则表达式过滤方法名
-trace -E com.gem.Arthas.TestTrace add2.*
-
-# 默认不会对JDK方法调用进行耗时统计,需要显示开启
-trace --skipJDKMethod false com.gem.Arthas.TestTrace serviceA
-```
-
-
-
-##### watch
-
-✔️强烈推荐。方法执行数据观测，让你能方便的观察到指定方法的调用情况。能观察到的范围为：返回值、抛出异常、入参，通过编写 OGNL 表达式进行对应变量的查看。[官方说明](https://arthas.aliyun.com/doc/watch.html)。
-
-
-
-##### heapdump
-
-类似jmap -dump，对正式环境影响很大。 结果可以用 jhat分析
-
-jad
-
-反编译
-
-1. 动态代理生成类的问题定位
-2. 第三方的类（观察代码）
-3. 版本问题（确定自己最新提交的版本是不是被使用）
-
-
-
-### 其他第三方工具
-
-#### mat
-
-分析dump文件的工具。载入比较大的dump文件前注意修改内存配置（MemoryAnalyzer.ini）
-
-#### heaphero
-
-在线dump文件分析工具
-
-#### GCViewer
-
-本地分析GC日志的工具。[参考文章](https://blog.csdn.net/qq_35995514/article/details/130207816)。
-
-#### gceasy
-
-在线GC日志分析工具，部分功能收费。
-
-
-
-### 能查看堆使用情况的工具
-
-jconsole，jvisualvm，jmap，阿里的arthas
+### JVM调优工具使用介绍
+
+JVM调优工具的主要关注点分三块：jvm信息，CPU，内存，线程。
+
+基本除了内存之外，推荐使用：arthas，[arthas官网使用说明](https://arthas.aliyun.com/doc/)
+
+arthas的优势：无需额外配置java端口，直接在服务器在线安装上执行。
+
+- jvm信息使用jvm命令
+- 线程信息使用thread命令，
+  - 使用thread -b 显示当前阻塞其他线程的线程
+  - thread -n 3：展示当前最忙的前3个线程并打印堆栈
+  - thread id：显示指定线程id的运行堆栈
+- CPU信息可以使用profile命令生成热力图
+- 内存信息可以使用memory命令
+  - 这个命令无法显示哪个对象占用内存较大
+  - 可以使用heapdump或者jmap命令导出内存dump文件。
+  - [分析dump文件的工具](#分析dump文件的工具)
+- 方法执行监控
+  - watch
+  - trace。
 
 
 
@@ -796,25 +619,6 @@ G1垃圾回收器哪些参数要调整？
 - **复杂的对象引用问题：**打印日志可能无法显示导致对象引用问题（例如循环引用）的完整引用链。dump 文件包含有关对象引用的详细信息，这有助于识别导致引用问题的复杂引用链。
 - **本机内存问题：**打印日志通常无法提供有关本机内存使用情况的信息。dump 文件包含有关本机内存分配和使用的信息，这有助于识别本机内存泄漏或其他问题。
 - **间歇性错误：**打印日志可能无法捕获间歇性错误，因为这些错误可能不会在应用程序运行期间持续发生。dump 文件可以提供有关应用程序状态的快照，这有助于诊断间歇性错误。
-
-
-
-### Java如何导出并分析dump文件
-
-当进程异常时自动导出dump文件。
-
-java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/java/dump -jar my-app.jar
-
-手动导出dump文件
-
-jmap -dump:live,format=b,file=dump.bin <pid>
-
-其中：
-
-- `<pid>` 是要导出 dump 文件的 Java 进程的进程 ID。
-- `live` 选项导出堆中所有活动对象的快照。
-- `format=b` 选项生成二进制格式的 dump 文件。
-- `file=dump.bin` 选项指定 dump 文件的输出路径和文件名。
 
 
 
@@ -923,3 +727,4 @@ kill  -9 命令会立刻关闭Jvm进程。但是kill  -9的语意是强制关闭
 案例2：定时任务偶发性卡死。
 
 某一个程序的定时任务，每到晚上就会偶发性的卡死，就是程序执行到某个地方不动了。使用arthus的trace命令定位到了具体的某一行方法调用时间超长，然后这个方法是调用另外系统的一个查询接口，可能是这个接口的性能存在问题，程序会执行很长时间执行不出来。发这个报告发给他们后，他们就去改好了。
+

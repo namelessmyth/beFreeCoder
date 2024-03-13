@@ -431,8 +431,6 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.351-b10, mixed mode)
 
 
 
-
-
 #### IDEA载入
 
 以上都准备好，就可以载入已经下载好的Spring源码了。Spring源码本地路径：D:\Workspace\idea\mashibing\lianpengju-spring
@@ -602,9 +600,11 @@ AbstractApplicationContext#refresh()方法是IOC容器初始化的核心方法�
 
 ##### 流程图
 
+可以将12个方法继续归类：刷新前的准备 > BeanFactory相关 > Bean相关处理 > 结束刷新，中间穿插着一些国际化资源和事件的初始化工作。下面是详细的流程图：
+
 ```mermaid
 flowchart TB
-prepareRefresh-->bf1
+prepareRefresh[prepareRefresh刷新准备]-->bf1
 
 subgraph BeanFactory
 direction LR
@@ -644,7 +644,7 @@ finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
         @Override
         protected void initPropertySources() {
             System.out.println("自定义initPropertySource");
-            getEnvironment().getSystemProperties().put("name","bobo");
+            getEnvironment().getSystemProperties().put("name","gem");
             getEnvironment().setRequiredProperties("key");
         }
     
@@ -695,8 +695,7 @@ finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
   		if (this.earlyApplicationListeners == null) {
   			// 从SpringBoot应用启动时这里就不为空。
   			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
-  		}
-  		else {
+  		} else {
   			// Reset local application listeners to pre-refresh state.
   			// 如果不等于空，则清空集合元素对象
   			this.applicationListeners.clear();
@@ -709,14 +708,14 @@ finishBeanFactoryInitialization-->finishRefresh-->reset[resetCommonCaches]
   		this.earlyApplicationEvents = new LinkedHashSet<>();
   	}
   ```
-
+  
 - 
 
   
 
 ##### obtainFreshBeanFactory()
 
-初始化BeanFactory。加载并解析xml配置文件得到BeanDefinition。
+关闭旧的BeanFactory (如果存在)，创建新的BeanFactory，解析xml配置文件加载BeanDefinition。
 
 - refreshBeanFactory。调用的是父类AbstractRefreshableApplicationContext中的方法。
 
@@ -906,7 +905,7 @@ beanFactory的准备工作，对他里面的BeanDefinition的各种属性进行�
 
 ##### invokeBeanFactoryPostProcessors()
 
-调用各种beanFactory的后置处理器（BFPP）。
+调用各种beanFactory的后置处理器（BFPP）。调用硬编码注册的BeanFactoryPostProcessors
 
 ```mermaid
 flowchart TB
@@ -972,13 +971,13 @@ Spring中比较重要的BeanDefinitionRegistryPostProcessor实例
 
 ##### registerBeanPostProcessors(beanFactory)
 
-注册BeanPostProcessors。真正调用要到后面的**getBean**方法。
+注册BeanPostProcessors，用于拦截 Bean 的创建。真正调用要到后面的**getBean**方法。
 
 
 
 ##### initMessageSource();
 
-初始化国际化资源文件。
+初始化国际化资源文件，用于解析消息，支持国际化。
 
 
 
@@ -1002,13 +1001,13 @@ Spring中比较重要的BeanDefinitionRegistryPostProcessor实例
 
 ##### finishBeanFactoryInitialization(beanFactory)
 
-核心方法，在这里实例化BeanFactory中的所有实例。
+核心方法，在这里实例化BeanFactory中的所有Bean单例实例，确保所有非懒加载的 Bean 都被创建。
 
 
 
 ##### finishRefresh()
 
-完成整个刷新过程。做一些通知工作。
+完成整个刷新过程。清理上下文资源，发布 `ContextRefreshedEvent`和通知。
 
 
 

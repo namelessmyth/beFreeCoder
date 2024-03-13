@@ -145,7 +145,7 @@
 
 ​        
 
-### 哪种场景下rabbitmq会丢失数据。
+### 哪种场景下RabbitMQ会丢失数据。
 
     生产者发送消息给rabbitmq服务器的时候。由于网络原因丢失；
     
@@ -153,7 +153,17 @@
     
     消费端接收到消息后异常了。也可能导致消息丢失。
 
-### MQ消息如何保证幂等？
+
+
+### RabbitMQ有哪些应答模式？
+
+1. **手动应答（Manual Acknowledgement）**：消费者在处理完消息后，需要显式地发送应答给RabbitMQ，告知消息已经被成功处理。这种方式可以确保消息被正确处理，避免消息丢失或重复消费。手动应答可以通过调用`channel.basicAck(deliveryTag, multiple)`方法来实现，其中`deliveryTag`是消息的唯一标识，`multiple`表示是否批量确认。
+2. **自动应答（Automatic Acknowledgement）**：消费者在接收到消息后，RabbitMQ会自动将消息标记为已经被消费，不需要显式地发送应答。这种方式适用于对消息的可靠性要求不高的场景，但可能会导致消息丢失或重复消费。
+3. **拒绝消息（Reject and Requeue）**：消费者可以拒绝消息并要求重新入队列，这可以通过调用`channel.basicReject(deliveryTag, requeue)`方法来实现，其中`requeue`参数表示是否重新入队列。如果消息被重新入队列，会重新被投递给消费者。
+4. **拒绝消息（Reject without Requeue）**：消费者可以拒绝消息并且不要求重新入队列，这可以通过调用`channel.basicReject(deliveryTag, false)`方法来实现。这种方式会将消息丢弃，不会重新投递给消费者。
+5. **负面应答（Negative Acknowledgement）**：消费者可以通过Nack应答来拒绝消息，可以选择是否将消息重新入队列或者直接丢弃。可以通过`channel.basicNack(deliveryTag, multiple, requeue)`方法来实现。他比basicReject多一个参数，支持批量确认，允许消费者一次确认或拒绝多个消息。并且方法返回一个布尔值，表示操作是否成功。basicReject无返回值
+
+
 
 ### RabbitMQ死信队列的使用和应用场景
 

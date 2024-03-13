@@ -861,13 +861,13 @@ JVM级别如何规范（JSR133）
 > StoreStore屏障：
 >
 > 	对于这样的语句Store1; StoreStore; Store2，
-> 																																				
+> 																																					
 > 	在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 >
 > LoadStore屏障：
 >
 > 	对于这样的语句Load1; LoadStore; Store2，
-> 																																				
+> 																																					
 > 	在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 >
 > StoreLoad屏障：
@@ -1529,6 +1529,8 @@ C++：手工处理垃圾，如果忘记回收，会导致内存泄漏问题。�
 
 从main方法开始，会启动一个主线程，然后会有一个main的栈帧，这里面中的对象就是线程栈变量。
 
+活动线程是指正在执行的线程，如果一个对象被活动线程引用，那么这个对象也是根。
+
 #### 静态变量
 
 静态变量一个类只有一个，当类初始化时，马上就会引用到静态变量，所以静态变量也是Root对象。被静态变量引用的对象不能被回收。
@@ -1561,15 +1563,15 @@ Runtime constant pool，常量池中引用指向的对象，类似静态变量�
 
 
 
-### 拷贝算法 (copying) 
+### 标记复制(mark copy) 
 
-也叫复制算法，将内存划分为两块相等的区域，每次只使用其中一块，当其中一块内存使用完了，就将还存活的对象复制到另外一块上面，然后把已经使用过的内存空间一次清除掉。
+也叫拷贝复制算法，将内存划分为两块相等的区域，每次只使用其中一块，当其中一块内存使用完了，就将还存活的对象复制到另外一块上面，然后把已经使用过的内存空间一次清除掉。
 
 缺点：空间浪费，复制操作会增加额外开销。
 
 优点：空间连续，没有碎片
 
-适用场景：少量对象存活的场景
+适用场景：少量对象存活的场景，不使用于老年代
 
 ![7ce0cc0300d790ff8375a5b937c69b4d](沈俊杰-马士兵笔记-jvm.assets/7ce0cc0300d790ff8375a5b937c69b4d.png)
 
@@ -1608,10 +1610,10 @@ Runtime constant pool，常量池中引用指向的对象，类似静态变量�
 ![image-20230619222853471](沈俊杰-马士兵笔记-jvm.assets/image-20230619222853471.png)
 
 1. 刚刚诞生的新对象首先会尝试在栈上分配。什么样的对象会分配到栈上？
-   1. 线程私有小对象。
-   2. 无逃逸。（就在某1个方法中使用的对象，没有其他地方引用）
+   1. 线程私有小对象。（例如：原始类型int，long，float等等）
+   2. 无逃逸对象。（就在某1个方法中使用的对象，没有其他地方引用）
    3. 支持标量替换（例如：某些对象就2个int属性，那就可以用2个int来代替整个对象）
-   4. （一般无需调整）
+   4. 引用型对象，就是要new出来的对象，一般都是存在堆上，栈中存的是指向对象的指针。
 2. 如果在栈上分配不下且这个对象又很大，则会直接进入老年代。
    1. 多大算大，是由一个参数控制的。
 
@@ -2555,17 +2557,17 @@ https://blog.csdn.net/qq_37933128/article/details/126969220
 
 ## 调优工具
 
-### jps
+### jdk调优工具
+
+#### jps
 
 使用jps命令，可以直接显示java的进程。类似ps -ef|grep java
 
-
-
-### jstack
+#### jstack
 
 用法：jstack 进程id，定位进程内部的线程运行状况，重点关注线程状态：WAITING，BLOCKED，
 
-![image-20230531224851008](沈俊杰-马士兵笔记-jvm.assets/image-20230531224851008.png)
+![image-20230531224851008](学习笔记-Java-jvm-Gem.assets/image-20230531224851008.png)
 
 上图中：waiting on <0x0000000088ca3310> (a java.lang.Object)，意思是这个t2线程一直在等<0x0000000088ca3310>这把锁释放。
 
@@ -2579,13 +2581,13 @@ https://blog.csdn.net/qq_37933128/article/details/126969220
 
 
 
-### jinfo
+#### jinfo
 
 用法：jinfo pid，查看虚拟机配置参数信思，也可用于调整虚拟机的配置参数。[详细说明](https://blog.csdn.net/K_520_W/article/details/121572228)。 
 
 
 
-### jstat
+#### jstat
 
 jstat -gc pid 500，后面的500指每隔500ms刷新一下显示，也可以不指定。这个命令可以动态观察gc情况。阅读GC日志发现频繁GC。
 
@@ -2593,7 +2595,7 @@ jstat -gc pid 500，后面的500指每隔500ms刷新一下显示，也可以不�
 
 
 
-### jmap
+#### jmap
 
 1. jmap - histo 4655 | head -20，查找JVM的进程中内存占用排在前20的对象。
 
@@ -2605,15 +2607,15 @@ jstat -gc pid 500，后面的500指每隔500ms刷新一下显示，也可以不�
 
    3. 很多服务器备份（高可用），停掉这台服务器对其他服务器不影响
 
-   4. 在线定位(一般小点儿公司用不到)
+   4. 在线定位(一般小公司用不到)
 
-3. java -Xms20M -Xmx20M -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError com.mashibing.jvm.gc.T15_FullGC_Problem01
+3. 导出命令参考：java -Xms20M -Xmx20M -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError com.mashibing.jvm.gc.T15_FullGC_Problem01
 
 4. 对于导出的dump文件分析方法可以参考[dump文件分析](#dump文件分析)
 
     
 
-### Jconsole
+#### JConsole
 
 Jdk自带的图形化调优工具。支持链接远程的JVM。目前此工具使用频率也比较低。
 
@@ -2650,7 +2652,7 @@ Jdk自带的图形化调优工具。支持链接远程的JVM。目前此工具�
 
 
 
-### JVisualVM
+#### JVisualVM
 
 java的另一款图形化调优工具，类似jconsole，但要易用性比前者好很多。
 
@@ -2673,11 +2675,11 @@ java的另一款图形化调优工具，类似jconsole，但要易用性比前�
 
 参考文章：https://www.cnblogs.com/liugh/p/7620336.html 
 
-马士兵视频：https://www.mashibing.com/study?courseNo=245&sectionNo=53582
 
 
+### 第三方调优工具
 
-### JProfiler
+#### JProfiler
 
 号称最好用的调优工具，可惜收费。
 
@@ -2750,11 +2752,11 @@ java的另一款图形化调优工具，类似jconsole，但要易用性比前�
 
 直接执行显示所有线程信息。thread id，显示某个线程的信息。
 
-thread -n 3：展示当前最忙的前3个线程并打印堆栈
+thread -n 3：✔️展示当前最忙的前3个线程并打印堆栈
 
 thread --all：显示所有匹配的线程
 
-thread id：显示指定线程id的运行堆栈
+thread id：✔️显示指定线程id的运行堆栈
 
 thread -b：✔️找出当前阻塞其他线程的线程
 
@@ -2841,6 +2843,19 @@ trace --skipJDKMethod false com.gem.Arthas.TestTrace serviceA
 ##### heapdump
 
 类似jmap -dump，对正式环境影响很大。 结果可以用 jhat分析
+
+```sh
+[arthas@58205]$ heapdump arthas-output/dump.hprof
+Dumping heap to arthas-output/dump.hprof ...
+Heap dump file created
+
+#只 dump live 对象
+[arthas@58205]$ heapdump --live /tmp/dump.hprof
+Dumping heap to /tmp/dump.hprof ...
+Heap dump file created
+```
+
+
 
 ##### jad
 
@@ -2935,6 +2950,10 @@ profiler stop
 
 火焰图里，X轴越长,代表使用的越多,Y轴是调用堆栈信息。当前收集的是什么类型的数据，比如cpu 那么x轴长度越大,占用的cpu资源就越多~。
 
+
+
+
+
 ### dump文件分析
 
 #### MAT
@@ -2957,13 +2976,25 @@ profiler stop
 4. 运行成功后，会自动在7000端口生成web报告，可以通过浏览器访问http://192.168.17.11:7000。
 5. 界面打开后，拉到最下方，找到对应链接，可以使用OQL查找特定问题对象
 
-**JVisualVM**
+#### JVisualVM
 
 参考[JVisualVM章节](#JVisualVM)说明
+
+#### heaphero
+
+在线dump文件分析工具，一般很少用，因为dump文件一般好几G。
 
 
 
 ### 日志分析
+
+#### GCViewer
+
+本地分析GC日志的工具。[参考文章](https://blog.csdn.net/qq_35995514/article/details/130207816)。
+
+#### gceasy
+
+在线GC日志分析工具，部分功能收费。
 
 首先日志分析分如下几种：业务日志，垃圾回收日志。
 
