@@ -164,13 +164,30 @@ IoC的核心组件是IOC容器，他会随着Spring的启动而自动初始化�
 
 #### 宏观认识
 
-Bean的生命周期宏观上可以表达为：
+Bean的生命周期宏观上可以表达为如下几个部分（先看1级内容，在看2级内容）：
 
 1. Bean工厂初始化（不熟的，这部分也可以不提）
 2. 实例化-Instantiation
-3. 属性赋值-populate
+3. 属性赋值DI-populate
+   1. 属性填充
+   2. 依赖对象创建
+
 4. 初始化-Initialization
+   1. 调用3个Aware接口方法调用
+   2. BeanPostProcessor前置处理
+      1. 6个Aware接口方法调用
+
+   3. InitializingBean.afterPropertiesSet()处理
+   4. 自定义initMethod调用
+   5. BeanPostProcessor后置处理
+
 5. 销毁-Destruction
+   1. DestructionAwareBeanPostProcessors.postProcessBeforeDestruction()
+   2. DisposableBean.destroy()
+   3. 自定义的destoryMethod处理
+
+
+#### BeanFactory和Bean的关系
 
 有的人可能会疑惑，Bean工厂和Bean是两回事，为什么会和Bean的生命周期有关？
 
@@ -179,6 +196,7 @@ Bean的生命周期宏观上可以表达为：
   - @Configuration的配置类
   - 解析@ComponentScan扫描的包
   - 解析@Import注解
+  - 在`refresh()`方法中的`invokeBeanFactoryPostProcessors()`方法中调用
 - 所以这个类可能会增加Bean的数量。
 - 下面是完整的Bean生命周期流程图来说明。（使用mermaid语法绘制）
 
@@ -214,7 +232,7 @@ subgraph initantiation[实例化]
     -->applyMergedBeanDefinitionPostProcessors
 end
 
-subgraph populate[属性赋值]
+subgraph populate["属性赋值populateBean()"]
     setValue["属性填充"]-->createDepend["依赖对象创建"]
 end
 
@@ -229,9 +247,7 @@ subgraph Initialization[初始化]
     		EnvironmentAware-->EmbeddedValueResolverAware-->ResourceLoaderAware
     		-->ApplicationEventPublisherAware-->MessageSourceAware-->ApplicationContextAware
     	end
-        ApplicationAwarePostProcessor-->CommonAnnotationBeanPostProcessor["CommonAnnotationBeanPostProcessor
-        负责解析@Resource、@WebServiceRef
-        、@EJB三个注解，这三个注解定义在javax.*包下"]
+        ApplicationAwarePostProcessor-->CommonAnnotationBeanPostProcessor["CommonAnnotationBeanPostProcessor<br>负责解析JSR-250注解，例如：@Resource、<br>@PostConstruct、@PreDestroy、@EJB<br>@WebServiceRef后面3个注解定义在javax.*包下"]
     end
     subgraph invokeInitMethod
         InitializingBean["InitializingBean.afterPropertiesSet"]
@@ -2862,6 +2878,7 @@ https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/ind
  （7） PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按REQUIRED属性执行。
 
 **我的总结：**
+
  （1）REQUIRED代表如果已经存在一个事务，就加入到这个事务中。如果当前没有事务，就新建一个事务，这是默认的事务传播设置。
  白话解释：如果马路上有车就搭车，如果马路上没有车就造一个车。
  （2）SUPPORTS代表如果已经存在一个事务，就加入到这个事务中。如果当前没有事务，就以非事务方式执行。
