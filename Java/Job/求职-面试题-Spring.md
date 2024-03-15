@@ -447,7 +447,9 @@ B --> A
 
 #### 如何解决
 
-首先并不是所有场景的循环依赖Spring都能解决的。Spring只能解决单例对象且set方法的循环依赖。构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者向其他办法解决。
+首先并不是所有场景的循环依赖Spring都能解决的。Spring只能解决单例对象且set方法的循环依赖。
+
+构造器或者多例对象目前Spring无法解决。这种情况需要程序员自己避免或者向其他办法解决。
 
 接下来正式介绍Spring解决循环依赖的机制，叫做三级缓存。
 
@@ -505,8 +507,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 我们先使用二级缓存来把解决流程演示一遍。
 
-1. 首先创建A的Bean对象，先依次在一二三级缓存中找。显然第一次肯定是找不到。
-2. 然后开始实例化A，实例化A结束后，会将A对象放入二级缓存中。此时A还没初始化。
+1. 首先创建A的Bean对象，创建之前会先依次在一二三级缓存中找。显然第一次肯定是找不到。
+2. 然后开始实例化A，实例化A结束后，会将A对象放入二级缓存中。此时A还没初始化完全。
 3. 然后进行属性赋值，遇到B对象。
 4. 同样的流程，先依次在一二三级缓存找。肯定也是找不到。
 5. 开始实例化B，实例化B结束，放入二级缓存中。此时B也没初始化。
@@ -1226,15 +1228,28 @@ public class HeavyResource {
 
 
 
+### Spring AOP的使用场景
+
+AOP（Aspect-Oriented Programming）是一种编程范式，用于将横切关注点（cross-cutting concerns）从核心业务逻辑中分离出来，以提高代码的模块化性、可维护性和可重用性。在实际项目中，AOP可以应用于许多场景，包括但不限于以下几个方面：
+
+1. **日志记录：** AOP可以用于记录方法的执行时间、参数、返回值等信息，以便进行系统监控、故障排查和性能优化。
+2. **事务管理：** AOP可以用于管理事务，实现声明式事务控制，避免手动编写事务管理代码，提高代码的简洁性和可维护性。
+3. **安全控制：** AOP可以用于实现安全控制，例如对方法或资源的访问权限控制、身份认证、日志记录等。
+   1. **身份认证（Authentication）：** 在用户登录时，Shiro可以通过AOP拦截请求并验证用户的身份信息，确保用户输入的用户名和密码正确，并生成相应的身份凭证。@RequiresAuthentication
+   2. **权限控制（Authorization）：** 在用户访问受保护资源时，Shiro可以通过AOP拦截请求并检查用户是否具有执行该操作的权限，确保用户具有相应的访问权限。@RequiresPermissions("permission")，@RequiresRoles("role")
+   3. **加密解密（Encryption/Decryption）：** 在用户密码加密和解密过程中，Shiro可以通过AOP拦截请求并对用户密码进行加密或解密操作，确保用户密码的安全性。
+   4. **安全日志记录（Security Logging）：** Shiro可以通过AOP实现安全相关的日志记录功能，记录用户登录日志、权限访问日志等安全信息，方便系统监控和审计。
+4. **异常处理：** AOP可以用于统一处理异常，将异常处理逻辑从业务代码中分离出来，提高代码的清晰度和可读性。
+5. **性能监控：** AOP可以用于监控系统的性能指标，如方法执行时间、内存占用等，帮助优化系统性能。
+6. **缓存管理：** AOP可以用于实现缓存管理，例如在方法执行前检查缓存中是否存在结果，避免重复计算，提高系统性能。
+7. **日志切面：** AOP可以用于定义日志切面，实现日志记录、审计日志等功能，帮助跟踪系统运行状态和操作记录。
+8. **权限控制：** AOP可以用于实现权限控制，例如根据用户角色或权限对方法进行拦截和授权，保护系统资源安全。
+
+总的来说，AOP在项目中的使用场景非常广泛，可以帮助提高代码质量、降低耦合度、增加系统的可维护性和可扩展性。通过合理地运用AOP，可以更好地管理系统中的横切关注点，提升软件开发效率和质量。
+
+
+
 ### 对Spring AOP的理解
-
-[介绍，AOP是什么？](#介绍，AOP是什么？)
-
-
-
-### Spring中AOP的实现原理
-
-[Spring AOP原理剖析](https://zhuanlan.zhihu.com/p/523107068)，[76 张图，剖析 Spring AOP 源码](https://zhuanlan.zhihu.com/p/572503780)，[Spring源码之AOP源码解析](https://blog.csdn.net/CX610602108/article/details/105904591)
 
 #### 介绍，AOP是什么？
 
@@ -1273,29 +1288,13 @@ Advice-->AroundAdvice["围绕通知(Around)"]
   - 后置通知(@After)。无论连接点方法是通过什么方式退出的，正常返回或者抛出异常，都会执行。相当于finally。
   - 围绕通知(@Around)。前后都执行。最强大的Advice。
 - **织入(Weaving)：**将增强处理添加到目标对象中，创建一个被增强代理对象的过程
-- **引入（Introduction）：**允许我们向现有的类中添加新方法或者属性
+- **引入(Introduction)：**允许我们向现有的类中添加新方法或者属性
 
 
 
-#### AOP应用场景
+### Spring中AOP的使用步骤
 
-1. 日志记录：通过AOP可以在方法执行前后记录日志，避免在每个方法中手动编写日志记录代码。
-2. 事务管理：通过AOP可以在方法执行前后进行事务管理，避免在每个方法中手动编写事务管理代码。
-3. 安全检查：通过AOP可以在方法执行前进行安全检查，例如检查用户是否有权限执行特定的方法。
-4. 性能监控：通过AOP可以在方法执行前后进行性能监控，例如记录方法的执行时间、调用次数等指标。
-5. 异常处理：通过AOP可以统一处理方法中抛出的异常，例如将异常转换为指定的错误码或错误信息。
-6. 缓存管理：通过AOP可以在方法执行前后进行缓存管理，例如将方法的返回结果缓存起来以提高性能。
-7. 参数验证：通过AOP可以在方法执行前对参数进行验证，例如：检查参数是否为空，是否合法，格式是否正确等。
-8. 分布式追踪：通过AOP可以在方法执行前后进行分布式追踪，例如记录方法的调用链路、跟踪ID等信息。
-9. 事件驱动：通过AOP可以在方法执行前后触发事件，例如在方法执行前发送一个通知或通知其他模块执行相应的操作。
-
-
-
-#### 使用案例
-
-文章参考：https://blog.csdn.net/weixin_45203607/article/details/120248631
-
-**maven依赖，pom.xml**
+**maven依赖引入**
 
 ```xml
     <!-- SpringBoot aop -->
@@ -1305,11 +1304,21 @@ Advice-->AroundAdvice["围绕通知(Around)"]
     </dependency>
 ```
 
-注意：不需要再添加aspectjweaver的依赖了，因为spring-boot-starter-aop中已包含，如果再添加老版本启动会报错。
+注意：不需要再添加aspectj weaver的依赖了，因为spring-boot-starter-aop中已包含，如果再添加老版本启动会报错。
 
-**切面代码参考**
+启用AspectJ的aop功能`@EnableAspectJAutoProxy(proxyTargetClass = false)`
 
-目标类
+**proxyTargetClass的含义**：
+
+true：无论被代理对象是否有接口都使用cglib代理。
+
+false：有接口则使用jdk动态代理，没接口则使用cglib代理。
+
+`exposeProxy=true`
+
+暴露代理对象，是否需要把代理对象设置到ThreadLocal中。就可以使用AopContext.currentProxy() 获取当前代理的对象。
+
+**目标类**
 
 ```java
 @Service
@@ -1325,7 +1334,11 @@ public class TargetClass {
 }
 ```
 
-切面类
+**切面类**
+
+在类上添加注解`@Aspect`、`@Component`。
+
+如果有多个切面可以使用`@Order`注解指定顺序，值越小越先执行。
 
 ```java
 import org.aspectj.lang.JoinPoint;
@@ -1384,10 +1397,12 @@ public class AspectTest {
 
     //返回通知
     @AfterReturning("poincut()")
-    public void afterReturning(JoinPoint joinPoint){//使用JoinPoint接口实例作为参数获得目标对象的类名和方法名
+    public void afterReturning(JoinPoint joinPoint){
+        //使用JoinPoint接口实例作为参数获得目标对象的类名和方法名
         System.out.print("这是返回通知（方法不出现异常时调用）！");
         System.out.println("被织入增强处理的目标方法为："+joinPoint.getSignature().getName());
     }
+    
     /**
      * 环绕通知
      * ProceedingJoinPoint是JoinPoint子接口，表示可以执行目标方法
@@ -1396,18 +1411,21 @@ public class AspectTest {
      * 3.必须throws Throwable
      */
     @Around("poincut()")
-    public Object around(ProceedingJoinPoint point)throws Throwable{//使用ProceedingJoinPoint接口实例作为参数获得目标对象的类名和方法名
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        //使用ProceedingJoinPoint接口实例作为参数获得目标对象的类名和方法名
         System.out.println("这是环绕通知之前的部分！");
         //调用目标方法
         Object object = point.proceed();
         System.out.println("这是环绕通知之前的部分！");
         return object;
     }
+    
     //异常通知
     @AfterThrowing("poincut()")
     public void afterException(){
         System.out.println("异常通知！");
     }
+    
     //后置通知
     @After("poincut()")
     public void after(){
@@ -1416,15 +1434,109 @@ public class AspectTest {
 }
 ```
 
+**切点表达式**
+
+execution表达式解释
+
+| 符号            | 含义                                                 |
+| --------------- | ---------------------------------------------------- |
+| 第一个 * 符号   | 表示返回值的类型任意                                 |
+| com.gem.service | 即需要进行横切的业务包                               |
+| 包名后面的 .*   | 表示当前包下面的类                                   |
+| .*(…)           | 表示任何方法名，括号表示参数，两个点表示任何参数类型 |
+
+和注解一起通过逻辑运算符（||、&&）来决定对连接点是否启用某个通知方法。同时监控多个
+
+```java
+@Pointcut("execution(public * com.gem.controller..*.*(..))")//切入点描述 这个是controller包的切入点
+public void controllerLog(){}//签名，可以理解成这个切入点的一个名称
+
+@Pointcut("execution(public * com.gem.uiController..*.*(..))")//切入点描述，这个是uiController包的切入点
+public void uiControllerLog(){}
+
+//同时监控service 和 Controller
+@Before("controllerLog() || uiControllerLog()") //在切入点的方法run之前要干的
+public void logBeforeController(JoinPoint joinPoint) {
+//...
+}
+```
+**连接点**
+
+```java
+public void before(JoinPoint joinPoint){
+    System.out.println("前置通知");
+    //获取目标方法的参数信息
+    Object[] obj = joinPoint.getArgs();
+    //AOP代理类的信息
+    joinPoint.getThis();
+    //代理的目标对象
+    joinPoint.getTarget();
+    //用的最多 通知的签名
+    Signature signature = joinPoint.getSignature();
+    //代理的是哪一个方法
+    System.out.println("代理的是哪一个方法"+signature.getName());
+    //AOP代理类的名字
+    System.out.println("AOP代理类的名字"+signature.getDeclaringTypeName());
+    //AOP代理类的类（class）信息
+    signature.getDeclaringType();
+    //获取RequestAttributes
+    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+    //请求
+    HttpServletRequest request = (HttpServletRequest) requestAttributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
+    //会话
+    HttpSession session = (HttpSession) requestAttributes.resolveReference(RequestAttributes.REFERENCE_SESSION);
+    //响应
+    HttpServletResponse response = ((ServletRequestAttributes)requestAttributes).getResponse();
+    //获取请求参数
+    Enumeration<String> enumeration = request.getParameterNames();
+    Map<String,String> parameterMap = new HashMap<>();
+    while (enumeration.hasMoreElements()){
+        String parameter = enumeration.nextElement();
+        parameterMap.put(parameter,request.getParameter(parameter));
+    }
+    String str = JSON.toJSONString(parameterMap);
+    if(obj.length > 0) {
+        System.out.println("请求的参数信息为："+str);
+    }
+}
+```
+
+
+
+### Spring中AOP的实现原理
+
+参考文章：[76 张图，剖析 Spring AOP 源码，小白居然也能看懂](https://zhuanlan.zhihu.com/p/572503780)
+
+#### 实现方式
+
+Spring AOP中创建代理对象使用的是动态代理，主要有两种实现方式，JDK动态代理和CGLIB动态代理。
+
+JDK动态代理通过反射来接收被代理的类，并且要求被代理的类必须实现一个接口。
+
+JDK动态代理的核心是InvocationHandler接囗和Proxy类。
+
+如果目标类没有实现接口，那么Spring AOP会选择使用CGLIB来动态代理目标类，
+
+CGLlB(Code Generation Library)，是一个代码生成的类库，可以在运行时动态的生成某个类的子类，注意CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLB做动态代理的。
+
 #### 源码分析
 
-##### 流程图（mermaid）
+##### 大体流程
+
+1. 前置处理
+   1. 发生在createBean()方法中，在初始化类之前。
+   2. 遍历所有的类，找到其中的切面类，加入到切面缓存advisorsCache中
+2. 后置处理
+   1. 发生在bean初始化之后的后置处理器中，将其与切面缓存中切面一一匹配。如果匹配上
+   2. 根据配置使用何时的动态代理，创建AOP代理对象。
+
+##### 详细流程图（mermaid）
 
 https://www.processon.com/view/link/6512d5acef8960241ead31b9
 
 ##### 详细步骤解析
 
-1. 从配置中的AOP配置，封装成BeanDefinition对象。aop的在xml中的配置是`<aop:config />`。
+1. 将配置文件中的AOP配置，封装成BeanDefinition对象。aop在xml中的配置是`<aop:config />`。
 
    1. 在IOC容器初始化时，是在obtainFreshBeanFactory()->loadBeanDefinitions()->parseBeanDefinitions() 方法中读取的。
 
@@ -3018,16 +3130,16 @@ public class Test {
 
 #### 构造器方法注入
 
-    2、
-    
-    @Component
-    public class Test{
-        private ApplicationContext applicationContext;
-     
-        public Test(ApplicationContext applicationContext) {
-            this.applicationContext = applicationContext;
-        }
+```java
+@Component
+public class Test{
+    private ApplicationContext applicationContext;
+ 	@Autowired
+    public Test(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
+}
+```
 
  这种方式没使用过，在此仅做记录，有这种方式可以注入ApplicationContext实例对象。
 
