@@ -8141,17 +8141,14 @@ https://www.mashibing.com/question/detail/84889，已经解决，之前的代码
 
 **今日所学内容**：
 
-1. 学习时间：06:30~22:50，10小时。
-2. 面试题：Spring。Bean生命周期，
-   1. Redis的持久化有哪两种方式，优缺点？Redis分布式死锁的场景。
-   2. Redis的分布式锁的问题及解决方案。redlock，看门狗，lua脚本
-   3. Redis高可用的几种方案。ES的使用场景和优缺点
-3. 英语：晨读学习，单词复习62。
+1. 学习时间：06:50~22:59，6小时。
+2. 面试题：SpringBoot启动流程，@Indexed注解，@EnableWebSocket，@EnableCaching，SpringBoot配置文件优先级
+3. 英语：晨读学习。复述之前学过的面试题。
 
 **总结**：今日学习总结已提交gitee，https://gitee.com/namelessmyth，
 
-**遇到的问题**：【问题】面试中被问到了ES，部分面试要求中也出现了ES，想知道突击一下ES的时间。如果短的话就试一下。
+**遇到的问题**：
 
-**是否解决**：暂未
+**是否解决**：
 
 **建议**：

@@ -2293,18 +2293,18 @@ public class UserService {
 
 ##### @Repository
 
-  @Repository 对应数据访问层Bean.这个注解在Spring2.0版本就提供的有哦，大家可能没有想到。
+@Repository 对应数据访问层Bean.这个注解在Spring2.0版本就提供的有哦，大家可能没有想到。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/6caab8fb772944cab8785d94d0af1ee6.png)
 
 
 ##### @Aspect
 
-  @Aspect是AOP相关的一个注解，用来标识配置类。
+@Aspect是AOP相关的一个注解，用来标识配置类。
 
 #### Spring2.5 之后
 
-  在2007年11月19日，Spring更新到了2.5版本，新增了很多常用注解，大大的简化配置操作。
+在2007年11月19日，Spring更新到了2.5版本，新增了很多常用注解，大大的简化配置操作。
 
 | 注解            | 说明                   |
 | --------------- | ---------------------- |
@@ -2315,11 +2315,11 @@ public class UserService {
 | @Controller     | 声明控制层组件         |
 | @RequestMapping | 声明请求对应的处理方法 |
 
-  在这些注解的作用下，我们可以不用在xml文件中去注册没有bean，这时我们只需要指定扫码路径，然后在对应的Bean头部添加相关的注解即可，这大大的简化了我们的配置及维护工作。案例如下：
+在这些注解的作用下，我们可以不用在xml文件中去注册没有bean，这时我们只需要指定扫码路径，然后在对应的Bean头部添加相关的注解即可，这大大的简化了我们的配置及维护工作。案例如下：
 
-  我们在配置文件中只需要配置扫码路径即可：
+我们在配置文件中只需要配置扫码路径即可：
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2332,9 +2332,9 @@ public class UserService {
 </beans>
 ```
 
-  持久层代码：
+持久层代码：
 
-```
+```java
 @Repository
 public class UserDao {
 
@@ -2344,9 +2344,9 @@ public class UserDao {
 }
 ```
 
-  业务逻辑层代码
+业务逻辑层代码
 
-```
+```java
 @Service
 public class UserService {
 
@@ -2359,9 +2359,9 @@ public class UserService {
 }
 ```
 
-  控制层代码：
+控制层代码：
 
-```
+```java
 @Controller
 public class UserController {
 
@@ -2374,9 +2374,9 @@ public class UserController {
 }
 ```
 
-  测试代码
+测试代码
 
-```
+```java
 public class Demo02Main {
     public static void main(String[] args) {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext02.xml");
@@ -2386,13 +2386,13 @@ public class Demo02Main {
 }
 ```
 
-  虽然在Spring的2.5版本提供了很多的注解，也大大的简化了我们的开发，但是任然没有摆脱XML配置驱动。
+虽然在Spring的2.5版本提供了很多的注解，也大大的简化了我们的开发，但是任然没有摆脱XML配置驱动。
 
 ### 1.3 Spring 3.x
 
-  在2009年12月16日发布了Spring3.0版本，这是一个注解编程发展的里程碑版本，在该版本中全面拥抱Java5。提供了 `@Configuration`注解，目的就是去xml化。同时通过 `@ImportResource`来实现Java配置类和XML配置的混合使用来实现平稳过渡。
+在2009年12月16日发布了Spring3.0版本，这是一个注解编程发展的里程碑版本，在该版本中全面拥抱Java5。提供了 `@Configuration`注解，目的就是去xml化。同时通过 `@ImportResource`来实现Java配置类和XML配置的混合使用来实现平稳过渡。
 
-```
+```java
 /**
  * @Configuration 标注的Java类 相当于 application.xml 配置文件
  */
@@ -2411,27 +2411,26 @@ public class JavaConfig {
 }
 ```
 
-   在Spring3.1 版之前配置扫描路径我们还只能在 XML 配置文件中通过 `component-scan` 标签来实现，在3.1之前还不能够完全实现去XML配置，在3.1 版本到来的时候，提供了一个 `@ComponentScan`注解，该注解的作用是替换掉 `component-scan`标签，是注解编程很大的进步，也是Spring实现无配置话的坚实基础。
+在Spring3.1 版之前配置扫描路径我们还只能在 XML 配置文件中通过 `component-scan` 标签来实现，在3.1之前还不能够完全实现去XML配置，在3.1 版本到来的时候，提供了一个 `@ComponentScan`注解，该注解的作用是替换掉 `component-scan`标签，是注解编程很大的进步，也是Spring实现无配置话的坚实基础。
 
 #### @ComponentScan
 
-  @ComponentScan的作用是指定扫码路径，用来替代在XML中的 `<component-scan>`标签，默认的扫码路径是当前注解标注的类所在的包及其子包。
+@ComponentScan的作用是指定扫码路径，用来替代在XML中的 `<component-scan>`标签，默认的扫码路径是当前注解标注的类所在的包及其子包。
 
-  定义UserService
+定义UserService
 
-```
+```java
 @Service
 public class UserService {
 }
 ```
 
-  创建对于的Java配置类
+创建对于的Java配置类
 
-```
+```java
 @Configuration
 @ComponentScan
 public class JavaConfig {
-
     public static void main(String[] args) {
         ApplicationContext ac = new AnnotationConfigApplicationContext(JavaConfig.class);
         System.out.println("ac.getBean(UserService.class) = " + ac.getBean(UserService.class));
@@ -2439,13 +2438,13 @@ public class JavaConfig {
 }
 ```
 
-  输出的结果
+输出的结果
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/5bb24770b5c44c9a8b4aab840400692c.png)
 
-  当然也可以指定特定的扫描路径
+当然也可以指定特定的扫描路径
 
-```
+```java
 @Configuration
 // 指定特定的扫描路径
 @ComponentScan(value = {"com.bobo.demo04"})
@@ -2460,32 +2459,34 @@ public class JavaConfig {
 
 #### @Import
 
-  @Import注解只能用在类上，作用是快速的将实例导入到Spring的IoC容器中，将实例导入到IoC容器中的方式有很多种，比如 `@Bean`注解,@Import注解可以用于导入第三方包。具体的使用方式有三种。
+@Import注解只能用在类上，作用是快速的将实例导入到Spring的IoC容器中，将实例导入到IoC容器中的方式有很多种，比如 `@Bean`注解,@Import注解可以用于导入第三方包。具体的使用方式有三种。
 
 ##### 静态导入
 
-  静态导入的方式是直接将我们需要导入到IoC容器中的对象类型直接添加进去即可。
+静态导入的方式是直接将我们需要导入到IoC容器中的对象类型直接添加进去即可。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/b7d9be159a3a4290a736449ebca93a5f.png)
 
-  这种方式的好处是简单，直接，但是缺点是如果要导入的比较多，则不太方便，而且也不灵活。
+这种方式的好处是简单，直接，但是缺点是如果要导入的比较多，则不太方便，而且也不灵活。
 
 ##### ImportSelector
 
-  `@Import`注解中我们也可以添加一个实现了 `ImportSelector`接口的类型，这时不会将该类型导入IoC容器中，而是会调用 `ImportSelector`接口中定义的 `selectImports`方法，将该方法的返回的字符串数组的类型添加到容器中。
+`@Import`注解中我们也可以添加一个实现了 `ImportSelector`接口的类型，这时不会将该类型导入IoC容器中，而是会调用 `ImportSelector`接口中定义的 `selectImports`方法，将该方法的返回的字符串数组的类型添加到容器中。
 
-  定义两个业务类
+定义两个业务类
 
-```
+```java
 public class Cache {
+    
 }
 public class Logger {
+    
 }
 ```
 
-  定义ImportSelector接口的实现,方法返回的是需要添加到IoC容器中的对象对应的类型的全类路径的字符串数组，我们可以根据不同的业务需求而导入不同的类型，会更加的灵活些。
+定义ImportSelector接口的实现,方法返回的是需要添加到IoC容器中的对象对应的类型的全类路径的字符串数组，我们可以根据不同的业务需求而导入不同的类型，会更加的灵活些。
 
-```
+```java
 public class MyImportSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
@@ -2494,9 +2495,9 @@ public class MyImportSelector implements ImportSelector {
 }
 ```
 
-  导入测试案例
+导入测试案例
 
-```
+```java
 @Configuration
 @Import(MyImportSelector.class)
 public class JavaConfig {
@@ -2509,15 +2510,15 @@ public class JavaConfig {
 }
 ```
 
-  输出结果：
+输出结果：
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/2211e2c7263141e5ac047441b8df7d4b.png)
 
 ##### ImportBeanDefinitionRegistrar
 
-  除了上面所介绍的ImportSelector方式灵活导入以外还提供了 `ImportBeanDefinitionRegistrar` 接口,也可以实现，相比 `ImportSelector` 接口的方式,ImportBeanDefinitionRegistrar 的方式是直接在定义的方法中提供了 `BeanDefinitionRegistry` ,自己在方法中实现注册。
+除了上面所介绍的ImportSelector方式灵活导入以外还提供了 `ImportBeanDefinitionRegistrar` 接口,也可以实现，相比 `ImportSelector` 接口的方式,ImportBeanDefinitionRegistrar 的方式是直接在定义的方法中提供了 `BeanDefinitionRegistry` ,自己在方法中实现注册。
 
-```
+```java
 public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -2531,9 +2532,9 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
 }
 ```
 
-  测试代码
+测试代码
 
-```
+```java
 @Configuration
 @Import(MyImportBeanDefinitionRegistrar.class)
 public class JavaConfig {
@@ -2546,18 +2547,18 @@ public class JavaConfig {
 }
 ```
 
-  输出结果
+输出结果
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/4804551db48c426cab59a14db56c0556.png)
 
 
 #### @EnableXXX
 
-  @Enable模块驱动，其实是在系统中我们先开发好各个功能独立的模块，比如 Web MVC 模块， AspectJ代理模块，Caching模块等。
+@Enable模块驱动，其实是在系统中我们先开发好各个功能独立的模块，比如 Web MVC 模块， AspectJ代理模块，Caching模块等。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/1d11f140967c438fa25433c1446eae49.png)
 
-  案例说明，先定义好功能模块
+案例说明，先定义好功能模块
 
 ```java
 /**
@@ -2573,7 +2574,7 @@ public class HelloWorldConfiguration {
 }
 ```
 
-  然后定义@Enable注解
+然后定义@Enable注解
 
 ```java
 /**
@@ -2588,7 +2589,7 @@ public @interface EnableHelloWorld {
 }
 ```
 
-  测试代码
+测试代码
 
 ```java
 @Configuration
@@ -2604,7 +2605,7 @@ public class JavaMian {
 }
 ```
 
-  效果
+效果
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/faab2d9290394fe3afd1674ceb365aeb.png)
 
@@ -4870,7 +4871,7 @@ public class Client {
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/220c333eed974afcb0fbeee3bea197d7.png)
 
-这个非常基础和简单就快速过掉。
+这个比较基础和简单，快速看一遍就行。
 
 ##### 2.启动流程
 
@@ -4916,7 +4917,7 @@ Tomcat的架构相关的内容在本文中不再赘述，可以查阅Tomcat源�
 
 ###### 3.2 流程分析
 
-接下来我们需要查看下Bootstrap中的main方法了，这时我们需要下载对应的源码文件了。可以官网自行下载，也可以在课件资料中找到。
+接下来我们需要查看下Bootstrap中的main方法了，这时我们需要下载对应的源码文件了。可以官网自行下载。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641985582000/4dcd2cf5b95f4b3f97b599a2c1fc5ef4.png)
 

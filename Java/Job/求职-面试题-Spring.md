@@ -3092,8 +3092,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
 
 
-
-
 ### InitializingBean的功能和使用场景
 
 InitializingBean是一个Spring提供的一个扩展接口。实现这个接口需要实现一个afterPropertiesSet方法。这个方法的调用时机：
@@ -5657,23 +5655,64 @@ public class HelloFormatTemplate {
 
 
 
-### SpringBoot的启动流程
+### SpringBoot启动流程
 
+建议这篇文章，讲的比较全面：[SpringBoot启动流程及其原理](https://www.cnblogs.com/theRhyme/p/11057233.html)
 
+![](https://img2018.cnblogs.com/blog/1158841/201907/1158841-20190707171658626-1389392187.png)
 
+**总体上分为两大步**
 
+- 启动类上注解：@SpringBootApplication
+- 启动类中的main方法：org.springframework.boot.SpringApplication#run(java.lang.Class<?>, String...)
 
-### SpringBoot工作原理
+#### 启动类注解
 
-SpringBoot：IoC  需要清楚Spring的加载过程
+**@SpringBootApplication**注解其实是包含了下面三个注解：
 
-1。run方法干了什么事情 --》 IoC
+1. **@EnableAutoConfiguration**：SpringBoot根据应用所声明的依赖来对Spring框架进行自动配置。简单概括一下就是，是借助@Import的帮助，将所有符合自动配置条件的bean定义加载到IoC容器。
+2. **@SpringBootConfiguration：**它继承自@Configuration，是JavaConfig形式的Spring Ioc容器的配置类。被标注的类等于在spring的XML配置文件中(applicationContext.xml)，装配所有bean事务，提供了一个spring的上下文环境。
+3. **@ComponentScan：**组件扫描，可自动发现和装配Bean，功能其实就是自动扫描并加载符合条件的组件或者bean定义，最终将这些bean定义加载到IoC容器中。
 
-2。SpringBootApplication注解做了什么事情  --》 通过EnableAutoConfiguration注解实现加载 META-INF/spring.factories 文件中的配置类
+#### main方法
 
-3。1和2是怎么关联的
+SpringBoot启动执行main方法的时候，会先构造一个SpringApplication的实例，然后调用这个实例的run方法，在run方法调用之前，也就是构造SpringApplication的时候会进行初始化的工作，初始化的时候会做以下几件事：
 
-BeanFactoryPostProcessor 完成对@Configuration注解的加载解析
+1. 把参数sources设置到SpringApplication属性中，这个sources可以是任何类型的参数.
+2. 判断是否是web程序，并设置到webEnvironment的boolean属性中.
+3. 创建并初始化ApplicationInitializer，设置到initializers属性中 。
+4. 创建并初始化ApplicationListener，设置到listeners属性中 。
+5. 初始化主类mainApplicatioClass。
+
+源代码：
+
+```Java
+private void initialize(Object[] sources) {
+    if (sources != null && sources.length > 0) {
+      //把sources设置到SpringApplication的sources属性中，目前只是一个MyApplication类对象
+    this.sources.addAll(Arrays.asList(sources)); 
+    }
+      //判断是否是web程序，并设置到webEnvironment的boolean属性中
+    this.webEnvironment = deduceWebEnvironment(); 
+      //找出所有的初始化器，默认有5个，设置到initializers属性中 。
+    setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+      //找出所有的应用程序监听器，默认有9个，设置到listeners属性中 。
+    setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+      //找出运行的主类(main class)
+    this.mainApplicationClass = deduceMainApplicationClass();
+}
+```
+
+2、SpringApplication构造完成之后调用run方法，启动SpringApplication，run方法执行的时候会做以下几件事：
+
+1. 构造一个StopWatch计时器，观察SpringApplication的执行 。
+2. 获取SpringApplicationRunListeners并封装到SpringApplicationRunListeners中启动，用于监听run方法的执行。
+3. 创建并初始化ApplicationArguments,获取run方法传递的args参数。
+4. 创建并初始化ConfigurableEnvironment（环境配置）。
+5. 打印banner（只用在Classpath下添加字符文件图标，就可以在启动时候打印）。
+6. 构造Spring容器(ApplicationContext)上下文。
+7. SpringApplicationRunListeners发布finish事件。
+8. StopWatch计时器停止计时。
 
 
 
@@ -5697,9 +5736,15 @@ https://www.yuque.com/hollis666/vzy8n3/xc2sq4
 
 https://blog.csdn.net/securitit/article/details/110039718
 
-Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`@ComponentScan`扫描的`package`包含的类越来越多的时候，Spring启动时模式注解解析时间就会变得越长。因此，Spring5.0引入@Indexed，为Spring模式注解添加索引。
+Spring5.0中引入的注解，它可以为Spring的模式注解添加索引，以提升应用启动性能。
+
+**原理分析**
+
+使用`<context:component-scan />`或`@ComponentScan`扫描的`package`包含的类越来越多的时候，Spring启动时模式注解解析时间就会变得越长。@Indexed注解可以为Spring模式注解添加索引。
 
 当我们在项目中使用了 `@Indexed`之后，编译打包的时候会在项目中自动生成 `META-INT/spring.components`文件。当Spring应用上下文执行 `ComponentScan`扫描时，`META-INT/spring.components`将会被 `CandidateComponentsIndexLoader` 读取并加载，转换为 `CandidateComponentsIndex`对象，这样的话 `@ComponentScan`不在扫描指定的package，而是读取 `CandidateComponentsIndex`对象，从而达到提升性能的目的。
+
+**如何使用？**
 
 若要开启`@Indexed`索引功能，首先需要引入`spring-context-indexer`。
 
@@ -5712,19 +5757,15 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 </dependency>
 ```
 
-使用@Indexed注解
+使用@Indexed注解。@Component注解的类也会自动索引，因为他内部已经用了@Indexed注解。
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/cc1f8dd821e741b19b6c1ab23eb56abe.png)
 
 ![image.png](https://fynotefile.oss-cn-zhangjiakou.aliyuncs.com/fynote/1462/1641630185000/fc77363593f44366b507c358a18a6b6c.png)
 
-
-
 ##### @Configuration
 
 声明一个Java配置类，其内部包含了若干个@Bean注解用于声明Bean对象，相当于applicationContext.xml。
-
-
 
 ##### @Lazy
 
@@ -5734,8 +5775,6 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 用于将配置文件中的属性值注入到Spring Bean中的字段属性中。
 
-
-
 ##### @Autowired
 
 自动装配，将需要的依赖注入到类中。通过使用不同的方式注入（如构造器注入、Setter注入、字段注入等）来指定要注入的实例对象。
@@ -5743,8 +5782,6 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 ##### @Qualifier
 
 给service主键设置一个别名,注入指定别名的主键，适用于1个接口多个实现类
-
-
 
 ##### @autowired@resource区别
 
@@ -5760,8 +5797,6 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 匹配顺序不同，@Autowired在获取bean时，先byType再byName，如果通过类型匹配到多个在根据名字确定一个。@Resource则相反，默认先byName再byType，如果指定了type属性，才会通过type查找。
 
-
-
 ##### @Inject
 
 和@Autowired注解一样，@Inject可以用来自动装配属性、方法和构造器；与@Autowired不同的是，@Inject没有required属性。因此@Inject注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。
@@ -5770,37 +5805,25 @@ Spring5.0中引入的注解，当应用中使用`<context:component-scan />`或`
 
 相对于@Autowired对应的Qualifier，@Inject所对应的是@Named注解。
 
-
-
 ##### @Bean
 
 声明一个Bean，一般用于在@Configuration配置类中定义需要注入IOC容器中的Bean实例对象。
-
-
 
 ##### @Component
 
 声明一个组件，将会由Spring框架进行扫描，并将其实例化作为一个Bean纳入Spring容器管理。
 
-
-
 ##### @Controller
 
 声明一个MVC控制器，标记该类为Spring的控制器，处理Web请求。
-
-
 
 ##### @Service
 
 声明一个服务类，标记该类为Spring的服务类，用于处理业务逻辑。
 
-
-
 ##### @Repository
 
 声明一个数据访问类，标记该类为Spring的数据访问类，用于进行数据库操作。
-
-
 
 ##### @Conditional
 
@@ -5826,8 +5849,6 @@ public class MyCondition implements Condition {
     }
 }
 ```
-
-
 
 ##### @Scope
 
@@ -5857,12 +5878,6 @@ public void task1() {
 
 }
 ```
-
-##### @EnableWebSocket
-
-
-
-##### @EnableCaching
 
 
 
@@ -6114,6 +6129,32 @@ public class MybatisAutoConfiguration {
 13. @ConditionalOnCloudPlatform：组合 @Conditional 注解，当指定的云平台激活时才开启配置
 14. @ConditionalOnSingleCandidate：组合 @Conditional 注解，当指定的 class 在容器中只有一个 Bean，或者同时有多个但为首选时才开启配置
 
+##### @EnableWebSocket
+
+注解的作用是启用WebSocket支持。WebSocket是一种在客户端和服务器之间建立全双工通信的协议，允许在不同页面之间实时传输数据。通过在Spring Boot应用程序的配置类上添加`@EnableWebSocket`注解，可以启用WebSocket功能，从而实现实时的双向通信，例如实时聊天、实时数据更新等功能。
+
+配套的Maven依赖引入：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-websocket</artifactId>
+</dependency>
+```
+
+##### @EnableCaching
+
+注解的作用是启用Spring框架的缓存功能。通过在Spring Boot应用程序的配置类上添加`@EnableCaching`注解，可以开启对Spring的缓存抽象支持，使得可以方便地在方法上使用`@Cacheable`、`@CachePut`和`@CacheEvict`等注解来实现缓存功能。
+
+配套的Maven依赖引入：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-cache</artifactId>
+</dependency>
+```
+
 
 
 ### SpringBoot中为什么用DeferredImportSelector?
@@ -6140,7 +6181,27 @@ https://www.mashibing.com/course/1767
 
 ### SpringBoot配置文件优先级
 
-https://www.cnblogs.com/hans-hu/archive/2022/05/08/16247235.html
+目录优先级
+
+`SpringBoot` 启动时加载配置文件的顺序，优先级则是倒过来。
+
+1. **内置默认配置**：Spring Boot会自动加载内置的默认配置，这些配置通常包含了一些默认的设置和属性。
+2. **应用内配置文件**：Spring Boot会加载应用内配置文件，包括以下几种：
+   - `application.properties`
+   - `application.yml`
+   - `application.yaml`
+   - `application.json`
+   - 文件类型顺序：properties > yaml > yml > json
+   - 目录顺序：类路径 > 类路径config目录 > 项目根目录 > 项目config目录
+3. **外部配置文件**：Spring Boot会加载外部的配置文件，jar包同级目录，包括以下几种：
+   - `/config`目录下的`application.properties`或`application.yml`文件
+   - `/config`目录下的`application-{profile}.properties`或`application-{profile}.yml`文件
+   - 外部文件系统中的`application.properties`或`application.yml`文件
+   - 外部文件系统中的`application-{profile}.properties`或`application-{profile}.yml`文件
+   - 通过`SPRING_CONFIG_LOCATION`环境变量指定的配置文件路径
+4. **命令行参数**：可以通过命令行参数来覆盖已加载的配置，例如`java -jar myapp.jar --server.port=8081`
+
+参考文章：https://www.cnblogs.com/hans-hu/archive/2022/05/08/16247235.html
 
 
 
