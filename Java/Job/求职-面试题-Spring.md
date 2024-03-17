@@ -4874,25 +4874,16 @@ https://baijiahao.baidu.com/s?id=1777713292868376926&wfr=spider&for=pc
 
 ## SpringBoot
 
-### 谈谈对SpringBoot的理解
-
-1.为什么会出现SpringBoot：
-
-SSM：添加相关的依赖【依赖很大。版本兼容性问题】 添加各自的配置文件，还有添加相关的整合文件。web.xml中配置  每个项目都得干这些事情。---》有很多重复性的工作 --》约定由于配置--》SpringBoot【脚手架】
-
-2.SpringBoot的发展
-
-2014 1.x  2018  2.x  2022 3.x
-
-3.从技术发展演变过程介绍SpringBoot ：Spring注解编程的发展
-
-4.Spring和SpringBoot的关系
-
-
-
 ### SpringBoot与Spring的区别
 
-https://www.yuque.com/hollis666/vzy8n3/meyfwphs8t6c3znd
+Spring Boot相对于传统的Spring框架具有以下核心特性：
+
+1. **自动装配**：Spring Boot通过约定大于配置的方式，自动配置应用程序所需的各种组件，如Web服务器、数据库连接等，简化了配置过程。
+2. **内嵌式容器**：Spring Boot内置了常用的Web容器（如Tomcat、Jetty），应用程序可以直接打包成可执行的JAR文件，无需外部Web服务器的支持。
+3. **Starter依赖**：Spring Boot提供了一系列的Starter依赖，简化了对第三方库的依赖管理，开发人员只需引入相应的Starter依赖即可快速集成所需的功能。
+4. **简化的配置**：Spring Boot提供了一套简化的配置方式，如application.properties或application.yml文件，让配置更加简洁明了。
+5. **Actuator监控**：Spring Boot集成了Actuator模块，提供了丰富的监控和管理功能，方便开发人员监控应用程序的运行状态。
+6. **快速开发**：Spring Boot提供了快速开发的能力，开发人员可以快速搭建应用程序的基础结构，专注于业务逻辑的实现。
 
 
 
@@ -4976,7 +4967,7 @@ https://www.yuque.com/hollis666/vzy8n3/meyfwphs8t6c3znd
 
 什么是自动装配？自动装配其实在Spring Framework的后期版本中就实现了。Spring Boot只是在此基础上，使用SPI做了进一步优化。
 
-SPI，全称为 Service Provider Interface，是一种服务发现机制。在JDK的JDBC中就已经使用过。Spring也是模仿JDK设计的。Spring的SPI机制规定：SpringBoot在启动时会扫描第三方 jar 包中的`META-INF/spring.factories`文件，将文件中配置的类型信息加载到 Spring容器中，并执行类中定义的各种操作。对于第三方jar 来说，只需要按照SpringBoot定义的标准，就能将自己的功能自动装配进 SpringBoot中。
+SPI，全称为 Service Provider Interface，是一种服务发现机制。在JDK的JDBC中就已经使用过。Spring也是模仿JDK设计的。Spring的SPI机制规定：SpringBoot在启动时会扫描第三方 jar 包中的`META-INF/spring.factories`文件，将文件中配置的类型信息加载到 Spring容器中，并执行类中定义的各种操作。对于第三方jar来说，只需要按照SpringBoot定义的标准，就能将自己的功能自动装配进 SpringBoot中。
 
 有了自动装配，在Spring Boot中如果要引入一些新功能，只需要在依赖中引入一个starter和做一些简单配置即可。例如：要在项目中使用redis的话，只需要引入下面的starter。
 
@@ -5659,8 +5650,6 @@ public class HelloFormatTemplate {
 
 建议这篇文章，讲的比较全面：[SpringBoot启动流程及其原理](https://www.cnblogs.com/theRhyme/p/11057233.html)
 
-![](https://img2018.cnblogs.com/blog/1158841/201907/1158841-20190707171658626-1389392187.png)
-
 **总体上分为两大步**
 
 - 启动类上注解：@SpringBootApplication
@@ -5670,19 +5659,22 @@ public class HelloFormatTemplate {
 
 **@SpringBootApplication**注解其实是包含了下面三个注解：
 
-1. **@EnableAutoConfiguration**：SpringBoot根据应用所声明的依赖来对Spring框架进行自动配置。简单概括一下就是，是借助@Import的帮助，将所有符合自动配置条件的bean定义加载到IoC容器。
-2. **@SpringBootConfiguration：**它继承自@Configuration，是JavaConfig形式的Spring Ioc容器的配置类。被标注的类等于在spring的XML配置文件中(applicationContext.xml)，装配所有bean事务，提供了一个spring的上下文环境。
-3. **@ComponentScan：**组件扫描，可自动发现和装配Bean，功能其实就是自动扫描并加载符合条件的组件或者bean定义，最终将这些bean定义加载到IoC容器中。
+1. **@SpringBootConfiguration：**它继承自@Configuration，根据Javadoc可知，该注解作用就是将当前的类作为一个JavaConfig类，然后触发注解`@EnableAutoConfiguration`和`@ComponentScan`的处理，本质上与@Configuration注解没有区别。
+2. **@ComponentScan：**告诉Spring容器自动载入带有 `Spring` 的模式注解的类，如 @Componet，@Repository。
+   1. 可以通过 basePackages 等属性来细粒度的定制 `@ComponentScan` 自动扫描的范围。
+   2. 如果不指定，则默认Spring框架实现会从声明 `@ComponentScan` 所在类的package进行扫描。
+3. **@EnableAutoConfiguration**：开启自动装配。基于Spring框架的自动装配机制和SPI机制，进一步简化了应用程序的开发和部署过程。通过约定大于配置的原则，Spring Boot能够自动识别并配置第三方应用程序所需的各种组件，包括数据库连接、Web服务器、日志系统等。这样可以让开发人员更专注于业务逻辑的实现，而无需过多关注配置细节，从而提高开发效率和降低维护成本。[自动装配详细解释](#SpringBoot自动装配)
 
 #### main方法
 
+![](https://img2023.cnblogs.com/blog/1252513/202306/1252513-20230630195055498-2065938346.png)
+
 SpringBoot启动执行main方法的时候，会先构造一个SpringApplication的实例，然后调用这个实例的run方法，在run方法调用之前，也就是构造SpringApplication的时候会进行初始化的工作，初始化的时候会做以下几件事：
 
-1. 把参数sources设置到SpringApplication属性中，这个sources可以是任何类型的参数.
-2. 判断是否是web程序，并设置到webEnvironment的boolean属性中.
-3. 创建并初始化ApplicationInitializer，设置到initializers属性中 。
-4. 创建并初始化ApplicationListener，设置到listeners属性中 。
-5. 初始化主类mainApplicatioClass。
+1. 确定应用程序类型，是否是web程序，并设置到webEnvironment的boolean属性中.
+2. 创建并加载始化器ApplicationInitializer，设置到initializers属性中 。
+3. 创建并初始化监听器ApplicationListener，设置到listeners属性中 。
+4. 初始化并设置程序运行的主类mainApplicationClass。
 
 源代码：
 
@@ -5705,14 +5697,21 @@ private void initialize(Object[] sources) {
 
 2、SpringApplication构造完成之后调用run方法，启动SpringApplication，run方法执行的时候会做以下几件事：
 
-1. 构造一个StopWatch计时器，观察SpringApplication的执行 。
-2. 获取SpringApplicationRunListeners并封装到SpringApplicationRunListeners中启动，用于监听run方法的执行。
-3. 创建并初始化ApplicationArguments,获取run方法传递的args参数。
-4. 创建并初始化ConfigurableEnvironment（环境配置）。
-5. 打印banner（只用在Classpath下添加字符文件图标，就可以在启动时候打印）。
-6. 构造Spring容器(ApplicationContext)上下文。
-7. SpringApplicationRunListeners发布finish事件。
-8. StopWatch计时器停止计时。
+1. 创建一个StopWatch实例，用来记录SpringBoot的启动时间
+2. 通过SpringFactoriesLoader加载listeners：比如EventPublishingRunListener
+3. 发布SprintBoot开始启动事件（EventPublishingRunListener#starting()）
+4. 创建和配置environment（environmentPrepared()）
+5. 打印SpringBoot的banner和版本
+6. 创建对应的ApplicationContext：Web类型，Reactive类型，普通的类型(非Web)
+7. prepareContext
+   1. 准备ApplicationContext，Initializers设置到ApplicationContext(contextPrepared())
+   2. 打印启动日志，打印profile信息(如dev, test, prod)
+   3. 最终会调用到AbstractApplicationContext#refresh方法，实际上就是Spring IOC容器的创建过程，并且会进行自动装配的操作，以及发布ApplicationContext已经refresh事件，标志着ApplicationContext初始化完成(contextLoaded())
+8. afterRefresh hook方法
+9. stopWatch停止计时，日志打印总共启动的时间
+10. 发布SpringBoot程序已启动事件(started())
+11. 调用ApplicationRunner和CommandLineRunner
+12. 最后发布就绪事件ApplicationReadyEvent，标志着SpringBoot可以处理就收的请求了(running())
 
 
 
@@ -6115,18 +6114,41 @@ public class MybatisAutoConfiguration {
 以下的注解是Springboot基于Spring的@Conditional注解衍生出来的
 
 1. `@ConditionalOnBean`：当容器里有指定 Bean 的条件下
+
 2. `@ConditionalOnMissingBean`：当容器里没有指定 Bean 的情况下
+
 3. `@ConditionalOnSingleCandidate`：当指定 Bean 在容器中只有一个，或者虽然有多个但是指定首选 Bean
+
 4. `@ConditionalOnClass`：当类路径下有指定类的条件下
+
 5. `@ConditionalOnMissingClass`：当类路径下没有指定类的条件下
+
 6. `@ConditionalOnProperty`：指定的属性是否有指定的值
-7. `@ConditionalOnResource`：类路径是否有指定的值
+
+7. `@ConditionalOnResource`：会根据classpath中是否存在指定的资源文件来决定是否创建一个Bean。
+
+   1. 参考实现
+
+   2. ```java
+      @Configuration
+      @ConditionalOnResource(resources = "application.properties")
+      public class MyConfiguration {
+          // Bean definitions
+      }
+      ```
+
 8. `@ConditionalOnExpression`：基于 SpEL 表达式作为判断条件
+
 9. `@ConditionalOnJava`：基于 Java 版本作为判断条件
+
 10. `@ConditionalOnJndi`：在 JNDI 存在的条件下差在指定的位置
+
 11. `@ConditionalOnNotWebApplication`：当前项目不是 Web 项目的条件下
-12. `@ConditionalOnWebApplication`：当前项目是 Web 项 目的条件下
+
+12. `@ConditionalOnWebApplication`：当前项目是 Web 项目的条件下
+
 13. @ConditionalOnCloudPlatform：组合 @Conditional 注解，当指定的云平台激活时才开启配置
+
 14. @ConditionalOnSingleCandidate：组合 @Conditional 注解，当指定的 class 在容器中只有一个 Bean，或者同时有多个但为首选时才开启配置
 
 ##### @EnableWebSocket
@@ -6205,32 +6227,52 @@ https://www.mashibing.com/course/1767
 
 
 
-### SpringBoot如何确保Bean的加载顺序
+### SpringBoot确保Bean加载顺序的方式
 
-从Bean初始化流程上来看，Bean有如下初始化时机：
+在Spring Boot中，可以通过以下几种方式来确定Bean的加载顺序：
 
-1. Spring容器按照顺序主动去初始化该Bean
-2. 被依赖的Bean，该Bean会先被初始化从。
-
-有如下办法确保加载顺序。
-
-**依赖**
-
-A依赖B，则B一定会在A之前初始化好。
-
-**@DependsOn注解**
+1. **@Order注解**：可以使用@Order注解来指定Bean的加载顺序。@Order注解可以标注在实现了Ordered接口的Bean上，也可以标注在实现了@Ordered接口的@Configuration类上。数值越小，优先级越高，加载顺序越靠前。
 
 ```java
-@Configuration
-public class AppConfiguration {
-    @Bean
-	@DependsOn("beanB")
-    public BeanA beanA(){
-        return new BeanA();
+@Component
+@Order(1)
+public class MyBean {
+    // Bean definition
+}
+```
+2. **实现Ordered接口**：Bean类实现Ordered接口，重写getOrder()方法来指定加载顺序。
+
+```java
+@Component
+public class MyBean implements Ordered {
+    @Override
+    public int getOrder() {
+        return 1;
     }
 }
-
 ```
+3. **实现PriorityOrdered接口**：Bean类实现PriorityOrdered接口，重写getOrder()方法来指定高优先级加载顺序。PriorityOrdered会在实现Ordered接口的Bean之前加载，即具有更高的优先级。
+
+```java
+@Component
+public class MyBean implements PriorityOrdered {
+    @Override
+    public int getOrder() {
+        return 1;
+    }
+}
+```
+4. **@DependsOn注解**：可以使用@DependsOn注解来指定Bean之间的依赖关系，确保指定的Bean先于其他Bean加载。
+
+```java
+@Component
+@DependsOn("dependencyBean")
+public class MyBean {
+    // Bean definition
+}
+```
+
+通过以上方式，可以灵活地控制Bean的加载顺序，确保在Spring Boot应用程序启动时按照指定的顺序加载Bean。
 
 
 
